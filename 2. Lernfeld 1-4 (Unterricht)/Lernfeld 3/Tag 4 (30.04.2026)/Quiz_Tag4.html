@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 4 – LF3: Das traditionelle Verfahren der Barzahlung</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128176; Quiz – Tag 4: Das traditionelle Verfahren der Barzahlung</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist das wesentliche Merkmal der Barzahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Das Geld wird von Konto zu Konto überwiesen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Das Geld wechselt physisch den Besitzer – Münzen oder Banknoten werden übergeben, ohne Kontonutzung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Zahlung wird per Scheck abgewickelt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Das Geld wird per App überwiesen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei der Barzahlung wechselt das Geld physisch den Besitzer. Weder der Schuldner noch der Gläubiger benutzt ein Konto.</div>
+    <div class="feedback err">&#10008; Falsch. Bei der Barzahlung findet ein physischer Geldtransfer statt – Münzen oder Banknoten werden übergeben, ohne Bankkonto.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was ist eine Quittung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Dokument zur Bonitätsprüfung des Kunden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Eine Empfangsbestätigung für den Erhalt einer Leistung oder eines Geldbetrags</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Rechnung für erbrachte Dienstleistungen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Vertrag zwischen Käufer und Verkäufer</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Eine Quittung ist eine Empfangsbestätigung für den Erhalt einer Leistung. Der Gläubiger ist verpflichtet, sie auszustellen.</div>
+    <div class="feedback err">&#10008; Falsch. Eine Quittung ist eine Empfangsbestätigung für den Erhalt einer Leistung – kein Vertrag und keine Rechnung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche Angabe muss eine Quittung zwingend enthalten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Steuernummer des Zahlungsempfängers</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Name des Zahlers, Zahlungsbetrag in Buchstaben und Ziffern, Grund der Zahlung, Ort und Tag sowie Unterschrift des Zahlungsempfängers</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Nur der Betrag und die Unterschrift des Käufers</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die IBAN des Käufers und die IBAN des Verkäufers</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Pflichtangaben einer Quittung: Name des Zahlers, Zahlungsbetrag (Buchstaben und Ziffern), Grund der Zahlung, Ort und Tag der Ausstellung, Empfangsbestätigung, Unterschrift des Zahlungsempfängers.</div>
+    <div class="feedback err">&#10008; Falsch. Eine Quittung muss enthalten: Name des Zahlers, Betrag in Buchstaben und Ziffern, Zahlungsgrund, Ort/Datum der Ausstellung und Unterschrift des Zahlungsempfängers.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was gilt rechtlich für Euro-Banknoten in der Eurozone bezüglich der Annahmepflicht?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Banknoten müssen nur bei Beträgen bis 100 Euro angenommen werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Banknoten sind gesetzliches Zahlungsmittel und müssen grundsätzlich angenommen werden, wenn damit finanzielle Verpflichtungen erfüllt werden sollen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Jeder Händler kann frei entscheiden, ob er Bargeld annimmt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Banknoten dürfen nur von Banken angenommen werden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! In der Eurozone sind Banknoten gesetzliches Zahlungsmittel. Aufgrund gesetzlicher Bestimmung muss jeder dieses Geld annehmen – Ausnahmen nur durch Vertrag oder AGB.</div>
+    <div class="feedback err">&#10008; Falsch. Euro-Banknoten sind gesetzliches Zahlungsmittel und müssen grundsätzlich angenommen werden. Ausnahmen sind nur durch Vertrag oder AGB möglich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Wie viele Münzen ist niemand in der Eurozone verpflichtet, in einer Zahlung anzunehmen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Mehr als 10 Münzen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Mehr als 100 Münzen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Mehr als 50 Münzen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Mehr als 20 Münzen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Niemand ist verpflichtet, mehr als 50 Münzen in einer Zahlung anzunehmen – unabhängig vom Gesamtbetrag. Es zählt die Stückzahl, nicht der Wert.</div>
+    <div class="feedback err">&#10008; Falsch. Im Euroraum ist niemand verpflichtet, mehr als 50 Münzen in einer Zahlung anzunehmen. Diese Regelung bezieht sich auf die Stückzahl, nicht auf den Wert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was kennzeichnet die unmittelbare Barzahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Die Zahlung erfolgt von Hand zu Hand – das Bargeld wird persönlich oder durch einen Boten übergeben</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Das Bargeld wird über die Post oder andere Anbieter weitergegeben</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Zahlung erfolgt per Lastschrift vom Konto</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Scheck wird an die Bank weitergeleitet</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die unmittelbare Barzahlung = Zahlung von Hand zu Hand. Physische Übergabe von Münzen/Scheinen, persönlich oder durch Boten, ohne Bankbeteiligung.</div>
+    <div class="feedback err">&#10008; Falsch. Unmittelbar = von Hand zu Hand. Die Zahlung erfolgt persönlich oder durch einen Boten – ohne Postweg und ohne Bank.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was ist ein Merkmal der mittelbaren Barzahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Zahlung erfolgt ohne Gebühren direkt von Person zu Person</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Das Bargeld wird unter Einbeziehung der Post oder anderer Anbieter über größere räumliche Entfernungen übermittelt, wobei relativ hohe Gebühren anfallen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Zahlung erfolgt über das Internet per Kreditkarte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es handelt sich um eine Banküberweisung</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die mittelbare Barzahlung nutzt die Post oder andere Anbieter (z. B. Western Union) für die Bargeldübermittlung über große Entfernungen – dabei fallen stets hohe Gebühren an.</div>
+    <div class="feedback err">&#10008; Falsch. Mittelbare Barzahlung = Bargeld wird über Post oder Anbieter (Western Union) über weite Entfernungen weitergegeben. Hierbei fallen hohe Gebühren an.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Wofür steht die Abkürzung MTCN bei Western Union?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Mobile Transfer Confirmation Number</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Money Transfer Control Number – eine Transaktionsnummer zur Sendungsverfolgung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Monetary Transfer Control Network</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Multi Transaction Cash Number</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! MTCN = Money Transfer Control Number. Diese Transaktionsnummer benötigt der Empfänger zusammen mit seinem Ausweis, um das Bargeld abzuholen.</div>
+    <div class="feedback err">&#10008; Falsch. MTCN = Money Transfer Control Number. Sie ist die Transaktionsnummer, die der Absender nach der Einzahlung erhält und dem Empfänger mitteilt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was sind die halbbaren Zahlungsformen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Überweisung, Dauerauftrag und Lastschrift</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Barscheck, Zahlschein und Nachnahme – Mischformen zwischen Bar- und bargeldloser Zahlung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kreditkarte, Girocard und PayPal</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Western Union, MoneyGram und Hawala</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die halbbaren Zahlungsformen sind Barscheck, Zahlschein und Nachnahme – sie sind eine Zwischenstufe zwischen Barzahlung und bargeldlosem Zahlungsverkehr.</div>
+    <div class="feedback err">&#10008; Falsch. Halbbare Zahlungsformen: Barscheck (Schuldner hat Konto, Empfänger bekommt Bargeld), Zahlschein (Schuldner zahlt Bar auf Konto ein) und Nachnahme.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was ist ein Barscheck?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Der Schuldner hat ein Konto, der Empfänger soll aber Bargeld ausgezahlt bekommen – der Scheck wird bei der Bank des Ausstellers eingelöst</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Der Schuldner zahlt Bargeld auf ein Konto des Zahlungsempfängers ein</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine sofortige Banküberweisung ohne Gebühren</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Kreditkartenzahlung mit sofortiger Kontobelastung</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Barscheck hat der Schuldner ein Konto, der Empfänger soll aber Bargeld bekommen. Der Scheck wird bei der Bank des Ausstellers eingelöst.</div>
+    <div class="feedback err">&#10008; Falsch. Barscheck: Der Schuldner hat ein Konto, der Empfänger erhält Bargeld. Zahlschein ist umgekehrt: Schuldner zahlt Bargeld auf Empfängerkonto ein.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Wie funktioniert die Nachnahme als halbbare Zahlungsform?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Käufer bezahlt vorab per Überweisung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Der Schuldner bezahlt bar beim Empfang der Ware beim Zusteller, der Betrag wird auf das Konto des Lieferanten weitergeleitet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Der Käufer bezahlt mit Kreditkarte an der Haustür</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Zahlung erfolgt innerhalb von 14 Tagen nach Erhalt der Ware</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei der Nachnahme bezahlt der Schuldner bar beim Empfang der Ware beim liefernden Post- oder Logistikunternehmen. Der Betrag wird dann auf das Konto des Lieferanten weitergeleitet.</div>
+    <div class="feedback err">&#10008; Falsch. Nachnahme: Der Empfänger bezahlt die Ware bar beim Zusteller. Der Betrag wird dann auf das Händlerkonto weitergeleitet.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Wie hoch ist der Anteil der Barzahlungen im deutschen Einzelhandel laut Statistik (2021)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Etwa 70 %</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Etwa 38,5 %</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Etwa 10 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Etwa 52 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Im Jahr 2021 betrug der Anteil der Barzahlungen im deutschen Einzelhandel noch 38,5 % – gegenüber 59,1 % im Jahr 2009. Der Trend geht deutlich zur Kartenzahlung.</div>
+    <div class="feedback err">&#10008; Falsch. 2021: Bar = 38,5 %, Karte = 58,8 %. 2009 waren es noch 59,1 % bar – der Anteil sinkt kontinuierlich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was ist ein Vorteil der Barzahlung gegenüber der Kartenzahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Barzahlung ist für Online-Einkäufe besonders gut geeignet</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Anonymität – keine digitale Spur und funktioniert ohne Strom/Internet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Barzahlung ist günstiger als Kartenzahlung für den Händler</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Barzahlung kann rückverfolgt werden bei Streitigkeiten</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Vorteile der Barzahlung: Anonymität (keine digitale Spur), funktioniert ohne Strom/Internet, sofortige Erfüllung der Zahlungspflicht und keine Transaktionsgebühren.</div>
+    <div class="feedback err">&#10008; Falsch. Vorteile der Barzahlung: Anonymität, Unabhängigkeit (kein Strom/Internet nötig), sofortige Zahlung, kein Zahlungsverzug möglich und keine Gebühren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Wie können Online-Einkäufe mit dem Dienst Barzahlen.de / Barpay mit Bargeld bezahlt werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Kunde zahlt direkt beim Paketboten bar bei Lieferung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Der Kunde erhält einen Zahlschein/Barcode und bezahlt an der Kasse von Partnergeschäften (z. B. dm, REWE); nach Zahlungseingang wird die Ware versendet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Der Kunde schickt Bargeld per Einschreiben an den Shop</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Kunde kauft einen Gutschein und löst ihn im Online-Shop ein</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei Barzahlen.de/Barpay: Kunde wählt die Zahlungsart, erhält per E-Mail einen Barcode, bezahlt an der Kasse eines Partnergeschäfts (dm, REWE, Rossmann), Zahlung wird digital bestätigt, Ware wird versendet.</div>
+    <div class="feedback err">&#10008; Falsch. Barzahlen.de/Barpay: Kunde erhält Barcode per E-Mail, zahlt bei Partnergeschäften (dm, REWE, Rossmann) bar. Nach Zahlungseingang wird die Ware versendet.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was ist ein Kassenbon im Vergleich zu einer Quittung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Kassenbon hat mehr rechtliche Wirkung als eine Quittung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Kassenbon bestätigt rechtlich die Bezahlung, erfüllt aber formal nicht das Schriftformgebot (keine Unterschrift) einer Quittung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Kassenbon und eine Quittung sind rechtlich identisch</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Kassenbon enthält immer die Unterschrift des Kassierenden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der Kassenbon bescheinigt die Bezahlung, erfüllt aber formal nicht das Schriftformgebot der Quittung – denn er enthält keine Unterschrift des Zahlungsempfängers.</div>
+    <div class="feedback err">&#10008; Falsch. Der Kassenbon bestätigt die Bezahlung, erfüllt aber nicht das Schriftformgebot (keine Unterschrift). Eine Quittung muss die Unterschrift des Zahlungsempfängers tragen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Bis zu welchem Betrag muss bei zweiseitigen Handelsgeschäften die Umsatzsteuer auf dem Kassenbon nicht ausgewiesen werden (Kleinbetragsrechnung)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bis 50,00 Euro</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Bis 100,00 Euro</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Bis 150,00 Euro</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bis 250,00 Euro</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei der Kleinbetragsrechnung muss bis zu einem Betrag von 150,00 Euro bei zweiseitigen Handelsgeschäften die Umsatzsteuer nicht separat ausgewiesen werden.</div>
+    <div class="feedback err">&#10008; Falsch. Die Grenze für die Kleinbetragsrechnung liegt bei 150,00 Euro. Bis zu diesem Betrag muss die Umsatzsteuer nicht separat ausgewiesen werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Bei welchem Geldbetrag erhebt Western Union beispielhaft 171,00 Euro Gebühr für einen Transfer von Deutschland nach Frankreich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 500 Euro</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 1.000 Euro</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 5.000 Euro</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 10.000 Euro</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Für einen Bargeldtransfer von 5.000 Euro von Deutschland nach Frankreich erhebt Western Union 171,00 Euro Gebühr – dies verdeutlicht die relativ hohen Kosten der mittelbaren Barzahlung.</div>
+    <div class="feedback err">&#10008; Falsch. Das Beispiel aus der Präsentation: 5.000 Euro Transfer von Deutschland nach Frankreich = 171,00 Euro Gebühr bei Western Union.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">An wie vielen Vertriebsstandorten in wie vielen Ländern kann Western Union-Bargeld ausgezahlt werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 50.000 Standorte in 50 Ländern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Mehr als 355.000 Standorte in über 200 Ländern</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 100.000 Standorte in 100 Ländern</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 500.000 Standorte in 50 Ländern</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Western Union ermöglicht die Auszahlung an mehr als 355.000 Vertriebsstandorten in über 200 Ländern weltweit.</div>
+    <div class="feedback err">&#10008; Falsch. Western Union hat mehr als 355.000 Vertriebsstandorte in über 200 Ländern – eines der größten globalen Bargeldtransfer-Netzwerke.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Warum spielt Barzahlung auch im E-Commerce eine Rolle?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Online-Händler müssen Bargeld annehmen, weil es gesetzlich vorgeschrieben ist</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Durch Dienste wie Barzahlen.de, Click &amp; Collect oder Nachnahme können Online-Bestellungen mit Bargeld bezahlt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Barzahlung spielt im E-Commerce keine Rolle</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur bei digitalen Downloads ist Barzahlung möglich</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Barzahlung ist im E-Commerce durch: Click &amp; Collect (Abholung im Laden), Nachnahme als halbbare Zahlungsform und Dienste wie Barzahlen.de/Barpay möglich.</div>
+    <div class="feedback err">&#10008; Falsch. Barzahlung ist im E-Commerce über Click &amp; Collect, Nachnahme und Dienste wie Barzahlen.de möglich – auch Online-Händler müssen dieses Thema kennen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was ist ein wesentlicher Nachteil der Barzahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Barzahlung ist immer mit hohen Bankgebühren verbunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Barzahlung ist für den Händler zu transparent</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Diebstahlrisiko (Verlust ist endgültig), keine Rückverfolgbarkeit bei Streitigkeiten und nicht direkt für Online-Zahlungen geeignet</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Barzahlung ist nicht gesetzliches Zahlungsmittel</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Nachteile der Barzahlung: Diebstahlrisiko, keine Rückverfolgbarkeit, Logistikaufwand (Zählen, Transport), Hygiene, Fälschungsrisiko und nicht direkt für E-Commerce geeignet.</div>
+    <div class="feedback err">&#10008; Falsch. Nachteile der Barzahlung sind: Diebstahlrisiko, keine Rückverfolgbarkeit, Logistikaufwand, Hygieneproblem, Fälschungsgefahr und fehlende E-Commerce-Tauglichkeit.</div>
+    <div class="q-nav"><button class="btn btn-next">Ergebnis anzeigen &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 4: Das traditionelle Verfahren der Barzahlung</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

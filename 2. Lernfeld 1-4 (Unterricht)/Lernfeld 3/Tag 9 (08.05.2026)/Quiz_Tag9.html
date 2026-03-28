@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 9 – LF3: Kreditzahlungen im Webshop</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 9: Kreditzahlungen im Webshop</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist die Definition eines Kredits?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Geldgeschenk ohne Rückzahlungspflicht</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Geldbeträge werden auf Zeit gegen Zinszahlungen überlassen mit Rückzahlungserwartung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine staatliche Unterstützungszahlung für Unternehmen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Versicherung gegen Zahlungsausfälle</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Bei einem Kredit werden Geldbeträge von einer Person auf Zeit gegen Zinszahlungen im Vertrauen auf Rückzahlung überlassen.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Kredit ist die zeitweise Überlassung von Geld gegen Zinszahlungen mit der Erwartung der Rückzahlung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wie lange ist die Laufzeit bei einem kurzfristigen Kredit?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Bis 6 Monate</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 6 Monate bis 4 Jahre</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Über 4 Jahre</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bis 1 Jahr</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Kurzfristige Kredite haben eine Laufzeit von bis zu 6 Monaten.</div>
+    <div class="feedback err">&#10007; Falsch. Kurzfristige Kredite haben eine Laufzeit bis zu 6 Monaten. Mittelfristig: 6 Monate bis 4 Jahre; langfristig: über 4 Jahre.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was ist das Merkmal des Kontokorrentkredits?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Auszahlung in einer Summe, langfristige Rückzahlung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kauf auf Ziel mit Skonto bei früher Zahlung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Kreditlinie bis zu einem Höchstbetrag, jederzeit kurzfristig abrufbar</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kredit mit Immobilien als Sicherheit</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Kontokorrentkredit kann das Konto bis zu einem Höchstbetrag überzogen werden. Es werden nur für den tatsächlich beanspruchten Betrag Zinsen berechnet.</div>
+    <div class="feedback err">&#10007; Falsch. Der Kontokorrentkredit ist eine Kreditlinie, die jederzeit kurzfristig in Anspruch genommen werden kann – Zinsen nur für den genutzten Betrag.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Welches Merkmal hat das Fälligkeitsdarlehen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Gleichbleibende Gesamtrate aus steigender Tilgung und sinkenden Zinsen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Gleiche Tilgungsbeträge in Raten mit sinkenden Zinsen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die gesamte Kreditsumme wird am Ende der Laufzeit in einer Summe zurückgezahlt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Tilgung steigt jährlich, Zinslast sinkt</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Fälligkeitsdarlehen (auch "Festdarlehen") wird die gesamte Kreditsumme erst am Ende der Laufzeit zurückgezahlt. Die Zinsen sind gleichbleibend hoch.</div>
+    <div class="feedback err">&#10007; Falsch. Das Fälligkeitsdarlehen (Festdarlehen) wird in einer Summe am Ende der Laufzeit zurückgezahlt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welches Darlehen hat eine gleichbleibende Gesamtrate (Annuität)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Fälligkeitsdarlehen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Abzahlungsdarlehen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Annuitätendarlehen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kontokorrentkredit</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Das Annuitätendarlehen hat eine gleichbleibende Gesamtrate (Annuität), bei der der Tilgungsanteil steigt und der Zinsanteil sinkt.</div>
+    <div class="feedback err">&#10007; Falsch. Das Annuitätendarlehen ist das Darlehen mit gleichbleibender Gesamtrate – Tilgungsanteil steigt, Zinsanteil sinkt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was ist eine Besonderheit des Lieferantenkredits gegenüber anderen Kreditarten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Er ist die günstigste Finanzierungsmöglichkeit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Er erfordert Immobilien als Sicherheit</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Er ist oft die teuerste Finanzierungsmöglichkeit, aber bequem durch Zahlungsziel</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Er wird immer zinsfrei gewährt</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Der Lieferantenkredit ist bequem (Ware sofort nutzbar, Zahlung später), aber oft die teuerste Finanzierungsmöglichkeit. Es lohnt sich häufig, einen Bankkredit aufzunehmen, um Skonto zu nutzen.</div>
+    <div class="feedback err">&#10007; Falsch. Der Lieferantenkredit ist zwar bequem, aber gilt als oft teuerste Finanzierungsform – Bankkredit für Skonto kann günstiger sein.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Welche Formel wird für die Zinsberechnung beim Lieferantenkredit verwendet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Z = Kapital × Zinssatz / 100</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Z = (Kapital × Laufzeit in Tagen × Zinssatz) / (100 × 360)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Z = Kapital + (Kapital × Zinssatz)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Z = Kapital / (Laufzeit × Zinssatz)</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die Zinsformel lautet: Z = (Kapital × Laufzeit in Tagen × Zinssatz) / (100 × 360).</div>
+    <div class="feedback err">&#10007; Falsch. Die korrekte Zinsformel ist: Z = (Kapital × Laufzeit in Tagen × Zinssatz) / (100 × 360).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Welchen Anteil haben Ratenzahlungen an allen Online-Zahlungen laut Präsentation (ca.)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 1–2 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 5 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 8 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 25 %</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ratenzahlungen machen ca. 8 % der Online-Zahlungen aus und steigen kontinuierlich, besonders bei hochpreisigen Produkten.</div>
+    <div class="feedback err">&#10007; Falsch. Laut Präsentation machen Ratenzahlungen ca. 8 % der Online-Zahlungen aus.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welche drei Varianten gibt es für den Ratenkauf in Onlineshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kreditkarte, Lastschrift, PayPal</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Webshop vergibt selbst, externer Dienstleister (komplett online), externer Dienstleister (teilweise online)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kurz-, mittel-, langfristig</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> BNPL, Vorkasse, Nachnahme</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die drei Varianten sind: Webshop vergibt selbst, externer Dienstleister (komplett online mit schneller Abwicklung) und externer Dienstleister (teilweise online mit Postident-Verfahren).</div>
+    <div class="feedback err">&#10007; Falsch. Die drei Ratenkauf-Varianten sind: Webshop selbst, externer Dienstleister komplett online, externer Dienstleister teilweise online (Postident).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was bedeutet BNPL?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Buy Now, Pay Later – Sofort kaufen, später bezahlen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Buy Now, Pay Later – Sofort kaufen, später zahlen (z. B. Klarna, Afterpay)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Bank Now, Pay Later – Bankkreditlösung für E-Commerce</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Build Now, Pay Later – Investitionsfinanzierung für Webshops</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! BNPL steht für "Buy Now, Pay Later" – Kunden kaufen sofort und zahlen später per Ratenzahlung. Anbieter wie Klarna, Affirm, Afterpay und PayPal Ratenzahlung bieten dies an.</div>
+    <div class="feedback err">&#10007; Falsch. BNPL = "Buy Now, Pay Later" – sofort kaufen, später zahlen über Dienste wie Klarna oder Afterpay.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Welches Risiko besteht für Kunden bei BNPL-Diensten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Zu hohe Transaktionsgebühren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ausbleibende Zahlungen beeinträchtigen die Kreditwürdigkeit und Gefahr der Überschuldung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Keine Käuferschutzrechte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ware kann nicht zurückgegeben werden</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ausbleibende Zahlungen bei BNPL beeinträchtigen die Kreditwürdigkeit und es besteht die Gefahr der Überschuldung, da keine umfassende Finanzauskunft erforderlich ist.</div>
+    <div class="feedback err">&#10007; Falsch. Hauptrisiken bei BNPL für Kunden sind: Beeinträchtigung der Kreditwürdigkeit bei Zahlungsausfall und Gefahr der Überschuldung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welche Institution ist die wichtigste Auskunftei für Bonitätsprüfungen in Deutschland?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> SCHUFA</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Bundesbank</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Finanzamt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> IHK</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die SCHUFA (und Creditreform) sind die wichtigsten gewerbsmäßigen Auskunfteien für Bonitätsprüfungen in Deutschland.</div>
+    <div class="feedback err">&#10007; Falsch. Die SCHUFA (Schutzgemeinschaft für allgemeine Kreditsicherung) ist die wichtigste Auskunftei für Bonitätsprüfungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Wie erfolgt die Bonitätsprüfung bei BNPL-Diensten im Vergleich zur klassischen Kreditvergabe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Strengere und längere Prüfung als bei Banken</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Nur durch staatliche Stellen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> KI-basiert in Echtzeit anhand von Daten wie Alter, Uhrzeit, Betrag und Transaktionshistorie</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Komplett ohne Prüfung</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Bei BNPL-Diensten übernehmen Algorithmen (KI) die Bonitätsprüfung in Echtzeit anhand von Daten wie Alter, Uhrzeit, Betrag und früheren Transaktionen.</div>
+    <div class="feedback err">&#10007; Falsch. BNPL-Dienste nutzen KI-Algorithmen für eine Echtzeit-Bonitätsprüfung anhand verschiedener Datenpunkte.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was ist ein Personalkredit?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Kredit, der nur auf Basis der Kreditwürdigkeit des Kreditnehmers vergeben wird, ohne dingliche Sicherheiten</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kredit mit Hypothek als Sicherheit</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kredit ausschließlich für Privatpersonen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kredit mit Bürgschaft eines Dritten</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Personalkredit ist die Grundlage nur die Überprüfung der Kreditwürdigkeit – keine dinglichen Sicherheiten. BNPL-Ratenkredite im E-Commerce sind meist Personalkredite.</div>
+    <div class="feedback err">&#10007; Falsch. Personalkredite basieren nur auf der Kreditwürdigkeitsprüfung ohne dingliche Sicherheiten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welche Kreditart nach Sicherheit setzt die Verpfändung von Wertpapieren oder Sachwerten voraus (Lombardkredit)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Personalkredit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Verstärkter Personalkredit (Bürgschaft)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Realkredit (Lombardkredit)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Lieferantenkredit</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Der Lombardkredit gehört zur Kategorie der Realkredite – er erfordert die Verpfändung von Sicherheiten. Weitere Realkredite sind: Sicherungsübereignung, Hypothek, Grundschuld.</div>
+    <div class="feedback err">&#10007; Falsch. Der Lombardkredit ist ein Realkredit, bei dem Wertpapiere oder Sachwerte als Sicherheit verpfändet werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welchen Effekt hat das Anbieten von Ratenkauf auf den durchschnittlichen Bestellwert im Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Er sinkt, da Kunden unsicher werden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Er bleibt gleich</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Er steigt deutlich, da Kunden größere Anschaffungen tätigen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es gibt keinen Einfluss auf den Bestellwert</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ratenkauf-Optionen steigern den durchschnittlichen Bestellwert deutlich. 10–15 % aller Onlinebestellungen nutzen mittlerweile eine Finanzierung per Ratenkauf.</div>
+    <div class="feedback err">&#10007; Falsch. Das Anbieten von Ratenkauf steigert den durchschnittlichen Bestellwert deutlich – Kunden tätigen größere Anschaffungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was ist Skonto und wann wird es gewährt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Rabatt auf den Kaufpreis bei Großbestellungen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Preisnachlass bei frühzeitiger Zahlung innerhalb einer kürzeren Zahlungsfrist</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Strafgebühr bei verspäteter Zahlung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine staatliche Förderung für kleine Unternehmen</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Skonto ist ein Preisnachlass, der gewährt wird, wenn der Käufer innerhalb einer kürzeren Frist (z. B. 10 statt 30 Tage) zahlt.</div>
+    <div class="feedback err">&#10007; Falsch. Skonto ist ein Preisnachlass bei frühzeitiger Zahlung – z. B. 2 % Skonto bei Zahlung innerhalb 10 Tagen statt 30 Tagen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche Kreditart verlängert sich auf alle gelieferten Waren eines Verkäufers (nicht nur eine Lieferung)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kurzfristiger Kredit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kontokorrentkredit</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Verlängerter Eigentumsvorbehalt</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> Erweiterter Eigentumsvorbehalt (Kreditart nach Sicherheit)</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Der erweiterte Eigentumsvorbehalt erstreckt sich auf alle vom Verkäufer gelieferten Waren – alle bleiben Eigentum des Verkäufers, bis sämtliche Waren bezahlt sind.</div>
+    <div class="feedback err">&#10007; Falsch. Der erweiterte Eigentumsvorbehalt gilt für alle gelieferten Waren des Verkäufers bis zur vollständigen Bezahlung aller Lieferungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welche der folgenden Aussagen über verstärkte Personalkredite ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie erfordern eine Hypothek auf Immobilien</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Sie nutzen Bürgschaft, Zession (Forderungsabtretung) oder Wechselkredit als Sicherheit</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Sie sind ausschließlich für Staatsunternehmen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie benötigen keine Sicherheiten</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Verstärkte Personalkredite nutzen persönliche Sicherheiten wie Bürgschaft, Zession (Abtretung von Forderungen) oder Wechselkredit.</div>
+    <div class="feedback err">&#10007; Falsch. Verstärkte Personalkredite werden durch Bürgschaft, Zession (Forderungsabtretung) oder Wechselkredit abgesichert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Denis Korn (Musikhaus) gibt an, dass 10–15 % seiner Onlinebestellungen den Ratenkauf nutzen. Welchen Schluss zieht die Präsentation daraus?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ratenkauf ist nur für Luxusprodukte geeignet</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Ratenkauf sollte abgeschafft werden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Ratenkauf ist ein Umsatztreiber, der Kaufabschlussquote steigert und positiv von Kunden wahrgenommen wird</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ratenkauf lohnt sich nur ab Bestellwerten über 1.000 €</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Das Fazit der Präsentation: Ratenkauf ist ein Umsatztreiber im E-Commerce, steigert die Kaufabschlussquote und wird von Kunden als zusätzliche Zahlungsart positiv wahrgenommen.</div>
+    <div class="feedback err">&#10007; Falsch. Ratenkauf ist laut Präsentation ein Umsatztreiber, der die Kaufabschlussquote steigert und von Kunden positiv bewertet wird.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 9</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

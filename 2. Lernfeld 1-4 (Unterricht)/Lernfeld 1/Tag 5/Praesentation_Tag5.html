@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 5 – 1.6 Vertriebskanäle</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+<div id="counter"></div>
+
+<!-- SLIDE 1: Deckblatt -->
+<div class="slide active" id="s1">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:1em">
+      <svg width="54" height="54" viewBox="0 0 54 54"><circle cx="27" cy="27" r="27" fill="#0d1b3e"/><path d="M14 34 L27 16 L40 34 Z" fill="#2563EB"/><rect x="22" y="34" width="10" height="8" fill="#fff"/></svg>
+      <div>
+        <div style="font-size:.82em;color:#888;letter-spacing:2px">LERNFELD 1 · TAG 5</div>
+        <h1 style="margin:0">1.6 Vertriebskanäle</h1>
+      </div>
+    </div>
+    <p class="cover-sub">Buchseiten 54–67</p>
+    <p style="font-size:.9em;color:#555;max-width:580px;margin-top:.8em">Direktvertrieb, indirekter Vertrieb, Online-Kanäle, Omnichannel-Strategie und Distributionspolitik im E-Commerce-Kontext.</p>
+    <div class="cover-meta">
+      <b>Can Siebert &amp; Hamzah Meyer</b> &nbsp;|&nbsp; 02. März 2026 &nbsp;|&nbsp; Berufsschule
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Inhaltsverzeichnis -->
+<div class="slide" id="s2">
+  <h2>Inhaltsverzeichnis</h2>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">1</span>Lernziele</div>
+    <div class="toc-item"><span class="toc-num">2</span>Direktvertrieb</div>
+    <div class="toc-item"><span class="toc-num">3</span>Indirekter Vertrieb</div>
+    <div class="toc-item"><span class="toc-num">4</span>Online-Kanäle</div>
+    <div class="toc-item"><span class="toc-num">5</span>Omnichannel-Strategie</div>
+    <div class="toc-item"><span class="toc-num">6</span>Distributionspolitik</div>
+    <div class="toc-item"><span class="toc-num">7</span>Kanalvergleich (Tabelle)</div>
+    <div class="toc-item"><span class="toc-num">8</span>SVG-Diagramme</div>
+    <div class="toc-item"><span class="toc-num">9</span>Fallbeispiele</div>
+    <div class="toc-item"><span class="toc-num">10</span>Zusammenfassung &amp; Literatur</div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Lernziele -->
+<div class="slide" id="s3">
+  <h2>Lernziele</h2>
+  <p style="margin-bottom:.8em;color:#555">Nach dieser Einheit können Sie …</p>
+  <div class="lz-item"><div class="lz-dot">1</div><p>Direktvertrieb und indirekten Vertrieb <b>definieren und unterscheiden</b>.</p></div>
+  <div class="lz-item"><div class="lz-dot">2</div><p>Online-Vertriebskanäle (Webshop, Marktplätze, Social Commerce) <b>erläutern und bewerten</b>.</p></div>
+  <div class="lz-item"><div class="lz-dot">3</div><p>Die Omnichannel-Strategie <b>von Multi- und Crosschannel abgrenzen</b>.</p></div>
+  <div class="lz-item"><div class="lz-dot">4</div><p>Intensiven, selektiven und exklusiven Vertrieb <b>anhand von Beispielen erklären</b>.</p></div>
+  <div class="lz-item"><div class="lz-dot">5</div><p>Für ein Fallbeispiel einen geeigneten Vertriebskanal <b>begründet auswählen</b>.</p></div>
+</div>
+
+<!-- SLIDE 4: Direktvertrieb -->
+<div class="slide" id="s4">
+  <h2>Direktvertrieb</h2>
+  <div class="two-col">
+    <div>
+      <h3>Definition</h3>
+      <p>Hersteller verkauft <b>ohne Zwischenhändler</b> direkt an den Endkunden.</p>
+      <h3>Formen</h3>
+      <ul>
+        <li>Eigener Webshop / App</li>
+        <li>Flagship Store / Werksverkauf</li>
+        <li>Außendienst / Haustürverkauf</li>
+        <li>Katalog- &amp; Telefonverkauf</li>
+        <li>Social Commerce (Instagram Shop)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box" style="margin-bottom:10px">
+        <h3 style="margin-top:0">Vorteile</h3>
+        <ul><li>Volle Marge</li><li>Direkte Kundendaten</li><li>Markenhoheit</li></ul>
+      </div>
+      <div class="box red">
+        <h3 style="margin-top:0">Nachteile</h3>
+        <ul><li>Hohe Investitionen</li><li>Eigenverantwortliche Logistik</li><li>Geringere Reichweite</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="highlight">Beispiel: Apple verkauft über apple.com und eigene Apple Stores direkt – keine Großhändler im Kerngeschäft.</div>
+</div>
+
+<!-- SLIDE 5: Indirekter Vertrieb -->
+<div class="slide" id="s5">
+  <h2>Indirekter Vertrieb</h2>
+  <div class="two-col">
+    <div>
+      <h3>Definition</h3>
+      <p>Produkte gelangen über <b>ein oder mehrere Zwischenglieder</b> zum Kunden.</p>
+      <h3>Stufigkeit</h3>
+      <ul>
+        <li><b>Einstufig:</b> Hersteller → Einzelhandel → Kunde</li>
+        <li><b>Zweistufig:</b> Hersteller → Großhandel → EH → Kunde</li>
+        <li><b>Mehrstufig:</b> + weitere Agenten/Distributoren</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box" style="margin-bottom:10px">
+        <h3 style="margin-top:0">Vorteile</h3>
+        <ul><li>Große Reichweite</li><li>Kein eigenes Ladenetz</li><li>Erfahrung der Partner</li></ul>
+      </div>
+      <div class="box red">
+        <h3 style="margin-top:0">Nachteile</h3>
+        <ul><li>Margenverlust</li><li>Weniger Kundendaten</li><li>Abhängigkeit vom Handel</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="highlight">Beispiel: Lego verkauft über Spielzeugfachhandel, Kaufhof und Amazon Marketplace.</div>
+</div>
+
+<!-- SLIDE 6: Online-Kanäle -->
+<div class="slide" id="s6">
+  <h2>Online-Vertriebskanäle</h2>
+  <table>
+    <tr><th>Kanal</th><th>Merkmale</th><th>Beispiele</th></tr>
+    <tr><td><b>Eigener Webshop</b></td><td>Volle Kontrolle, Direktverkauf, SEO-Potenzial</td><td>Shopify, WooCommerce, Shopware</td></tr>
+    <tr><td><b>Online-Marktplatz</b></td><td>Hohe Reichweite, Provisionen 8–15 %</td><td>Amazon, eBay, Otto</td></tr>
+    <tr><td><b>Social Commerce</b></td><td>Impulskauf, Community-Bindung</td><td>Instagram Shop, TikTok Shop</td></tr>
+    <tr><td><b>B2B-Plattformen</b></td><td>Rahmenverträge, große Mengen</td><td>Mercateo, Alibaba</td></tr>
+    <tr><td><b>App / Mobile</b></td><td>Push-Benachrichtigungen, Loyalty</td><td>Zalando App, REWE App</td></tr>
+  </table>
+  <div class="highlight">Marktplätze liefern Reichweite, der eigene Shop liefert Marge und Daten – die Kombination ist entscheidend.</div>
+</div>
+
+<!-- SLIDE 7: Omnichannel-Strategie -->
+<div class="slide" id="s7">
+  <h2>Omnichannel-Strategie</h2>
+  <div class="two-col" style="margin-bottom:.8em">
+    <div class="box">
+      <h3 style="margin-top:0">Multichannel</h3>
+      <p>Mehrere Kanäle, <b>getrennt</b> betrieben. Keine gemeinsame Datenbasis.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Crosschannel</h3>
+      <p>Kanäle greifen ineinander (z. B. online bestellen, im Laden abholen = <b>Click &amp; Collect</b>).</p>
+    </div>
+  </div>
+  <div class="box" style="border-top-color:var(--dr);margin-bottom:.8em">
+    <h3 style="margin-top:0;color:var(--dr)">Omnichannel (Ziel)</h3>
+    <p>Alle Kanäle sind <b>nahtlos integriert</b>. Kunde wechselt beliebig – einheitliches Erlebnis, einheitliche Datenbasis.</p>
+  </div>
+  <div class="highlight">Erfolgsfaktoren: Einheitliches ERP/CRM, Echtzeit-Lagerbestand, konsistente Preise, kanalübergreifende Loyalty-Programme.</div>
+</div>
+
+<!-- SLIDE 8: Distributionspolitik -->
+<div class="slide" id="s8">
+  <h2>Distributionspolitik</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:.5em 0">
+    <div class="box">
+      <h3 style="margin-top:0">Intensiv</h3>
+      <p>Möglichst viele Händler &amp; Kanäle. <b>Ziel:</b> Maximale Verfügbarkeit.</p>
+      <p style="margin-top:.5em"><b>Produkte:</b> FMCG, Getränke, Süßwaren</p>
+      <span class="tag">Coca-Cola</span><span class="tag">Ferrero</span>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Selektiv</h3>
+      <p>Ausgewählte Händler nach Kriterien (Beratung, Image).</p>
+      <p style="margin-top:.5em"><b>Produkte:</b> Elektronik, Kosmetik, Mode</p>
+      <span class="tag">Sony</span><span class="tag">Clinique</span>
+    </div>
+    <div class="box red">
+      <h3 style="margin-top:0">Exklusiv</h3>
+      <p>Nur <b>ein Händler</b> pro Region. Maximale Markenkontrolle.</p>
+      <p style="margin-top:.5em"><b>Produkte:</b> Luxusgüter, Sportwagen</p>
+      <span class="tag">Rolex</span><span class="tag">Ferrari</span>
+    </div>
+  </div>
+  <div class="highlight">Die Wahl der Distributionsintensität beeinflusst Markenimage, Preisniveau und Kundenerlebnis direkt.</div>
+</div>
+
+<!-- SLIDE 9: SVG Direktvertrieb vs. Indirekter Vertrieb -->
+<div class="slide" id="s9">
+  <h2>Vertriebswege – Visualisierung</h2>
+  <svg width="780" height="290" viewBox="0 0 780 290">
+    <!-- Direkt -->
+    <text x="30" y="24" fill="#0d1b3e" font-weight="bold" font-size="13">Direktvertrieb</text>
+    <rect x="30" y="35" width="110" height="40" rx="6" fill="#0d1b3e"/>
+    <text x="85" y="60" fill="#fff" text-anchor="middle" font-size="11">Hersteller</text>
+    <line x1="140" y1="55" x2="260" y2="55" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+    <rect x="260" y="35" width="110" height="40" rx="6" fill="#2563EB"/>
+    <text x="315" y="60" fill="#fff" text-anchor="middle" font-size="11">Endkunde</text>
+    <text x="200" y="45" fill="#2563EB" text-anchor="middle" font-size="10">direkt</text>
+    <!-- Indirekt einstufig -->
+    <text x="30" y="120" fill="#0d1b3e" font-weight="bold" font-size="13">Indirekter Vertrieb (einstufig)</text>
+    <rect x="30" y="130" width="110" height="40" rx="6" fill="#0d1b3e"/>
+    <text x="85" y="155" fill="#fff" text-anchor="middle" font-size="11">Hersteller</text>
+    <line x1="140" y1="150" x2="210" y2="150" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/>
+    <rect x="210" y="130" width="110" height="40" rx="6" fill="#1a3a6e"/>
+    <text x="265" y="155" fill="#fff" text-anchor="middle" font-size="11">Einzelhandel</text>
+    <line x1="320" y1="150" x2="390" y2="150" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/>
+    <rect x="390" y="130" width="110" height="40" rx="6" fill="#2563EB"/>
+    <text x="445" y="155" fill="#fff" text-anchor="middle" font-size="11">Endkunde</text>
+    <!-- Indirekt zweistufig -->
+    <text x="30" y="220" fill="#0d1b3e" font-weight="bold" font-size="13">Indirekter Vertrieb (zweistufig)</text>
+    <rect x="30" y="230" width="110" height="40" rx="6" fill="#0d1b3e"/>
+    <text x="85" y="255" fill="#fff" text-anchor="middle" font-size="11">Hersteller</text>
+    <line x1="140" y1="250" x2="190" y2="250" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/>
+    <rect x="190" y="230" width="100" height="40" rx="6" fill="#1a3a6e"/>
+    <text x="240" y="255" fill="#fff" text-anchor="middle" font-size="11">Großhandel</text>
+    <line x1="290" y1="250" x2="340" y2="250" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/>
+    <rect x="340" y="230" width="110" height="40" rx="6" fill="#1a3a6e"/>
+    <text x="395" y="255" fill="#fff" text-anchor="middle" font-size="11">Einzelhandel</text>
+    <line x1="450" y1="250" x2="500" y2="250" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/>
+    <rect x="500" y="230" width="110" height="40" rx="6" fill="#2563EB"/>
+    <text x="555" y="255" fill="#fff" text-anchor="middle" font-size="11">Endkunde</text>
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563EB"/></marker>
+      <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker>
+    </defs>
+  </svg>
+</div>
+
+<!-- SLIDE 10: SVG Omnichannel -->
+<div class="slide" id="s10">
+  <h2>Omnichannel – Kanalintegration</h2>
+  <svg width="780" height="300" viewBox="0 0 780 300">
+    <!-- Zentrum -->
+    <ellipse cx="390" cy="150" rx="70" ry="45" fill="#0d1b3e"/>
+    <text x="390" y="145" fill="#fff" text-anchor="middle" font-size="12" font-weight="bold">Kunde</text>
+    <text x="390" y="162" fill="#f9c74f" text-anchor="middle" font-size="10">(360°-Erlebnis)</text>
+    <!-- Channels -->
+    <rect x="20" y="55" width="110" height="38" rx="8" fill="#1a3a6e"/>
+    <text x="75" y="79" fill="#fff" text-anchor="middle" font-size="11">Webshop</text>
+    <line x1="130" y1="74" x2="320" y2="135" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <rect x="20" y="175" width="110" height="38" rx="8" fill="#1a3a6e"/>
+    <text x="75" y="199" fill="#fff" text-anchor="middle" font-size="11">Filiale</text>
+    <line x1="130" y1="194" x2="320" y2="165" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <rect x="640" y="55" width="120" height="38" rx="8" fill="#1a3a6e"/>
+    <text x="700" y="79" fill="#fff" text-anchor="middle" font-size="11">Marktplatz</text>
+    <line x1="640" y1="74" x2="460" y2="135" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <rect x="640" y="175" width="120" height="38" rx="8" fill="#1a3a6e"/>
+    <text x="700" y="199" fill="#fff" text-anchor="middle" font-size="11">Social Media</text>
+    <line x1="640" y1="194" x2="460" y2="165" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <rect x="300" y="10" width="180" height="38" rx="8" fill="#2563EB"/>
+    <text x="390" y="34" fill="#fff" text-anchor="middle" font-size="11">Mobile App</text>
+    <line x1="390" y1="48" x2="390" y2="105" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <rect x="300" y="252" width="180" height="38" rx="8" fill="#2563EB"/>
+    <text x="390" y="276" fill="#fff" text-anchor="middle" font-size="11">Click &amp; Collect</text>
+    <line x1="390" y1="252" x2="390" y2="195" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+    <text x="390" y="295" fill="#888" text-anchor="middle" font-size="9">Alle Kanäle teilen Lagerbestand, CRM und Preisdaten in Echtzeit</text>
+  </svg>
+</div>
+
+<!-- SLIDE 11: SVG Distributionsintensität -->
+<div class="slide" id="s11">
+  <h2>Distributionsintensität – Übersicht</h2>
+  <svg width="780" height="290" viewBox="0 0 780 290">
+    <!-- Intensiv -->
+    <rect x="20" y="20" width="220" height="240" rx="10" fill="#e8ecf5"/>
+    <rect x="20" y="20" width="220" height="36" rx="10" fill="#0d1b3e"/>
+    <text x="130" y="43" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">Intensiv</text>
+    <circle cx="60" cy="110" r="14" fill="#0d1b3e"/><text x="60" y="115" fill="#fff" text-anchor="middle" font-size="9">H</text>
+    <circle cx="130" cy="110" r="14" fill="#0d1b3e"/><text x="130" y="115" fill="#fff" text-anchor="middle" font-size="9">H</text>
+    <circle cx="200" cy="110" r="14" fill="#0d1b3e"/><text x="200" y="115" fill="#fff" text-anchor="middle" font-size="9">H</text>
+    <line x1="60" y1="124" x2="60" y2="164" stroke="#555" stroke-width="1.5"/>
+    <line x1="130" y1="124" x2="130" y2="164" stroke="#555" stroke-width="1.5"/>
+    <line x1="200" y1="124" x2="200" y2="164" stroke="#555" stroke-width="1.5"/>
+    <circle cx="60" cy="175" r="14" fill="#2563EB"/><text x="60" y="180" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <circle cx="130" cy="175" r="14" fill="#2563EB"/><text x="130" y="180" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <circle cx="200" cy="175" r="14" fill="#2563EB"/><text x="200" y="180" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <text x="130" y="230" fill="#555" text-anchor="middle" font-size="10">Massenprodukte</text>
+    <text x="130" y="248" fill="#555" text-anchor="middle" font-size="10">FMCG, Getränke</text>
+    <!-- Selektiv -->
+    <rect x="280" y="20" width="220" height="240" rx="10" fill="#e8ecf5"/>
+    <rect x="280" y="20" width="220" height="36" rx="10" fill="#1a3a6e"/>
+    <text x="390" y="43" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">Selektiv</text>
+    <circle cx="390" cy="100" r="14" fill="#1a3a6e"/><text x="390" y="105" fill="#fff" text-anchor="middle" font-size="9">H</text>
+    <line x1="360" y1="114" x2="330" y2="160" stroke="#555" stroke-width="1.5"/>
+    <line x1="420" y1="114" x2="450" y2="160" stroke="#555" stroke-width="1.5"/>
+    <circle cx="330" cy="172" r="14" fill="#2563EB"/><text x="330" y="177" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <circle cx="450" cy="172" r="14" fill="#2563EB"/><text x="450" y="177" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <text x="390" y="230" fill="#555" text-anchor="middle" font-size="10">Elektronik, Kosmetik</text>
+    <text x="390" y="248" fill="#555" text-anchor="middle" font-size="10">Ausgewählte Händler</text>
+    <!-- Exklusiv -->
+    <rect x="540" y="20" width="220" height="240" rx="10" fill="#e8ecf5"/>
+    <rect x="540" y="20" width="220" height="36" rx="10" fill="#2563EB"/>
+    <text x="650" y="43" fill="#fff" text-anchor="middle" font-size="13" font-weight="bold">Exklusiv</text>
+    <circle cx="650" cy="100" r="14" fill="#2563EB"/><text x="650" y="105" fill="#fff" text-anchor="middle" font-size="9">H</text>
+    <line x1="650" y1="114" x2="650" y2="158" stroke="#555" stroke-width="2"/>
+    <circle cx="650" cy="170" r="14" fill="#0d1b3e"/><text x="650" y="175" fill="#fff" text-anchor="middle" font-size="9">K</text>
+    <text x="650" y="230" fill="#555" text-anchor="middle" font-size="10">Luxusgüter</text>
+    <text x="650" y="248" fill="#555" text-anchor="middle" font-size="10">1 Händler pro Region</text>
+  </svg>
+</div>
+
+<!-- QUIZ SLIDE 1: Vertriebskanäle Grundlagen -->
+<div class="slide" id="sq1" style="background:#fff; overflow-y:auto;">
+  <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#0d1b3e,#2563EB)"></div>
+  <h2 style="border-left:4px solid #2563EB;padding-left:12px;color:#0d1b3e;margin-bottom:1em;">🧠 Zwischenquiz: Vertriebskanäle & Strategien</h2>
+  <div id="zq5-1-container">
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">1. Was beschreibt den Direktvertrieb?</p>
+      <div class="zq5-options1">
+        <button onclick="chk5('zq5-1-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Hersteller verkauft über Großhändler und Einzelhändler</button>
+        <button onclick="chk5('zq5-1-q1',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Hersteller verkauft ohne Zwischenhändler direkt an den Endkunden</button>
+        <button onclick="chk5('zq5-1-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Privatpersonen handeln untereinander</button>
+      </div>
+      <p id="zq5-1-q1-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">2. Wofür stehen die Buchstaben im KRAK-Modell?</p>
+      <div class="zq5-options2">
+        <button onclick="chk5('zq5-1-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Kanal, Reichweite, Abnahme, Kunde</button>
+        <button onclick="chk5('zq5-1-q2',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Kosten, Reichweite, Aufwand, Kontrolle</button>
+        <button onclick="chk5('zq5-1-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Kooperation, Rabatt, Angebot, Kapital</button>
+      </div>
+      <p id="zq5-1-q2-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #2563EB;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">3. Bei welcher Distributionsstrategie wird das Produkt nur über einen einzigen Händler pro Region verkauft?</p>
+      <div class="zq5-options3">
+        <button onclick="chk5('zq5-1-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Intensive Distribution</button>
+        <button onclick="chk5('zq5-1-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Selektive Distribution</button>
+        <button onclick="chk5('zq5-1-q3',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Exklusive Distribution</button>
+      </div>
+      <p id="zq5-1-q3-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function chk5(qid, btn, correct) {
+    btn.closest('div').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    btn.style.color = 'white';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#27ae60' : '#c0392b';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('div').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) { b.style.background = '#27ae60'; b.style.color = 'white'; }
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE: Kanalvergleich Tabelle -->
+<div class="slide" id="s12">
+  <h2>Kanalvergleich – Entscheidungshilfe</h2>
+  <table>
+    <tr><th>Kriterium</th><th>Eigener Shop</th><th>Amazon Marketplace</th><th>Filiale</th></tr>
+    <tr><td>Reichweite</td><td>Mittel</td><td>Sehr hoch</td><td>Lokal</td></tr>
+    <tr><td>Marge</td><td>Hoch</td><td>Mittel (–15 % Provision)</td><td>Mittel</td></tr>
+    <tr><td>Kundendaten</td><td>Vollständig</td><td>Eingeschränkt</td><td>Teilweise</td></tr>
+    <tr><td>Investition</td><td>Mittel–Hoch</td><td>Gering</td><td>Sehr hoch</td></tr>
+    <tr><td>Markenkontrolle</td><td>Vollständig</td><td>Gering</td><td>Vollständig</td></tr>
+    <tr><td>Aufbaudauer</td><td>Wochen</td><td>Tage</td><td>Monate</td></tr>
+  </table>
+  <div class="highlight">Empfehlung für Start-ups: Amazon Marketplace als Einstieg → parallel eigenen Webshop aufbauen, um Datenhoheit zu gewinnen.</div>
+</div>
+
+<!-- SLIDE: KRAK-Modell Detailfolie -->
+<div class="slide" id="skrak">
+  <h2>KRAK-Modell: Marktplatz vs. eigener Shop</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:.5em 0">
+    <div class="box">
+      <h3 style="margin-top:0">K – Kosten</h3>
+      <p><b>Marktplatz:</b> Monatliche Gebühr + Provision ca. 8–15% je Verkauf</p>
+      <p style="margin-top:.4em"><b>Eigener Shop:</b> Einmalige Einrichtung + Hosting/Lizenz (ab ~5 €/Monat)</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">R – Reichweite</h3>
+      <p><b>Marktplatz:</b> Sehr hoch – Millionen Nutzer sofort erreichbar</p>
+      <p style="margin-top:.4em"><b>Eigener Shop:</b> Aufbau nötig (SEO, Werbung, Social Media)</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">A – Aufwand</h3>
+      <p><b>Marktplatz:</b> Geringer Einstiegsaufwand – schnell startbereit</p>
+      <p style="margin-top:.4em"><b>Eigener Shop:</b> Hoher Einrichtungsaufwand, technisches Know-how nötig</p>
+    </div>
+    <div class="box red">
+      <h3 style="margin-top:0">K – Kontrolle</h3>
+      <p><b>Marktplatz:</b> Gering – Preisregeln, Design und Kundendaten beim Marktplatz</p>
+      <p style="margin-top:.4em"><b>Eigener Shop:</b> Vollständige Kontrolle über Daten, Design, Preise</p>
+    </div>
+  </div>
+  <div class="highlight"><b>Empfehlung:</b> Hybridstrategie – Marktplatz für sofortige Reichweite nutzen, parallel eigenen Shop für Kundendaten und Markenaufbau aufbauen. (Heinemann, 2023, S. 201)</div>
+</div>
+
+<!-- SLIDE: Fallbeispiel Exclusiva GmbH -->
+<div class="slide" id="sexclusiva">
+  <h2>Fallbeispiel: Die Exclusiva GmbH</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ausgangssituation</h3>
+      <p>Die <b>Exclusiva GmbH</b> ist ein deutsches Unternehmen, das hochwertige Ledertaschen herstellt. Bisher: nur Flagship-Stores in Frankfurt, München und Berlin (Single Channel, exklusiv).</p>
+      <h3>Kennzahlen</h3>
+      <ul>
+        <li>Jahresumsatz: ca. 3,5 Mio. EUR</li>
+        <li>Zielgruppe: Gutverdiener (30–55 Jahre)</li>
+        <li>Bisheriger Online-Anteil: <b>0 %</b></li>
+      </ul>
+      <h3>Strategische Frage</h3>
+      <p>Amazon/Marktplatz oder eigener Webshop?</p>
+    </div>
+    <div>
+      <div class="box red">
+        <h3 style="margin-top:0">Gegen Amazon</h3>
+        <ul>
+          <li>Massenwirkung schadet dem Luxus-Image</li>
+          <li>Preiskontrolle schwierig</li>
+          <li>Wettbewerber sind direkt sichtbar</li>
+        </ul>
+      </div>
+      <div class="box" style="margin-top:10px">
+        <h3 style="margin-top:0">Für eigenen Webshop</h3>
+        <ul>
+          <li>Vollständige Markenkontrolle</li>
+          <li>Eigene Kundendaten</li>
+          <li>Premium-Design möglich</li>
+          <li>Passt zur exklusiven Distribution</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="highlight"><b>Empfehlung:</b> Eigener Webshop (z.B. auf Shopware-Basis) mit exklusivem Design + Click-&-Collect in den drei Stores (Cross-Channel) — <b>keine</b> Präsenz auf Massenmarktplätzen.</div>
+</div>
+
+<!-- SLIDE: Neue Vertriebsformen -->
+<div class="slide" id="sneu">
+  <h2>Neue Vertriebsformen im E-Commerce</h2>
+  <table>
+    <tr><th>Form</th><th>Beschreibung</th><th>Beispiele</th></tr>
+    <tr><td><b>D2C</b><br><span class="tag">Direct to Consumer</span></td><td>Hersteller verkauft ohne Zwischenhändler direkt an Endkunden</td><td>Nike.com, Adidas.com, Allbirds</td></tr>
+    <tr><td><b>Social Commerce</b></td><td>Kaufprozess findet direkt in Social-Media-Apps statt</td><td>TikTok Shop, Instagram Shopping, Pinterest</td></tr>
+    <tr><td><b>Live Shopping</b></td><td>Produkte werden live per Video präsentiert und in Echtzeit verkauft</td><td>Amazon Live, TikTok Live, QVC-Format</td></tr>
+    <tr><td><b>Voice Commerce</b></td><td>Bestellung per Sprachassistent</td><td>Alexa: „Bestell Waschmittel!", Google Assistant</td></tr>
+    <tr><td><b>Subscription</b></td><td>Abo-Modell: regelmäßige Lieferung gegen monatliche Zahlung</td><td>HelloFresh, Dollar Shave Club, Spotify</td></tr>
+  </table>
+  <div class="highlight"><b>Trend:</b> In China macht Live Shopping bereits über 10% des E-Commerce-Umsatzes aus (~500 Mrd. USD, 2022). TikTok Shop startete 2023 auch in Deutschland.</div>
+</div>
+
+<!-- QUIZ SLIDE 2: Omnichannel & Distributionsstrategien -->
+<div class="slide" id="sq2" style="background:#fff; overflow-y:auto;">
+  <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#0d1b3e,#2563EB)"></div>
+  <h2 style="border-left:4px solid #2563EB;padding-left:12px;color:#0d1b3e;margin-bottom:1em;">🧠 Zwischenquiz: Omnichannel & Distributionspolitik</h2>
+  <div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">1. Was kennzeichnet eine Omnichannel-Strategie?</p>
+      <div>
+        <button onclick="chk5b('zq5b-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Es wird nur ein einziger Vertriebskanal genutzt</button>
+        <button onclick="chk5b('zq5b-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Mehrere Kanäle werden getrennt voneinander betrieben</button>
+        <button onclick="chk5b('zq5b-q1',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Alle Kanäle sind nahtlos integriert – einheitliche Kundensicht und Datenbasis</button>
+      </div>
+      <p id="zq5b-q1-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">2. Welche Distributionsstrategie nutzt Coca-Cola typischerweise?</p>
+      <div>
+        <button onclick="chk5b('zq5b-q2',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Intensive Distribution – möglichst viele Händler und Kanäle</button>
+        <button onclick="chk5b('zq5b-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Selektive Distribution – ausgewählte Fachhändler</button>
+        <button onclick="chk5b('zq5b-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Exklusive Distribution – nur ein Händler pro Region</button>
+      </div>
+      <p id="zq5b-q2-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #2563EB;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">3. Was bedeutet D2C (Direct to Consumer)?</p>
+      <div>
+        <button onclick="chk5b('zq5b-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Discounter verkauft direkt an Verbraucher</button>
+        <button onclick="chk5b('zq5b-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Distributionskanal zu Großhändlern</button>
+        <button onclick="chk5b('zq5b-q3',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Hersteller verkauft ohne Zwischenhändler direkt an den Endkunden</button>
+      </div>
+      <p id="zq5b-q3-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function chk5b(qid, btn, correct) {
+    btn.closest('div').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    btn.style.color = 'white';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#27ae60' : '#c0392b';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('div').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) { b.style.background = '#27ae60'; b.style.color = 'white'; }
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE 13: Fallbeispiel 1 – Zalando -->
+<div class="slide" id="s13">
+  <h2>Fallbeispiel 1: Zalando</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ausgangssituation</h3>
+      <p>Zalando startete 2008 als reiner Online-Schuhhändler (Direktvertrieb). Heute betreibt das Unternehmen ein hybrides Modell.</p>
+      <h3>Kanalstrategie</h3>
+      <ul>
+        <li>Eigener Webshop (Zalando.de) – Direktvertrieb</li>
+        <li>Zalando Partner Program – Marktplatz für Drittmarken</li>
+        <li>Zalando Lounge – Outlet-Kanal</li>
+        <li>Connected Retail – Integration stationärer Händler</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box">
+        <h3 style="margin-top:0">Ergebnis</h3>
+        <p>Durch <b>Plattformstrategie</b> werden Konkurrenten zu Partnern. Zalando kontrolliert Kundenkontakt &amp; Daten.</p>
+      </div>
+      <div class="box red" style="margin-top:10px">
+        <h3 style="margin-top:0">Distributionstyp</h3>
+        <span class="badge">Selektiv</span> <span class="badge r">Omnichannel</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Fallbeispiel 2 – Apple -->
+<div class="slide" id="s14">
+  <h2>Fallbeispiel 2: Apple – Exklusiver Direktvertrieb</h2>
+  <div class="two-col">
+    <div>
+      <h3>Kanalstrategie</h3>
+      <ul>
+        <li>Apple.com – eigener Webshop weltweit</li>
+        <li>Apple Store Filialen – Premium-Erlebnis</li>
+        <li>Apple App Store – digitaler Kanal</li>
+        <li>Selektiv: Media Markt, Saturn (nur Hardware)</li>
+      </ul>
+      <h3>Besonderheit</h3>
+      <p>Apple schreibt Händlern <b>einheitliche Preise</b> vor → Preiskontrolle trotz indirekter Kanäle.</p>
+    </div>
+    <div>
+      <div class="box red">
+        <h3 style="margin-top:0">Learnings</h3>
+        <ul>
+          <li>Exklusive Markenwelt durch eigene Stores</li>
+          <li>Premium-Positionierung erfordert Kanalkontrolle</li>
+          <li>Selektive Partner stärken das Markenbild</li>
+        </ul>
+      </div>
+      <div style="margin-top:10px">
+        <span class="badge">Exklusiv/Selektiv</span>
+        <span class="badge r">Direkt + Indirekt</span>
+      </div>
+    </div>
+  </div>
+  <div class="highlight">Apples Erfolg zeigt: Kanalstrategie ist Markenstrategie – beide sind nicht trennbar.</div>
+</div>
+
+<!-- QUIZ SLIDE 3: Neue Vertriebsformen & Fallbeispiele -->
+<div class="slide" id="sq3" style="background:#fff; overflow-y:auto;">
+  <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#0d1b3e,#2563EB)"></div>
+  <h2 style="border-left:4px solid #2563EB;padding-left:12px;color:#0d1b3e;margin-bottom:1em;">🧠 Zwischenquiz: Neue Vertriebsformen</h2>
+  <div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">1. Für welche Vertriebsstrategie entschied sich Exclusiva GmbH laut Fallbeispiel?</p>
+      <div>
+        <button onclick="chk5c('zq5c-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Verkauf über Amazon und alle Marktplätze</button>
+        <button onclick="chk5c('zq5c-q1',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Eigener Webshop mit exklusivem Design + Click-&-Collect (Cross-Channel)</button>
+        <button onclick="chk5c('zq5c-q1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Nur stationäre Stores wie bisher (Single Channel)</button>
+      </div>
+      <p id="zq5c-q1-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #0d1b3e;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">2. Was ist Live Shopping?</p>
+      <div>
+        <button onclick="chk5c('zq5c-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Produkte werden 24/7 im Webshop angeboten</button>
+        <button onclick="chk5c('zq5c-q2',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Produkte werden per Live-Video präsentiert und Zuschauer können in Echtzeit kaufen</button>
+        <button onclick="chk5c('zq5c-q2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Bestellung über einen Sprachassistenten</button>
+      </div>
+      <p id="zq5c-q2-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+    <div style="background:#e8ecf5;border-radius:8px;padding:14px 16px;border-top:3px solid #2563EB;margin-bottom:14px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#1a1a2e;">3. Welches Beispiel illustriert Voice Commerce am besten?</p>
+      <div>
+        <button onclick="chk5c('zq5c-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">A) Kauf direkt in einem Instagram-Beitrag per Klick</button>
+        <button onclick="chk5c('zq5c-q3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">B) Hersteller verkauft direkt über seine eigene App (D2C)</button>
+        <button onclick="chk5c('zq5c-q3',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#fff;border:1px solid #64748B;border-radius:6px;color:#333;cursor:pointer;">C) Alexa: „Bestell Waschmittel!" – Bestellung per Sprachbefehl</button>
+      </div>
+      <p id="zq5c-q3-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function chk5c(qid, btn, correct) {
+    btn.closest('div').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    btn.style.color = 'white';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#27ae60' : '#c0392b';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('div').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) { b.style.background = '#27ae60'; b.style.color = 'white'; }
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE 15: Zusammenfassung I -->
+<div class="slide" id="s15">
+  <h2>Zusammenfassung (1/2)</h2>
+  <div class="sum-row">
+    <div class="sum-card"><b>Direktvertrieb</b>Hersteller → Kunde, volle Marge &amp; Datenkontrolle, hohe Eigeninvestition</div>
+    <div class="sum-card"><b>Indirekter Vertrieb</b>Zwischenhändler erhöhen Reichweite, reduzieren Marge und Datenzugriff</div>
+    <div class="sum-card"><b>Online-Kanäle</b>Webshop, Marktplätze, Social Commerce – jeder Kanal hat eigenes Profil</div>
+  </div>
+  <div class="highlight" style="margin-top:.8em">
+    <b>Merksatz:</b> Der optimale Vertriebskanal ergibt sich aus Produkt, Zielgruppe, Budget und strategischem Ziel – es gibt keine universelle Antwort.
+  </div>
+  <p style="margin-top:.8em;font-size:.88em;color:#555">Die Kanalwahl beeinflusst: Preisniveau · Markenimage · Kundenerlebnis · Skalierbarkeit · Datenhoheit</p>
+</div>
+
+<!-- SLIDE 16: Zusammenfassung II -->
+<div class="slide" id="s16">
+  <h2>Zusammenfassung (2/2)</h2>
+  <div class="sum-row">
+    <div class="sum-card"><b>Omnichannel</b>Nahtlose Integration aller Kanäle – Kunde wechselt ohne Bruch</div>
+    <div class="sum-card"><b>Intensiv</b>Max. Verfügbarkeit – FMCG, Massenartikel</div>
+    <div class="sum-card"><b>Selektiv</b>Ausgewählte Händler – Qualitätsprodukte</div>
+    <div class="sum-card"><b>Exklusiv</b>Ein Händler/Region – Luxus, Markenkontrolle</div>
+  </div>
+  <table style="margin-top:.8em">
+    <tr><th>Strategie</th><th>Stärke</th><th>Risiko</th></tr>
+    <tr><td>Direktvertrieb</td><td>Marge, Daten</td><td>Reichweite, Investition</td></tr>
+    <tr><td>Marktplatz</td><td>Reichweite</td><td>Abhängigkeit, Provision</td></tr>
+    <tr><td>Omnichannel</td><td>Kundenbindung</td><td>Komplexität, Kosten</td></tr>
+  </table>
+</div>
+
+<!-- SLIDE 17: Literaturverzeichnis -->
+<div class="slide" id="s17">
+  <h2>Literaturverzeichnis</h2>
+  <p style="font-size:.78em;color:#555;margin-bottom:.8em">APA 7 – Mindestens 5 Quellen</p>
+  <ul style="font-size:.8em;line-height:1.9;list-style:none;padding:0">
+    <li>Heinemann, G. (2023). <i>Der neue Online-Handel: Geschäftsmodell und Kanalexzellenz im Digital Commerce</i> (13. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-38367-0</li>
+    <li>Kollmann, T. (2022). <i>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</i> (8. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-35646-9</li>
+    <li>Wirtz, B. W. (2021). <i>Multi-Channel-Marketing: Grundlagen – Instrumente – Prozesse</i> (3. Aufl.). Springer Gabler.</li>
+    <li>Statista Research Department. (2024). <i>E-Commerce in Deutschland – Statista Dossier</i>. Statista GmbH. https://de.statista.com/statistik/studie/id/6521/dokument/e-commerce-statista-dossier/</li>
+    <li>Meffert, H., Burmann, C., Kirchgeorg, M., &amp; Eisenbeiß, M. (2019). <i>Marketing: Grundlagen marktorientierter Unternehmensführung</i> (13. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-21196-7</li>
+    <li>Zalando SE. (2023). <i>Geschäftsbericht 2023</i>. https://corporate.zalando.com/de/investor-relations/geschaeftsbericht-2023</li>
+  </ul>
+</div>
+
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 23</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>1.6 Vertriebskanäle &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

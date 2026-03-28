@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 11 – Betriebliche Mitbestimmung & Entgeltabrechnung | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* === Supplemental styles to match Tag 7 standard === */
+
+/* Progress bar container */
+#progress-bar-container { position:fixed; top:0; left:0; width:100%; height:4px; z-index:100; background:transparent; }
+
+/* Slide types */
+.slide-toc { justify-content:flex-start; padding-top:70px; }
+.slide-summary { justify-content:flex-start; padding-top:70px; }
+.slide-refs { justify-content:flex-start; padding-top:70px; overflow-y:auto; }
+
+/* Tag badge */
+.tag-badge {
+  position:absolute; top:20px; left:40px;
+  font-size:.72rem; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--primary); background:var(--primary-light);
+  padding:5px 14px; border-radius:20px;
+}
+
+/* Slide number & copyright */
+.slide-number {
+  position:absolute; bottom:30px; right:40px;
+  font-size:.7rem; color:var(--text-muted);
+}
+.copyright { display:none; }
+#copyright { display:none; }
+#nav-hint { display:none; }
+.slide-footer { position:fixed; bottom:0; left:0; right:0; padding:6px 40px; display:flex; justify-content:space-between; font-size:.68rem; color:var(--text-muted); border-top:1px solid var(--border); background:rgba(255,255,255,.95); z-index:10; }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+/* Cover subtitle */
+.subtitle {
+  font-size:1rem; color:var(--text-muted); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:12px;
+}
+
+/* Three column grid */
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+
+/* Lernziel badge */
+.lernziel-badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.75rem; font-weight:700; padding:4px 14px;
+  border-radius:20px; letter-spacing:.5px;
+}
+
+/* Definition box */
+.definition {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.92rem; line-height:1.7; color:var(--text);
+}
+
+/* Key term highlight */
+.key-term {
+  color:var(--primary); font-weight:700;
+}
+
+/* Info box (blue) */
+.info-box {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Warning box (orange/amber) */
+.warning-box {
+  background:var(--accent-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--accent); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Success box (green) */
+.success-box {
+  background:var(--success-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--success); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Citation */
+.citation {
+  font-size:.76rem; color:var(--text-muted); margin-top:8px;
+  font-style:italic; line-height:1.5;
+}
+
+/* Quiz slide styling */
+.quiz-slide {
+  justify-content:flex-start; padding-top:70px;
+}
+
+/* Slide h2 styling (used in Tag 10/11 instead of .slide-title) */
+.slide h2 {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:20px; position:relative; align-self:flex-start;
+}
+.slide-content h2::after, .slide-toc h2::after, .slide-summary h2::after, .slide-refs h2::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+
+/* Cover slide h1 */
+.slide-cover h1 {
+  font-size:2.6rem; font-weight:800; line-height:1.15;
+  color:var(--text); margin-bottom:16px;
+}
+
+/* Slide p (body text) */
+.slide > p { font-size:.92rem; color:var(--text-muted); line-height:1.7; margin-bottom:14px; width:100%; }
+
+/* h3 within slides (outside cards) */
+.slide > .two-col h3, .slide > .three-col h3, .slide > div > h3 {
+  font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px;
+}
+
+/* Lists within slides (outside cards) */
+.slide > ul, .slide > .two-col ul, .slide > .three-col ul, .slide > div > ul {
+  padding-left:18px; font-size:.88rem; color:var(--text-muted); line-height:1.7;
+}
+.slide > ul li, .slide > .two-col li, .slide > .three-col li, .slide > div > ul li {
+  margin-bottom:5px;
+}
+
+/* Section number (alternative to section-num) */
+.section-number {
+  font-size:6rem; font-weight:900; color:rgba(255,255,255,.15);
+  position:absolute; top:30px; right:60px; line-height:1;
+}
+
+/* Cover line */
+.cover-line {
+  width:80px; height:4px; background:var(--primary);
+  border-radius:2px; margin:16px auto;
+}
+
+/* Slide subtitle */
+.slide-subtitle {
+  font-size:.9rem; color:var(--text-muted); margin-bottom:20px;
+  align-self:flex-start;
+}
+
+/* Animations for new elements */
+.slide.active h2, .slide.active .definition, .slide.active .info-box,
+.slide.active .warning-box, .slide.active .success-box,
+.slide.active .three-col, .slide.active .two-col,
+.slide.active .lernziel-badge { animation:fadeUp .5s ease both; }
+.slide.active h2 { animation-delay:.05s; }
+.slide.active .definition { animation-delay:.1s; }
+.slide.active .two-col, .slide.active .three-col { animation-delay:.15s; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div class="slides-wrapper" id="slides">
+
+<!-- FOLIE 1: COVER -->
+<div class="slide slide-cover active">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <p class="subtitle">Lernfeld 1 · Kaufmann/Kauffrau im E-Commerce</p>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs><linearGradient id="teamGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+    <circle cx="40" cy="35" r="14" fill="url(#teamGrad)" opacity="0.9"/>
+    <path d="M18 75 Q18 55 40 55 Q62 55 62 75" fill="url(#teamGrad)" opacity="0.7"/>
+    <circle cx="80" cy="35" r="14" fill="url(#teamGrad)" opacity="0.7"/>
+    <path d="M58 75 Q58 55 80 55 Q102 55 102 75" fill="url(#teamGrad)" opacity="0.5"/>
+    <circle cx="85" cy="85" r="18" fill="white" stroke="#F59E0B" stroke-width="3"/>
+    <text x="85" y="92" text-anchor="middle" fill="#F59E0B" font-size="20" font-weight="900" font-family="Segoe UI">&#8364;</text>
+  </svg>
+  <h1>Tag 11: Betriebliche Mitbestimmung<br>&amp; Entgeltabrechnung</h1>
+  <p style="color:#f39c12; font-size:1.15em;">Buchseiten 114–123 · Blöcke 1.14 / 1.15</p>
+  <p style="margin-top:20px;">Themen: BetrVG · Betriebsrat · JAV · Brutto/Netto · Sozialversicherung · Lohnsteuer · Gehaltsabrechnung</p>
+  <div class="slide-number">Folie 1 / 57</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 2: INHALTSVERZEICHNIS 1 -->
+<div class="slide slide-toc">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Inhaltsverzeichnis (1/2)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Block 1.14 – Mitbestimmung (Folien 5–25)</h3>
+      <ul>
+        <li>Definition Mitbestimmung &amp; BetrVG</li>
+        <li>Betriebsrat: Wahl, Aufgaben, Rechte</li>
+        <li>Informations-, Mitwirkungs- &amp; Mitbestimmungsrechte</li>
+        <li>Soziale, personelle, wirtschaftliche Angelegenheiten</li>
+        <li>Betriebsvereinbarungen &amp; Einigungsstelle</li>
+        <li>JAV – Jugend- und Auszubildendenvertretung</li>
+        <li>Unternehmensmitbestimmung (Aufsichtsrat)</li>
+        <li>Fallbeispiel: Betriebsvereinbarung Homeoffice</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.15 – Entgeltabrechnung (Folien 26–48)</h3>
+      <ul>
+        <li>Brutto vs. Netto</li>
+        <li>Sozialversicherungsbeiträge</li>
+        <li>KV, RV, AV, PV, UV</li>
+        <li>Beitragssätze 2024</li>
+        <li>Lohnsteuer &amp; Steuerklassen</li>
+        <li>Gehaltsabrechnung lesen</li>
+        <li>Sonderzahlungen &amp; geldwerte Vorteile</li>
+        <li>Praxisaufgabe Azubi-Abrechnung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 2 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 3: INHALTSVERZEICHNIS 2 -->
+<div class="slide slide-toc">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Inhaltsverzeichnis (2/2)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Abschluss (Folien 49–50)</h3>
+      <ul>
+        <li>Zusammenfassung des Tages</li>
+        <li>Literaturverzeichnis (APA 7)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Wichtige Gesetze heute</h3>
+      <ul>
+        <li><strong>BetrVG</strong> – Betriebsverfassungsgesetz</li>
+        <li><strong>MitbestG</strong> – Mitbestimmungsgesetz 1976</li>
+        <li><strong>DrittelbG</strong> – Drittelbeteiligungsgesetz</li>
+        <li><strong>SGB IV / V / VI / III / XI</strong> – Sozialversicherung</li>
+        <li><strong>EStG</strong> – Einkommensteuergesetz</li>
+        <li><strong>BBiG § 17</strong> – Mindestausbildungsvergütung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 3 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 4: LERNZIELE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Lernziele des Tages</h2>
+  <div class="two-col">
+    <div>
+      <span class="lernziel-badge">Block 1.14 – Mitbestimmung</span>
+      <ul style="margin-top:12px;">
+        <li>Den Aufbau und die Aufgaben des Betriebsrats erklären</li>
+        <li>Die drei Rechtsebenen (Information, Mitwirkung, Mitbestimmung) unterscheiden</li>
+        <li>Die Rolle der JAV für Auszubildende beschreiben</li>
+        <li>Betriebsvereinbarungen von Tarifverträgen abgrenzen</li>
+        <li>Unternehmensmitbestimmung (Aufsichtsrat) erläutern</li>
+      </ul>
+    </div>
+    <div>
+      <span class="lernziel-badge">Block 1.15 – Entgeltabrechnung</span>
+      <ul style="margin-top:12px;">
+        <li>Den Unterschied zwischen Brutto und Netto erklären</li>
+        <li>Sozialversicherungszweige und Beitragssätze 2024 benennen</li>
+        <li>Steuerklassen erläutern und anwenden</li>
+        <li>Eine einfache Gehaltsabrechnung lesen und berechnen</li>
+        <li>Sondervergütungen und geldwerte Vorteile einordnen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 4 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 5: WAS IST MITBESTIMMUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Was ist Mitbestimmung? – Definition &amp; Rechtsgrundlagen</h2>
+  <div class="definition">
+    <span class="key-term">Mitbestimmung</span> bezeichnet das Recht der Arbeitnehmer und ihrer Vertretungen, an betrieblichen und unternehmerischen Entscheidungen mitzuwirken und diese mitzugestalten.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Ebenen der Mitbestimmung</h3>
+      <ul>
+        <li><strong>Betriebliche Ebene:</strong> Betriebsrat (BetrVG)</li>
+        <li><strong>Unternehmensebene:</strong> Aufsichtsrat (MitbestG, DrittelbG)</li>
+        <li><strong>Europäische Ebene:</strong> Europäischer Betriebsrat (EBRG)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Rechtsgrundlagen</h3>
+      <ul>
+        <li>GG Art. 9 Abs. 3 – Koalitionsfreiheit</li>
+        <li>BetrVG (1972, zuletzt 2021)</li>
+        <li>MitbestG 1976</li>
+        <li>Drittelbeteiligungsgesetz 2004</li>
+        <li>SprAuG – Sprecherausschussgesetz</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 5 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 6: BETRVG ÜBERBLICK -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebsverfassungsgesetz (BetrVG) – Überblick</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Geltungsbereich</h3>
+      <ul>
+        <li>Private Unternehmen</li>
+        <li>Ab <strong>5 ständigen wahlberechtigten</strong> Arbeitnehmern</li>
+        <li>Nicht: öffentlicher Dienst (dort PersVG)</li>
+        <li>Nicht: Tendenzbetriebe (kirchlich, politisch)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Wichtige Regelungen</h3>
+      <ul>
+        <li>§ 1 – Betriebsrat bilden</li>
+        <li>§ 7 – Wahlrecht</li>
+        <li>§ 37 – Ehrenamtsprinzip</li>
+        <li>§ 74 – Kooperationsgebot</li>
+        <li>§ 87 – Mitbestimmung</li>
+        <li>§ 102 – Anhörung Kündigung</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Grundprinzipien</h3>
+      <ul>
+        <li>Friedliche Zusammenarbeit</li>
+        <li>Arbeitskampfverbot im Betrieb</li>
+        <li>Kooperationsgebot</li>
+        <li>Ehrenamtliche Tätigkeit</li>
+        <li>Kostentragung durch Arbeitgeber</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 6 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 7: BETRIEBSRAT WAHL -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebsrat – Wahl &amp; Zusammensetzung (§§ 7–16 BetrVG)</h2>
+  <svg width="860" height="160" viewBox="0 0 860 160">
+    <rect x="10" y="20" width="200" height="120" rx="10" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="110" y="55" text-anchor="middle" fill="#f39c12" font-size="12" font-weight="bold">5–20 AN</text>
+    <text x="110" y="78" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold">1</text>
+    <text x="110" y="100" text-anchor="middle" fill="#ddd" font-size="12">Betriebsratsmitglied</text>
+    <text x="110" y="128" text-anchor="middle" fill="#aaa" font-size="10">§ 9 BetrVG</text>
+    <rect x="225" y="20" width="200" height="120" rx="10" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="2"/>
+    <text x="325" y="55" text-anchor="middle" fill="#f39c12" font-size="12" font-weight="bold">21–50 AN</text>
+    <text x="325" y="78" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold">3</text>
+    <text x="325" y="100" text-anchor="middle" fill="#ddd" font-size="12">Mitglieder</text>
+    <text x="325" y="128" text-anchor="middle" fill="#aaa" font-size="10">§ 9 BetrVG</text>
+    <rect x="440" y="20" width="200" height="120" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="540" y="55" text-anchor="middle" fill="#2ecc71" font-size="12" font-weight="bold">51–100 AN</text>
+    <text x="540" y="78" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold">5</text>
+    <text x="540" y="100" text-anchor="middle" fill="#ddd" font-size="12">Mitglieder</text>
+    <text x="540" y="128" text-anchor="middle" fill="#aaa" font-size="10">§ 9 BetrVG</text>
+    <rect x="655" y="20" width="200" height="120" rx="10" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="2"/>
+    <text x="755" y="55" text-anchor="middle" fill="#3498db" font-size="12" font-weight="bold">101–200 AN</text>
+    <text x="755" y="78" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold">7</text>
+    <text x="755" y="100" text-anchor="middle" fill="#ddd" font-size="12">Mitglieder</text>
+    <text x="755" y="128" text-anchor="middle" fill="#aaa" font-size="10">§ 9 BetrVG</text>
+  </svg>
+  <ul>
+    <li><strong>Wahlberechtigt:</strong> alle AN ab 16 Jahren</li>
+    <li><strong>Wählbar:</strong> AN ab 18 Jahren, mind. 6 Monate im Betrieb</li>
+    <li><strong>Amtszeit:</strong> 4 Jahre</li>
+    <li><strong>Wahlschutz:</strong> BR-Mitglieder genießen besonderen Kündigungsschutz</li>
+  </ul>
+  <div class="slide-number">Folie 7 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 8: BETRIEBSRAT AUFGABEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebsrat – Aufgaben und Rechte (§ 80 BetrVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Allgemeine Aufgaben</h3>
+      <ul>
+        <li>Darüber wachen, dass Gesetze, Tarifverträge und Betriebsvereinbarungen eingehalten werden</li>
+        <li>Maßnahmen beim Arbeitgeber beantragen</li>
+        <li>Gleichstellung von Männern und Frauen fördern</li>
+        <li>Integration ausländischer Arbeitnehmer</li>
+        <li>Schwerbehinderte fördern</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Spezifische Rechte</h3>
+      <ul>
+        <li>Informationsrecht (immer)</li>
+        <li>Anhörungsrecht (vor Kündigungen)</li>
+        <li>Mitwirkungsrecht (Vorschlagsrecht)</li>
+        <li>Zustimmungsrecht (erzwingbar)</li>
+        <li>Initiativrecht (Regelungen vorschlagen)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 8 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 9: INFORMATIONSRECHT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Informationsrecht des Betriebsrats</h2>
+  <div class="definition">
+    Der Arbeitgeber ist verpflichtet, den Betriebsrat <span class="key-term">rechtzeitig und umfassend</span> zu unterrichten. Das Informationsrecht ist die schwächste Form der Mitbestimmung.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Informationspflichtige Themen</h3>
+      <ul>
+        <li>Personalplanung (§ 92 BetrVG)</li>
+        <li>Berufsausbildung (§ 96 BetrVG)</li>
+        <li>Wirtschaftliche Lage des Unternehmens</li>
+        <li>Einstellungen und Umgruppierungen</li>
+        <li>Betriebsänderungen (§ 111 BetrVG)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Rechtsfolge bei Verletzung</h3>
+      <ul>
+        <li>Betriebsrat kann Auskunft verlangen</li>
+        <li>Arbeitsgericht anrufen</li>
+        <li>Bei Kündigung ohne Anhörung: Kündigung <strong>unwirksam!</strong></li>
+      </ul>
+      <div class="citation">§ 102 Abs. 1 S. 3 BetrVG</div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 9 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 10: MITWIRKUNGSRECHT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Mitwirkungsrecht (Anhörungsrecht)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Was ist Mitwirkung?</h3>
+      <p style="font-size:0.95em;">Der Betriebsrat kann Stellung nehmen und Bedenken äußern, aber der Arbeitgeber ist nicht an die Meinung des Betriebsrats gebunden. Die Entscheidung liegt beim Arbeitgeber.</p>
+      <div class="info-box" style="margin-top:10px;">
+        <strong>Unterschied zur Mitbestimmung:</strong> Bei der Mitwirkung kann der AG letztlich allein entscheiden – bei der Mitbestimmung braucht er die Zustimmung des BR.
+      </div>
+    </div>
+    <div>
+      <h3>Beispiele für Mitwirkungsrechte</h3>
+      <ul>
+        <li>§ 92 – Personalplanung (Beratungsrecht)</li>
+        <li>§ 96 – Berufsbildungsmaßnahmen</li>
+        <li>§ 106 – Wirtschaftsausschuss informieren</li>
+        <li>§ 111 – Betriebsänderungen (Unterrichtung)</li>
+        <li>§ 102 – Anhörung bei Kündigung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 10 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 11: MITBESTIMMUNGSRECHT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Mitbestimmungsrecht – Erzwingbare Mitbestimmung</h2>
+  <svg width="860" height="150" viewBox="0 0 860 150">
+    <rect x="10" y="10" width="260" height="130" rx="12" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="2"/>
+    <text x="140" y="45" text-anchor="middle" fill="#3498db" font-size="14" font-weight="bold">Informationsrecht</text>
+    <text x="140" y="70" text-anchor="middle" fill="#ddd" font-size="11">Arbeitgeber muss</text>
+    <text x="140" y="87" text-anchor="middle" fill="#ddd" font-size="11">informieren</text>
+    <text x="140" y="110" text-anchor="middle" fill="#aaa" font-size="10">Schwächstes Recht</text>
+    <rect x="300" y="10" width="260" height="130" rx="12" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="2"/>
+    <text x="430" y="45" text-anchor="middle" fill="#f39c12" font-size="14" font-weight="bold">Mitwirkungsrecht</text>
+    <text x="430" y="70" text-anchor="middle" fill="#ddd" font-size="11">BR kann Stellung nehmen,</text>
+    <text x="430" y="87" text-anchor="middle" fill="#ddd" font-size="11">AG entscheidet allein</text>
+    <text x="430" y="110" text-anchor="middle" fill="#aaa" font-size="10">Mittleres Recht</text>
+    <rect x="590" y="10" width="260" height="130" rx="12" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="720" y="45" text-anchor="middle" fill="#e74c3c" font-size="14" font-weight="bold">Mitbestimmungsrecht</text>
+    <text x="720" y="70" text-anchor="middle" fill="#ddd" font-size="11">AG braucht Zustimmung</text>
+    <text x="720" y="87" text-anchor="middle" fill="#ddd" font-size="11">des BR (§ 87 BetrVG)</text>
+    <text x="720" y="110" text-anchor="middle" fill="#aaa" font-size="10">Stärkstes Recht</text>
+  </svg>
+  <div class="info-box">
+    Bei erzwingbarer Mitbestimmung kann der Betriebsrat die Zustimmung verweigern. Kommt keine Einigung zustande, entscheidet die <strong>Einigungsstelle</strong> verbindlich.
+  </div>
+  <div class="slide-number">Folie 11 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 12: SOZIALE ANGELEGENHEITEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Soziale Angelegenheiten (§ 87 BetrVG)</h2>
+  <p>Bei sozialen Angelegenheiten hat der Betriebsrat das <span class="key-term">stärkste Mitbestimmungsrecht</span> (erzwingbar).</p>
+  <div class="two-col">
+    <div>
+      <h3>Mitbestimmungspflichtige Themen</h3>
+      <ul>
+        <li>Ordnung im Betrieb und Verhalten der AN</li>
+        <li>Beginn und Ende der Arbeitszeit, Pausen</li>
+        <li>Kurzarbeit / Mehrarbeit</li>
+        <li>Urlaubsplan und -grundsätze</li>
+        <li>Einführung technischer Überwachungseinrichtungen</li>
+        <li>Sozialeinrichtungen des Betriebs</li>
+        <li>Entlohnungsgrundsätze und -methoden</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Praxisbeispiel Exclusiva GmbH</h3>
+      <p style="font-size:0.9em;">Die Exclusiva GmbH möchte eine neue Zeiterfassungssoftware einführen. Der Betriebsrat muss zustimmen, da es sich um eine technische Einrichtung handelt, die das Verhalten der Arbeitnehmer überwachen kann (§ 87 Abs. 1 Nr. 6 BetrVG).</p>
+    </div>
+  </div>
+  <div class="slide-number">Folie 12 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 13: PERSONELLE ANGELEGENHEITEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Personelle Angelegenheiten (§§ 94–105 BetrVG)</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Allgemeine Personalplanung (§ 92)</h3>
+      <ul style="font-size:0.9em;">
+        <li>AG unterrichtet BR über Personalplanung</li>
+        <li>BR kann Vorschläge machen</li>
+        <li>Nur Mitwirkungsrecht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Einstellung (§ 99)</h3>
+      <ul style="font-size:0.9em;">
+        <li>AG muss BR vor Einstellung unterrichten</li>
+        <li>BR kann Zustimmung verweigern (4 Wochen)</li>
+        <li>Bei Verweigerung: Arbeitsgericht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Kündigung (§ 102)</h3>
+      <ul style="font-size:0.9em;">
+        <li>AG muss BR anhören</li>
+        <li>BR kann widersprechen</li>
+        <li>AN hat bei Widerspruch weiterbeschäftigungsanspruch</li>
+        <li>Kündigung ohne Anhörung = unwirksam!</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 13 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 14: WIRTSCHAFTLICHE ANGELEGENHEITEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Wirtschaftliche Angelegenheiten (§§ 106–113 BetrVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Wirtschaftsausschuss (§ 106)</h3>
+      <ul>
+        <li>Ab <strong>100 AN</strong> Pflicht</li>
+        <li>Besteht aus BR-Mitgliedern und AG</li>
+        <li>Monatliche Beratung über wirtschaftliche Lage</li>
+        <li>Nur beratende Funktion</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Betriebsänderung (§ 111)</h3>
+      <ul>
+        <li>Wesentliche Änderungen (Stilllegung, Verlagerung, Fusion)</li>
+        <li>AG muss BR rechtzeitig und umfassend unterrichten</li>
+        <li>BR und AG verhandeln über Interessenausgleich und Sozialplan</li>
+        <li>Sozialplan: Pflicht bei Betriebsänderungen mit Nachteilen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>Nachteilsausgleich (§ 113 BetrVG):</strong> Führt der AG eine Betriebsänderung durch, ohne den Interessenausgleich mit dem BR zu versuchen, können AN Nachteilsausgleich verlangen.
+  </div>
+  <div class="slide-number">Folie 14 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 15: BETRIEBSVEREINBARUNGEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebsvereinbarungen (§ 77 BetrVG)</h2>
+  <div class="definition">
+    Eine <span class="key-term">Betriebsvereinbarung (BV)</span> ist ein schriftlicher Vertrag zwischen Arbeitgeber und Betriebsrat, der für alle Arbeitnehmer des Betriebs unmittelbar und zwingend gilt.
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Merkmale</h3>
+      <ul>
+        <li>Schriftform erforderlich</li>
+        <li>Gilt automatisch für alle AN (keine Einzelunterschrift nötig)</li>
+        <li>Günstigkeitsprinzip gilt (wie beim TV)</li>
+        <li>Tarifvorbehalt: TV geht vor BV (§ 77 Abs. 3 BetrVG)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Typische Betriebsvereinbarungen</h3>
+      <ul>
+        <li>Homeoffice-Regelung</li>
+        <li>Gleitzeit und Arbeitszeitkonten</li>
+        <li>Nutzung betrieblicher IT-Systeme</li>
+        <li>Betriebliche Altersvorsorge</li>
+        <li>Datenschutz und Videoüberwachung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 15 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 16: EINIGUNGSSTELLE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Die Einigungsstelle (§ 76 BetrVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Was ist die Einigungsstelle?</h3>
+      <p style="font-size:0.95em;">Ein innerbetriebliches Schlichtungsorgan, das bei Einigungsstreitigkeiten zwischen Betriebsrat und Arbeitgeber verbindlich entscheidet.</p>
+      <h3 style="margin-top:12px;">Zusammensetzung</h3>
+      <ul>
+        <li>Unparteiischer Vorsitzender (häufig Richter)</li>
+        <li>Gleiche Anzahl Beisitzer von beiden Seiten</li>
+        <li>Vorsitzender hat Stichentscheid</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Zuständigkeit</h3>
+      <ul>
+        <li>Erzwingbare Mitbestimmung (§ 87 BetrVG)</li>
+        <li>Eingruppierungsstreitigkeiten</li>
+        <li>Sozialplanverhandlungen</li>
+        <li>Interessenausgleich bei Betriebsänderung</li>
+      </ul>
+      <div class="success-box" style="margin-top:10px; font-size:0.9em;">
+        Der Spruch der Einigungsstelle ersetzt die Einigung und ist für beide Seiten verbindlich.
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 16 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 17: JAV -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Jugend- und Auszubildendenvertretung (JAV) (§§ 60–73 BetrVG)</h2>
+  <div class="definition">
+    Die <span class="key-term">JAV</span> vertritt die besonderen Interessen von Jugendlichen (unter 18 Jahren) und Auszubildenden (bis 25 Jahre) im Betrieb.
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Voraussetzungen für eine JAV</h3>
+      <ul>
+        <li>Mindestens <strong>5 Jugendliche oder Azubis</strong> im Betrieb</li>
+        <li>Existierender Betriebsrat</li>
+        <li>Wahlberechtigt: AN unter 18 + Azubis bis 25</li>
+        <li>Wählbar: AN unter 18 + Azubis bis 25</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Größe der JAV</h3>
+      <ul>
+        <li>5–20 Betroffene: 1 Mitglied</li>
+        <li>21–50 Betroffene: 3 Mitglieder</li>
+        <li>51–150 Betroffene: 5 Mitglieder</li>
+        <li>Amtszeit: 2 Jahre</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 17 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 18: JAV RECHTE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>JAV – Rechte und Aufgaben (§§ 68–73 BetrVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Aufgaben der JAV</h3>
+      <ul>
+        <li>Maßnahmen beantragen, die Jugendlichen und Azubis zugutekommen</li>
+        <li>Überwachen, dass Gesetze (JASchG, BBiG) eingehalten werden</li>
+        <li>Anregungen und Beschwerden entgegennehmen</li>
+        <li>Gleichstellung fördern</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Mitwirkungsrechte</h3>
+      <ul>
+        <li>Teilnahme an BR-Sitzungen mit beratender Stimme</li>
+        <li>Antragsrecht an den Betriebsrat</li>
+        <li>Bei Jugendbelangen: BR muss JAV-Beschlüsse behandeln</li>
+        <li>JAV kann monatliche Versammlung abhalten</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-box">
+    <strong>Für Azubis wichtig:</strong> Die JAV ist die erste Anlaufstelle bei Problemen in der Ausbildung (Verstöße gegen BBiG, Überarbeitung, Konflikte). Sie ist kein Streikgremium, sondern ein Beratungs- und Antragsorgangremium.
+  </div>
+  <div class="slide-number">Folie 18 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 19: SPRECHERAUSSCHUSS -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Sprecherausschuss für leitende Angestellte (SprAuG)</h2>
+  <div class="definition">
+    Leitende Angestellte (z.B. Prokuristen, Abteilungsleiter mit selbständigen Entscheidungsbefugnissen) werden nicht durch den Betriebsrat vertreten. Für sie gibt es den <span class="key-term">Sprecherausschuss</span>.
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Wer ist leitender Angestellter?</h3>
+      <ul>
+        <li>Prokuristen (§ 5 Abs. 3 BetrVG)</li>
+        <li>Personen mit Einstellungs-/Entlassungsbefugnis</li>
+        <li>Führungskräfte mit eigener unternehmerischer Entscheidungsbefugnis</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Unterschied zum Betriebsrat</h3>
+      <ul>
+        <li>Nur Mitwirkungsrechte (keine echte Mitbestimmung)</li>
+        <li>Keine Möglichkeit, Maßnahmen zu blockieren</li>
+        <li>Kann Richtlinien zu Entgelt und sozialen Angelegenheiten empfehlen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 19 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 20: UNTERNEHMENSMITBESTIMMUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Unternehmensmitbestimmung – Der Aufsichtsrat</h2>
+  <div class="two-col">
+    <div>
+      <h3>Mitbestimmung im Aufsichtsrat</h3>
+      <ul>
+        <li>Betrifft Kapitalgesellschaften (GmbH, AG, KGaA)</li>
+        <li>Aufsichtsrat kontrolliert den Vorstand/die Geschäftsführung</li>
+        <li>Arbeitnehmer sind im Aufsichtsrat vertreten</li>
+      </ul>
+      <div class="info-box" style="margin-top:12px;">
+        <strong>Wichtig:</strong> Die Unternehmensmitbestimmung gilt <em>nicht</em> für den Betrieb, sondern für das Unternehmen als Ganzes.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Gesetze &amp; Schwellenwerte</h3>
+      <table>
+        <tr><th>Gesetz</th><th>AN-Zahl</th><th>AN-Anteil im AR</th></tr>
+        <tr><td>DrittelbG</td><td>501–2.000</td><td>1/3</td></tr>
+        <tr><td>MitbestG 1976</td><td>über 2.000</td><td>1/2 (paritätisch)</td></tr>
+        <tr><td>Montan-MitbestG</td><td>Bergbau, Stahl</td><td>1/2 + neutral</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="slide-number">Folie 20 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 21: MITBESTIMMUNGSGESETZ 1976 -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Mitbestimmungsgesetz 1976 (MitbestG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Geltungsbereich</h3>
+      <ul>
+        <li>Unternehmen mit <strong>mehr als 2.000 AN</strong></li>
+        <li>Kapitalgesellschaften (AG, GmbH, KGaA)</li>
+        <li>Ausnahme: Tendenzbetriebe, Familienunternehmen mit &lt; 500 AN</li>
+      </ul>
+      <h3 style="margin-top:14px;">Aufsichtsratsbesetzung</h3>
+      <ul>
+        <li>Paritätische Besetzung: je 50 % Kapital und Arbeitnehmer</li>
+        <li>Bei Stimmengleichheit: Doppelstimme des Aufsichtsratsvorsitzenden (Kapitalseite)</li>
+        <li>AN-Vertreter werden von Belegschaft gewählt</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Praxis: Exclusiva GmbH</h3>
+      <p style="font-size:0.9em;">Die Exclusiva GmbH hat 3.500 Mitarbeiter. Damit gilt das MitbestG. Im Aufsichtsrat sitzen 10 Personen: 5 von der Kapitalseite und 5 Arbeitnehmervertreter (davon mind. 1 Gewerkschaftsvertreter).</p>
+    </div>
+  </div>
+  <div class="slide-number">Folie 21 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 22: DRITTELBETEILIGUNGSGESETZ -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Drittelbeteiligungsgesetz (DrittelbG)</h2>
+  <div class="definition">
+    Das <span class="key-term">Drittelbeteiligungsgesetz (2004)</span> schreibt vor, dass in Unternehmen mit 501–2.000 Arbeitnehmern ein Drittel der Aufsichtsratsmandate an Arbeitnehmervertreter fallen muss.
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Unterschied zu MitbestG</h3>
+      <ul>
+        <li>Nur 1/3 Arbeitnehmervertreter (nicht 1/2)</li>
+        <li>Schwächere Mitbestimmung</li>
+        <li>Für mittlere Unternehmen gedacht</li>
+        <li>Kein Vetorecht bei Stimmengleichheit</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Wahl der AN-Vertreter</h3>
+      <ul>
+        <li>Wahl durch alle AN des Unternehmens</li>
+        <li>Amtszeit: 4 Jahre</li>
+        <li>Auch Gewerkschaftsvertreter möglich</li>
+        <li>Passives Wahlrecht: mind. 18 Jahre, 1 Jahr im Unternehmen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 22 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 23: BETRIEBSRAT PRAXIS -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebsrat in der Praxis – Exclusiva GmbH</h2>
+  <div class="two-col">
+    <div>
+      <h3>Situation</h3>
+      <p style="font-size:0.95em;">Die Exclusiva GmbH (Online-Shop für Mode) hat 120 Mitarbeiter. Der Betriebsrat besteht aus 5 Mitgliedern. Die Geschäftsführung möchte die Arbeitszeiten auf 10 Stunden täglich ausdehnen und Samstagsarbeit einführen.</p>
+    </div>
+    <div>
+      <h3>Rolle des Betriebsrats</h3>
+      <ul>
+        <li>Mitbestimmungspflichtig: Änderung der Arbeitszeit (§ 87 Abs. 1 Nr. 2 BetrVG)</li>
+        <li>BR kann Zustimmung verweigern</li>
+        <li>Verhandlung über Betriebsvereinbarung</li>
+        <li>Bei Scheitern: Einigungsstelle</li>
+        <li>Ergebnis: Betriebsvereinbarung mit max. 9h/Tag + Freizeitausgleich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 23 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 24: GRENZEN MITBESTIMMUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Grenzen der Mitbestimmung</h2>
+  <div class="two-col">
+    <div>
+      <h3>Was der Betriebsrat NICHT kann</h3>
+      <ul>
+        <li>Streik ausrufen (das macht die Gewerkschaft)</li>
+        <li>Unternehmerische Grundsatzentscheidungen blockieren (z.B. Produktionsprogramm)</li>
+        <li>Einstellungsstopp beschließen</li>
+        <li>Gehälter der Führungskräfte festlegen</li>
+        <li>Betrieb führen oder leiten</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Unternehmerische Freiheit</h3>
+      <ul>
+        <li>Marktentscheidungen (welche Produkte)</li>
+        <li>Investitionsentscheidungen</li>
+        <li>Standortwahl (grundsätzlich)</li>
+        <li>Unternehmensorganisation (grds.)</li>
+      </ul>
+      <div class="info-box" style="margin-top:10px; font-size:0.9em;">
+        Der BR hat kein Mitbestimmungsrecht bei der <strong>unternehmerischen Planung</strong> – nur bei der Durchführung (soweit AN betroffen).
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 24 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE ZQ11A: ZWISCHENQUIZ – Betriebsrat & Mitbestimmung -->
+<div class="slide quiz-slide" id="slide-ZQ11A" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2 style="color:#2563EB;margin-bottom:15px;">🧠 Zwischenquiz: Betriebsrat &amp; Mitbestimmung</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Ab wie vielen ständig beschäftigten Arbeitnehmern kann ein Betriebsrat gewählt werden?</p>
+    <div id="q11a1opts">
+      <button onclick="chk11a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) 3 Arbeitnehmer</button>
+      <button onclick="chk11a1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) 5 Arbeitnehmer</button>
+      <button onclick="chk11a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) 10 Arbeitnehmer</button>
+    </div>
+    <p id="q11a1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Die Exclusiva GmbH möchte Überstunden anordnen. Welches Recht hat der Betriebsrat?</p>
+    <div id="q11a2opts">
+      <button onclick="chk11a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Nur Informationsrecht</button>
+      <button onclick="chk11a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Anhörungsrecht</button>
+      <button onclick="chk11a2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Erzwingbares Mitbestimmungsrecht (§ 87 BetrVG)</button>
+    </div>
+    <p id="q11a2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Wie lange beträgt die Amtszeit des Betriebsrats?</p>
+    <div id="q11a3opts">
+      <button onclick="chk11a3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) 2 Jahre</button>
+      <button onclick="chk11a3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) 4 Jahre</button>
+      <button onclick="chk11a3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) 5 Jahre</button>
+    </div>
+    <p id="q11a3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk11a1(btn,correct){
+    document.getElementById('q11a1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11a1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Ab 5 ständig beschäftigten, wahlberechtigten AN (§ 1 BetrVG).':'❌ Falsch! Richtig: 5 Arbeitnehmer.';
+    if(!correct)document.getElementById('q11a1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11a2(btn,correct){
+    document.getElementById('q11a2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11a2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Überstunden: § 87 Abs. 1 Nr. 3 BetrVG – erzwingbares Mitbestimmungsrecht!':'❌ Falsch! Richtig: Erzwingbares Mitbestimmungsrecht nach § 87 BetrVG.';
+    if(!correct)document.getElementById('q11a2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11a3(btn,correct){
+    document.getElementById('q11a3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11a3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Amtszeit 4 Jahre, Wahl alle 4 Jahre (§ 21 BetrVG).':'❌ Falsch! Richtig: 4 Jahre.';
+    if(!correct)document.getElementById('q11a3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE: §87 BETRVG – SOZIALE ANGELEGENHEITEN LISTE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>§ 87 BetrVG – Erzwingbare Mitbestimmung (Soziale Angelegenheiten)</h2>
+  <p>Bei diesen Themen <span class="key-term">muss</span> der Arbeitgeber die Zustimmung des Betriebsrats einholen:</p>
+  <div class="two-col" style="margin-top:10px;">
+    <div>
+      <ul>
+        <li>Beginn und Ende der täglichen Arbeitszeit</li>
+        <li>Verteilung der Arbeitszeit auf Wochentage</li>
+        <li>Vorübergehende Verkürzung/Verlängerung der Arbeitszeit (Überstunden)</li>
+        <li>Zeit, Ort und Art der Lohnauszahlung</li>
+        <li>Urlaubsgrundsätze und Urlaubsplan</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li>Technische Einrichtungen zur Verhaltens-/Leistungsüberwachung</li>
+        <li>Unfallverhütung und Gesundheitsschutz</li>
+        <li>Form und Verwaltung von Sozialeinrichtungen</li>
+        <li>Betriebliche Lohngestaltung (Prämien, Akkord)</li>
+        <li>Grundsätze des betrieblichen Vorschlagswesens</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box" style="margin-top:10px;">
+    <strong>Eselsbrücke I-A-M:</strong> <em>„IAM wächst in der Macht"</em><br>
+    <strong>I</strong>nformation → <strong>A</strong>nhörung → <strong>M</strong>itbestimmung (von schwach nach stark!)
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 25: FALLBEISPIEL HOMEOFFICE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Fallbeispiel: Betriebsvereinbarung Homeoffice</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ausgangssituation</h3>
+      <p style="font-size:0.9em;">Nach der Pandemie möchte die Exclusiva GmbH Homeoffice dauerhaft regeln. Der Betriebsrat besteht auf klaren Regeln zu Erreichbarkeit und Datenschutz.</p>
+      <h3 style="margin-top:10px;">Verhandlungsergebnis</h3>
+      <ul style="font-size:0.9em;">
+        <li>Max. 3 Tage/Woche Homeoffice</li>
+        <li>Kernarbeitszeiten 9–15 Uhr</li>
+        <li>Arbeitgeber stellt Equipment</li>
+        <li>Datenschutz: nur betriebliche Geräte</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Rechtliche Einordnung</h3>
+      <ul style="font-size:0.9em;">
+        <li>Mitbestimmungspflichtig nach § 87 Abs. 1 Nr. 1 (Ordnung im Betrieb) und Nr. 2 (Arbeitszeit)</li>
+        <li>Schriftliche Betriebsvereinbarung</li>
+        <li>Gilt für alle AN des Betriebs</li>
+        <li>Kündbar mit 3-monatiger Frist</li>
+        <li>Günstigkeitsvergleich zu TV beachten</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 25 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE ZQ11B: ZWISCHENQUIZ – JAV & Einigungsstelle -->
+<div class="slide quiz-slide" id="slide-ZQ11B" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2 style="color:#2563EB;margin-bottom:15px;">🧠 Zwischenquiz: JAV &amp; Mitbestimmungsebenen</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Bis zu welchem Alter vertritt die JAV Arbeitnehmer im Betrieb?</p>
+    <div id="q11b1opts">
+      <button onclick="chk11b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Bis 18 Jahre</button>
+      <button onclick="chk11b1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Bis 25 Jahre</button>
+      <button onclick="chk11b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Bis 30 Jahre</button>
+    </div>
+    <p id="q11b1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Der Arbeitgeber instaliert eine Videoüberwachung im Lager. Welche Mitbestimmungsstufe gilt?</p>
+    <div id="q11b2opts">
+      <button onclick="chk11b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Informationsrecht</button>
+      <button onclick="chk11b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Anhörungsrecht</button>
+      <button onclick="chk11b2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Mitbestimmungsrecht (§ 87 Abs. 1 Nr. 6 BetrVG)</button>
+    </div>
+    <p id="q11b2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Was passiert, wenn Betriebsrat und Arbeitgeber bei § 87 BetrVG keine Einigung erzielen?</p>
+    <div id="q11b3opts">
+      <button onclick="chk11b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Der Arbeitgeber entscheidet allein</button>
+      <button onclick="chk11b3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Die Einigungsstelle entscheidet verbindlich</button>
+      <button onclick="chk11b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Die Gewerkschaft entscheidet</button>
+    </div>
+    <p id="q11b3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk11b1(btn,correct){
+    document.getElementById('q11b1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11b1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! JAV: Azubis bis 25 Jahre (§§ 60–73 BetrVG).':'❌ Falsch! JAV vertritt Jugendliche und Azubis bis 25 Jahre.';
+    if(!correct)document.getElementById('q11b1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11b2(btn,correct){
+    document.getElementById('q11b2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11b2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Technische Überwachungseinrichtungen: § 87 Abs. 1 Nr. 6 – erzwingbares Mitbestimmungsrecht.':'❌ Falsch! Videoüberwachung = § 87 Abs. 1 Nr. 6 = Mitbestimmungsrecht!';
+    if(!correct)document.getElementById('q11b2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11b3(btn,correct){
+    document.getElementById('q11b3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11b3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Einigungsstelle (§ 76 BetrVG) entscheidet verbindlich.':'❌ Falsch! Die Einigungsstelle entscheidet verbindlich.';
+    if(!correct)document.getElementById('q11b3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE 26: ENTGELT DEFINITION -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Was ist Entgelt? – Definition &amp; Begriffe</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Lohn</h3>
+      <p style="font-size:0.9em;">Zeitlohn oder Leistungslohn für Arbeiter. Berechnet nach Stunden oder Stückzahl. Schwankt je nach Leistung/Zeit.</p>
+      <div class="citation">Typisch: Handwerk, Produktion</div>
+    </div>
+    <div class="card">
+      <h3>Gehalt</h3>
+      <p style="font-size:0.9em;">Feste monatliche Vergütung für Angestellte. Unabhängig von genauen Arbeitsstunden. Planbare Größe für AG und AN.</p>
+      <div class="citation">Typisch: Büro, E-Commerce</div>
+    </div>
+    <div class="card">
+      <h3>Vergütung (Azubi)</h3>
+      <p style="font-size:0.9em;">Bezeichnung für die Bezahlung während der Ausbildung. Geregelt in BBiG § 17 (Mindestausbildungsvergütung).</p>
+      <div class="citation">§ 17 BBiG</div>
+    </div>
+  </div>
+  <div class="definition" style="margin-top:14px;">
+    <span class="key-term">Entgelt</span> ist der Oberbegriff für alle Formen der Vergütung von Arbeit: Lohn, Gehalt, Honorar, Vergütung.
+  </div>
+  <div class="slide-number">Folie 26 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 27: BRUTTO VS NETTO -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Brutto vs. Netto – Das Grundprinzip</h2>
+  <svg width="860" height="180" viewBox="0 0 860 180">
+    <rect x="10" y="20" width="160" height="140" rx="10" fill="rgba(39,174,96,0.4)" stroke="#27ae60" stroke-width="2"/>
+    <text x="90" y="60" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">Brutto-Gehalt</text>
+    <text x="90" y="85" text-anchor="middle" fill="#fff" font-size="22" font-weight="bold">3.000 €</text>
+    <text x="90" y="110" text-anchor="middle" fill="#ddd" font-size="11">Vereinbartes</text>
+    <text x="90" y="127" text-anchor="middle" fill="#ddd" font-size="11">Gehalt im Vertrag</text>
+    <text x="200" y="100" text-anchor="middle" fill="#e74c3c" font-size="20">−</text>
+    <rect x="220" y="20" width="160" height="140" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="300" y="50" text-anchor="middle" fill="#e74c3c" font-size="12" font-weight="bold">Sozialversicherung</text>
+    <text x="300" y="70" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold">ca. 560 €</text>
+    <text x="300" y="92" text-anchor="middle" fill="#ddd" font-size="10">KV + RV + AV + PV</text>
+    <text x="300" y="110" text-anchor="middle" fill="#ddd" font-size="10">ca. 20 % des Bruttos</text>
+    <text x="410" y="100" text-anchor="middle" fill="#e74c3c" font-size="20">−</text>
+    <rect x="430" y="20" width="160" height="140" rx="10" fill="rgba(243,156,18,0.3)" stroke="#f39c12" stroke-width="2"/>
+    <text x="510" y="50" text-anchor="middle" fill="#f39c12" font-size="12" font-weight="bold">Lohnsteuer</text>
+    <text x="510" y="70" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold">ca. 450 €</text>
+    <text x="510" y="92" text-anchor="middle" fill="#ddd" font-size="10">Abhängig von</text>
+    <text x="510" y="110" text-anchor="middle" fill="#ddd" font-size="10">Steuerklasse</text>
+    <text x="620" y="100" text-anchor="middle" fill="#27ae60" font-size="20">=</text>
+    <rect x="640" y="20" width="200" height="140" rx="10" fill="rgba(39,174,96,0.5)" stroke="#2ecc71" stroke-width="3"/>
+    <text x="740" y="55" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">Netto-Auszahlung</text>
+    <text x="740" y="85" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold">ca. 1.990 €</text>
+    <text x="740" y="113" text-anchor="middle" fill="#ddd" font-size="11">Was auf dem Konto</text>
+    <text x="740" y="130" text-anchor="middle" fill="#ddd" font-size="11">ankommt</text>
+  </svg>
+  <div class="slide-number">Folie 27 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 28: SOZIALVERSICHERUNGSBEITRÄGE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Sozialversicherungsbeiträge – Überblick</h2>
+  <svg width="300" height="300" viewBox="0 0 300 300" style="float:left; margin-right:30px;">
+    <circle cx="150" cy="150" r="120" fill="none" stroke="#333" stroke-width="1"/>
+    <!-- KV ca. 14.6% -->
+    <path d="M150,150 L150,30 A120,120 0 0,1 270,150 Z" fill="rgba(231,76,60,0.7)"/>
+    <text x="225" y="100" fill="#fff" font-size="11" text-anchor="middle">KV</text>
+    <text x="225" y="115" fill="#fff" font-size="10" text-anchor="middle">14,6%</text>
+    <!-- RV ca. 18.6% -->
+    <path d="M150,150 L270,150 A120,120 0 0,1 90,255 Z" fill="rgba(243,156,18,0.7)"/>
+    <text x="230" y="220" fill="#fff" font-size="11" text-anchor="middle">RV</text>
+    <text x="230" y="235" fill="#fff" font-size="10" text-anchor="middle">18,6%</text>
+    <!-- AV ca. 2.6% -->
+    <path d="M150,150 L90,255 A120,120 0 0,1 60,195 Z" fill="rgba(39,174,96,0.7)"/>
+    <text x="72" y="265" fill="#fff" font-size="10" text-anchor="middle">AV 2,6%</text>
+    <!-- PV ca. 3.05% -->
+    <path d="M150,150 L60,195 A120,120 0 0,1 50,120 Z" fill="rgba(52,152,219,0.7)"/>
+    <text x="45" y="155" fill="#fff" font-size="10" text-anchor="middle">PV</text>
+    <text x="45" y="168" fill="#fff" font-size="9" text-anchor="middle">3,05%</text>
+    <!-- Rest: Lohnsteuer -->
+    <path d="M150,150 L50,120 A120,120 0 0,1 150,30 Z" fill="rgba(155,89,182,0.7)"/>
+    <text x="85" y="65" fill="#fff" font-size="10" text-anchor="middle">Lohn-</text>
+    <text x="85" y="78" fill="#fff" font-size="10" text-anchor="middle">steuer</text>
+    <circle cx="150" cy="150" r="50" fill="#1a1a2e"/>
+    <text x="150" y="145" text-anchor="middle" fill="#f39c12" font-size="12" font-weight="bold">Abzüge</text>
+    <text x="150" y="162" text-anchor="middle" fill="#ddd" font-size="11">vom Brutto</text>
+  </svg>
+  <div style="display:inline-block; vertical-align:top; max-width:560px;">
+    <h3>Die 5 Zweige der Sozialversicherung</h3>
+    <ul>
+      <li><strong>Krankenversicherung (KV):</strong> Krankheitskosten</li>
+      <li><strong>Rentenversicherung (RV):</strong> Altersvorsorge</li>
+      <li><strong>Arbeitslosenversicherung (AV):</strong> ALG I</li>
+      <li><strong>Pflegeversicherung (PV):</strong> Pflegebedarf</li>
+      <li><strong>Unfallversicherung (UV):</strong> Berufsgenossenschaft (nur AG zahlt)</li>
+    </ul>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>Halbe-Halbe:</strong> Bis auf die UV zahlen AG und AN die Beiträge hälftig.
+    </div>
+  </div>
+  <div class="slide-number">Folie 28 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 29: KRANKENVERSICHERUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Gesetzliche Krankenversicherung (GKV) – SGB V</h2>
+  <div class="two-col">
+    <div>
+      <h3>Grundsätze</h3>
+      <ul>
+        <li>Pflichtversicherung bis zur Beitragsbemessungsgrenze (BBG)</li>
+        <li>BBG 2024: <strong>5.175 €/Monat</strong></li>
+        <li>Allgemeiner Beitragssatz: <strong>14,6 %</strong></li>
+        <li>Kassenindividueller Zusatzbeitrag: Ø 1,6 % (2024)</li>
+        <li>Aufteilung: je 7,3 % AN + AG</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Leistungen der GKV</h3>
+      <ul>
+        <li>Ambulante und stationäre Behandlung</li>
+        <li>Medikamente (mit Zuzahlung)</li>
+        <li>Krankengeld ab dem 43. Krankheitstag</li>
+        <li>Familienversicherung (beitragsfrei)</li>
+        <li>Mutterschaftsgeld, Vorsorge</li>
+      </ul>
+    </div>
+  </div>
+  <div class="citation" style="margin-top:10px;">SGB V – Sozialgesetzbuch Fünftes Buch (Gesetzliche Krankenversicherung)</div>
+  <div class="slide-number">Folie 29 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 30: RENTENVERSICHERUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Rentenversicherung (GRV) – SGB VI</h2>
+  <div class="two-col">
+    <div>
+      <h3>Grundsätze</h3>
+      <ul>
+        <li>Pflichtversicherung für alle AN und Azubis</li>
+        <li>Beitragssatz 2024: <strong>18,6 %</strong> (je 9,3 % AN + AG)</li>
+        <li>BBG West: 7.550 €/Monat (2024)</li>
+        <li>BBG Ost: 7.450 €/Monat (2024)</li>
+      </ul>
+      <h3 style="margin-top:12px;">Leistungen</h3>
+      <ul>
+        <li>Altersrente (frühestens ab 63)</li>
+        <li>Erwerbsminderungsrente</li>
+        <li>Hinterbliebenenrente</li>
+        <li>Rehabilitation</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Generationenvertrag</h3>
+      <p style="font-size:0.9em;">Die Rente basiert auf dem Umlageverfahren: Die heutigen Beitragszahler finanzieren die heutigen Rentner. Demografischer Wandel belastet das System.</p>
+      <div class="warning-box" style="margin-top:10px; font-size:0.85em;">
+        Ergänzende private und betriebliche Altersvorsorge (bAV, Riester) wird deshalb wichtiger.
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 30 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 31: ARBEITSLOSENVERSICHERUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Arbeitslosenversicherung (ALV) – SGB III</h2>
+  <div class="two-col">
+    <div>
+      <h3>Beiträge &amp; Anspruch</h3>
+      <ul>
+        <li>Beitragssatz 2024: <strong>2,6 %</strong> (je 1,3 % AN + AG)</li>
+        <li>BBG: identisch mit RV</li>
+        <li>Anspruch auf ALG I: mind. 12 Monate beitragspflichtig in den letzten 2 Jahren</li>
+        <li>Höhe ALG I: 60 % des letzten Nettoentgelts (67 % mit Kind)</li>
+        <li>Dauer: 12 Monate (länger bei älteren AN)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Leistungen der Agentur für Arbeit</h3>
+      <ul>
+        <li>Arbeitslosengeld I (ALG I)</li>
+        <li>Berufsberatung und Vermittlung</li>
+        <li>Weiterbildungsförderung</li>
+        <li>Kurzarbeitergeld (KUG)</li>
+        <li>Insolvenzgeld bei Betriebsinsolvenz</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 31 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 32: PFLEGEVERSICHERUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Pflegeversicherung (SPV) – SGB XI</h2>
+  <div class="two-col">
+    <div>
+      <h3>Grundsätze</h3>
+      <ul>
+        <li>Folgt automatisch der Krankenversicherung</li>
+        <li>Beitragssatz 2024: <strong>3,4 %</strong> (kinderlos: 4,0 %)</li>
+        <li>Aufteilung: 1,7 % AN + 1,7 % AG</li>
+        <li>Kinderlose zahlen 0,6 % Zuschlag (AN allein)</li>
+        <li>Ausnahme: Sachsen – AG zahlt weniger</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Leistungen</h3>
+      <ul>
+        <li>Pflegegeld für häusliche Pflege</li>
+        <li>Pflegesachleistungen (ambulant)</li>
+        <li>Vollstationäre Pflege (Heimkostenanteil)</li>
+        <li>Pflegegrade 1–5 bestimmen Leistungshöhe</li>
+      </ul>
+      <div class="info-box" style="margin-top:10px; font-size:0.85em;">
+        Die Pflegeversicherung deckt nur Teile der Kosten. Eine Ergänzung durch private Pflegezusatzversicherung ist empfehlenswert.
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 32 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 33: UNFALLVERSICHERUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Gesetzliche Unfallversicherung – Berufsgenossenschaft (SGB VII)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Besonderheit</h3>
+      <ul>
+        <li>Beitrag wird <strong>ausschließlich vom Arbeitgeber</strong> bezahlt</li>
+        <li>Höhe abhängig von Branche und Gefährdungsklasse</li>
+        <li>Verwaltung durch Berufsgenossenschaften (z.B. BGHW für Handel)</li>
+        <li>Gilt auch für den Schulweg (Wegeunfall)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Leistungen</h3>
+      <ul>
+        <li>Heilbehandlung nach Arbeitsunfall</li>
+        <li>Verletztengeld</li>
+        <li>Berufliche Rehabilitation</li>
+        <li>Rentenzahlung bei dauerhafter Minderung der Erwerbsfähigkeit</li>
+        <li>Hinterbliebenenrente bei Todesfällen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 33 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 34: BEITRAGSSÄTZE 2024 -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Beitragssätze 2024 im Überblick</h2>
+  <table>
+    <tr><th>Versicherungszweig</th><th>Gesamt</th><th>Anteil AN</th><th>Anteil AG</th><th>BBG/Monat</th></tr>
+    <tr><td>Krankenversicherung (KV)</td><td>14,6 % + ZB</td><td>7,3 % + ½ ZB</td><td>7,3 % + ½ ZB</td><td>5.175 €</td></tr>
+    <tr><td>Rentenversicherung (RV)</td><td>18,6 %</td><td>9,3 %</td><td>9,3 %</td><td>7.550 € (W)</td></tr>
+    <tr><td>Arbeitslosenversicherung (AV)</td><td>2,6 %</td><td>1,3 %</td><td>1,3 %</td><td>7.550 € (W)</td></tr>
+    <tr><td>Pflegeversicherung (PV)</td><td>3,4 % (4,0 % kinderlos)</td><td>1,7 %</td><td>1,7 %</td><td>5.175 €</td></tr>
+    <tr><td>Unfallversicherung (UV)</td><td>Branchenabhängig</td><td>0 %</td><td>100 %</td><td>kein Limit</td></tr>
+  </table>
+  <div class="info-box" style="margin-top:12px;">
+    <strong>Merke:</strong> Über der BBG wird kein Beitrag mehr gezahlt. Gut verdienende AN können in die private Krankenversicherung (PKV) wechseln (Grenze 2024: 69.300 €/Jahr).
+  </div>
+  <div class="slide-number">Folie 34 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 35: LOHNSTEUER UND STEUERKLASSEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Lohnsteuer und Steuerklassen – Grundprinzip</h2>
+  <svg width="860" height="160" viewBox="0 0 860 160">
+    <rect x="10" y="20" width="120" height="120" rx="10" fill="rgba(52,152,219,0.3)" stroke="#3498db" stroke-width="2"/>
+    <text x="70" y="55" text-anchor="middle" fill="#3498db" font-size="16" font-weight="bold">I</text>
+    <text x="70" y="78" text-anchor="middle" fill="#ddd" font-size="11">Ledig</text>
+    <text x="70" y="96" text-anchor="middle" fill="#ddd" font-size="11">Geschieden</text>
+    <text x="70" y="114" text-anchor="middle" fill="#aaa" font-size="10">Std.-Klasse</text>
+    <rect x="148" y="20" width="120" height="120" rx="10" fill="rgba(39,174,96,0.3)" stroke="#27ae60" stroke-width="2"/>
+    <text x="208" y="55" text-anchor="middle" fill="#2ecc71" font-size="16" font-weight="bold">II</text>
+    <text x="208" y="78" text-anchor="middle" fill="#ddd" font-size="11">Alleinerziehend</text>
+    <text x="208" y="96" text-anchor="middle" fill="#ddd" font-size="11">mit Kind</text>
+    <text x="208" y="114" text-anchor="middle" fill="#aaa" font-size="10">Entlastungsbetrag</text>
+    <rect x="286" y="20" width="120" height="120" rx="10" fill="rgba(243,156,18,0.3)" stroke="#f39c12" stroke-width="2"/>
+    <text x="346" y="55" text-anchor="middle" fill="#f39c12" font-size="16" font-weight="bold">III</text>
+    <text x="346" y="75" text-anchor="middle" fill="#ddd" font-size="11">Verheiratet</text>
+    <text x="346" y="93" text-anchor="middle" fill="#ddd" font-size="11">Besserverdienender</text>
+    <text x="346" y="114" text-anchor="middle" fill="#aaa" font-size="10">Niedrigste Steuer</text>
+    <rect x="424" y="20" width="120" height="120" rx="10" fill="rgba(155,89,182,0.3)" stroke="#9b59b6" stroke-width="2"/>
+    <text x="484" y="55" text-anchor="middle" fill="#9b59b6" font-size="16" font-weight="bold">IV</text>
+    <text x="484" y="75" text-anchor="middle" fill="#ddd" font-size="11">Verheiratet</text>
+    <text x="484" y="93" text-anchor="middle" fill="#ddd" font-size="11">gleich gut verdienend</text>
+    <text x="484" y="114" text-anchor="middle" fill="#aaa" font-size="10">Wie Klasse I</text>
+    <rect x="562" y="20" width="120" height="120" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="622" y="55" text-anchor="middle" fill="#e74c3c" font-size="16" font-weight="bold">V</text>
+    <text x="622" y="75" text-anchor="middle" fill="#ddd" font-size="11">Verheiratet</text>
+    <text x="622" y="93" text-anchor="middle" fill="#ddd" font-size="11">Wenigerverdienend</text>
+    <text x="622" y="114" text-anchor="middle" fill="#aaa" font-size="10">Höchste Steuer</text>
+    <rect x="700" y="20" width="150" height="120" rx="10" fill="rgba(127,140,141,0.3)" stroke="#7f8c8d" stroke-width="2"/>
+    <text x="775" y="55" text-anchor="middle" fill="#7f8c8d" font-size="16" font-weight="bold">VI</text>
+    <text x="775" y="75" text-anchor="middle" fill="#ddd" font-size="11">Mehrere Jobs</text>
+    <text x="775" y="93" text-anchor="middle" fill="#ddd" font-size="11">2. Arbeitgeber</text>
+    <text x="775" y="114" text-anchor="middle" fill="#aaa" font-size="10">Höchste Abzüge</text>
+  </svg>
+  <div class="slide-number">Folie 35 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 36: STEUERKLASSEN ERKLÄRT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Steuerklassen I–VI im Detail</h2>
+  <table>
+    <tr><th>Klasse</th><th>Personengruppe</th><th>Grundfreibetrag 2024</th><th>Besonderheit</th></tr>
+    <tr><td>I</td><td>Ledig, getrennt lebend, geschieden, verwitwet (ab 2. Jahr)</td><td>11.604 €</td><td>Standardklasse</td></tr>
+    <tr><td>II</td><td>Alleinerziehend mit Kind im Haushalt</td><td>11.604 € + 4.260 €</td><td>Entlastungsbetrag</td></tr>
+    <tr><td>III</td><td>Verheiratet / LP, besserverdienend</td><td>23.208 € (doppelt)</td><td>Nur mit Klasse V</td></tr>
+    <tr><td>IV</td><td>Verheiratet / LP, gleich verdienend</td><td>11.604 €</td><td>Wie Klasse I</td></tr>
+    <tr><td>V</td><td>Verheiratet / LP, geringer verdienend</td><td>0 €</td><td>Nur mit Klasse III</td></tr>
+    <tr><td>VI</td><td>Zweiter oder weiterer Arbeitgeber</td><td>0 €</td><td>Keine Freibeträge</td></tr>
+  </table>
+  <div class="slide-number">Folie 36 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 37: SOLI UND KIRCHENSTEUER -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Solidaritätszuschlag und Kirchensteuer</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Solidaritätszuschlag (Soli)</h3>
+      <ul>
+        <li>Seit 2021 weitgehend abgeschafft</li>
+        <li>Fällt nur noch für Spitzenverdiener an</li>
+        <li>Freigrenze 2024: 18.130 € Lohnsteuer/Jahr</li>
+        <li>Satz: 5,5 % der Lohnsteuer</li>
+        <li>Finanziert Aufbau Ost (historisch)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Kirchensteuer</h3>
+      <ul>
+        <li>Nur für Mitglieder einer steuerberechtigten Kirche</li>
+        <li>Satz: <strong>8 %</strong> (Bayern, BW) oder <strong>9 %</strong> (alle anderen) der Lohnsteuer</li>
+        <li>Wird automatisch vom Arbeitgeber einbehalten</li>
+        <li>Kirchenaustritt = kein Anspruch mehr</li>
+        <li>Kein Kirchensteuer bei kinderlosem Freibetrag</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 37 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 38: FREIBETRÄGE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Freibeträge und Werbungskosten</h2>
+  <div class="two-col">
+    <div>
+      <h3>Wichtige Freibeträge 2024</h3>
+      <table>
+        <tr><th>Freibetrag</th><th>Betrag/Jahr</th></tr>
+        <tr><td>Grundfreibetrag</td><td>11.604 €</td></tr>
+        <tr><td>Arbeitnehmer-Pauschbetrag</td><td>1.230 €</td></tr>
+        <tr><td>Sonderausgaben-Pauschbetrag</td><td>36 €</td></tr>
+        <tr><td>Kinderfreibetrag</td><td>8.952 € (pro Kind)</td></tr>
+        <tr><td>Entlastungsbetrag Alleinerziehende</td><td>4.260 €</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Werbungskosten</h3>
+      <ul>
+        <li>Fahrtkosten Arbeitsweg: 0,30 € ab 1. km / 0,38 € ab 21. km</li>
+        <li>Arbeitsmittel (Laptop, Bürobedarf)</li>
+        <li>Berufskleidung</li>
+        <li>Fortbildungskosten</li>
+        <li>Kontoführungsgebühren (pauschal 16 €)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 38 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 39: GEHALTSABRECHNUNG AUFBAU -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Gehaltsabrechnung lesen – Aufbau</h2>
+  <svg width="860" height="200" viewBox="0 0 860 200">
+    <rect x="10" y="10" width="840" height="180" rx="10" fill="rgba(0,0,0,0.04)" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+    <!-- Header -->
+    <rect x="20" y="20" width="820" height="30" rx="5" fill="rgba(231,76,60,0.3)"/>
+    <text x="30" y="40" fill="#fff" font-size="12" font-weight="bold">Arbeitgeberdaten | Arbeitnehmerdaten | Abrechnungszeitraum | Steuerklasse | SV-Schlüssel</text>
+    <!-- Brutto -->
+    <rect x="20" y="58" width="380" height="50" rx="5" fill="rgba(39,174,96,0.2)"/>
+    <text x="30" y="78" fill="#2ecc71" font-size="12" font-weight="bold">Bruttoentgelt</text>
+    <text x="30" y="97" fill="#ddd" font-size="11">Grundgehalt + Zulagen + Sonderzahlungen = Brutto</text>
+    <!-- Abzüge -->
+    <rect x="20" y="115" width="380" height="65" rx="5" fill="rgba(231,76,60,0.2)"/>
+    <text x="30" y="135" fill="#e74c3c" font-size="12" font-weight="bold">Abzüge (AN-Anteile)</text>
+    <text x="30" y="153" fill="#ddd" font-size="11">− Lohnsteuer   − KV   − RV   − AV   − PV</text>
+    <text x="30" y="170" fill="#aaa" font-size="10">Ggf. − Kirchensteuer  − Soli  − VWL  − sonstige</text>
+    <!-- Netto -->
+    <rect x="420" y="58" width="440" height="122" rx="5" fill="rgba(52,152,219,0.2)"/>
+    <text x="430" y="85" fill="#3498db" font-size="14" font-weight="bold">= Netto-Auszahlung</text>
+    <text x="430" y="110" fill="#ddd" font-size="12">Überwiesen an das Konto des AN</text>
+    <text x="430" y="135" fill="#aaa" font-size="11">+ ggf. Sachbezüge, geldwerte Vorteile</text>
+    <text x="430" y="155" fill="#aaa" font-size="11">+ steuerfreie Leistungen (Fahrtgeld)</text>
+    <text x="430" y="170" fill="#f39c12" font-size="11">→ Zeile "Auszahlungsbetrag"</text>
+  </svg>
+  <div class="slide-number">Folie 39 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 40: GEHALTSABRECHNUNG AZUBI BEISPIEL -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Gehaltsabrechnung – Beispiel Auszubildende</h2>
+  <p>Maria, 17 Jahre, 1. Ausbildungsjahr, Kauffrau im E-Commerce, Steuerklasse I, gesetzlich krankenversichert</p>
+  <table>
+    <tr><th>Position</th><th>Betrag</th><th>Erläuterung</th></tr>
+    <tr><td>Ausbildungsvergütung (Brutto)</td><td>700,00 €</td><td>Tarifvertrag Einzelhandel NRW</td></tr>
+    <tr><td>− Lohnsteuer</td><td>0,00 €</td><td>Unter Grundfreibetrag</td></tr>
+    <tr><td>− Krankenversicherung (AN)</td><td>51,10 €</td><td>7,3 % von 700 €</td></tr>
+    <tr><td>− Rentenversicherung (AN)</td><td>65,10 €</td><td>9,3 % von 700 €</td></tr>
+    <tr><td>− Arbeitslosenversicherung (AN)</td><td>9,10 €</td><td>1,3 % von 700 €</td></tr>
+    <tr><td>− Pflegeversicherung (AN)</td><td>11,90 €</td><td>1,7 % von 700 €</td></tr>
+    <tr><td><strong>= Netto-Auszahlung</strong></td><td><strong>562,80 €</strong></td><td></td></tr>
+  </table>
+  <div class="slide-number">Folie 40 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 41: GEHALTSZETTEL SCHRITT FÜR SCHRITT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Gehaltszettel lesen – Schritt für Schritt</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Schritt 1: Kopfdaten prüfen</h3>
+      <ul style="font-size:0.9em;">
+        <li>Name und Adresse korrekt?</li>
+        <li>Steuerklasse richtig eingetragen?</li>
+        <li>Abrechnungsmonat korrekt?</li>
+        <li>Sozialversicherungsnummer?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Schritt 2: Brutto prüfen</h3>
+      <ul style="font-size:0.9em;">
+        <li>Grundgehalt laut Vertrag/Tarif?</li>
+        <li>Sonderzahlungen korrekt?</li>
+        <li>Überstunden abgegolten?</li>
+        <li>Zulagen vollständig?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Schritt 3: Abzüge prüfen</h3>
+      <ul style="font-size:0.9em;">
+        <li>Steuerklasse stimmt mit Abzug überein?</li>
+        <li>SV-Beiträge plausibel?</li>
+        <li>Nettobetrag nachrechnen</li>
+        <li>Kontodaten korrekt?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-box" style="margin-top:14px;">
+    <strong>Fehler gefunden?</strong> Sofort bei der Personalabteilung melden. Fehler in der Gehaltsabrechnung (zu wenig bezahlt) können rückwirkend korrigiert werden.
+  </div>
+  <div class="slide-number">Folie 41 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 42: URLAUBSGELD UND WEIHNACHTSGELD -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Urlaubsgeld und Weihnachtsgeld</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Urlaubsgeld</h3>
+      <ul>
+        <li>Kein gesetzlicher Anspruch (nur wenn tariflich oder vertraglich vereinbart)</li>
+        <li>Tarifvertrag Einzelhandel: häufig 50–80 % eines Monatsgehalts</li>
+        <li>Steuer- und SV-pflichtig</li>
+        <li>Auszahlung meist im Mai/Juni</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Weihnachtsgeld (13. Monatsgehalt)</h3>
+      <ul>
+        <li>Ebenfalls kein gesetzlicher Anspruch</li>
+        <li>Betriebliche Übung begründet Anspruch nach 3 Jahren</li>
+        <li>Steuer- und SV-pflichtig</li>
+        <li>Auszahlung meist November/Dezember</li>
+        <li>Rückzahlungsklausel bei Kündigung möglich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 42 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 43: VWL -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Vermögenswirksame Leistungen (VWL)</h2>
+  <div class="definition">
+    <span class="key-term">Vermögenswirksame Leistungen (VWL)</span> sind Geldleistungen des Arbeitgebers, die direkt in Vermögensanlagen des Arbeitnehmers eingezahlt werden (§§ 1 ff. 5. VermBG).
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Funktionsweise</h3>
+      <ul>
+        <li>Arbeitgeber zahlt max. 40 €/Monat direkt in Anlageform</li>
+        <li>Anlageformen: Bausparvertrag, Investmentfonds, Banksparplan</li>
+        <li>AN kann eigenen Anteil dazulegen</li>
+        <li>Staatliche Arbeitnehmer-Sparzulage möglich</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Steuerliche Behandlung</h3>
+      <ul>
+        <li>VWL vom AG sind lohnsteuerpflichtiges Einkommen</li>
+        <li>Aber: Arbeitnehmer-Sparzulage bei niedrigem Einkommen (15 %, max. 80 €/Jahr bei Fonds)</li>
+        <li>Sperrfrist: 6–7 Jahre</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 43 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 44: BETRIEBLICHE ALTERSVORSORGE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Betriebliche Altersvorsorge (bAV)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Was ist die bAV?</h3>
+      <ul>
+        <li>Altersvorsorge über den Arbeitgeber (2. Säule)</li>
+        <li>Rechtsanspruch auf Entgeltumwandlung (§ 1a BetrAVG)</li>
+        <li>Arbeitgeber muss mindestens 15 % Zuschuss leisten</li>
+        <li>Beiträge bis 3.624 €/Jahr steuerfrei</li>
+        <li>Beiträge bis 3.624 €/Jahr SV-beitragsfrei</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Durchführungswege</h3>
+      <ul>
+        <li>Direktversicherung (am häufigsten)</li>
+        <li>Pensionskasse</li>
+        <li>Pensionsfonds</li>
+        <li>Unterstützungskasse</li>
+        <li>Direktzusage (Pensionsrückstellung)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 44 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 45: SACHBEZÜGE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Sachbezüge und geldwerte Vorteile</h2>
+  <div class="two-col">
+    <div>
+      <h3>Was sind Sachbezüge?</h3>
+      <p style="font-size:0.9em;">Geldwerte Vorteile, die nicht in bar ausgezahlt werden, sondern als Sach- oder Dienstleistung gewährt werden.</p>
+      <h3 style="margin-top:12px;">Freigrenze</h3>
+      <p style="font-size:0.9em;">Bis <strong>50 €/Monat</strong> sind Sachbezüge steuer- und SV-frei (§ 8 Abs. 2 EStG). Bei Überschreitung: volle Steuerpflicht.</p>
+    </div>
+    <div>
+      <h3>Typische Sachbezüge</h3>
+      <ul>
+        <li>Essensmarken / Kantinenessen</li>
+        <li>Tankgutscheine / Jobticket</li>
+        <li>Mitarbeiterrabatte (bis 1.080 €/Jahr steuerfrei)</li>
+        <li>Dienstwagen (1 %-Regelung)</li>
+        <li>Diensthandy (100 % steuerfrei bei überwiegend betrieblich)</li>
+        <li>Warengutscheine</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 45 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 46: MINDESTAUSBILDUNGSVERGÜTUNG 2024 -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Mindestausbildungsvergütung 2024 (§ 17 BBiG)</h2>
+  <table>
+    <tr><th>Ausbildungsjahr</th><th>Mindest-Vergütung/Monat</th><th>Erhöhung gegenüber Startjahr</th></tr>
+    <tr><td>1. Ausbildungsjahr</td><td>649 €</td><td>Basiswert</td></tr>
+    <tr><td>2. Ausbildungsjahr</td><td>766 € (+18 %)</td><td>+ 117 € / Monat</td></tr>
+    <tr><td>3. Ausbildungsjahr</td><td>876 € (+35 %)</td><td>+ 110 € / Monat</td></tr>
+    <tr><td>4. Ausbildungsjahr (falls vorhanden)</td><td>909 € (+40 %)</td><td>+ 33 € / Monat</td></tr>
+  </table>
+  <div class="success-box" style="margin-top:14px;">
+    <strong>Günstigkeitsprinzip:</strong> Wenn ein Tarifvertrag eine höhere Vergütung festlegt, gilt dieser. Die gesetzliche Mindestausbildungsvergütung ist nur die Untergrenze. Im Einzelhandel NRW liegen die tariflichen Vergütungen häufig 100–200 € darüber.
+  </div>
+  <div class="slide-number">Folie 46 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 47: PRAXISAUFGABE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Praxisaufgabe: Gehaltsabrechnung berechnen</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Aufgabe</h3>
+      <p style="font-size:0.9em;">Jonas, 19 Jahre, 2. Ausbildungsjahr, Kaufmann im E-Commerce bei der Exclusiva GmbH. Tarifliche Vergütung: 820 € brutto. Steuerklasse I, ev. Kirchensteuerpflichtig (9 %), keine Kinder.</p>
+      <p style="font-size:0.9em; margin-top:8px;"><strong>Berechne:</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>Krankenversicherungsbeitrag AN</li>
+        <li>Rentenversicherungsbeitrag AN</li>
+        <li>AV-Beitrag AN</li>
+        <li>Pflegeversicherung AN</li>
+        <li>Lohnsteuer (ca. 0 €, warum?)</li>
+        <li>Netto-Auszahlung</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Lösung</h3>
+      <ul style="font-size:0.9em;">
+        <li>KV: 7,3 % × 820 € = <strong>59,86 €</strong></li>
+        <li>RV: 9,3 % × 820 € = <strong>76,26 €</strong></li>
+        <li>AV: 1,3 % × 820 € = <strong>10,66 €</strong></li>
+        <li>PV: 1,7 % × 820 € = <strong>13,94 €</strong></li>
+        <li>LSt: 0 € (unter Jahresgrundfreib. von 11.604 €)</li>
+        <li>KiSt: 0 € (keine Lohnsteuer = keine KiSt)</li>
+        <li><strong>Netto: 820 – 160,72 = 659,28 €</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 47 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 48: FALLSTUDIE EXCLUSIVA -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Fallstudie: Gehaltsabrechnung Azubi Exclusiva GmbH</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ausgangssituation</h3>
+      <p style="font-size:0.9em;">Sina (18) erhält ihre erste Gehaltsabrechnung und ist verwirrt: Ihr Brutto beträgt 700 €, sie bekommt aber nur 560 € überwiesen. Sie fragt sich, wo die restlichen 140 € geblieben sind.</p>
+    </div>
+    <div class="card">
+      <h3>Erklärung für Sina</h3>
+      <ul style="font-size:0.85em;">
+        <li>KV (7,3 %): − 51,10 €</li>
+        <li>RV (9,3 %): − 65,10 €</li>
+        <li>AV (1,3 %): − 9,10 €</li>
+        <li>PV (1,7 %): − 11,90 €</li>
+        <li>Lohnsteuer: − 0,00 € (unter Freibetrag)</li>
+        <li>VWL AG-Anteil: + 13,29 € (AG-Zuschuss)</li>
+        <li><strong>Netto: 576,09 €</strong></li>
+        <li>Diskrepanz durch Rundung + VWL-Einbehalt</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 48 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE: BRUTTO-NETTO FORMEL & ESELSBRÜCKE K-R-A-P -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Brutto → Netto: Die Formel &amp; Eselsbrücke K-R-A-P</h2>
+  <div class="definition">
+    <strong>Brutto</strong> − Lohnsteuer − Solidaritätszuschlag − Kirchensteuer − Sozialversicherungsbeiträge = <span class="key-term">Netto</span>
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <div class="warning-box">
+        <strong>Eselsbrücke K-R-A-P:</strong><br>
+        <strong>K</strong>ranken – <strong>R</strong>enten – <strong>A</strong>rbeitslosen – <strong>P</strong>flege<br>
+        <em>„KRAP zieht ab – vier Versicherungen, die vom Brutto verschwinden!"</em>
+      </div>
+      <div class="success-box" style="margin-top:10px;">
+        <strong>Merke:</strong> SV-Beiträge je zur Hälfte von AG und AN! Ausnahme: PV – AN zahlt etwas mehr (Kinderlosenanteil ab 23 J.: +0,6 %).
+      </div>
+    </div>
+    <div class="card">
+      <h3>Beitragssätze 2024 (AN-Anteil)</h3>
+      <table style="font-size:0.85em;">
+        <tr><th>Versicherung</th><th>AN-Anteil</th></tr>
+        <tr><td>Krankenversicherung (KV)</td><td>7,3 % + Zusatz</td></tr>
+        <tr><td>Rentenversicherung (RV)</td><td>9,3 %</td></tr>
+        <tr><td>Arbeitslosenversicherung (AV)</td><td>1,3 %</td></tr>
+        <tr><td>Pflegeversicherung (PV)</td><td>1,7 % (+ ggf. 0,6 %)</td></tr>
+        <tr><td><strong>Gesamt AN-Anteil</strong></td><td><strong>ca. 20 %</strong></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE: PRAXISBEISPIEL AZUBI BEN – GEHALTSABRECHNUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Praxisbeispiel: Gehaltsabrechnung Azubi Ben</h2>
+  <div class="definition">
+    <strong>Situation:</strong> Azubi Ben (18 Jahre, Steuerklasse I, kein Kirchenmitglied) verdient <span class="key-term">850 € brutto</span> im 1. Lehrjahr bei der Exclusiva GmbH.
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div>
+      <h3>Schritt-für-Schritt-Berechnung</h3>
+      <table style="font-size:0.85em;">
+        <tr><th>Position</th><th>Betrag</th></tr>
+        <tr><td>Bruttogehalt</td><td>850,00 €</td></tr>
+        <tr><td>− Lohnsteuer</td><td>0,00 € (unter Grundfreibetrag)</td></tr>
+        <tr><td>− KV-Beitrag AN (ca. 8,15 %)</td><td>− 69,28 €</td></tr>
+        <tr><td>− RV-Beitrag AN (9,3 %)</td><td>− 79,05 €</td></tr>
+        <tr><td>− AV-Beitrag AN (1,3 %)</td><td>− 11,05 €</td></tr>
+        <tr><td>− PV-Beitrag AN (1,7 %)</td><td>− 14,45 €</td></tr>
+        <tr><td><strong>Nettogehalt (ca.)</strong></td><td><strong>ca. 676 €</strong></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Hinweise</h3>
+      <ul style="font-size:0.9em;">
+        <li>Azubis unter ca. 1.300 €/Monat zahlen oft <strong>keine</strong> Lohnsteuer (Grundfreibetrag)</li>
+        <li>SV-Beiträge ca. <strong>20 %</strong> des Bruttos</li>
+        <li>AG zahlt noch einmal ca. 20 % zusätzlich auf den Bruttolohn</li>
+        <li>Gehaltsabrechnung immer prüfen: Name, Steuerklasse, KK, Beitragssätze!</li>
+      </ul>
+      <div class="success-box" style="margin-top:10px;font-size:0.9em;">
+        Die Gehaltsabrechnung muss vollständig sein – Fehler kommen vor!
+      </div>
+    </div>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE ZQ11C: ZWISCHENQUIZ – Entgeltabrechnung & Steuerklassen -->
+<div class="slide quiz-slide" id="slide-ZQ11C" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2 style="color:#2563EB;margin-bottom:15px;">🧠 Zwischenquiz: Entgeltabrechnung &amp; Steuerklassen</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Welche vier Zweige der Sozialversicherung zahlt ein Arbeitnehmer anteilig? (Eselsbrücke K-R-A-P)</p>
+    <div id="q11c1opts">
+      <button onclick="chk11c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Kranken, Renten, Arbeitslosen, Unfall</button>
+      <button onclick="chk11c1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Kranken, Renten, Arbeitslosen, Pflege</button>
+      <button onclick="chk11c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Kranken, Renten, Pflege, Steuer</button>
+    </div>
+    <p id="q11c1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Welche Steuerklasse hat ein alleinstehender Arbeitnehmer ohne Kinder?</p>
+    <div id="q11c2opts">
+      <button onclick="chk11c2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Steuerklasse I</button>
+      <button onclick="chk11c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Steuerklasse III</button>
+      <button onclick="chk11c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Steuerklasse VI</button>
+    </div>
+    <p id="q11c2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Wie hoch ist der Arbeitnehmer-Anteil an der Sozialversicherung insgesamt (ca.)?</p>
+    <div id="q11c3opts">
+      <button onclick="chk11c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) ca. 10 %</button>
+      <button onclick="chk11c3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) ca. 20 %</button>
+      <button onclick="chk11c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) ca. 35 %</button>
+    </div>
+    <p id="q11c3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk11c1(btn,correct){
+    document.getElementById('q11c1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11c1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! K-R-A-P: Kranken, Renten, Arbeitslosen, Pflege. Unfallversicherung zahlt nur der AG.':'❌ Falsch! Richtig: K-R-A-P (Unfall zahlt nur der AG!).';
+    if(!correct)document.getElementById('q11c1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11c2(btn,correct){
+    document.getElementById('q11c2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11c2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Alleinstehend ohne Kinder = Steuerklasse I.':'❌ Falsch! Alleinstehend = Steuerklasse I.';
+    if(!correct)document.getElementById('q11c2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk11c3(btn,correct){
+    document.getElementById('q11c3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q11c3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! AN-Anteil SV insgesamt ca. 20 % des Bruttogehalts.':'❌ Falsch! Richtig: ca. 20 % AN-Anteil.';
+    if(!correct)document.getElementById('q11c3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE 49: ZUSAMMENFASSUNG -->
+<div class="slide slide-summary">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Zusammenfassung des Tages</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Block 1.14 – Mitbestimmung</h3>
+      <ul style="font-size:0.9em;">
+        <li>BetrVG gilt ab 5 Arbeitnehmern</li>
+        <li>Betriebsrat: Information &gt; Mitwirkung &gt; Mitbestimmung</li>
+        <li>§ 87 BetrVG: Soziale Angelegenheiten = erzwingbar</li>
+        <li>§ 102 BetrVG: Kündigung ohne BR-Anhörung = unwirksam</li>
+        <li>JAV vertritt Jugendliche und Azubis</li>
+        <li>Unternehmensmitbestimmung: DrittelbG / MitbestG</li>
+        <li>Betriebsvereinbarung = unmittelbar + zwingend</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.15 – Entgeltabrechnung</h3>
+      <ul style="font-size:0.9em;">
+        <li>Brutto − SV-Beiträge − Lohnsteuer = Netto</li>
+        <li>5 Zweige: KV, RV, AV, PV, UV (UV nur AG)</li>
+        <li>Beitragssatz SV gesamt AN ca. 20 %</li>
+        <li>6 Steuerklassen je nach Familienstand</li>
+        <li>Mindestausbildungsvergütung 2024: ab 649 €</li>
+        <li>Sachbezüge bis 50 €/Monat steuerfrei</li>
+        <li>bAV: Entgeltumwandlung mit AG-Zuschuss</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 49 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 50: LITERATURVERZEICHNIS -->
+<div class="slide slide-refs">
+  <div class="tag-badge">LF1 | Tag 11</div>
+  <h2>Literaturverzeichnis</h2>
+  <ul style="font-size:0.87em; line-height:1.9;">
+    <li>Bundesministerium der Justiz. (2021). <em>Betriebsverfassungsgesetz (BetrVG) in der Fassung vom 5. Juli 2021</em>. BGBl. I S. 2603. https://www.gesetze-im-internet.de/betrvg/</li>
+    <li>Bundesministerium der Justiz. (2023). <em>Sozialgesetzbuch (SGB) Viertes Buch – Gemeinsame Vorschriften für die Sozialversicherung</em>. https://www.gesetze-im-internet.de/sgb_4/</li>
+    <li>Bundesministerium der Justiz. (2023). <em>Einkommensteuergesetz (EStG)</em>. https://www.gesetze-im-internet.de/estg/</li>
+    <li>Bundesministerium der Justiz. (2023). <em>Mitbestimmungsgesetz (MitbestG) vom 4. Mai 1976</em>. BGBl. I S. 1153. https://www.gesetze-im-internet.de/mitbestg/</li>
+    <li>Bundesministerium der Justiz. (2020). <em>Berufsbildungsgesetz (BBiG) – § 17 Mindestausbildungsvergütung</em>. https://www.gesetze-im-internet.de/bbig_2005/</li>
+    <li>Fitting, K., Engels, G., Schmidt, I., Trebinger, Y., &amp; Linsenmaier, W. (2022). <em>Betriebsverfassungsgesetz: Handkommentar</em> (31. Aufl.). Franz Vahlen.</li>
+    <li>Bundesministerium für Gesundheit. (2024). <em>Beitragssätze in der gesetzlichen Krankenversicherung 2024</em>. https://www.bundesgesundheitsministerium.de</li>
+    <li>Deutsche Rentenversicherung. (2024). <em>Beitragssätze und Rechengrößen 2024</em>. https://www.deutsche-rentenversicherung.de</li>
+  </ul>
+  <div class="slide-number">Folie 50 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+</div><!-- end slides-wrapper -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 56</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 11 - Betriebliche Mitbestimmung & Entgeltabrechnung &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title,h1,h2');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

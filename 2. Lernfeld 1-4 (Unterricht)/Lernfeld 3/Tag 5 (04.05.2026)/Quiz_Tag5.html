@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 5 – LF3: Zahlungen mit der Girocard</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128179; Quiz – Tag 5: Zahlungen mit der Girocard</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Wie wurde die Girocard früher bezeichnet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Debitkarte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> ec-Karte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kreditkarte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Maestro-Karte</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Girocard wurde früher als „ec-Karte" bezeichnet. Heute lautet der offizielle Name „Girocard" (vgl. Deutsche Bundesbank, 2022).</div>
+    <div class="feedback err">&#10008; Falsch. Die Girocard hieß früher „ec-Karte". Der Name wurde im Rahmen der Vereinheitlichung des deutschen Zahlungsverkehrs geändert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wie viele Girocards sind laut Präsentation in Deutschland im Umlauf?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Über 50 Millionen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Über 80 Millionen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Über 100 Millionen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Über 150 Millionen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! In Deutschland sind über 100 Millionen Girocards im Umlauf. Damit ist sie das meistverbreitete Kartenzahlungsmittel am stationären POS.</div>
+    <div class="feedback err">&#10008; Falsch. Über 100 Millionen Girocards befinden sich in Deutschland im Umlauf. Dazu kommen mehr als 58.000 Geldautomaten im Inland.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche wichtige Einschränkung gilt für die Girocard im E-Commerce?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie ist nur in Deutschland nutzbar</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Sie kann nur an Geldautomaten eingesetzt werden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Sie kann bisher nicht für Zahlungen im Onlineshop eingesetzt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie ist auf Beträge unter 50 € begrenzt</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Girocard kann bisher nicht im Onlineshop eingesetzt werden. Im E-Commerce werden daher Kreditkarten, PayPal und andere digitale Zahlungsdienste verwendet.</div>
+    <div class="feedback err">&#10008; Falsch. Die entscheidende Einschränkung ist: Die Girocard ist im Onlineshop nicht einsetzbar. Am stationären POS (Point of Sale) ist sie jedoch das meistgenutzte Kartenzahlungsmittel.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was versteht man unter „Electronic Cash"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Zahlung mit Kreditkarte per PIN</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Das bargeldlose Bezahlen ausschließlich mit der Girocard, bestätigt durch PIN-Eingabe</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Bezahlen per Mobile Payment</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Zahlung über PayPal am Kassenterminal</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Electronic Cash bezeichnet das bargeldlose Bezahlen nur mit der Girocard, wobei der Kunde die Zahlung durch Eingabe seiner PIN am Kassenterminal bestätigt.</div>
+    <div class="feedback err">&#10008; Falsch. Electronic Cash ist das bargeldlose Bezahlen ausschließlich mit der Girocard per PIN-Eingabe – nicht mit Kreditkarten oder anderen Zahlungsmitteln.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was prüft die Autorisierungsstelle beim Electronic-Cash-Verfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den Kontostand des Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Adresse des Karteninhabers</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> PIN-Eingabe, Kartensperre und individuelles Ausgabenlimit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Bonität und Schufa-Einträge des Kunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Autorisierungsstelle prüft drei Punkte: die richtige PIN-Eingabe, eine eventuelle Kartensperre und das individuell festgelegte Ausgabenlimit (z. B. 1.000 € pro Woche).</div>
+    <div class="feedback err">&#10008; Falsch. Die Autorisierungsstelle prüft PIN-Eingabe, Kartensperre und Ausgabenlimit – nicht den genauen Kontostand oder Schufa-Daten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Wie viele Schritte umfasst der Ablauf einer Electronic-Cash-Zahlung laut Präsentation?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 6 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 7 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 8 Schritte</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> 10 Schritte</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der Ablauf einer Electronic-Cash-Zahlung umfasst 10 Schritte – von der Ermittlung des Kaufbetrags durch das Kassenpersonal bis zur Kontobelastung des Kunden.</div>
+    <div class="feedback err">&#10008; Falsch. Der Electronic-Cash-Ablauf hat 10 Schritte, beginnend mit der Betragsfeststellung und endend mit der Kontobelastung der Transaktion auf dem Girokonto des Kunden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was ist der wesentliche Unterschied zwischen dem Lastschriftverfahren mit Girocard und Electronic Cash?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Beim Lastschriftverfahren wird die Karte per Chip gelesen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Beim Lastschriftverfahren findet keine PIN-Prüfung und keine Online-Autorisierung statt; der Kunde unterschreibt einen Beleg</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Lastschriftverfahren bietet dem Händler mehr Sicherheit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Beim Lastschriftverfahren gibt der Kunde eine TAN ein</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Lastschriftverfahren mit Girocard wird der Magnetstreifen gelesen, keine PIN geprüft und keine Verbindung zur Autorisierungsstelle aufgebaut. Der Kunde unterschreibt lediglich einen Lastschriftbeleg.</div>
+    <div class="feedback err">&#10008; Falsch. Das Lastschriftverfahren unterscheidet sich von Electronic Cash durch: Magnetstreifenlesung statt Chip, Unterschrift statt PIN, keine Online-Prüfung und daher kein Zahlungsgarantie für den Händler.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Welchen Vorteil hat das Lastschriftverfahren mit Girocard gegenüber Electronic Cash?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Höhere Sicherheit für den Händler</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Zahlungsgarantie durch die Bank</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Geringere Kosten, da keine Autorisierungsgebühren anfallen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Schnellere Gutschrift auf dem Händlerkonto</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das Lastschriftverfahren ist günstiger, weil keine Gebühren für die Online-Autorisierung entstehen. Dafür trägt der Händler das volle Risiko, da keine Kontodeckungsprüfung stattfindet.</div>
+    <div class="feedback err">&#10008; Falsch. Der einzige Vorteil des Lastschriftverfahrens gegenüber Electronic Cash sind die geringeren Kosten durch den Wegfall der Autorisierungsgebühren – bei gleichzeitig höherem Ausfallrisiko.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was ist eine Smartcard?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Karte mit besonders starkem Magnetstreifen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Eine Kreditkarte mit NFC-Funktion</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Eine Girocard mit integriertem Mikrochip, der ein eigenes Betriebssystem besitzt und eigenständig autorisieren kann</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Karte, die nur im Ausland funktioniert</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Eine Smartcard (kluge Karte) ist eine Girocard mit einem Mikrochip – einem Minicomputer mit eigenem Betriebssystem und eigener Logik, der eigenständig Autorisierungen vornehmen kann.</div>
+    <div class="feedback err">&#10008; Falsch. Eine Smartcard ist eine Girocard mit integriertem Mikrochip. Dieser Chip hat ein eigenes Betriebssystem und kann POS-Zahlungen eigenständig autorisieren sowie das Ausgabenlimit lokal überwachen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was ist der Unterschied zwischen GeldKarte und girogo?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> GeldKarte ist kontaktlos, girogo ist kontaktbehaftet</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> GeldKarte ist kontaktbehaftet (Prepaid-Funktion bis 200 €); girogo ist die kontaktlose Version, direkt vom Konto</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Beide sind identisch – nur unterschiedliche Bezeichnungen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> GeldKarte ist für große Beträge, girogo nur für Kleinstbeträge unter 5 €</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die GeldKarte ist die kontaktbehaftete Prepaid-Funktion auf dem Chip der Girocard (aufladbar bis 200 €). girogo ist die kontaktlose Variante – direkt vom Konto, ohne vorheriges Aufladen.</div>
+    <div class="feedback err">&#10008; Falsch. GeldKarte = kontaktbehaftete Prepaid-Funktion, Chip, aufladbar bis 200 €. girogo = kontaktlose Funktion, direkt vom Konto abgebucht, keine Aufladung nötig.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Welche Frequenz nutzt NFC (Near Field Communication) für die kontaktlose Datenübertragung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 2,4 GHz</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> 13,56 MHz</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 5 GHz</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 900 MHz</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! NFC arbeitet im Frequenzband 13,56 MHz mit einer Übertragungsrate von max. 424 kBit/s. Die Reichweite beträgt bis zu 10 cm.</div>
+    <div class="feedback err">&#10008; Falsch. NFC verwendet die Frequenz 13,56 MHz. Die Reichweite ist auf bis zu 10 cm begrenzt, was unbefugtes Abhören erheblich erschwert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Bis zu welchem Betrag ist bei der NFC-Zahlung keine PIN-Eingabe erforderlich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bis 10 €</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Bis 15 €</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Bis 20 € / 50 € (je nach Einstellung)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bis 100 €</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei NFC-Zahlungen bis 20 € bzw. 50 € (je nach Kartenkonfiguration) ist keine PIN-Eingabe erforderlich. Bei höheren Beträgen muss zusätzlich die PIN eingegeben werden.</div>
+    <div class="feedback err">&#10008; Falsch. Die PIN-freie NFC-Zahlung gilt bis zu 20 € oder 50 € (bankenabhängige Einstellung). Bei höheren Beträgen ist die PIN-Eingabe Pflicht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Wie lange dauert eine NFC-Zahlung im Vergleich zur herkömmlichen Girocard-Zahlung mit PIN?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> NFC dauert 30 Sekunden, Girocard mit PIN 45 Sekunden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> NFC dauert ca. 11 Sekunden, Girocard mit PIN ca. 22 Sekunden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Beide Verfahren sind gleich schnell</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> NFC dauert 5 Sekunden, Girocard mit PIN 10 Sekunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! NFC-Zahlungen dauern durchschnittlich 11 Sekunden, während eine herkömmliche Girocard-Zahlung mit PIN sowie Barzahlung jeweils ca. 22 Sekunden benötigen.</div>
+    <div class="feedback err">&#10008; Falsch. Laut Präsentation dauert NFC ca. 11 Sekunden, die Girocard-Zahlung mit PIN ca. 22 Sekunden – NFC ist also etwa doppelt so schnell.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was ergab die Allensbach-Studie (2017) zum Besitz von Girocards in Deutschland?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 75 % der Bevölkerung besitzen eine Girocard</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 85 % der Bevölkerung besitzen eine Girocard</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 92 % der Bevölkerung besitzen eine Girocard</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 98 % der Bevölkerung besitzen eine Girocard</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Allensbach-Studie (2017) belegt: 92 % der Bevölkerung in Deutschland besitzen eine Girocard. Bei den 30- bis 44-Jährigen überwiegt erstmals die Kartenzahlung gegenüber Bargeld.</div>
+    <div class="feedback err">&#10008; Falsch. Laut Allensbach-Studie besitzen 92 % der Bevölkerung eine Girocard. Sie ist damit das meistverbreitete Zahlungsinstrument in Deutschland.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welcher Anteil der Girocard-Inhaber nutzt NFC bereits oder plant, es zu nutzen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 20 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 35 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 48 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 67 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! 48 % der Girocard-Inhaber nutzen NFC bereits oder planen es. Besonders bei den 16- bis 44-Jährigen sind 67 % gegenüber kontaktlosem Bezahlen aufgeschlossen.</div>
+    <div class="feedback err">&#10008; Falsch. 48 % der Girocard-Inhaber nutzen NFC bereits oder planen es. Die Gruppe der über 60-Jährigen ist mit 29 % Nutzern deutlich skeptischer.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche vier Verwendungsmöglichkeiten bietet die Girocard laut Präsentation?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Onlinezahlung, Lastschrift, Kreditfunktion, Bargeldabhebung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bargeldabhebung, Electronic Cash, GeldKarte, NFC-Zahlung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Überweisung, Dauerauftrag, Lastschrift, Bargeld</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> PayPal, Apple Pay, Google Pay, Bargeldabhebung</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die vier Verwendungsmöglichkeiten der Girocard sind: 1. Bargeldabhebung am Automaten, 2. Electronic Cash am POS, 3. GeldKarte (Kleingeldspeicher), 4. NFC-Zahlung (kontaktlos).</div>
+    <div class="feedback err">&#10008; Falsch. Die vier Verwendungsmöglichkeiten der Girocard laut Präsentation sind: Bargeldabhebung, Electronic Cash, GeldKarte und NFC-Zahlung. Im Onlineshop ist sie nicht einsetzbar.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Warum trägt beim Lastschriftverfahren mit Girocard der Händler das volle Risiko?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Weil die Bank keine Gebühren erstattet</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Weil keine Online-Prüfung stattfindet und daher nicht sichergestellt ist, dass das Konto des Kunden gedeckt ist</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Weil der Kunde die Zahlung jederzeit stornieren kann</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Weil keine Unterschrift des Kunden vorliegt</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Da beim Lastschriftverfahren keine Verbindung zur Autorisierungszentrale aufgebaut wird, kann nicht geprüft werden, ob das Konto gedeckt ist. Das Ausfallrisiko liegt damit vollständig beim Händler.</div>
+    <div class="feedback err">&#10008; Falsch. Das Risiko liegt beim Händler, weil keine Online-Prüfung der Kontodeckung erfolgt. Es gibt keine Zahlungsgarantie, wie sie beim Electronic Cash durch die Bankverbindung gegeben wird.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welcher Chip-Standard macht die Girocard fälschungssicher und ermöglicht verschlüsselte Kommunikation mit dem Terminal?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> RFID-Chip</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> NFC-Chip</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> EMV-Chip</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> SIM-Chip</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der EMV-Chip (benannt nach Eurocard, MasterCard, Visa) enthält ein eigenes Betriebssystem, ist fälschungssicher und kommuniziert verschlüsselt mit dem POS-Terminal.</div>
+    <div class="feedback err">&#10008; Falsch. Der EMV-Chip ist der Standard, der die Girocard fälschungssicher macht. Er enthält ein eigenes Betriebssystem und kommuniziert verschlüsselt mit dem Terminal.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Wie unterscheiden sich Girocard und Kreditkarte beim Online-Einsatz?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Beide sind im Online-Handel einsetzbar</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Girocard ist im Online-Handel bevorzugt, die Kreditkarte nur im stationären Handel</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die Girocard ist im Online-Handel nicht einsetzbar, die Kreditkarte hingegen weltweit im E-Commerce</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Beide sind nur im Ausland online einsetzbar</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Girocard kann nicht im Onlineshop eingesetzt werden. Kreditkarten (Visa, MasterCard) sind weltweit im E-Commerce nutzbar – das ist ein fundamentaler Unterschied für E-Commerce-Kaufleute.</div>
+    <div class="feedback err">&#10008; Falsch. Die Girocard ist im Online-Handel nicht einsetzbar. Kreditkarten sind weltweit im E-Commerce akzeptiert. In Deutschland gibt es über 100 Mio. Girocards, aber nur ca. 40 Mio. Kreditkarten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche Aussage über Sicherheitsmerkmale der Girocard ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Nach einem Diebstahl kann die Sperrhotline nur tagsüber erreicht werden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Das Ausgabenlimit ist fest und kann nicht individuell angepasst werden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Drei Fehlversuche bei der PIN-Eingabe führen zur automatischen Kartensperre; die Sperrhotline ist unter 116 116 erreichbar</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> NFC-Zahlungen sind bis 500 € ohne PIN möglich</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Drei falsche PIN-Eingaben führen zur Kartensperre. Bei Verlust oder Diebstahl kann die Karte rund um die Uhr über die Sperrhotline 116 116 gesperrt werden.</div>
+    <div class="feedback err">&#10008; Falsch. Bei drei Fehlversuchen der PIN-Eingabe wird die Karte gesperrt. Die Sperrhotline 116 116 ist 24/7 erreichbar. Das Ausgabenlimit ist individuell einstellbar, und NFC ohne PIN gilt nur bis ca. 25/50 €.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div id="result-card">
+    <div class="result-circle" id="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#8635; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>Tag 5 &nbsp;|&nbsp; Lernfeld 3: 3.5 Zahlungen mit der Girocard &nbsp;|&nbsp; &copy; Can Siebert &amp; Hamzah Meyer</footer>
+<script>
+const cards = document.querySelectorAll('.q-card');
+const dotsContainer = document.getElementById('q-dots');
+const progressFill = document.getElementById('progress-fill');
+const scoreDisplay = document.getElementById('score-display');
+let current = 0, correct = 0, answered = 0;
+const state = Array(cards.length).fill(null);
+
+cards.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.addEventListener('click', () => jumpTo(i));
+  dotsContainer.appendChild(d);
+});
+
+function getDots() { return dotsContainer.querySelectorAll('.dot'); }
+
+function jumpTo(n) {
+  cards[current].classList.remove('active');
+  getDots()[current].classList.remove('current');
+  current = n;
+  cards[current].classList.add('active');
+  getDots()[current].classList.add('current');
+}
+
+cards.forEach((card, idx) => {
+  card.querySelectorAll('.opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (state[idx] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      state[idx] = isCorrect;
+      if (isCorrect) { correct++; answered++; } else { answered++; }
+      card.querySelectorAll('.opt').forEach(o => {
+        if (o.dataset.correct === 'true') o.classList.add('correct');
+        else o.classList.add(o === opt ? 'wrong' : 'disabled');
+      });
+      card.querySelector('.feedback.ok').classList.toggle('show', isCorrect);
+      card.querySelector('.feedback.err').classList.toggle('show', !isCorrect);
+      const dot = getDots()[idx];
+      dot.classList.remove('current');
+      dot.classList.add(isCorrect ? 'answered-ok' : 'answered-err');
+      progressFill.style.width = (answered / cards.length * 100) + '%';
+      scoreDisplay.textContent = correct + ' / ' + answered;
+    });
+  });
+  card.querySelector('.btn-next').addEventListener('click', () => {
+    if (idx + 1 < cards.length) jumpTo(idx + 1);
+    else showResult();
+  });
+});
+
+function showResult() {
+  cards.forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round(correct / cards.length * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  let grade, msg;
+  if (pct >= 85) { grade = 'excellent'; msg = 'Hervorragend! Du kennst die Girocard sehr gut.'; }
+  else if (pct >= 70) { grade = 'good'; msg = 'Gut gemacht! Einige Details kannst du noch festigen.'; }
+  else if (pct >= 50) { grade = 'ok'; msg = 'Nicht schlecht – wiederhole die Inhalte zur Girocard.'; }
+  else { grade = 'low'; msg = 'Noch Übungsbedarf – schau dir die Präsentation nochmals an.'; }
+  circle.className = 'result-circle ' + grade;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-sub').textContent = correct + ' von ' + cards.length + ' Fragen richtig beantwortet.';
+}
+
+function restartQuiz() {
+  correct = 0; answered = 0;
+  state.fill(null);
+  progressFill.style.width = '0%';
+  scoreDisplay.textContent = '0 / 0';
+  document.getElementById('result-card').classList.remove('show');
+  cards.forEach((card, i) => {
+    card.querySelectorAll('.opt').forEach(o => o.className = 'opt');
+    card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+    card.classList.remove('active');
+  });
+  getDots().forEach((d, i) => { d.className = 'dot' + (i === 0 ? ' current' : ''); });
+  current = 0;
+  cards[0].classList.add('active');
+}
+</script>
+</body>
+</html>

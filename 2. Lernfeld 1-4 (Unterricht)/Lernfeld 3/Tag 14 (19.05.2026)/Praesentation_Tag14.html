@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.14 Die Geschäftsfähigkeit – Tag 14</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none}#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100}#viewport{width:100vw;height:100vh;position:relative;overflow:hidden}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg)}.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit-left{opacity:0;transform:translateX(-60px)}.slide.cover{justify-content:center;text-align:center}.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px}.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px}.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8}.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start}.slide-header .icon{font-size:1.6rem}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap}.content{width:100%;flex:1;overflow:hidden}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px}.cards{display:grid;gap:14px;width:100%}.cols2{grid-template-columns:1fr 1fr}.cols3{grid-template-columns:1fr 1fr 1fr}.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow)}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px}.card.gold::before{background:var(--accent)}.card.green::before{background:var(--success)}.card.red::before{background:var(--danger)}.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6}.card ul{padding-left:16px}.card li{margin-bottom:3px}.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px}.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent)}.highlight.green{background:var(--success-light);border-left-color:var(--success)}.highlight.red{background:var(--danger-light);border-left-color:var(--danger)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}.badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:4px}.badge.gold{background:var(--accent)}.badge.green{background:var(--success)}.badge.red{background:var(--danger)}table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border)}.sum-table tr:nth-child(even) td{background:var(--bg-alt)}.sum-table tr:hover td{background:var(--primary-light)}.step-flow{display:flex;align-items:stretch;gap:0;width:100%;margin-top:8px}.step-box{flex:1;background:var(--bg-card);border-radius:10px;padding:14px 12px;text-align:center;font-size:.8rem;border:1px solid var(--border);box-shadow:var(--shadow)}.step-box h4{color:var(--primary);font-size:.82rem;margin-bottom:4px}.step-box p{color:var(--text-muted);font-size:.72rem;line-height:1.4}.step-arrow{display:flex;align-items:center;color:var(--primary);font-size:1.2rem;padding:0 4px}.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px}.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem}.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow)}#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg)}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s}#nav button:hover{background:var(--primary-light)}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center}#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both}.slide.active .slide-header{animation-delay:.05s}.slide.active .content{animation-delay:.15s}#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px}#grid-overlay.visible{display:block}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary)}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px}#grid-header button:hover{background:var(--bg-alt)}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px)}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light)}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1 -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 14</div>
+    <h1>3.14 Die Gesch&auml;ftsf&auml;higkeit<br>der Gesch&auml;ftspartner</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 507 – 512</div>
+    <div class="cover-meta">Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>19. Mai 2026<br><br><strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong></div>
+  </section>
+
+  <!-- FOLIE 2 -->
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 20</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Rechtsf&auml;higkeit definieren</strong> – den Unterschied zwischen nat&uuml;rlichen und juristischen Personen erkl&auml;ren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Drei Stufen der Gesch&auml;ftsf&auml;higkeit</strong> – gesch&auml;ftsunf&auml;hig, beschr&auml;nkt gesch&auml;ftsf&auml;hig und voll gesch&auml;ftsf&auml;hig unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Taschengeldparagraph anwenden</strong> – &sect; 110 BGB auf Praxisf&auml;lle anwenden k&ouml;nnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Einwilligung des gesetzlichen Vertreters</strong> – schwebend unwirksame Rechtsgesch&auml;fte erkl&auml;ren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>E-Commerce-Besonderheiten</strong> – Probleme der Gesch&auml;ftsf&auml;higkeit bei Onlinek&auml;ufen beurteilen.</div></div>
+      <div class="highlight" style="margin-top:12px"><strong>Leitfrage:</strong> Wer darf rechtswirksam Vertr&auml;ge abschlie&szlig;en und welche Besonderheiten gelten f&uuml;r Minderj&auml;hrige im E-Commerce?</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3 -->
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#9878;</div><h2>Rechtsf&auml;higkeit</h2><span class="tag">Folie 3 / 20</span></div>
+    <div class="content">
+      <div class="highlight"><strong>Definition:</strong> Unter <strong>Rechtsf&auml;higkeit</strong> versteht das Gesetz die F&auml;higkeit einer Person, Tr&auml;ger von Rechten und Pflichten zu sein.</div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128100; Nat&uuml;rliche Personen</h3>
+          <ul><li><strong>Beginn:</strong> Vollendung der Geburt</li><li><strong>Ende:</strong> Tod</li><li>Beispiel: Jeder Mensch</li></ul>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; Juristische Personen</h3>
+          <ul><li><strong>Beginn:</strong> Gr&uuml;ndung (z.&thinsp;B. AG: Eintragung ins Handelsregister)</li><li><strong>Ende:</strong> Aufl&ouml;sung (z.&thinsp;B. L&ouml;schung im Handelsregister)</li><li>Beispiele: Vereine, AGs, GmbHs, Genossenschaften</li></ul>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px"><strong>Wichtig:</strong> Rechtsf&auml;higkeit &ne; Gesch&auml;ftsf&auml;higkeit! Ein Neugeborenes ist rechtsf&auml;hig, aber nicht gesch&auml;ftsf&auml;hig.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4 -->
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Die drei Stufen der Gesch&auml;ftsf&auml;higkeit</h2><span class="tag">Folie 4 / 20</span></div>
+    <div class="content">
+      <div class="highlight"><strong>Definition:</strong> Unter <strong>Gesch&auml;ftsf&auml;higkeit</strong> versteht das Gesetz die F&auml;higkeit von Personen, Rechtsgesch&auml;fte rechtswirksam abzuschlie&szlig;en.</div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card red">
+          <h3>&#10060; Gesch&auml;ftsunf&auml;hig</h3>
+          <p>Personen bis zur Vollendung des <strong>7. Lebensjahres</strong> sowie dauernd Geisteskranke.</p>
+          <p style="margin-top:6px">Willenserkl&auml;rungen sind <strong>nichtig</strong>.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#9888; Beschr&auml;nkt gesch&auml;ftsf&auml;hig</h3>
+          <p>Minderj&auml;hrige vom vollendeten <strong>7. bis 18. Lebensjahr</strong>.</p>
+          <p style="margin-top:6px">Willenserkl&auml;rungen sind bis auf Ausnahmen <strong>schwebend unwirksam</strong>.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Voll gesch&auml;ftsf&auml;hig</h3>
+          <p>Personen, die das <strong>18. Lebensjahr</strong> vollendet haben.</p>
+          <p style="margin-top:6px">Willenserkl&auml;rungen sind <strong>uneingeschr&auml;nkt</strong> rechtswirksam.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5 -->
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#10060;</div><h2>Gesch&auml;ftsunf&auml;higkeit</h2><span class="tag">Folie 5 / 20</span></div>
+    <div class="content">
+      <div class="highlight red"><strong>Gesch&auml;ftsunf&auml;hig</strong> sind: Kinder unter 7 Jahren und dauernd geisteskranke Personen. Ihre Willenserkl&auml;rungen sind <strong>nichtig</strong> (von Anfang an ung&uuml;ltig).</div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card red">
+          <h3>&#128118; Kinder unter 7 Jahren</h3>
+          <p>K&ouml;nnen <strong>keine</strong> Rechtsgesch&auml;fte abschlie&szlig;en. Auch ein &bdquo;Kauf&ldquo; von S&uuml;&szlig;igkeiten ist rechtlich <strong>nichtig</strong> – der gesetzliche Vertreter m&uuml;sste zustimmen.</p>
+        </div>
+        <div class="card red">
+          <h3>&#128567; Dauernd Geisteskranke</h3>
+          <p>Personen, die aufgrund einer dauerhaften psychischen Erkrankung nicht in der Lage sind, ihren Willen frei zu bestimmen.</p>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px"><strong>Praxis:</strong> Im Alltag werden Kleingesch&auml;fte von Kindern unter 7 Jahren meist geduldet (z.&thinsp;B. Kauf eines Br&ouml;tchens). Rechtlich sind sie aber nichtig.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6 -->
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#9888;</div><h2>Beschr&auml;nkte Gesch&auml;ftsf&auml;higkeit</h2><span class="tag">Folie 6 / 20</span></div>
+    <div class="content">
+      <div class="highlight gold">Beschr&auml;nkt gesch&auml;ftsf&auml;hig sind Personen, die mindestens 7, aber unter 18 Jahre alt sind. Sie d&uuml;rfen Rechtsgesch&auml;fte normalerweise nur mit <strong>Zustimmung des gesetzlichen Vertreters</strong> (Eltern, Vormund) abschlie&szlig;en.</div>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-top:14px;margin-bottom:8px"><strong>Ohne vorherige Einwilligung:</strong> Rechtsgesch&auml;fte sind <strong>schwebend unwirksam</strong>. Sie k&ouml;nnen durch nachtr&auml;gliche Genehmigung des gesetzlichen Vertreters wirksam werden.</p>
+      <div class="info-box">
+        <strong>Beispiel:</strong> Der 17-j&auml;hrige Jochen Reinhard kauft einen DVD-Rekorder, ohne seinen Vater gefragt zu haben. Der Verk&auml;ufer fragt den Vater sp&auml;ter. Stimmt der Vater zu = Kaufvertrag. Stimmt er nicht zu = kein Vertrag.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7 -->
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#128176;</div><h2>Ausnahmen: Wann Minderj&auml;hrige allein handeln d&uuml;rfen</h2><span class="tag">Folie 7 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#127873; Nur rechtlicher Vorteil</h3>
+          <p>Willenserkl&auml;rungen, die <strong>nur rechtliche Vorteile</strong> bringen (z.&thinsp;B. ein Geschenk annehmen).</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Taschengeldparagraph (&sect; 110 BGB)</h3>
+          <p>Vertr&auml;ge, die mit dem <strong>Taschengeld</strong> erf&uuml;llt werden k&ouml;nnen.</p>
+          <p style="margin-top:6px"><strong>Beispiel:</strong> Die 15-j&auml;hrige Sabine kauft eine CD f&uuml;r 12,90 &euro; von ihrem Taschengeld.</p>
+        </div>
+        <div class="card">
+          <h3>&#128188; Im Rahmen des Arbeitsvertrags</h3>
+          <p>Rechtsgesch&auml;fte im Rahmen eines <strong>Arbeitsvertrags</strong>, dem der gesetzliche Vertreter zugestimmt hat.</p>
+          <p style="margin-top:6px"><strong>Beispiel:</strong> 17-j&auml;hriger Verk&auml;ufer darf Kunden bedienen.</p>
+        </div>
+        <div class="card green">
+          <h3>&#127970; Selbstst&auml;ndiger Gesch&auml;ftsbetrieb</h3>
+          <p>Mit Erlaubnis des Vormundschaftsgerichts darf ein Minderj&auml;hriger einen Betrieb f&uuml;hren und <strong>alle Gesch&auml;fte</strong> abschlie&szlig;en, die dieser Betrieb mit sich bringt.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8 -->
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#128176;</div><h2>Der Taschengeldparagraph im Detail (&sect; 110 BGB)</h2><span class="tag">Folie 8 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green"><strong>&sect; 110 BGB:</strong> Ein von einem Minderj&auml;hrigen ohne Zustimmung des gesetzlichen Vertreters geschlossener Vertrag gilt als <strong>von Anfang an wirksam</strong>, wenn der Minderj&auml;hrige die vertragsgem&auml;&szlig;e Leistung mit Mitteln bewirkt, die ihm zu diesem Zweck oder zur <strong>freien Verf&uuml;gung</strong> &uuml;berlassen worden sind.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Taschengeld muss <strong>ausreichen</strong>, um den vollen Kaufpreis zu bezahlen</li>
+          <li>Gilt <strong>nicht</strong> f&uuml;r Ratenzahlungsgesch&auml;fte</li>
+          <li>Gilt <strong>nicht</strong> f&uuml;r laufende Verpflichtungen (z.&thinsp;B. Abo)</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Wirksam</h3>
+          <ul><li>Sandra (14) und Thomas (15) kaufen ein gebrauchtes Smartphone f&uuml;r 20,00 &euro; von ihrem Taschengeld</li></ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Nicht wirksam</h3>
+          <ul><li>Die 16-j&auml;hrige Antonia kauft ein Mountainbike f&uuml;r 4.389,00 &euro; im Internet – &uuml;bersteigt das Taschengeld</li></ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9 -->
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#9989;</div><h2>Unbeschr&auml;nkte (volle) Gesch&auml;ftsf&auml;higkeit</h2><span class="tag">Folie 9 / 20</span></div>
+    <div class="content">
+      <div class="highlight green"><strong>Unbeschr&auml;nkt gesch&auml;ftsf&auml;hig</strong> sind nat&uuml;rliche Personen, die das <strong>18. Lebensjahr</strong> vollendet haben. Ihre Willenserkl&auml;rungen sind voll rechtswirksam.</div>
+      <div class="info-box" style="margin-top:14px">
+        <strong>Ausnahme:</strong> Kann ein Vollj&auml;hriger seine Angelegenheiten aufgrund einer k&ouml;rperlichen, psychischen Krankheit, geistigen oder seelischen Behinderung ganz oder teilweise nicht erledigen, so bestellt das Vormundschaftsgericht einen <strong>Betreuer</strong>, der ihn gerichtlich und au&szlig;ergerichtlich vertritt.
+      </div>
+      <div class="highlight" style="margin-top:10px"><strong>Merke:</strong> Ein Betreuer wird nur bestellt, wenn die Person tats&auml;chlich nicht in der Lage ist, ihre Angelegenheiten zu regeln. Betreuung bedeutet <strong>nicht automatisch</strong> Gesch&auml;ftsunf&auml;higkeit.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10 -->
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>&Uuml;bersicht: Die drei Stufen</h2><span class="tag">Folie 10 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Stufe</th><th>Alter / Personenkreis</th><th>Rechtsfolge</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge red">Gesch&auml;ftsunf&auml;hig</span></td><td>Kinder unter 7 Jahren, dauernd Geisteskranke</td><td>Willenserkl&auml;rungen sind <strong>nichtig</strong></td></tr>
+          <tr><td><span class="badge gold">Beschr&auml;nkt gesch&auml;ftsf&auml;hig</span></td><td>Minderj&auml;hrige (7–17 Jahre)</td><td>Willenserkl&auml;rungen sind <strong>schwebend unwirksam</strong> (Ausnahmen beachten)</td></tr>
+          <tr><td><span class="badge green">Voll gesch&auml;ftsf&auml;hig</span></td><td>Ab 18 Jahren</td><td>Willenserkl&auml;rungen sind <strong>voll wirksam</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:14px"><strong>Ausnahmen bei beschr&auml;nkter GF:</strong> Nur rechtlicher Vorteil, Taschengeldparagraph (&sect; 110 BGB), Arbeitsvertrag mit Zustimmung, Selbstst&auml;ndiger Betrieb mit Erlaubnis.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11 -->
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#128187;</div><h2>Onlinek&auml;ufe und Gesch&auml;ftsf&auml;higkeit</h2><span class="tag">Folie 11 / 20</span></div>
+    <div class="content">
+      <div class="highlight gold"><strong>Problem:</strong> Im Onlineshop kann der Betreiber den Jugendlichen <strong>nicht sehen</strong> und nicht direkt nach dem Ausweis fragen. Die gleichen Regeln der Gesch&auml;ftsf&auml;higkeit gelten aber online wie offline.</div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128100; Verantwortung des Jugendlichen</h3>
+          <ul>
+            <li>Muss sein Alter <strong>nicht</strong> von sich aus angeben</li>
+            <li>Hat keine Pflicht, auf sein Alter hinzuweisen</li>
+            <li>Webshop hat keine vertraglichen Anspr&uuml;che, auch bei falscher Altersangabe</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; Verantwortung des H&auml;ndlers</h3>
+          <ul>
+            <li>Bei Unsicherheit: <strong>Genehmigung des gesetzlichen Vertreters</strong> einholen</li>
+            <li>Bei jugendschutzrelevanten Produkten: <strong>Altersverifikation</strong> erforderlich</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:10px"><strong>Beispiel:</strong> Die 8-j&auml;hrige Sara Kind hat 800,00 &euro; gespart und bestellt einen Laptop online. Das Versandunternehmen holt vorsichtshalber die Zustimmung der Eltern per E-Mail ein.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12 -->
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#128274;</div><h2>Altersverifikation im E-Commerce</h2><span class="tag">Folie 12 / 20</span></div>
+    <div class="content">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px">F&uuml;r jugendschutzrelevante Produkte (Alkohol, Tabak, nicht jugendfreie Inhalte) gibt es verschiedene Verfahren:</p>
+      <table class="sum-table">
+        <thead><tr><th>Verfahren</th><th>Beschreibung</th><th>Bewertung</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Postident</strong></td><td>Kunde geht mit Ausweis zur Postfiliale</td><td>Sicher, aber lange Wartezeit</td></tr>
+          <tr><td><strong>Postident mit eigenh&auml;ndiger &Uuml;bergabe</strong></td><td>Alterspr&uuml;fung bei Auslieferung</td><td>Rechtlich am sichersten</td></tr>
+          <tr><td><strong>Kopie Personalausweis</strong></td><td>Ausweis-Upload bei Anmeldung</td><td>Unterschiedlich bewertet von Gerichten</td></tr>
+          <tr><td><strong>Giropay-ID</strong></td><td>Altersnachweis &uuml;ber Onlinebanking</td><td>Schnell und sicher</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13 -->
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 1: Gesch&auml;ftsf&auml;higkeit</h2><span class="tag">Folie 13 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe a)</h3>
+          <p>Der 17-j&auml;hrige Hans Vollmer erh&auml;lt von seinem Vater 500,00 &euro; f&uuml;r ein Notebook. Der H&auml;ndler besteht auf eine Einverst&auml;ndniserkl&auml;rung des Vaters. <strong>Warum?</strong></p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe b)</h3>
+          <p>Sandra (14) und Thomas (15) kaufen ein gebrauchtes Smartphone f&uuml;r 20,00 &euro;. Der Vater will den Kauf r&uuml;ckg&auml;ngig machen. <strong>Wer hat recht?</strong></p>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="highlight green"><strong>L&ouml;sung a):</strong> Hans ist beschr&auml;nkt gesch&auml;ftsf&auml;hig. 500 &euro; &uuml;bersteigt vermutlich das Taschengeld. Der H&auml;ndler braucht die Genehmigung, auch wenn das Geld vom Vater stammt – es kommt auf den <strong>Zweck</strong> der &Uuml;berlassung an.</div>
+        <div class="highlight gold"><strong>L&ouml;sung b):</strong> Der H&auml;ndler kann die R&uuml;cknahme verweigern. &sect; 110 BGB: Der Kaufpreis von 20,00 &euro; konnte mit dem <strong>Taschengeld</strong> bezahlt werden – der Vertrag ist <strong>wirksam</strong>.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14 -->
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 2: Fallbeispiele</h2><span class="tag">Folie 14 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Fall 1</h3>
+          <p>Der 9-j&auml;hrige J&uuml;rgen bekommt eine Playstation von seiner Tante geschenkt. Seine Eltern verbieten die Annahme. <strong>Sind sie dazu berechtigt?</strong></p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Fall 2</h3>
+          <p>Markus (16) bestellt ein Notebook f&uuml;r 698,00 &euro; im Onlineshop. <strong>Wie sollte sich der Elektronikmarkt verhalten?</strong></p>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="highlight"><strong>L&ouml;sung Fall 1:</strong> Nein. Die Annahme eines Geschenks bringt <strong>nur rechtliche Vorteile</strong>. J&uuml;rgen darf das Geschenk annehmen, auch ohne Zustimmung der Eltern.</div>
+        <div class="highlight gold"><strong>L&ouml;sung Fall 2:</strong> Der Elektronikmarkt sollte die <strong>Genehmigung der Eltern</strong> einholen, da 698 &euro; das &uuml;bliche Taschengeld &uuml;bersteigt. Der Vertrag ist schwebend unwirksam.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15 -->
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 3: Auszubildende im Verkauf</h2><span class="tag">Folie 15 / 20</span></div>
+    <div class="content">
+      <div class="info-box">
+        <strong>Fallbeispiel:</strong> Die 17-j&auml;hrige Agathe Kwasny ist Auszubildende im Verkauf der Exclusiva GmbH. Sie best&auml;tigt die Bestellung einer Kundin &uuml;ber zehn Damenshirts mit einer Auftragsbestätigung per E-Mail. <strong>Darf sie das?</strong>
+      </div>
+      <div class="highlight green" style="margin-top:14px">
+        <strong>L&ouml;sung:</strong> Ja! Agathe handelt im Rahmen ihres <strong>Ausbildungsvertrags</strong>, dem ihre Eltern zugestimmt haben. Sie darf im Rahmen des Arbeitsverh&auml;ltnisses Rechtsgesch&auml;fte abschlie&szlig;en, z.&thinsp;B. Waren verkaufen, Vereinbarungen &uuml;ber Arbeitszeit treffen usw.
+      </div>
+      <div class="highlight gold" style="margin-top:10px">
+        <strong>Aber:</strong> Private Gesch&auml;fte (z.&thinsp;B. eine teure Stereoanlage kaufen) fallen <strong>nicht</strong> unter diese Ausnahme und erfordern die Zustimmung der Eltern.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16 -->
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 4: Britta K&ouml;rber</h2><span class="tag">Folie 16 / 20</span></div>
+    <div class="content">
+      <div class="info-box">Britta K&ouml;rber arbeitet in der Abteilung &bdquo;Unterhaltungselektronik&ldquo;. Heute kommen folgende Kunden:</div>
+      <table class="sum-table" style="margin-top:10px">
+        <thead><tr><th>Kunde</th><th>Wunsch</th><th>Empfehlung</th></tr></thead>
+        <tbody>
+          <tr><td>17-j&auml;hriger Sch&uuml;ler</td><td>Laserdrucker, 534,00 &euro;</td><td><strong>Genehmigung der Eltern einholen</strong> – &uuml;bersteigt Taschengeld</td></tr>
+          <tr><td>6-j&auml;hriges M&auml;dchen</td><td>CD, 7,00 &euro; als Geschenk f&uuml;r Mutter</td><td><strong>Gesch&auml;ftsunf&auml;hig</strong> – Vertrag nichtig, praktisch dulden</td></tr>
+          <tr><td>12-j&auml;hriger Junge</td><td>DVD-Rohlinge, 5,60 &euro;</td><td><strong>&sect; 110 BGB</strong> – mit Taschengeld bezahlbar, wirksam</td></tr>
+          <tr><td>Ca. 30-j&auml;hriger Mann</td><td>Fernsehger&auml;t, 560,00 &euro;</td><td><strong>Voll gesch&auml;ftsf&auml;hig</strong> – Vertrag ohne Weiteres wirksam</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17 -->
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Was wir heute gelernt haben</h2><span class="tag">Folie 17 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green"><h3>&#9989; Rechtsf&auml;higkeit</h3><p>F&auml;higkeit, Tr&auml;ger von Rechten und Pflichten zu sein. Nat&uuml;rliche und juristische Personen.</p></div>
+        <div class="card green"><h3>&#9989; Drei Stufen</h3><p>Gesch&auml;ftsunf&auml;hig (&lt; 7), beschr&auml;nkt (7–17), voll (ab 18).</p></div>
+        <div class="card green"><h3>&#9989; Taschengeldparagraph</h3><p>&sect; 110 BGB: Wirksamer Vertrag, wenn mit Taschengeld bezahlbar.</p></div>
+        <div class="card green"><h3>&#9989; Schwebende Unwirksamkeit</h3><p>Nachtr&auml;gliche Genehmigung durch Eltern macht Vertrag wirksam.</p></div>
+        <div class="card green"><h3>&#9989; Ausnahmen</h3><p>Rechtlicher Vorteil, Arbeitsvertrag, selbstst&auml;ndiger Betrieb.</p></div>
+        <div class="card green"><h3>&#9989; E-Commerce</h3><p>Gleiche Regeln online – Altersverifikation als L&ouml;sung.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18 -->
+  <section class="slide" data-index="18">
+    <div class="slide-header"><div class="icon">&#128172;</div><h2>Diskussionsfragen</h2><span class="tag">Folie 18 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Online-Altersproblematik</h3><p>Wie kann ein Webshop sicherstellen, dass keine Minderj&auml;hrigen ohne Genehmigung hochpreisige Waren kaufen?</p></div>
+        <div class="card gold"><h3>2. Taschengeld-Grenze</h3><p>Ab welchem Betrag w&uuml;rden Sie als H&auml;ndler die Genehmigung der Eltern einholen?</p></div>
+        <div class="card"><h3>3. In-App-K&auml;ufe</h3><p>Ein 10-j&auml;hriger kauft f&uuml;r 200 &euro; In-App-K&auml;ufe in einem Spiel. Sind die Eltern zur Zahlung verpflichtet?</p></div>
+        <div class="card gold"><h3>4. Jugendschutz</h3><p>Welche Produkte in Ihrem Ausbildungsbetrieb erfordern eine Altersverifikation?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19 -->
+  <section class="slide" data-index="19">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 19 / 20</span></div>
+    <div class="content">
+      <div class="ref-entry">Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.</div>
+      <div class="ref-entry">Br&auml;utigam, P. (2020). <em>E-Commerce: Rechtshandbuch</em>. C.H.Beck.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">K&ouml;hler, H. &amp; Bornkamm, J. (2023). <em>Gesetz gegen den unlauteren Wettbewerb: UWG</em> (41. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Palandt, O. (2023). <em>B&uuml;rgerliches Gesetzbuch: BGB</em> (82. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Spindler, G. &amp; Schuster, F. (2019). <em>Recht der elektronischen Medien</em> (4. Aufl.). C.H.Beck.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20 -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 14</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.14 Die Gesch&auml;ftsf&auml;higkeit der Gesch&auml;ftspartner</div>
+    <div class="cover-meta">N&auml;chstes Thema: <strong>3.15 Die Allgemeinen Gesch&auml;ftsbedingungen</strong><br><br>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten</div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folien&uuml;bersicht</span><button onclick="toggleGrid()">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev">&#8592;</button><span id="slide-counter">1 / 20</span><button id="btn-next">&#8594;</button><button id="btn-grid">&#8862;</button></div>
+<div id="footer"><span>Tag 14 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%'}document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid()});let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1)}});function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible')}function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid()};c.appendChild(d)})}document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 7 – Webshop Name und Adresse Teil 1 | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div class="slides-wrapper" id="slides">
+
+<!-- SLIDE 1: Cover -->
+<div class="slide slide-cover active" data-index="0">
+  <div class="cover-tag">Lernfeld 1 &nbsp;|&nbsp; E-Commerce Ausbildung &nbsp;|&nbsp; Tag 7</div>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs>
+      <linearGradient id="globeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#1e4db7"/>
+        <stop offset="100%" stop-color="#3a7bd5"/>
+      </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="50" fill="url(#globeGrad)" opacity="0.9"/>
+    <ellipse cx="60" cy="60" rx="22" ry="50" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="1.5"/>
+    <ellipse cx="60" cy="60" rx="50" ry="50" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/>
+    <line x1="10" y1="60" x2="110" y2="60" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/>
+    <line x1="60" y1="10" x2="60" y2="110" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/>
+    <ellipse cx="60" cy="60" rx="38" ry="50" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+    <text x="60" y="67" text-anchor="middle" fill="white" font-size="22" font-weight="900" font-family="Segoe UI">.de</text>
+  </svg>
+  <div class="cover-title">Webshop Name &amp; Adresse</div>
+  <div class="cover-subtitle">Abschnitt 1.8 &nbsp;|&nbsp; Teil 1 &nbsp;|&nbsp; Buchseiten 76–83</div>
+  <div class="cover-line"></div>
+  <div style="font-size:15px;color:var(--text-gray);animation:fadeInDown 0.8s ease 0.7s both">
+    Domains &amp; URLs &bull; Webhosting &bull; SSL/HTTPS &bull; Impressumspflicht
+  </div>
+  <div class="cover-meta">
+    Can Siebert &amp; Hamzah Meyer &nbsp;&bull;&nbsp; 2026 &nbsp;&bull;&nbsp; Lernfeld 1, Tag 7
+  </div>
+</div>
+
+<!-- SLIDE 2: Inhaltsverzeichnis -->
+<div class="slide slide-content" data-index="1">
+  <div class="slide-title">Inhaltsverzeichnis</div>
+  <div class="slide-subtitle">Themenübersicht – Tag 7</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span>Lernziele des Tages</div>
+    <div class="toc-item"><span class="toc-num">02</span>Was ist eine Domain?</div>
+    <div class="toc-item"><span class="toc-num">03</span>Aufbau einer URL</div>
+    <div class="toc-item"><span class="toc-num">04</span>Top-Level-Domains (TLDs)</div>
+    <div class="toc-item"><span class="toc-num">05</span>DENIC – Registrierung</div>
+    <div class="toc-item"><span class="toc-num">06</span>Markenrecht &amp; Domains</div>
+    <div class="toc-item"><span class="toc-num">07</span>Webhosting-Arten</div>
+    <div class="toc-item"><span class="toc-num">08</span>Shared vs. VPS</div>
+    <div class="toc-item"><span class="toc-num">09</span>Dedicated &amp; Cloud</div>
+    <div class="toc-item"><span class="toc-num">10</span>SSL / HTTPS</div>
+    <div class="toc-item"><span class="toc-num">11</span>Impressum §5 TMG</div>
+    <div class="toc-item"><span class="toc-num">12</span>Zusammenfassung &amp; Literatur</div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Lernziele -->
+<div class="slide slide-content" data-index="2">
+  <div class="slide-title">Lernziele</div>
+  <div class="slide-subtitle">Was du nach diesem Tag kannst</div>
+  <div class="obj-item"><div class="obj-icon">1</div>Den Aufbau einer URL erklären und die einzelnen Bestandteile benennen (Protokoll, Subdomain, SLD, TLD, Pfad).</div>
+  <div class="obj-item"><div class="obj-icon">2</div>Unterschiedliche TLD-Kategorien (ccTLD, gTLD, nTLD) mit Beispielen nennen und einordnen.</div>
+  <div class="obj-item"><div class="obj-icon">3</div>Den Prozess der Domain-Registrierung über die DENIC eG beschreiben.</div>
+  <div class="obj-item"><div class="obj-icon">4</div>Markenrechtliche Risiken bei der Domainnamen-Wahl identifizieren und vermeiden.</div>
+  <div class="obj-item"><div class="obj-icon">5</div>Die vier Webhosting-Arten (Shared, VPS, Dedicated, Cloud) vergleichen und situationsgerecht wählen.</div>
+  <div class="obj-item"><div class="obj-icon">6</div>Die Bedeutung von SSL/HTTPS für Sicherheit und Vertrauen erläutern.</div>
+  <div class="obj-item"><div class="obj-icon">7</div>Die Pflichtangaben eines Impressums nach §5 TMG aufzählen und rechtlich einordnen.</div>
+</div>
+
+<!-- SLIDE 4: SECTION – Domains & URLs -->
+<div class="slide slide-section" data-index="3">
+  <div class="section-number">01</div>
+  <div class="section-label">Kapitel 1</div>
+  <div class="section-title">Domains &amp; URLs</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Die Adresse deines Webshops im Internet</div>
+</div>
+
+<!-- SLIDE 5: Was ist eine Domain? -->
+<div class="slide slide-content" data-index="4">
+  <div class="slide-title">Was ist eine Domain?</div>
+  <div class="slide-subtitle">Grundlagen</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#127757; Definition</div>
+        <div class="card-body">Eine <span class="kterm">Domain</span> ist ein lesbarer Name, der eine IP-Adresse im Internet ersetzt. Sie wird über das <em>Domain Name System (DNS)</em> in numerische IP-Adressen aufgelöst (z.&nbsp;B. 93.184.216.34).</div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title">&#128279; Warum Domains?</div>
+        <div class="card-body">Menschen können sich Namen wie <em>amazon.de</em> besser merken als IP-Adressen. Domains sind außerdem <em>Markenzeichen</em> und schaffen Vertrauen bei Kunden.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="svg-center">
+        <svg width="280" height="180" viewBox="0 0 280 180">
+          <rect width="280" height="180" rx="12" fill="rgba(0,0,0,0.3)"/>
+          <!-- Browser bar -->
+          <rect x="10" y="10" width="260" height="36" rx="6" fill="rgba(0,0,0,0.08)"/>
+          <circle cx="30" cy="28" r="5" fill="#e74c3c"/>
+          <circle cx="46" cy="28" r="5" fill="#f39c12"/>
+          <circle cx="62" cy="28" r="5" fill="#27ae60"/>
+          <rect x="75" y="18" width="175" height="20" rx="4" fill="rgba(0,0,0,0.1)"/>
+          <text x="162" y="32" text-anchor="middle" fill="#82b1ff" font-size="11" font-family="Courier New">mein-shop.de</text>
+          <!-- Arrow -->
+          <text x="140" y="80" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="11" font-family="Segoe UI">DNS-Auflösung</text>
+          <line x1="140" y1="55" x2="140" y2="95" stroke="var(--accent)" stroke-width="2" marker-end="url(#arr)"/>
+          <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--accent)"/></marker></defs>
+          <!-- IP -->
+          <rect x="80" y="100" width="120" height="36" rx="6" fill="rgba(30,77,183,0.3)" stroke="rgba(30,77,183,0.5)" stroke-width="1"/>
+          <text x="140" y="123" text-anchor="middle" fill="#82b1ff" font-size="13" font-family="Courier New" font-weight="700">93.184.216.34</text>
+          <text x="140" y="158" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="10" font-family="Segoe UI">IP-Adresse des Webservers</text>
+        </svg>
+      </div>
+      <div class="info-box" style="margin-top:8px">&#128161; Das DNS funktioniert wie ein <em>Telefonbuch des Internets</em> – es übersetzt Namen in Adressen.</div>
+    </div>
+  </div>
+  <div class="citation">Tanenbaum, A. S., &amp; Wetherall, D. J. (2021). <em>Computer Networks</em> (6th ed.). Pearson. S. 612–618.</div>
+</div>
+
+<!-- SLIDE 6: Aufbau einer URL -->
+<div class="slide slide-content" data-index="5">
+  <div class="slide-title">Aufbau einer URL</div>
+  <div class="slide-subtitle">Uniform Resource Locator – Struktur</div>
+  <div class="url-diagram">
+    <span class="url-part url-protocol">https://</span><span class="url-part url-subdomain">www.</span><span class="url-part url-domain">mein-shop</span><span class="url-part url-tld">.de</span><span class="url-part url-path">/produkte/schuhe</span>
+  </div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#ff8a80"></div>Protokoll</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a8e6cf"></div>Subdomain</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#82b1ff"></div>Second-Level-Domain (SLD)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffe082"></div>Top-Level-Domain (TLD)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(0,0,0,0.2)"></div>Pfad / Ressource</div>
+  </div>
+  <div class="content-grid grid-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title">&#128274; Protokoll</div>
+      <div class="card-body"><span class="kterm">HTTP</span> (Hypertext Transfer Protocol) oder <span class="kterm">HTTPS</span> (verschlüsselt). Für E-Commerce ist HTTPS Pflicht – sonst warnen Browser die Kunden.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127968; Second-Level-Domain</div>
+      <div class="card-body">Der frei wählbare Teil der Domain. Dieser Teil ist das wichtigste Markenelement des Webshops und sollte <em>kurz, einprägsam</em> und <em>rechtlich unbedenklich</em> sein.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127758; Subdomain</div>
+      <div class="card-body">Steht vor der Hauptdomain (z.&nbsp;B. <em>www.</em>, <em>shop.</em>, <em>blog.</em>). Subdomains können kostenlos angelegt werden und dienen der Strukturierung.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128196; Pfad</div>
+      <div class="card-body">Zeigt die genaue Ressource auf dem Server (<em>/produkte/schuhe</em>). Kann Unterordner, Dateinamen oder Query-Parameter enthalten.</div>
+    </div>
+  </div>
+  <div class="citation">Berners-Lee, T., Masinter, L., &amp; McCahill, M. (1994). <em>Uniform Resource Locators (URL)</em>. RFC 1738. IETF. https://doi.org/10.17487/RFC1738</div>
+</div>
+
+<!-- SLIDE 7: TLDs Übersicht -->
+<div class="slide slide-content" data-index="6">
+  <div class="slide-title">Top-Level-Domains (TLDs)</div>
+  <div class="slide-subtitle">Kategorien und Beispiele</div>
+  <table class="data-table">
+    <tr>
+      <th>Typ</th><th>Kürzel</th><th>Bedeutung</th><th>Beispiele</th><th>Kosten/Jahr</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-blue">ccTLD</span></td>
+      <td>Country Code</td>
+      <td>Länderspezifisch, regional verankert</td>
+      <td>.de, .at, .ch, .uk, .fr</td>
+      <td>ca. 10–15 €</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-red">gTLD</span></td>
+      <td>Generic</td>
+      <td>Generisch, international verbreitet</td>
+      <td>.com, .net, .org, .info</td>
+      <td>ca. 10–20 €</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-gold">nTLD</span></td>
+      <td>New Generic</td>
+      <td>Seit 2013, thematisch spezialisiert</td>
+      <td>.shop, .online, .store, .berlin</td>
+      <td>ca. 5–50 €</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-green">sTLD</span></td>
+      <td>Sponsored</td>
+      <td>Für bestimmte Organisationen</td>
+      <td>.gov, .edu, .museum, .aero</td>
+      <td>Zugang beschränkt</td>
+    </tr>
+  </table>
+  <div class="highlight-box">&#128683; <strong>E-Commerce-Tipp:</strong> Für den deutschen Markt ist <em>.de</em> erste Wahl (Vertrauen &amp; SEO). International: <em>.com</em>. Branchenspezifisch: <em>.shop</em> oder <em>.store</em> sind moderne Alternativen.</div>
+  <div class="citation">ICANN. (2024). <em>New Generic Top-Level Domains</em>. https://www.icann.org/resources/pages/new-gtlds-2012-02-25-en</div>
+</div>
+
+<!-- SLIDE 8: Internationale TLDs Infografik -->
+<div class="slide slide-content" data-index="7">
+  <div class="slide-title">TLD-Marktanteile &amp; Empfehlungen</div>
+  <div class="slide-subtitle">Welche TLD wähle ich für meinen Webshop?</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="svg-center">
+        <svg width="240" height="220" viewBox="0 0 240 220">
+          <!-- Pie chart approximation as arcs -->
+          <defs>
+            <linearGradient id="pieDE" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient>
+            <linearGradient id="pieCOM" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#e74c3c"/></linearGradient>
+          </defs>
+          <text x="120" y="16" text-anchor="middle" fill="rgba(0,0,0,0.6)" font-size="12" font-family="Segoe UI">Registrierte Domains weltweit</text>
+          <!-- Simple bar chart instead -->
+          <rect x="20" y="30" width="90" height="26" rx="4" fill="url(#pieDE)"/>
+          <text x="116" y="48" fill="white" font-size="12" font-family="Segoe UI">.de – 17,0 Mio.</text>
+          <rect x="20" y="64" width="130" height="26" rx="4" fill="url(#pieCOM)"/>
+          <text x="156" y="82" fill="white" font-size="12" font-family="Segoe UI">.com – 150+ Mio.</text>
+          <rect x="20" y="98" width="40" height="26" rx="4" fill="#27ae60"/>
+          <text x="66" y="116" fill="white" font-size="12" font-family="Segoe UI">.net – 13 Mio.</text>
+          <rect x="20" y="132" width="28" height="26" rx="4" fill="#f39c12"/>
+          <text x="54" y="150" fill="white" font-size="12" font-family="Segoe UI">.org – 10 Mio.</text>
+          <rect x="20" y="166" width="22" height="26" rx="4" fill="#8e44ad"/>
+          <text x="48" y="184" fill="white" font-size="12" font-family="Segoe UI">.shop &amp; Co. – 8+ Mio.</text>
+          <text x="120" y="212" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="10" font-family="Segoe UI">Quelle: Verisign Domain Report 2024</text>
+        </svg>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="styled">
+        <li><span class="kterm">.de</span> – Stärkstes Vertrauenssignal im deutschen E-Commerce. Verwaltung durch DENIC eG.</li>
+        <li><span class="kterm">.com</span> – International bevorzugt. Verwaltung durch Verisign. Keine geografische Bindung.</li>
+        <li><span class="kterm">.shop / .store</span> – Moderne Alternativen, sofort erkennbar als Onlineshop.</li>
+        <li><span class="kterm">.eu</span> – Sinnvoll bei EU-weitem Verkauf, signalisiert europäischen Ursprung.</li>
+        <li><span class="kterm">Typosquatting</span> – Registriere auch Tippfehler-Varianten deiner Domain (z.&nbsp;B. ohne Bindestrich), um Missbrauch zu verhindern.</li>
+      </ul>
+      <div class="success-box">&#9989; <strong>Best Practice:</strong> Registriere .de, .com und .shop gleichzeitig und leite alle auf eine primäre Domain um.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: SECTION – DENIC -->
+<div class="slide slide-section" data-index="8">
+  <div class="section-number">02</div>
+  <div class="section-label">Kapitel 2</div>
+  <div class="section-title">DENIC &amp; Registrierung</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Wie bekomme ich meine .de-Domain?</div>
+</div>
+
+<!-- SLIDE 10: DENIC eG -->
+<div class="slide slide-content" data-index="9">
+  <div class="slide-title">DENIC eG – Die deutsche Registrierungsstelle</div>
+  <div class="slide-subtitle">Domain Registrar für .de-Domains</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#127968; Was ist die DENIC?</div>
+        <div class="card-body">Die <span class="kterm">DENIC eG</span> (Deutsches Network Information Center) ist die offizielle, nicht-kommerzielle Genossenschaft für die Verwaltung der <em>.de</em>-Top-Level-Domain. Sie wurde 1996 gegründet und hat Sitz in Frankfurt am Main.</div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title">&#128200; Kennzahlen</div>
+        <div class="card-body">
+          Registrierte .de-Domains: <em>ca. 17 Millionen</em><br>
+          Mitglieder (Registrare): <em>über 300</em><br>
+          Gegründet: <em>1996</em><br>
+          Sitz: <em>Frankfurt am Main</em>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128101; Wer kann registrieren?</div>
+        <div class="card-body">Privatpersonen und Unternehmen können <em>keine</em> direkte DENIC-Mitgliedschaft beantragen. Die Registrierung läuft über akkreditierte <span class="kterm">Registrare</span> (Webhoster wie IONOS, Strato, Hetzner).</div>
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        &#128161; <strong>Prinzip First-Come-First-Served:</strong> Wer zuerst registriert, bekommt die Domain – unabhängig von Markennamen (aber rechtliche Risiken bleiben!).
+      </div>
+    </div>
+  </div>
+  <div class="citation">DENIC eG. (2024). <em>Über DENIC</em>. https://www.denic.de/ueber-denic/</div>
+</div>
+
+<!-- SLIDE 11: Registrierungsprozess -->
+<div class="slide slide-content" data-index="10">
+  <div class="slide-title">Domain-Registrierung – Schritt für Schritt</div>
+  <div class="slide-subtitle">Von der Idee zur eigenen Domain</div>
+  <div class="two-col">
+    <div class="col">
+      <ol class="step-list">
+        <li><strong>Wunschdomain prüfen</strong> – WHOIS-Abfrage beim Registrar oder direkt auf denic.de. Ist die Domain noch frei?</li>
+        <li><strong>Registrar auswählen</strong> – Akkreditierten Webhoster wählen (IONOS, Strato, Hetzner, united-domains).</li>
+        <li><strong>Domain buchen</strong> – Registrar übermittelt Registrierungsantrag an DENIC.</li>
+        <li><strong>Inhaberdaten angeben</strong> – Name, Adresse (werden im WHOIS gespeichert, DSGVO beachten!).</li>
+        <li><strong>DNS-Einstellungen</strong> – Nameserver und DNS-Records konfigurieren (A, CNAME, MX).</li>
+        <li><strong>Jahresgebühr zahlen</strong> – .de ca. 10–15 €/Jahr je nach Anbieter. Rechtzeitig verlängern!</li>
+      </ol>
+    </div>
+    <div class="col">
+      <div class="svg-center">
+        <svg width="220" height="250" viewBox="0 0 220 250">
+          <defs>
+            <linearGradient id="stepGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#1e4db7"/>
+              <stop offset="100%" stop-color="#3a7bd5"/>
+            </linearGradient>
+          </defs>
+          <!-- Timeline -->
+          <line x1="40" y1="20" x2="40" y2="230" stroke="rgba(0,0,0,0.15)" stroke-width="2" stroke-dasharray="4,4"/>
+          <!-- Steps -->
+          <circle cx="40" cy="30" r="10" fill="url(#stepGrad)"/><text x="40" y="35" text-anchor="middle" fill="white" font-size="11" font-weight="700">1</text><text x="58" y="35" fill="var(--light-gray)" font-size="11" font-family="Segoe UI">Verfügbarkeit prüfen</text>
+          <circle cx="40" cy="70" r="10" fill="url(#stepGrad)"/><text x="40" y="75" text-anchor="middle" fill="white" font-size="11" font-weight="700">2</text><text x="58" y="75" fill="var(--light-gray)" font-size="11" font-family="Segoe UI">Registrar wählen</text>
+          <circle cx="40" cy="110" r="10" fill="url(#stepGrad)"/><text x="40" y="115" text-anchor="middle" fill="white" font-size="11" font-weight="700">3</text><text x="58" y="115" fill="var(--light-gray)" font-size="11" font-family="Segoe UI">Domain buchen</text>
+          <circle cx="40" cy="150" r="10" fill="url(#stepGrad)"/><text x="40" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="700">4</text><text x="58" y="155" fill="var(--light-gray)" font-size="11" font-family="Segoe UI">Daten hinterlegen</text>
+          <circle cx="40" cy="190" r="10" fill="url(#stepGrad)"/><text x="40" y="195" text-anchor="middle" fill="white" font-size="11" font-weight="700">5</text><text x="58" y="195" fill="var(--light-gray)" font-size="11" font-family="Segoe UI">DNS konfigurieren</text>
+          <circle cx="40" cy="230" r="10" fill="#27ae60"/><text x="40" y="235" text-anchor="middle" fill="white" font-size="11" font-weight="700">&#10003;</text><text x="58" y="235" fill="#a8e6cf" font-size="11" font-family="Segoe UI">Domain aktiv!</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: WHOIS & DSGVO -->
+<div class="slide slide-content" data-index="11">
+  <div class="slide-title">WHOIS-Datenbank &amp; DSGVO</div>
+  <div class="slide-subtitle">Datenschutz bei der Domain-Registrierung</div>
+  <div class="content-grid grid-2">
+    <div class="card">
+      <div class="card-title">&#128270; Was ist WHOIS?</div>
+      <div class="card-body">WHOIS ist ein Protokoll zur Abfrage von Domaininhaber-Informationen. Früher waren alle Daten (Name, Adresse, E-Mail) öffentlich abrufbar.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128274; DSGVO-Änderung 2018</div>
+      <div class="card-body">Seit Mai 2018 werden persönliche Daten im WHOIS <em>anonymisiert</em> oder ausgeblendet. Nur akkreditierte Behörden und berechtigte Stellen können vollständige Daten abrufen.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127982; Für Unternehmen</div>
+      <div class="card-body">Firmendaten (Name, Land, Registrar) bleiben oft sichtbar. Für Shopbetreiber empfiehlt sich ein <em>Datenschutz-Proxy</em>-Service des Registrars.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#9888;&#65039; Pflichten trotzdem</div>
+      <div class="card-body">Obwohl WHOIS anonymisiert ist, müssen korrekte Inhaberdaten beim Registrar hinterlegt sein. Falsche Angaben können zur Domain-Löschung führen.</div>
+    </div>
+  </div>
+  <div class="highlight-box">&#9878;&#65039; <strong>Merke:</strong> WHOIS-Anonymisierung ≠ keine Registrierungspflicht. Die DENIC und der Registrar kennen immer die echten Inhaberdaten.</div>
+</div>
+
+<!-- SLIDE 13: SECTION – Markenrecht -->
+<div class="slide slide-section" data-index="12">
+  <div class="section-number">03</div>
+  <div class="section-label">Kapitel 3</div>
+  <div class="section-title">Markenrecht &amp; Domains</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Rechtliche Fallstricke bei der Namenswahl</div>
+</div>
+
+<!-- SLIDE 14: Markenrecht Grundlagen -->
+<div class="slide slide-content" data-index="13">
+  <div class="slide-title">Markenrecht bei Domainnamen</div>
+  <div class="slide-subtitle">§ 14 MarkenG – Was ist zu beachten?</div>
+  <div class="two-col">
+    <div class="col">
+      <ul class="styled">
+        <li>Das <span class="kterm">Markengesetz (MarkenG)</span> schützt eingetragene Marken vor unbefugter Nutzung – auch in Domainnamen.</li>
+        <li>Wer eine Domain mit einem fremden Markennamen registriert, riskiert eine <em>Abmahnung</em> und muss die Domain übertragen.</li>
+        <li>Selbst ähnlich klingende Domains können Markenrechte verletzen (<em>Verwechslungsgefahr</em>).</li>
+        <li>Bekannte Marken genießen besonderen Schutz – auch ohne Verwechslungsgefahr (<em>Rufausbeutung</em>).</li>
+        <li>Vor der Registrierung: Markendatenbank des <em>DPMA</em> (Deutsches Patent- und Markenamt) prüfen.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#9888;&#65039; Cybersquatting</div>
+        <div class="card-body"><span class="kterm">Cybersquatting</span> bezeichnet die missbräuchliche Registrierung von Domains mit bekannten Markennamen in Gewinnabsicht. Dies ist nach §4 Nr. 10 UWG als unlauterer Wettbewerb verboten und führt zu Unterlassungsansprüchen.</div>
+      </div>
+      <div class="highlight-box" style="margin-top:12px">
+        &#128683; <strong>Praxisbeispiel:</strong> Wer "adidas-shop.de" registriert, erhält sofort eine Abmahnung von Adidas AG – egal ob der Shop wirklich Adidas-Produkte verkauft oder nicht.
+      </div>
+    </div>
+  </div>
+  <div class="citation">Ingerl, R., &amp; Rohnke, C. (2010). <em>Markengesetz: Kommentar</em> (3. Aufl.). C. H. Beck. S. 823–841.</div>
+</div>
+
+<!-- SLIDE 15: UDRP & Dispute Resolution -->
+<div class="slide slide-content" data-index="14">
+  <div class="slide-title">Domain-Streitigkeiten lösen</div>
+  <div class="slide-subtitle">UDRP, DeNIC-Streitbeilegung &amp; Gerichte</div>
+  <div class="content-grid grid-3">
+    <div class="card">
+      <div class="card-title">&#127758; UDRP (International)</div>
+      <div class="card-body">Uniform Domain-Name Dispute-Resolution Policy der ICANN. Gilt für gTLDs (.com, .net, .org). Schnelles Schiedsverfahren, dauert ca. 60 Tage. Kosten: 1.500–3.000 $.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127482;&#127466; DENIC-Verfahren</div>
+      <div class="card-body">Für .de-Domains gibt es kein eigenes Schiedsverfahren der DENIC. Streitigkeiten werden direkt vor deutschen <em>Landgerichten</em> ausgetragen.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128196; Rechtliche Schritte</div>
+      <div class="card-body">1. Abmahnung durch Markeninhaber<br>2. Einstweilige Verfügung<br>3. Klage auf Unterlassung &amp; Domain-Übertragung<br>4. Schadensersatz möglich</div>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px">
+    &#128161; <strong>Checkliste vor Domain-Registrierung:</strong><br>
+    ✓ DPMA-Markendatenbank prüfen (dpma.de)<br>
+    ✓ Google-Suche nach ähnlichen Namen<br>
+    ✓ Handelsnamen-Register prüfen<br>
+    ✓ Im Zweifel: Anwalt für IP-Recht befragen
+  </div>
+  <div class="citation">ICANN. (2013). <em>Uniform Domain-Name Dispute-Resolution Policy</em>. https://www.icann.org/resources/pages/udrp-2012-02-25-en</div>
+</div>
+
+<!-- SLIDE 16: Gute Domain-Namen -->
+<div class="slide slide-content" data-index="15">
+  <div class="slide-title">Kriterien für einen guten Domain-Namen</div>
+  <div class="slide-subtitle">Branding, SEO &amp; Rechtssicherheit kombinieren</div>
+  <div class="content-grid grid-2">
+    <div class="card">
+      <div class="card-title">&#9989; Do's</div>
+      <div class="card-body">
+        <ul class="styled" style="margin-top:0">
+          <li>Kurz und einprägsam (max. 15 Zeichen ideal)</li>
+          <li>Leicht zu buchstabieren und zu merken</li>
+          <li>Markenfähig – unterscheidungskräftig</li>
+          <li>Passend zur Zielgruppe und Branche</li>
+          <li>Sprechbar ohne Erklärung (Telefon-Test)</li>
+          <li>Keine Bindestriche (wenn möglich)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#10060; Don'ts</div>
+      <div class="card-body">
+        <ul class="styled" style="margin-top:0">
+          <li>Fremde Markennamen verwenden</li>
+          <li>Generische Gattungsbegriffe allein (schwer schützbar)</li>
+          <li>Umlaute (ä, ö, ü) – Kompatibilitätsprobleme</li>
+          <li>Zu langer Name (über 30 Zeichen)</li>
+          <li>Zahlen und Sonderzeichen (Verwechslung)</li>
+          <li>Irreführende Begriffe (Wettbewerbsrecht)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="success-box" style="margin-top:14px">
+    &#127775; <strong>Beispiele guter E-Commerce-Domains:</strong> zalando.de, otto.de, about-you.de, shop-apotheke.com – kurz, merkbar, markenfähig.
+  </div>
+</div>
+
+<!-- SLIDE ZQ1: ZWISCHENQUIZ – Domains & URLs -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto; align-items: flex-start; justify-content: flex-start;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; font-size:26px; font-weight:800;">🧠 Zwischenquiz: Domains &amp; URLs</h2>
+  <div style="width:100%">
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">1. Was bedeutet die Abkürzung DNS?</p>
+      <div class="zq1-q1-opts">
+        <button onclick="checkZQ7AQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Digital Name Service</button>
+        <button onclick="checkZQ7AQ1(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Domain Name System</button>
+        <button onclick="checkZQ7AQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Dynamic Network Server</button>
+      </div>
+      <p id="zq7a-q1-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">2. In welcher Reihenfolge sind die URL-Bestandteile korrekt?</p>
+      <div class="zq1-q2-opts">
+        <button onclick="checkZQ7AQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) TLD → Subdomain → Protokoll → SLD → Pfad</button>
+        <button onclick="checkZQ7AQ2(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Protokoll → Subdomain → SLD → TLD → Pfad</button>
+        <button onclick="checkZQ7AQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) SLD → Protokoll → TLD → Subdomain → Pfad</button>
+      </div>
+      <p id="zq7a-q2-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">3. Welche Organisation verwaltet .de-Domains?</p>
+      <div class="zq1-q3-opts">
+        <button onclick="checkZQ7AQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) ICANN</button>
+        <button onclick="checkZQ7AQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) VeriSign</button>
+        <button onclick="checkZQ7AQ3(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) DENIC eG</button>
+      </div>
+      <p id="zq7a-q3-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ7AQ1(btn, correct) {
+    btn.closest('.zq1-q1-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7a-q1-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! DNS = Domain Name System' : '❌ Falsch! Richtig: DNS = Domain Name System';
+    if (!correct) btn.closest('.zq1-q1-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7AQ2(btn, correct) {
+    btn.closest('.zq1-q2-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7a-q2-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Eselsbrücke: Pro-Sub-Sec-Top-Pfad' : '❌ Falsch! Richtig: Protokoll → Subdomain → SLD → TLD → Pfad';
+    if (!correct) btn.closest('.zq1-q2-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7AQ3(btn, correct) {
+    btn.closest('.zq1-q3-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7a-q3-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! DENIC = Deutsches Network Information Center' : '❌ Falsch! Richtig: DENIC eG (Frankfurt am Main)';
+    if (!correct) btn.closest('.zq1-q3-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- SLIDE 17: SECTION – Webhosting -->
+<div class="slide slide-section" data-index="16">
+  <div class="section-number">04</div>
+  <div class="section-label">Kapitel 4</div>
+  <div class="section-title">Webhosting-Arten</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Wo lebt mein Webshop?</div>
+</div>
+
+<!-- SLIDE 18: Webhosting Überblick -->
+<div class="slide slide-content" data-index="17">
+  <div class="slide-title">Was ist Webhosting?</div>
+  <div class="slide-subtitle">Grundlagen der Server-Infrastruktur</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128290; Definition</div>
+        <div class="card-body"><span class="kterm">Webhosting</span> bezeichnet die Bereitstellung von Speicherplatz, Rechenleistung und Netzwerkverbindung auf einem Server, auf dem Webseiten und Webshops gehostet werden. Der Hoster sorgt für Verfügbarkeit, Strom, Kühlung und Netzwerkanbindung.</div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title">&#128200; Wichtige Hosting-Kennzahlen</div>
+        <div class="card-body">
+          <strong>Uptime:</strong> Verfügbarkeitsgarantie (99,9% = max. 8,7 h Ausfall/Jahr)<br>
+          <strong>Bandbreite:</strong> Datentransfer-Volumen<br>
+          <strong>RAM / CPU:</strong> Rechenleistung<br>
+          <strong>Speicher:</strong> SSD (schnell) vs. HDD
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="svg-center">
+        <svg width="240" height="200" viewBox="0 0 240 200">
+          <!-- Server rack illustration -->
+          <rect x="80" y="10" width="80" height="160" rx="8" fill="rgba(30,77,183,0.2)" stroke="rgba(30,77,183,0.4)" stroke-width="1.5"/>
+          <!-- Server units -->
+          <rect x="88" y="20" width="64" height="22" rx="3" fill="rgba(30,77,183,0.4)"/>
+          <circle cx="100" cy="31" r="4" fill="#27ae60"/><text x="115" y="35" fill="rgba(0,0,0,0.7)" font-size="9" font-family="Courier New">SERVER-01</text>
+          <rect x="88" y="48" width="64" height="22" rx="3" fill="rgba(30,77,183,0.4)"/>
+          <circle cx="100" cy="59" r="4" fill="#27ae60"/><text x="115" y="63" fill="rgba(0,0,0,0.7)" font-size="9" font-family="Courier New">SERVER-02</text>
+          <rect x="88" y="76" width="64" height="22" rx="3" fill="rgba(30,77,183,0.4)"/>
+          <circle cx="100" cy="87" r="4" fill="#f39c12"/><text x="115" y="91" fill="rgba(0,0,0,0.7)" font-size="9" font-family="Courier New">SERVER-03</text>
+          <rect x="88" y="104" width="64" height="22" rx="3" fill="rgba(30,77,183,0.2)" stroke="rgba(0,0,0,0.1)"/>
+          <circle cx="100" cy="115" r="4" fill="rgba(0,0,0,0.2)"/><text x="115" y="119" fill="rgba(0,0,0,0.3)" font-size="9" font-family="Courier New">RESERVE</text>
+          <!-- Network lines -->
+          <line x1="120" y1="170" x2="30" y2="195" stroke="rgba(30,77,183,0.5)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <line x1="120" y1="170" x2="120" y2="195" stroke="rgba(30,77,183,0.5)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <line x1="120" y1="170" x2="210" y2="195" stroke="rgba(30,77,183,0.5)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="30" y="200" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="9">Nutzer 1</text>
+          <text x="120" y="200" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="9">Nutzer 2</text>
+          <text x="210" y="200" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="9">Nutzer 3</text>
+        </svg>
+      </div>
+      <div class="info-box" style="margin-top:6px;font-size:12px">Rechenzentren haben redundante Stromversorgung, Klimaanlage, Brandschutz und meist ISO-27001-Zertifizierung.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: Shared Hosting -->
+<div class="slide slide-content" data-index="18">
+  <div class="slide-title">Shared Hosting</div>
+  <div class="slide-subtitle">Viele Shops – ein Server</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="svg-center">
+        <svg width="240" height="160" viewBox="0 0 240 160">
+          <rect x="10" y="10" width="220" height="140" rx="10" fill="rgba(0,0,0,0.04)" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+          <text x="120" y="30" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="Segoe UI" font-weight="700">EIN SERVER</text>
+          <!-- Partitions -->
+          <rect x="20" y="38" width="46" height="40" rx="4" fill="rgba(192,57,43,0.3)" stroke="rgba(192,57,43,0.5)" stroke-width="1"/>
+          <text x="43" y="63" text-anchor="middle" fill="white" font-size="9">Shop A</text>
+          <rect x="72" y="38" width="46" height="40" rx="4" fill="rgba(30,77,183,0.3)" stroke="rgba(30,77,183,0.5)" stroke-width="1"/>
+          <text x="95" y="63" text-anchor="middle" fill="white" font-size="9">Shop B</text>
+          <rect x="124" y="38" width="46" height="40" rx="4" fill="rgba(39,174,96,0.3)" stroke="rgba(39,174,96,0.5)" stroke-width="1"/>
+          <text x="147" y="63" text-anchor="middle" fill="white" font-size="9">Shop C</text>
+          <rect x="176" y="38" width="46" height="40" rx="4" fill="rgba(243,156,18,0.25)" stroke="rgba(243,156,18,0.4)" stroke-width="1"/>
+          <text x="199" y="63" text-anchor="middle" fill="white" font-size="9">Shop D</text>
+          <text x="120" y="100" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9" font-family="Segoe UI">Geteilte Ressourcen: RAM, CPU, Bandbreite</text>
+          <rect x="20" y="108" width="200" height="10" rx="3" fill="rgba(0,0,0,0.08)"/>
+          <rect x="20" y="108" width="140" height="10" rx="3" fill="rgba(30,77,183,0.4)"/>
+          <text x="228" y="118" fill="rgba(0,0,0,0.3)" font-size="8">70%</text>
+          <text x="120" y="140" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="9">Shared RAM / CPU Pool</text>
+        </svg>
+      </div>
+    </div>
+    <div class="col">
+      <table class="data-table">
+        <tr><th colspan="2">Shared Hosting</th></tr>
+        <tr><td>&#128176; Kosten</td><td>1–10 €/Monat</td></tr>
+        <tr><td>&#9881;&#65039; Verwaltung</td><td>Komplett beim Hoster</td></tr>
+        <tr><td>&#128200; Leistung</td><td>Gering bis mittel</td></tr>
+        <tr><td>&#128272; Sicherheit</td><td>Basislevel (geteilt)</td></tr>
+        <tr><td>&#127919; Zielgruppe</td><td>Kleine Shops, Einsteiger</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:10px">&#9888;&#65039; <strong>Nachteil:</strong> "Bad Neighbor Effect" – wenn ein anderer Shop auf dem Server viel Traffic hat, leidet deine Seite darunter.</div>
+</div>
+
+<!-- SLIDE 20: VPS Hosting -->
+<div class="slide slide-content" data-index="19">
+  <div class="slide-title">VPS – Virtual Private Server</div>
+  <div class="slide-subtitle">Virtualisierung für mehr Kontrolle</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128290; Wie funktioniert VPS?</div>
+        <div class="card-body">Ein physischer Server wird per <span class="kterm">Hypervisor</span> (z.&nbsp;B. KVM, VMware) in mehrere virtuelle Maschinen aufgeteilt. Jeder VPS hat <em>garantierte Ressourcen</em> (RAM, CPU, Speicher) – unabhängig von anderen Nutzern.</div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title">&#127760; Einsatzgebiet</div>
+        <div class="card-body">Wachsende Shops (1.000–50.000 Besucher/Tag), eigene Software-Installationen, individuelle Server-Konfiguration, Root-Zugriff erforderlich.</div>
+      </div>
+    </div>
+    <div class="col">
+      <table class="data-table">
+        <tr><th colspan="2">VPS Hosting</th></tr>
+        <tr><td>&#128176; Kosten</td><td>5–60 €/Monat</td></tr>
+        <tr><td>&#9881;&#65039; Verwaltung</td><td>Teils selbst (root-Zugang)</td></tr>
+        <tr><td>&#128200; Leistung</td><td>Mittel bis hoch</td></tr>
+        <tr><td>&#128272; Sicherheit</td><td>Isoliert (Hypervisor)</td></tr>
+        <tr><td>&#127919; Zielgruppe</td><td>Fortgeschrittene, KMU</td></tr>
+      </table>
+      <div class="success-box" style="margin-top:10px">&#9989; Gutes Preis-Leistungs-Verhältnis. Empfohlen ab ca. 500 Bestellungen/Monat.</div>
+    </div>
+  </div>
+  <div class="citation">Reese, G. (2009). <em>Cloud Application Architectures</em>. O'Reilly. S. 14–28.</div>
+</div>
+
+<!-- SLIDE 21: Dedicated Server -->
+<div class="slide slide-content" data-index="20">
+  <div class="slide-title">Dedicated Server</div>
+  <div class="slide-subtitle">Maximale Leistung – exklusiver Server</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="svg-center">
+        <svg width="220" height="160" viewBox="0 0 220 160">
+          <rect x="30" y="10" width="160" height="140" rx="10" fill="rgba(192,57,43,0.15)" stroke="rgba(192,57,43,0.4)" stroke-width="2"/>
+          <text x="110" y="35" text-anchor="middle" fill="var(--red-light)" font-size="12" font-weight="700" font-family="Segoe UI">DEIN SERVER</text>
+          <text x="110" y="52" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="9">Vollständig exklusiv</text>
+          <rect x="48" y="62" width="124" height="20" rx="4" fill="rgba(192,57,43,0.25)"/>
+          <text x="110" y="76" text-anchor="middle" fill="white" font-size="10">64 GB RAM – exklusiv</text>
+          <rect x="48" y="88" width="124" height="20" rx="4" fill="rgba(192,57,43,0.25)"/>
+          <text x="110" y="102" text-anchor="middle" fill="white" font-size="10">16-Core CPU – exklusiv</text>
+          <rect x="48" y="114" width="124" height="20" rx="4" fill="rgba(192,57,43,0.25)"/>
+          <text x="110" y="128" text-anchor="middle" fill="white" font-size="10">2 TB SSD – exklusiv</text>
+          <text x="110" y="148" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="9">Root-Zugang, volle Kontrolle</text>
+        </svg>
+      </div>
+    </div>
+    <div class="col">
+      <table class="data-table">
+        <tr><th colspan="2">Dedicated Server</th></tr>
+        <tr><td>&#128176; Kosten</td><td>80–500+ €/Monat</td></tr>
+        <tr><td>&#9881;&#65039; Verwaltung</td><td>Vollständig selbst</td></tr>
+        <tr><td>&#128200; Leistung</td><td>Sehr hoch</td></tr>
+        <tr><td>&#128272; Sicherheit</td><td>Maximal (kein Sharing)</td></tr>
+        <tr><td>&#127919; Zielgruppe</td><td>Große Shops, Enterprise</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:10px">Anbieter: Hetzner, IONOS, Strato, OVH, 1&amp;1. Sinnvoll ab ca. 10.000+ Bestellungen/Monat.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22: Cloud Hosting -->
+<div class="slide slide-content" data-index="21">
+  <div class="slide-title">Cloud Hosting</div>
+  <div class="slide-subtitle">Skalierbarkeit auf Knopfdruck</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#9729;&#65039; Cloud-Prinzipien</div>
+        <div class="card-body">
+          <strong>On-Demand:</strong> Ressourcen werden bei Bedarf automatisch zugewiesen.<br><br>
+          <strong>Pay-as-you-go:</strong> Zahlung nur für tatsächlich genutzte Ressourcen.<br><br>
+          <strong>Skalierbarkeit:</strong> Automatisches Hoch- und Runterskalieren (Auto-Scaling).<br><br>
+          <strong>Redundanz:</strong> Daten über mehrere Rechenzentren verteilt.
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <table class="data-table">
+        <tr><th colspan="2">Cloud Hosting</th></tr>
+        <tr><td>&#128176; Kosten</td><td>Variabel (pay-per-use)</td></tr>
+        <tr><td>&#9881;&#65039; Verwaltung</td><td>Managed bis self-managed</td></tr>
+        <tr><td>&#128200; Leistung</td><td>Nahezu unbegrenzt</td></tr>
+        <tr><td>&#128272; Sicherheit</td><td>Hoch (redundant)</td></tr>
+        <tr><td>&#127919; Zielgruppe</td><td>Start-ups, skalierend</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:10px">Bekannte Anbieter: AWS (Amazon), Google Cloud, Microsoft Azure, Hetzner Cloud.</div>
+    </div>
+  </div>
+  <div class="citation">Mell, P., &amp; Grance, T. (2011). <em>The NIST Definition of Cloud Computing</em> (SP 800-145). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-145</div>
+</div>
+
+<!-- SLIDE 23: Hosting Vergleich -->
+<div class="slide slide-content" data-index="22">
+  <div class="slide-title">Hosting-Vergleich auf einen Blick</div>
+  <div class="slide-subtitle">Welche Lösung passt zu welchem Shop?</div>
+  <table class="data-table">
+    <tr>
+      <th>Kriterium</th>
+      <th>Shared</th>
+      <th>VPS</th>
+      <th>Dedicated</th>
+      <th>Cloud</th>
+    </tr>
+    <tr>
+      <td>Kosten/Monat</td>
+      <td style="color:#27ae60">1–10 €</td>
+      <td style="color:#f39c12">5–60 €</td>
+      <td style="color:#e74c3c">80–500 €</td>
+      <td style="color:#3a7bd5">Variabel</td>
+    </tr>
+    <tr>
+      <td>Technisches Wissen</td>
+      <td>Keins</td>
+      <td>Mittel</td>
+      <td>Hoch</td>
+      <td>Mittel–Hoch</td>
+    </tr>
+    <tr>
+      <td>Skalierbarkeit</td>
+      <td>&#9744; Nein</td>
+      <td>&#9744; Begrenzt</td>
+      <td>&#9744; Nein</td>
+      <td>&#9745; Ja</td>
+    </tr>
+    <tr>
+      <td>Performance</td>
+      <td>Gering</td>
+      <td>Gut</td>
+      <td>Sehr gut</td>
+      <td>Sehr gut</td>
+    </tr>
+    <tr>
+      <td>Empfohlen für</td>
+      <td>Start</td>
+      <td>Wachstum</td>
+      <td>Enterprise</td>
+      <td>Alle Größen</td>
+    </tr>
+  </table>
+  <div class="success-box" style="margin-top:14px">&#128161; <strong>Faustregel:</strong> Klein starten mit Shared Hosting, bei Wachstum zu VPS oder Cloud migrieren. Nie in Dedicated investieren, solange Cloud günstiger ist.</div>
+</div>
+
+<!-- SLIDE ZQ2: ZWISCHENQUIZ – Webhosting -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto; align-items: flex-start; justify-content: flex-start;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; font-size:26px; font-weight:800;">🧠 Zwischenquiz: Webhosting</h2>
+  <div style="width:100%">
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">1. Welche Hosting-Art bietet automatische Skalierung nach dem Pay-per-Use-Prinzip?</p>
+      <div class="zq2-q1-opts">
+        <button onclick="checkZQ7BQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Shared Hosting</button>
+        <button onclick="checkZQ7BQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Dedicated Server</button>
+        <button onclick="checkZQ7BQ1(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Cloud Hosting</button>
+      </div>
+      <p id="zq7b-q1-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">2. Was bedeutet der "Bad Neighbor Effect" beim Shared Hosting?</p>
+      <div class="zq2-q2-opts">
+        <button onclick="checkZQ7BQ2(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Andere Nutzer auf demselben Server können die eigene Performance beeinträchtigen</button>
+        <button onclick="checkZQ7BQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Schlechte Nachbarschaft im Datenzentrum erhöht Stromkosten</button>
+        <button onclick="checkZQ7BQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Nachbarliche Shops können die eigene Domain stehlen</button>
+      </div>
+      <p id="zq7b-q2-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">3. Welches kostenlose SSL-Zertifikat wird von fast allen Hostern unterstützt?</p>
+      <div class="zq2-q3-opts">
+        <button onclick="checkZQ7BQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Comodo SSL</button>
+        <button onclick="checkZQ7BQ3(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Let's Encrypt</button>
+        <button onclick="checkZQ7BQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) DigiCert</button>
+      </div>
+      <p id="zq7b-q3-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ7BQ1(btn, correct) {
+    btn.closest('.zq2-q1-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7b-q1-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Cloud Hosting = Pay-per-Use + Auto-Scaling' : '❌ Falsch! Richtig: Cloud Hosting (AWS, Azure, GCP)';
+    if (!correct) btn.closest('.zq2-q1-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7BQ2(btn, correct) {
+    btn.closest('.zq2-q2-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7b-q2-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Geteilte Ressourcen können bei viel Traffic anderer Shops die eigene Seite verlangsamen.' : '❌ Falsch! Beim Shared Hosting teilen sich viele Shops einen Server – viel Traffic anderer leidet alle.';
+    if (!correct) btn.closest('.zq2-q2-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7BQ3(btn, correct) {
+    btn.closest('.zq2-q3-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7b-q3-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Let\'s Encrypt = kostenlos, automatisch, von fast allen Hostern unterstützt.' : '❌ Falsch! Richtig: Let\'s Encrypt (kostenlos, automatisches DV-Zertifikat)';
+    if (!correct) btn.closest('.zq2-q3-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- SLIDE 24: SECTION – SSL/HTTPS -->
+<div class="slide slide-section" data-index="23">
+  <div class="section-number">05</div>
+  <div class="section-label">Kapitel 5</div>
+  <div class="section-title">SSL / HTTPS</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Verschlüsselung &amp; Vertrauen im Webshop</div>
+</div>
+
+<!-- SLIDE 25: SSL/TLS Grundlagen -->
+<div class="slide slide-content" data-index="24">
+  <div class="slide-title">SSL &amp; TLS – Grundlagen</div>
+  <div class="slide-subtitle">Verschlüsselungsprotokoll für sichere Verbindungen</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128274; Was ist SSL/TLS?</div>
+        <div class="card-body"><span class="kterm">SSL</span> (Secure Sockets Layer) ist das ältere Protokoll, heute ersetzt durch <span class="kterm">TLS</span> (Transport Layer Security). Trotzdem spricht man noch von "SSL-Zertifikat". TLS verschlüsselt die Verbindung zwischen Browser und Server.</div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-title">&#128200; Aktuelle Version</div>
+        <div class="card-body">TLS 1.3 (seit 2018) ist der aktuelle Standard. TLS 1.0 und 1.1 sind veraltet und werden von modernen Browsern abgelehnt. TLS 1.2 noch weit verbreitet.</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="svg-center">
+        <svg width="240" height="180" viewBox="0 0 240 180">
+          <!-- Browser -->
+          <rect x="10" y="20" width="80" height="50" rx="6" fill="rgba(30,77,183,0.3)" stroke="rgba(30,77,183,0.5)" stroke-width="1"/>
+          <text x="50" y="40" text-anchor="middle" fill="white" font-size="10" font-family="Segoe UI">Browser</text>
+          <text x="50" y="58" text-anchor="middle" fill="#82b1ff" font-size="9">&#128274; HTTPS</text>
+          <!-- Lock icon path -->
+          <rect x="150" y="20" width="80" height="50" rx="6" fill="rgba(192,57,43,0.25)" stroke="rgba(192,57,43,0.4)" stroke-width="1"/>
+          <text x="190" y="40" text-anchor="middle" fill="white" font-size="10" font-family="Segoe UI">Webserver</text>
+          <text x="190" y="58" text-anchor="middle" fill="#ff8a80" font-size="9">&#128229; Shop.de</text>
+          <!-- Arrows -->
+          <path d="M92,38 L148,38" stroke="#27ae60" stroke-width="2" marker-end="url(#arr2)"/>
+          <path d="M148,52 L92,52" stroke="#27ae60" stroke-width="2" marker-end="url(#arr3)"/>
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#27ae60"/></marker>
+            <marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#27ae60"/></marker>
+          </defs>
+          <text x="120" y="34" text-anchor="middle" fill="#27ae60" font-size="9">Anfrage</text>
+          <text x="120" y="66" text-anchor="middle" fill="#27ae60" font-size="9">Antwort</text>
+          <!-- Encryption visualization -->
+          <rect x="20" y="90" width="200" height="40" rx="6" fill="rgba(39,174,96,0.1)" stroke="rgba(39,174,96,0.3)"/>
+          <text x="120" y="108" text-anchor="middle" fill="#a8e6cf" font-size="10" font-family="Courier New">&#128274; TLS 1.3 verschlüsselt</text>
+          <text x="120" y="123" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9">AES-256 + RSA / ECDHE</text>
+          <text x="120" y="158" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="9" font-family="Segoe UI">Kein Dritter kann Daten mitlesen</text>
+          <rect x="10" y="148" width="220" height="22" rx="4" fill="rgba(192,57,43,0.12)" stroke="rgba(192,57,43,0.2)"/>
+          <text x="120" y="164" text-anchor="middle" fill="#ff8a80" font-size="9" font-family="Segoe UI">Ohne HTTPS: Klartext – alles lesbar!</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="citation">Rescorla, E. (2018). <em>The Transport Layer Security (TLS) Protocol Version 1.3</em>. RFC 8446. IETF. https://doi.org/10.17487/RFC8446</div>
+</div>
+
+<!-- SLIDE 26: SSL-Zertifikatstypen -->
+<div class="slide slide-content" data-index="25">
+  <div class="slide-title">SSL-Zertifikatstypen</div>
+  <div class="slide-subtitle">DV, OV &amp; EV – Was braucht mein Webshop?</div>
+  <div class="content-grid grid-3">
+    <div class="card">
+      <div class="card-title"><span class="badge badge-blue">DV</span> Domain Validated</div>
+      <div class="card-body">
+        Nur Domain-Besitz wird geprüft.<br><br>
+        <strong>Kosten:</strong> Kostenlos (Let's Encrypt) bis 50 €/Jahr<br>
+        <strong>Ausstellung:</strong> Minuten<br>
+        <strong>Für:</strong> Kleine Blogs, Portfolios<br>
+        <strong>Anzeige:</strong> &#128274; https://
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-gold">OV</span> Organization Validated</div>
+      <div class="card-body">
+        Firma wird verifiziert (HR-Auszug).<br><br>
+        <strong>Kosten:</strong> 50–300 €/Jahr<br>
+        <strong>Ausstellung:</strong> 1–3 Werktage<br>
+        <strong>Für:</strong> KMU-Webshops<br>
+        <strong>Anzeige:</strong> &#128274; https://
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-red">EV</span> Extended Validation</div>
+      <div class="card-body">
+        Umfangreiche Firmenprüfung.<br><br>
+        <strong>Kosten:</strong> 200–800 €/Jahr<br>
+        <strong>Ausstellung:</strong> 1–2 Wochen<br>
+        <strong>Für:</strong> Banken, große Shops<br>
+        <strong>Anzeige:</strong> &#128274; Firmenname sichtbar
+      </div>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px">
+    &#128161; <strong>Empfehlung für E-Commerce-Einsteiger:</strong> Let's Encrypt (kostenlos, DV) reicht für den Start. Ab einem gewissen Umsatz OV-Zertifikat für mehr Kundenvertrauen.
+  </div>
+</div>
+
+<!-- SLIDE 27: HTTPS Bedeutung für E-Commerce -->
+<div class="slide slide-content" data-index="26">
+  <div class="slide-title">Warum HTTPS für E-Commerce unverzichtbar ist</div>
+  <div class="slide-subtitle">Sicherheit, Recht &amp; SEO</div>
+  <div class="content-grid grid-2">
+    <div class="card">
+      <div class="card-title">&#128272; Datenschutz &amp; Sicherheit</div>
+      <div class="card-body">Ohne HTTPS werden Zahlungsdaten, Passwörter und Adressen im Klartext übertragen. Jeder im Netzwerk (WLAN-Café, ISP) kann mitlesen. DSGVO verlangt technische Schutzmaßnahmen nach Art. 32 DSGVO.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128245; Browser-Warnungen</div>
+      <div class="card-body">Chrome, Firefox &amp; Safari zeigen seit 2018 bei HTTP-Seiten mit Formularen die Warnung "Nicht sicher". Kunden verlassen Shops sofort bei dieser Warnung – <em>Conversion-Killer!</em></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128269; SEO-Rankingfaktor</div>
+      <div class="card-body">Google bestätigte 2014 HTTPS als positiven Rankingfaktor. HTTP-Seiten ranken schlechter in der Google-Suche als HTTPS-Seiten bei sonst gleichen Voraussetzungen.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128179; Zahlungsanbieter</div>
+      <div class="card-body">PayPal, Stripe, Klarna und alle seriösen Zahlungsanbieter <em>fordern zwingend HTTPS</em>. Ohne gültiges SSL-Zertifikat ist eine Integration unmöglich.</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:10px">&#9878;&#65039; <strong>Rechtslage:</strong> Nach §13 Abs. 7 TMG (alt) bzw. Art. 32 DSGVO müssen geeignete technische Maßnahmen zum Schutz personenbezogener Daten ergriffen werden. HTTPS ist de facto Pflicht.</div>
+</div>
+
+<!-- SLIDE 28: SECTION – Impressum -->
+<div class="slide slide-section" data-index="27">
+  <div class="section-number">06</div>
+  <div class="section-label">Kapitel 6</div>
+  <div class="section-title">Impressum §5 TMG</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Pflichtangaben für jeden Webshop</div>
+</div>
+
+<!-- SLIDE 29: TMG §5 Grundlagen -->
+<div class="slide slide-content" data-index="28">
+  <div class="slide-title">Impressumspflicht – §5 TMG</div>
+  <div class="slide-subtitle">Telemediengesetz – Pflichtangaben für Diensteanbieter</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128220; Wer braucht ein Impressum?</div>
+        <div class="card-body">Jeder, der <em>gewerbsmäßig</em> oder <em>mit wirtschaftlichem Zweck</em> eine Webseite betreibt. Also: <em>jeder Webshop</em> ohne Ausnahme. Auch Social-Media-Accounts mit kommerziellem Zweck!</div>
+      </div>
+      <div class="highlight-box" style="margin-top:12px">
+        &#128683; <strong>Bußgeld:</strong> Fehlendes oder unvollständiges Impressum ist eine Ordnungswidrigkeit (§16 TMG) und kann mit bis zu 50.000 € bestraft werden. Zudem drohen Abmahnungen durch Wettbewerber.
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#128337; Wo muss das Impressum stehen?</div>
+        <div class="card-body">
+          Das Impressum muss <em>leicht auffindbar</em>, <em>unmittelbar erreichbar</em> und <em>ständig verfügbar</em> sein.<br><br>
+          ✓ Eigene Seite "Impressum"<br>
+          ✓ Maximal 2 Klicks von der Startseite<br>
+          ✓ Link im Footer sichtbar<br>
+          ✗ Nicht nur im PDF<br>
+          ✗ Nicht hinter Login
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="citation">Bundesministerium der Justiz. (2007). <em>Telemediengesetz (TMG) §5 – Allgemeine Informationspflichten</em>. https://www.gesetze-im-internet.de/tmg/__5.html</div>
+</div>
+
+<!-- SLIDE 30: Pflichtangaben im Impressum -->
+<div class="slide slide-content" data-index="29">
+  <div class="slide-title">Pflichtangaben §5 TMG – Vollständige Liste</div>
+  <div class="slide-subtitle">Was muss ins Impressum?</div>
+  <div class="content-grid grid-2">
+    <div>
+      <ul class="styled">
+        <li><strong>Name und Anschrift</strong> – Vollständiger Name (Privatperson) oder Firmenname + ladungsfähige Anschrift</li>
+        <li><strong>Kontaktdaten</strong> – E-Mail-Adresse (Pflicht!), Telefonnummer empfohlen</li>
+        <li><strong>Handelsregister</strong> – HRB-Nummer, Registergericht (bei eingetragenen Firmen)</li>
+        <li><strong>USt-IdNr.</strong> – Umsatzsteuer-Identifikationsnummer (§27a UStG) oder Steuernummer</li>
+        <li><strong>Vertretungsberechtigte</strong> – Geschäftsführer, Vorstand (bei GmbH/AG)</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="styled">
+        <li><strong>Aufsichtsbehörde</strong> – Bei erlaubnispflichtigen Gewerben (Apotheken, Finanz etc.)</li>
+        <li><strong>Kammerzugehörigkeit</strong> – IHK, HWK oder Berufskammer</li>
+        <li><strong>Berufsrechtliche Regelungen</strong> – Bei reglementierten Berufen (Anwalt, Arzt etc.)</li>
+        <li><strong>Inhaltlich Verantwortlicher</strong> – Gem. §55 Abs. 2 RStV für journalistische Inhalte</li>
+        <li><strong>OS-Plattform</strong> – Link zur EU-Streitbeilegungsplattform (bei B2C Pflicht)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:10px">&#128161; Die EU-Streitbeilegungsplattform: https://ec.europa.eu/consumers/odr – muss bei B2C-Shops verlinkt werden (EU-Verordnung Nr. 524/2013).</div>
+</div>
+
+<!-- SLIDE 31: Impressum Muster -->
+<div class="slide slide-content" data-index="30">
+  <div class="slide-title">Impressum – Musterbeispiel GmbH</div>
+  <div class="slide-subtitle">Wie ein vollständiges Impressum aussieht</div>
+  <div class="two-col">
+    <div class="col">
+      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:18px;font-size:12.5px;color:var(--light-gray);line-height:1.9;font-family:'Courier New',monospace">
+        <span style="color:var(--accent);font-weight:700">IMPRESSUM</span><br><br>
+        MeinShop GmbH<br>
+        Musterstraße 42<br>
+        12345 Musterstadt<br><br>
+        Geschäftsführer: Max Mustermann<br>
+        HRB 123456, AG Musterstadt<br><br>
+        Tel.: +49 1234 567890<br>
+        E-Mail: info@meinshop.de<br><br>
+        USt-IdNr.: DE123456789<br><br>
+        Streitbeilegung:<br>
+        <span style="color:#82b1ff">ec.europa.eu/consumers/odr</span><br>
+        Wir nehmen nicht an<br>
+        Schlichtungsverfahren teil.
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-title">&#9989; Häufige Fehler vermeiden</div>
+        <div class="card-body">
+          ✗ Nur Postfach als Adresse (nicht ladungsfähig)<br>
+          ✗ Fehlende E-Mail-Adresse<br>
+          ✗ E-Mail als Bild (muss Text sein!)<br>
+          ✗ Veraltete Handelsregisternummer<br>
+          ✗ Fehlender OS-Plattform-Link<br>
+          ✗ Impressum nur auf Startseite, nicht auf Unterseiten erreichbar
+        </div>
+      </div>
+      <div class="success-box" style="margin-top:12px">&#9989; <strong>Tipp:</strong> Impressums-Generator nutzen (z.&nbsp;B. eRecht24.de oder Trusted Shops) und regelmäßig aktualisieren.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE NEU: Datenschutzerklärung (DSGVO) -->
+<div class="slide slide-content" style="align-items: flex-start;">
+  <div class="slide-title">Datenschutzerklärung – DSGVO</div>
+  <div class="slide-subtitle">Pflichtinhalte nach Art. 13/14 DSGVO</div>
+  <div class="two-col">
+    <div class="col">
+      <ul class="styled">
+        <li>Name und Kontaktdaten des <span class="kterm">Verantwortlichen</span></li>
+        <li>Kontaktdaten des <span class="kterm">Datenschutzbeauftragten</span> (falls vorhanden)</li>
+        <li><span class="kterm">Zweck</span> und Rechtsgrundlage der Datenverarbeitung</li>
+        <li>Kategorien der verarbeiteten Daten (Name, E-Mail, IP-Adresse)</li>
+        <li>Empfänger der Daten (Zahlungs- und Versanddienstleister)</li>
+        <li>Dauer der Datenspeicherung</li>
+        <li>Betroffenenrechte: Auskunft, Berichtigung, Löschung, Widerspruch</li>
+        <li>Beschwerderecht bei der Aufsichtsbehörde</li>
+        <li>Einsatz von Cookies und Tracking-Tools (z.&nbsp;B. Google Analytics)</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="highlight-box">
+        <strong style="color:#e74c3c;">⚠ DSGVO-Bußgelder</strong><br><br>
+        DSGVO-Verstöße können mit bis zu <span class="kterm">20 Millionen EUR</span> oder <span class="kterm">4 % des weltweiten Jahresumsatzes</span> bestraft werden – je nachdem, was höher ist.<br><br>
+        <em>Beispiel:</em> Amazon Luxemburg – 746 Millionen EUR Bußgeld (2021)
+      </div>
+      <div class="info-box" style="margin-top:12px;">
+        💡 <strong>Pflichtdokumente:</strong> Alle deutschen Online-Shops benötigen<br>
+        <strong>Impressum + Datenschutzerklärung + Widerrufsbelehrung</strong> – kurz: <span class="kterm">I-D-W</span>
+      </div>
+    </div>
+  </div>
+  <div class="citation">Europäisches Parlament. (2016). <em>Datenschutz-Grundverordnung (EU) 2016/679</em>, Art. 13/14. Amtsblatt der EU.</div>
+</div>
+
+<!-- SLIDE NEU: Widerrufsbelehrung -->
+<div class="slide slide-content" style="align-items: flex-start;">
+  <div class="slide-title">Widerrufsbelehrung – §312g BGB</div>
+  <div class="slide-subtitle">14-tägiges Widerrufsrecht im Fernabsatz</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <div class="card-title">⚖ Fernabsatzrecht</div>
+        <div class="card-body">Das <span class="kterm">Fernabsatzrecht</span> (§312g BGB) gibt Verbrauchern bei Online-Käufen ein <em>14-tägiges Widerrufsrecht</em> ab Erhalt der Ware – nicht ab der Bestellung!</div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-title">📋 Wichtige Details</div>
+        <div class="card-body">
+          ▸ Frist beginnt ab Erhalt der Ware<br>
+          ▸ Widerruf muss eindeutig erklärt werden<br>
+          ▸ Bei fehlendem/falschem Widerruf: Verlängerung auf <em>12 Monate + 14 Tage</em><br>
+          ▸ Musterformular empfohlen
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="highlight-box">
+        <strong style="color:#e74c3c;">🚫 Kein Widerrufsrecht bei:</strong><br>
+        ▸ Digitalen Inhalten (wenn Download begonnen)<br>
+        ▸ Maßgefertigten Produkten (z.&nbsp;B. gravierte Ringe)<br>
+        ▸ Verderblichen Waren (z.&nbsp;B. Lebensmittel)<br>
+        ▸ Versiegelten Hygieneprodukten (wenn Siegel gebrochen)
+      </div>
+      <div class="success-box" style="margin-top:12px;">
+        💡 <strong>Eselsbrücke – I-D-W-A-P:</strong><br>
+        <span class="kterm">I</span>mpressum – <span class="kterm">D</span>atenschutz – <span class="kterm">W</span>iderruf – <span class="kterm">A</span>GB – <span class="kterm">P</span>reisangaben<br>
+        <em>„Immer Denkst Wie Auf Papier"</em><br>
+        Diese 5 Angaben sind im deutschen Online-Handel <strong>Pflicht!</strong>
+      </div>
+    </div>
+  </div>
+  <div class="citation">Bundesministerium der Justiz. (2022). <em>Bürgerliches Gesetzbuch (BGB) §312g – Widerrufsrecht bei außerhalb von Geschäftsräumen geschlossenen Verträgen und Fernabsatzverträgen</em>.</div>
+</div>
+
+<!-- SLIDE ZQ3: ZWISCHENQUIZ – Rechtliche Pflichtangaben -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto; align-items: flex-start; justify-content: flex-start;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; font-size:26px; font-weight:800;">🧠 Zwischenquiz: Rechtliche Pflichtangaben</h2>
+  <div style="width:100%">
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">1. Wie viele Klicks darf das Impressum maximal von der Startseite entfernt sein?</p>
+      <div class="zq3-q1-opts">
+        <button onclick="checkZQ7CQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) 1 Klick</button>
+        <button onclick="checkZQ7CQ1(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) 2 Klicks</button>
+        <button onclick="checkZQ7CQ1(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) 5 Klicks</button>
+      </div>
+      <p id="zq7c-q1-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">2. Wie lange beträgt das gesetzliche Widerrufsrecht bei Online-Käufen?</p>
+      <div class="zq3-q2-opts">
+        <button onclick="checkZQ7CQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) 7 Tage ab Bestellung</button>
+        <button onclick="checkZQ7CQ2(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) 30 Tage ab Warenerhalt</button>
+        <button onclick="checkZQ7CQ2(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) 14 Tage ab Warenerhalt</button>
+      </div>
+      <p id="zq7c-q2-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom: 18px;">
+      <p style="font-weight: bold; margin-bottom: 8px; color: #ecf0f1; font-size:15px;">3. Was bedeutet die Eselsbrücke "I-D-W-A-P"?</p>
+      <div class="zq3-q3-opts">
+        <button onclick="checkZQ7CQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Impressum, Datenschutz, Widerruf, Angebote, Preisliste</button>
+        <button onclick="checkZQ7CQ3(this, true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Impressum, Datenschutz, Widerruf, AGB, Preisangaben</button>
+        <button onclick="checkZQ7CQ3(this, false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Impressum, Daten, Werbung, Abmahnung, Preise</button>
+      </div>
+      <p id="zq7c-q3-result" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ7CQ1(btn, correct) {
+    btn.closest('.zq3-q1-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7c-q1-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Maximal 2 Klicks von der Startseite (§5 TMG).' : '❌ Falsch! Richtig: Maximal 2 Klicks von der Startseite.';
+    if (!correct) btn.closest('.zq3-q1-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7CQ2(btn, correct) {
+    btn.closest('.zq3-q2-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7c-q2-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! 14 Tage ab Warenerhalt – nicht ab Bestelldatum!' : '❌ Falsch! Richtig: 14 Tage ab Warenerhalt (§312g BGB).';
+    if (!correct) btn.closest('.zq3-q2-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  function checkZQ7CQ3(btn, correct) {
+    btn.closest('.zq3-q3-opts').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq7c-q3-result');
+    r.style.display = 'block'; r.style.color = correct ? '#2ecc71' : '#e74c3c';
+    r.textContent = correct ? '✅ Richtig! I-D-W-A-P = Impressum, Datenschutz, Widerruf, AGB, Preisangaben – alle 5 sind im deutschen Online-Handel Pflicht!' : '❌ Falsch! Richtig: Impressum, Datenschutz, Widerruf, AGB, Preisangaben.';
+    if (!correct) btn.closest('.zq3-q3-opts').querySelectorAll('button').forEach(b => { if (b.onclick.toString().includes('true')) b.style.background = '#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- SLIDE 32: Abmahnrisiken -->
+<div class="slide slide-content" data-index="31">
+  <div class="slide-title">Abmahnrisiken &amp; Rechtssicherheit</div>
+  <div class="slide-subtitle">Häufige Rechtsverstöße im E-Commerce</div>
+  <table class="data-table">
+    <tr>
+      <th>Verstoß</th><th>Rechtsgrundlage</th><th>Risiko</th><th>Abhilfe</th>
+    </tr>
+    <tr>
+      <td>Kein Impressum</td>
+      <td>§5 TMG, §16 TMG</td>
+      <td style="color:#e74c3c">Bis 50.000 € OWi</td>
+      <td>Sofort ergänzen</td>
+    </tr>
+    <tr>
+      <td>Kein HTTPS</td>
+      <td>Art. 32 DSGVO</td>
+      <td style="color:#e74c3c">Bis 20 Mio. € DSGVO</td>
+      <td>SSL-Zertifikat</td>
+    </tr>
+    <tr>
+      <td>Fremde Domain/Marke</td>
+      <td>§14 MarkenG</td>
+      <td style="color:#f39c12">Abmahnung, Domain verlieren</td>
+      <td>DPMA prüfen</td>
+    </tr>
+    <tr>
+      <td>Fehlende Preisangaben</td>
+      <td>PAngV</td>
+      <td style="color:#f39c12">Wettbewerbs-Abmahnung</td>
+      <td>Brutto-Preise anzeigen</td>
+    </tr>
+    <tr>
+      <td>Kein Cookie-Banner</td>
+      <td>§25 TTDSG</td>
+      <td style="color:#f39c12">DSGVO-Bußgeld</td>
+      <td>Consent-Tool</td>
+    </tr>
+  </table>
+  <div class="highlight-box" style="margin-top:12px">&#128683; Deutschland hat eine sehr aktive Abmahnkultur. Mitbewerber und Abmahnvereine überwachen aktiv Online-Shops auf Rechtsverstöße.</div>
+</div>
+
+<!-- SLIDE 33: SECTION – Zusammenfassung -->
+<div class="slide slide-section" data-index="32">
+  <div class="section-number">07</div>
+  <div class="section-label">Abschluss</div>
+  <div class="section-title">Zusammenfassung</div>
+  <div style="font-size:18px;color:rgba(0,0,0,0.7);margin-top:10px">Die wichtigsten Erkenntnisse des Tages</div>
+</div>
+
+<!-- SLIDE 34: Zusammenfassung -->
+<div class="slide slide-summary" data-index="33">
+  <div class="slide-title">Zusammenfassung – Tag 7</div>
+  <div class="slide-subtitle">Abschnitt 1.8 – Webshop Name &amp; Adresse Teil 1</div>
+  <div class="content-grid grid-2">
+    <div class="card">
+      <div class="card-title">&#127757; Domain &amp; URL</div>
+      <div class="card-body">Eine URL besteht aus Protokoll, Subdomain, SLD und TLD. .de-Domains werden über die DENIC eG registriert. Das Prinzip ist First-Come-First-Served.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#9878;&#65039; Markenrecht</div>
+      <div class="card-body">Vor jeder Domain-Registrierung DPMA-Datenbank prüfen. Cybersquatting ist verboten. Abmahnungen sind kostspielig.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128290; Webhosting</div>
+      <div class="card-body">4 Arten: Shared (günstig), VPS (flexibel), Dedicated (leistungsstark), Cloud (skalierbar). Wahl nach Shopgröße und Budget.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128274; SSL/HTTPS</div>
+      <div class="card-body">HTTPS ist Pflicht für E-Commerce: Datenschutz (DSGVO Art. 32), Browser-Vertrauen, SEO-Faktor, Zahlungsanbieter-Anforderung.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128220; Impressum §5 TMG</div>
+      <div class="card-body">Jeder gewerbliche Webshop braucht ein vollständiges Impressum. Max. 2 Klicks erreichbar. Fehlendes Impressum: bis 50.000 € Bußgeld.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#10003; Merkformel</div>
+      <div class="card-body" style="color:var(--accent);font-size:15px;font-weight:700">Domain + Hosting + HTTPS + Impressum = rechtssicherer Webshop-Start</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 35: Literaturverzeichnis -->
+<div class="slide slide-content" data-index="34">
+  <div class="slide-title">Literaturverzeichnis</div>
+  <div class="slide-subtitle">Quellen nach APA 7 (American Psychological Association, 7th Edition)</div>
+  <div style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:8px">
+    <div class="ref-item">Berners-Lee, T., Masinter, L., &amp; McCahill, M. (1994). <em>Uniform Resource Locators (URL)</em> (RFC 1738). Internet Engineering Task Force. https://doi.org/10.17487/RFC1738</div>
+    <div class="ref-item">Bundesministerium der Justiz. (2007). <em>Telemediengesetz (TMG): §5 – Allgemeine Informationspflichten</em>. https://www.gesetze-im-internet.de/tmg/__5.html</div>
+    <div class="ref-item">DENIC eG. (2024). <em>Über DENIC – Die deutsche Domain-Verwaltung</em>. https://www.denic.de/ueber-denic/</div>
+    <div class="ref-item">ICANN. (2013). <em>Uniform Domain-Name Dispute-Resolution Policy (UDRP)</em>. Internet Corporation for Assigned Names and Numbers. https://www.icann.org/resources/pages/udrp-2012-02-25-en</div>
+    <div class="ref-item">ICANN. (2024). <em>New Generic Top-Level Domains</em>. Internet Corporation for Assigned Names and Numbers. https://www.icann.org/resources/pages/new-gtlds-2012-02-25-en</div>
+    <div class="ref-item">Ingerl, R., &amp; Rohnke, C. (2010). <em>Markengesetz: Kommentar zu §§ 1–189 MarkenG</em> (3. Aufl.). C. H. Beck.</div>
+    <div class="ref-item">Mell, P., &amp; Grance, T. (2011). <em>The NIST Definition of Cloud Computing</em> (Special Publication 800-145). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-145</div>
+    <div class="ref-item">Reese, G. (2009). <em>Cloud Application Architectures: Building Applications and Infrastructure in the Cloud</em>. O'Reilly Media.</div>
+    <div class="ref-item">Rescorla, E. (2018). <em>The Transport Layer Security (TLS) Protocol Version 1.3</em> (RFC 8446). Internet Engineering Task Force. https://doi.org/10.17487/RFC8446</div>
+    <div class="ref-item">Tanenbaum, A. S., &amp; Wetherall, D. J. (2021). <em>Computer Networks</em> (6th ed.). Pearson Education.</div>
+    <div class="ref-item">Verisign. (2024). <em>Domain Name Industry Brief Q3 2024</em>. VeriSign, Inc. https://www.verisign.com/en_US/domain-names/dnib/index.xhtml</div>
+    <div class="ref-item">Europäisches Parlament &amp; Rat. (2013). <em>Verordnung (EU) Nr. 524/2013 über die Online-Beilegung verbraucherrechtlicher Streitigkeiten</em>. Amtsblatt der Europäischen Union. https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32013R0524</div>
+  </div>
+</div>
+
+</div><!-- end slides-wrapper -->
+
+<!-- Footer -->
+<div class="slide-footer">
+  <span>Lernfeld 1 | E-Commerce Ausbildung | Tag 7 | Abschnitt 1.8</span>
+  <span>&#169; 2026 Can Siebert &amp; Hamzah Meyer – Alle Rechte vorbehalten</span>
+</div>
+
+
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 40</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Webshop Name und Adresse Teil 1 | Lernfeld 1 &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

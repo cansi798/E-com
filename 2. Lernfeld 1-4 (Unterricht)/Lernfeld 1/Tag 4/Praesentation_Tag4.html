@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 4 – Soziale Kompetenz & E-Commerce-Arten</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="copyright">© 2026 Can Siebert &amp; Hamzah Meyer – E-Commerce Ausbildung</div>
+<div id="key-hint">← → Pfeiltasten zur Navigation</div>
+
+<div id="slides">
+
+<!-- SLIDE 1: Deckblatt -->
+<div class="slide bg-cover active">
+  <div class="cover-logo">
+    <svg width="90" height="90" viewBox="0 0 90 90">
+      <defs>
+        <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#2563EB"/>
+          <stop offset="100%" style="stop-color:#1a3168"/>
+        </linearGradient>
+      </defs>
+      <circle cx="45" cy="45" r="42" fill="url(#lg1)" opacity="0.8"/>
+      <text x="45" y="52" text-anchor="middle" font-size="28" font-weight="bold" fill="white" font-family="Arial">EC</text>
+    </svg>
+  </div>
+  <div class="tag-badge">Lernfeld 1 · Tag 4</div>
+  <h1 class="slide-title" style="font-size:2.8rem; max-width:800px;">Soziale Kompetenz &amp;<br>E-Commerce-Arten</h1>
+  <div class="red-line"></div>
+  <p class="slide-subtitle" style="font-size:1rem;">Abschnitte 1.4 &amp; 1.5 · Buchseiten 40–53</p>
+  <div class="cover-meta">
+    Erstellt von: Can Siebert &amp; Hamzah Meyer<br>
+    Datum: 02. März 2026<br>
+    Ausbildung: Kaufmann/-frau im E-Commerce<br>
+    Berufsschule · Lernfeld 1
+  </div>
+</div>
+
+<!-- SLIDE 2: Inhaltsverzeichnis -->
+<div class="slide bg-dark">
+  <div class="section-label">Übersicht</div>
+  <h2 class="slide-title">Inhaltsverzeichnis</h2>
+  <div class="red-line"></div>
+  <ul class="toc-list">
+    <li><span class="toc-num">1</span> Lernziele des Tages <span class="toc-page">Folie 3</span></li>
+    <li><span class="toc-num">2</span> Was ist soziale Kompetenz? <span class="toc-page">Folie 4–5</span></li>
+    <li><span class="toc-num">3</span> Kommunikation im E-Commerce <span class="toc-page">Folie 6–10</span></li>
+    <li><span class="toc-num">4</span> Teamarbeit &amp; Zusammenarbeit <span class="toc-page">Folie 11–14</span></li>
+    <li><span class="toc-num">5</span> Konfliktlösung <span class="toc-page">Folie 15–18</span></li>
+    <li><span class="toc-num">6</span> E-Commerce-Arten im Überblick <span class="toc-page">Folie 19–21</span></li>
+    <li><span class="toc-num">7</span> B2C, B2B, C2C, B2G, M-Commerce <span class="toc-page">Folie 22–29</span></li>
+    <li><span class="toc-num">8</span> Vergleich &amp; Marktdaten <span class="toc-page">Folie 30–32</span></li>
+    <li><span class="toc-num">9</span> Zusammenfassung <span class="toc-page">Folie 33–34</span></li>
+    <li><span class="toc-num">10</span> Literaturverzeichnis <span class="toc-page">Folie 35</span></li>
+  </ul>
+</div>
+
+<!-- SLIDE 3: Lernziele -->
+<div class="slide bg-dark">
+  <div class="section-label">Lernziele</div>
+  <h2 class="slide-title">Was lernst du heute?</h2>
+  <div class="red-line"></div>
+  <ul class="lz-list">
+    <li>Ich kann den Begriff „Soziale Kompetenz" definieren und seine Bedeutung im E-Commerce erläutern.</li>
+    <li>Ich kenne die Grundlagen effektiver Kommunikation und kann das Sender-Empfänger-Modell erklären.</li>
+    <li>Ich verstehe die Bedeutung von Teamarbeit und kenne Phasen der Teamentwicklung nach Tuckman.</li>
+    <li>Ich bin in der Lage, Konflikttypen zu unterscheiden und Strategien zur Konfliktlösung anzuwenden.</li>
+    <li>Ich kann die verschiedenen E-Commerce-Arten (B2C, B2B, C2C, B2G, M-Commerce) definieren und voneinander abgrenzen.</li>
+    <li>Ich kenne praxisrelevante Beispiele für jede E-Commerce-Art und kann ihre wirtschaftliche Bedeutung einschätzen.</li>
+  </ul>
+</div>
+
+<!-- SLIDE 4: Soziale Kompetenz Definition -->
+<div class="slide bg-section">
+  <div class="section-label">Abschnitt 1.4</div>
+  <h2 class="slide-title">Was ist soziale Kompetenz?</h2>
+  <div class="red-line"></div>
+  <div class="highlight-box">
+    <p>"Soziale Kompetenz bezeichnet die Gesamtheit der Fertigkeiten, die für eine konstruktive Interaktion und Kooperation mit anderen Menschen erforderlich sind – sie ist keine angeborene Eigenschaft, sondern erlernbar."</p>
+    <p class="cite">Schulz von Thun, F., Ruppel, J., &amp; Stratmann, R. (2017). <em>Miteinander reden: Kommunikationspsychologie für Führungskräfte.</em> Rowohlt. (S. 18)</p>
+  </div>
+  <div class="cards-grid cards-3" style="max-width:880px; margin-top:16px;">
+    <div class="card">
+      <span class="card-icon">🗣️</span>
+      <h3>Kommunikation</h3>
+      <p>Klar, wertschätzend und zielgerichtet mit anderen interagieren.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🤝</span>
+      <h3>Kooperation</h3>
+      <p>Im Team effektiv zusammenarbeiten und gemeinsame Ziele verfolgen.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">⚖️</span>
+      <h3>Konfliktfähigkeit</h3>
+      <p>Konflikte erkennen, ansprechen und konstruktiv lösen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Dimensionen sozialer Kompetenz -->
+<div class="slide bg-content">
+  <div class="section-label">1.4 Soziale Kompetenz</div>
+  <h2 class="slide-title">Dimensionen im Überblick</h2>
+  <div class="red-line"></div>
+  <div class="svg-container">
+    <svg width="700" height="280" viewBox="0 0 700 280">
+      <!-- Zentraler Kreis -->
+      <circle cx="350" cy="140" r="55" fill="#2563EB" opacity="0.85"/>
+      <text x="350" y="135" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Arial">Soziale</text>
+      <text x="350" y="152" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Arial">Kompetenz</text>
+      <!-- Außenkreise -->
+      <circle cx="150" cy="70" r="42" fill="#1a3168" opacity="0.9"/>
+      <text x="150" y="65" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Kommunikation</text>
+      <text x="150" y="80" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">(verbal/nonverbal)</text>
+      <line x1="192" y1="87" x2="300" y2="115" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+      <circle cx="560" cy="70" r="42" fill="#1a3168" opacity="0.9"/>
+      <text x="560" y="65" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Empathie</text>
+      <text x="560" y="80" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">(Einfühlungsverm.)</text>
+      <line x1="518" y1="87" x2="400" y2="115" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+      <circle cx="90" cy="200" r="42" fill="#1a3168" opacity="0.9"/>
+      <text x="90" y="195" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Teamfähigkeit</text>
+      <text x="90" y="210" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">(Kooperation)</text>
+      <line x1="130" y1="184" x2="300" y2="158" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+      <circle cx="350" cy="250" r="42" fill="#1a3168" opacity="0.9"/>
+      <text x="350" y="245" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Konfliktlösung</text>
+      <text x="350" y="260" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">(Mediation)</text>
+      <line x1="350" y1="208" x2="350" y2="195" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+      <circle cx="610" cy="200" r="42" fill="#1a3168" opacity="0.9"/>
+      <text x="610" y="195" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Führung</text>
+      <text x="610" y="210" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">(Leadership)</text>
+      <line x1="570" y1="184" x2="400" y2="158" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+    </svg>
+  </div>
+  <div class="highlight-box" style="margin-top:8px;">
+    <p>Im E-Commerce sind soziale Kompetenzen besonders wichtig, da digitale Kommunikation Mimik und Körpersprache erschwert. Missverständnisse entstehen häufiger – klare Ausdrucksweise wird zur Kernkompetenz (Stauber &amp; Wittmann, 2020, S. 41).</p>
+  </div>
+</div>
+
+<!-- SLIDE 6: KEKK-Modell -->
+<div class="slide bg-content">
+  <div class="section-label">1.4 Soziale Kompetenz</div>
+  <h2 class="slide-title">Das KEKK-Modell – 4 Dimensionen</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-4" style="max-width:960px; margin-bottom:16px;">
+    <div class="card" style="border-top:3px solid #2563EB;">
+      <span class="card-icon">🗣️</span>
+      <h3 style="color:#e74c3c;">K – Kommunikation</h3>
+      <p>Klar und verständlich ausdrücken; aktiv zuhören; Feedback geben und nehmen.</p>
+      <p style="font-size:0.75rem; color:#bdc3cb; margin-top:8px;"><em>Beispiel: Kundenanfragen per E-Mail präzise beantworten</em></p>
+    </div>
+    <div class="card" style="border-top:3px solid #f0c040;">
+      <span class="card-icon">❤️</span>
+      <h3 style="color:#f0c040;">E – Empathie</h3>
+      <p>Sich in andere hineinversetzen; Perspektivwechsel vornehmen; Gefühle erkennen.</p>
+      <p style="font-size:0.75rem; color:#bdc3cb; margin-top:8px;"><em>Beispiel: Verständnis für verärgerten Kunden aufbringen</em></p>
+    </div>
+    <div class="card" style="border-top:3px solid #2ecc71;">
+      <span class="card-icon">🤝</span>
+      <h3 style="color:#2ecc71;">K – Kooperation</h3>
+      <p>Gemeinsam Ziele erreichen; Aufgaben verteilen; Stärken der anderen nutzen.</p>
+      <p style="font-size:0.75rem; color:#bdc3cb; margin-top:8px;"><em>Beispiel: Projektarbeit mit Marketing und Logistik-Team</em></p>
+    </div>
+    <div class="card" style="border-top:3px solid #7fb3ff;">
+      <span class="card-icon">⚖️</span>
+      <h3 style="color:#7fb3ff;">K – Konfliktlösung</h3>
+      <p>Spannungen konstruktiv bewältigen; Win-Win-Lösungen anstreben; sachlich bleiben.</p>
+      <p style="font-size:0.75rem; color:#bdc3cb; margin-top:8px;"><em>Beispiel: Reklamation lösungsorientiert klären</em></p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <p>💡 <strong>Eselsbrücke:</strong> <strong>K</strong>ommunikation – <strong>E</strong>mpathie – <strong>K</strong>ooperation – <strong>K</strong>onfliktlösung = <strong>KEKK</strong></p>
+    <p style="font-size:0.82rem; color:#bdc3cb; margin-top:6px;">"Der KEKK-Kreis dreht sich immer – wer alle vier beherrscht, kommt im Team weiter!" (Kanning, 2015, S. 47)</p>
+  </div>
+</div>
+
+<!-- SLIDE 7: Mehrabian-Modell -->
+<div class="slide bg-dark">
+  <div class="section-label">1.4 Kommunikation</div>
+  <h2 class="slide-title">Das Mehrabian-Modell (55-38-7-Regel)</h2>
+  <div class="red-line"></div>
+  <div class="svg-container">
+    <svg width="700" height="160" viewBox="0 0 700 160">
+      <!-- 55% Körpersprache -->
+      <rect x="10" y="40" width="385" height="80" rx="8" fill="#2563EB" opacity="0.85"/>
+      <text x="202" y="78" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial">55%</text>
+      <text x="202" y="100" text-anchor="middle" fill="white" font-size="12" font-family="Arial">Körpersprache / Mimik / Gestik</text>
+      <!-- 38% Stimme -->
+      <rect x="400" y="40" width="160" height="80" rx="8" fill="#e67e22" opacity="0.9"/>
+      <text x="480" y="78" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial">38%</text>
+      <text x="480" y="100" text-anchor="middle" fill="white" font-size="11" font-family="Arial">Stimme / Tonfall</text>
+      <!-- 7% Inhalt -->
+      <rect x="566" y="40" width="124" height="80" rx="8" fill="#2a4a8a" opacity="0.9"/>
+      <text x="628" y="78" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial">7%</text>
+      <text x="628" y="100" text-anchor="middle" fill="white" font-size="11" font-family="Arial">Worte / Inhalt</text>
+      <!-- Labels -->
+      <text x="350" y="20" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Wirkung einer emotionalen Botschaft (Mehrabian, 1971)</text>
+    </svg>
+  </div>
+  <div class="cards-grid cards-2" style="max-width:860px; margin-top:12px;">
+    <div class="card">
+      <h3>Was bedeutet das Modell?</h3>
+      <ul>
+        <li>Gilt für <strong>emotionale Botschaften</strong> im direkten Kontakt</li>
+        <li>Nonverbale Signale dominieren den Gesamteindruck</li>
+        <li>Körpersprache und Tonfall sind entscheidend</li>
+        <li>Nur 7% des Eindrucks kommt aus dem Wortinhalt</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid #e74c3c;">
+      <h3>Einschränkungen im E-Commerce</h3>
+      <ul>
+        <li>Modell gilt <strong>nicht</strong> für sachliche Informationen</li>
+        <li>Digitale Kommunikation (E-Mail, Chat): kein Körperkontakt</li>
+        <li>Emojis, Reaktionszeit, Großschreibung als nonverbale Signale</li>
+        <li>Klare Schriftsprache wird noch wichtiger</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:12px;">
+    <p class="cite">Mehrabian, A. (1971). <em>Silent messages: Implicit communication of emotions and attitudes.</em> Wadsworth. — Wichtig: Das Modell wird oft falsch verallgemeinert; es gilt speziell für emotionale Aussagen.</p>
+  </div>
+</div>
+
+<!-- SLIDE 8: Kommunikation - Grundlagen -->
+<div class="slide bg-section">
+  <div class="section-label">1.4.1 Kommunikation</div>
+  <h2 class="slide-title">Grundlagen der Kommunikation</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>Kommunikation ist der Prozess des Austauschens von Informationen, Gedanken und Gefühlen zwischen Personen über verbale und nonverbale Kanäle (Watzlawick et al., 2017, S. 50).</p>
+      </div>
+      <div class="info-box">
+        <h4>Kommunikationsformen</h4>
+        <ul>
+          <li><strong>Verbal:</strong> gesprochene und geschriebene Sprache</li>
+          <li><strong>Nonverbal:</strong> Mimik, Gestik, Körperhaltung</li>
+          <li><strong>Paraverbal:</strong> Tonlage, Lautstärke, Sprechtempo</li>
+          <li><strong>Digital:</strong> E-Mail, Chat, Videokonferenz</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Axiome nach Watzlawick</h4>
+        <ul>
+          <li>Man kann nicht nicht kommunizieren.</li>
+          <li>Jede Kommunikation hat einen Inhalts- und Beziehungsaspekt.</li>
+          <li>Kommunikation ist Ursache und Wirkung zugleich.</li>
+          <li>Kommunikation verläuft digital und analog.</li>
+          <li>Kommunikation ist symmetrisch oder komplementär.</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p class="cite">Watzlawick, P., Beavin, J. H., &amp; Jackson, D. D. (2017). <em>Menschliche Kommunikation.</em> Hogrefe. (S. 50–71)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Sender-Empfänger-Modell -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.1 Kommunikation</div>
+  <h2 class="slide-title">Das Sender-Empfänger-Modell</h2>
+  <div class="red-line"></div>
+  <div class="svg-container">
+    <svg width="760" height="200" viewBox="0 0 760 200">
+      <!-- Sender -->
+      <rect x="20" y="60" width="130" height="80" rx="10" fill="#1a3168" stroke="#2a4a8a" stroke-width="1.5"/>
+      <text x="85" y="95" text-anchor="middle" fill="#f0c040" font-size="13" font-weight="bold" font-family="Arial">SENDER</text>
+      <text x="85" y="115" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">kodiert Botschaft</text>
+
+      <!-- Kanal -->
+      <rect x="200" y="75" width="360" height="50" rx="8" fill="rgba(192,57,43,0.15)" stroke="#2563EB" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="380" y="96" text-anchor="middle" fill="#e74c3c" font-size="11" font-weight="bold" font-family="Arial">KANAL (Medium)</text>
+      <text x="380" y="113" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">E-Mail · Chat · Telefon · Videokonferenz</text>
+      <!-- Arrows -->
+      <path d="M150 100 L200 100" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+      <path d="M560 100 L610 100" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+      <!-- Feedback arrow -->
+      <path d="M610 150 Q380 180 150 150" stroke="#2a4a8a" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arr2)"/>
+      <text x="380" y="175" text-anchor="middle" fill="#7fb3ff" font-size="10" font-family="Arial">Feedback / Rückkopplung</text>
+
+      <!-- Empfänger -->
+      <rect x="610" y="60" width="130" height="80" rx="10" fill="#1a3168" stroke="#2a4a8a" stroke-width="1.5"/>
+      <text x="675" y="95" text-anchor="middle" fill="#f0c040" font-size="13" font-weight="bold" font-family="Arial">EMPFÄNGER</text>
+      <text x="675" y="115" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">dekodiert Botschaft</text>
+
+      <!-- Störung -->
+      <rect x="330" y="20" width="100" height="36" rx="6" fill="rgba(192,57,43,0.3)" stroke="#2563EB" stroke-width="1"/>
+      <text x="380" y="38" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="bold" font-family="Arial">⚡ Störungen</text>
+      <text x="380" y="52" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">(technisch/persönlich)</text>
+      <line x1="380" y1="56" x2="380" y2="75" stroke="#2563EB" stroke-width="1" stroke-dasharray="3,2"/>
+
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2563EB"/>
+        </marker>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2a4a8a"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+  <div class="highlight-box">
+    <p>Im digitalen Handel fehlen nonverbale Signale fast vollständig. Fehlinterpretationen entstehen häufiger. Professionelle Schriftsprache, klar formulierte E-Mails und strukturierte Chats sind daher entscheidend für den Geschäftserfolg.</p>
+    <p class="cite">Shannon, C. E., &amp; Weaver, W. (1949). <em>The Mathematical Theory of Communication.</em> University of Illinois Press. (S. 34)</p>
+  </div>
+</div>
+
+<!-- SLIDE 8: 4-Ohren-Modell -->
+<div class="slide bg-dark">
+  <div class="section-label">1.4.1 Kommunikation</div>
+  <h2 class="slide-title">Das 4-Ohren-Modell (Schulz von Thun)</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-4" style="max-width:920px;">
+    <div class="card" style="border-top:3px solid #e74c3c;">
+      <h3 style="color:#e74c3c;">Sachinhalt</h3>
+      <p>Was wird mitgeteilt? Fakten, Daten, Informationen. „Die Lieferung kommt morgen."</p>
+    </div>
+    <div class="card" style="border-top:3px solid #f0c040;">
+      <h3 style="color:#f0c040;">Selbstoffenbarung</h3>
+      <p>Was sagt der Sender über sich? Gefühle, Persönlichkeit. „Ich bin zuverlässig."</p>
+    </div>
+    <div class="card" style="border-top:3px solid #2ecc71;">
+      <h3 style="color:#2ecc71;">Beziehung</h3>
+      <p>Was denkt der Sender vom Empfänger? Wie stehen sie zueinander? Ton, Respekt.</p>
+    </div>
+    <div class="card" style="border-top:3px solid #7fb3ff;">
+      <h3 style="color:#7fb3ff;">Appell</h3>
+      <p>Was soll der Empfänger tun? „Bitte bereite alles für die Ankunft vor."</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:18px;">
+    <p>Jede Nachricht enthält potenziell alle vier Ebenen gleichzeitig. Im Kundensupport des E-Commerce ist es entscheidend, Nachrichten auf allen Ebenen korrekt zu verstehen, um Missverständnisse zu vermeiden.</p>
+    <p class="cite">Schulz von Thun, F. (2019). <em>Miteinander reden 1: Störungen und Klärungen.</em> Rowohlt. (S. 25–44)</p>
+  </div>
+</div>
+
+<!-- SLIDE 9: Digitale Kommunikation -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.1 Kommunikation</div>
+  <h2 class="slide-title">Digitale Kommunikation im E-Commerce</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Kommunikationskanäle im Handel</h4>
+        <ul>
+          <li>E-Mail (formell, dokumentierbar)</li>
+          <li>Live-Chat / Chatbots (schnell, skalierbar)</li>
+          <li>Social Media (öffentlich, reichweitenstark)</li>
+          <li>Videokonferenz (persönlich, interaktiv)</li>
+          <li>Ticketsysteme (strukturiert, nachverfolgbar)</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>Erfolgsfaktoren</h4>
+        <ul>
+          <li>Klare, verständliche Sprache</li>
+          <li>Schnelle Reaktionszeiten</li>
+          <li>Einheitlicher Kommunikationsstil (Corporate Language)</li>
+          <li>Empfängerorientierung</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="svg-container">
+        <svg width="320" height="220" viewBox="0 0 320 220">
+          <!-- Bar chart: Kundenzufriedenheit nach Kanal -->
+          <text x="160" y="18" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">Kundenzufriedenheit nach Kanal</text>
+          <!-- Bars -->
+          <rect x="30" y="40" width="40" height="140" rx="4" fill="#1a3168" opacity="0.8"/>
+          <rect x="30" y="40" width="40" height="112" rx="4" fill="#2563EB" opacity="0.85"/>
+          <text x="50" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Arial">80%</text>
+          <text x="50" y="195" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">Chat</text>
+
+          <rect x="90" y="40" width="40" height="140" rx="4" fill="#1a3168" opacity="0.8"/>
+          <rect x="90" y="40" width="40" height="98" rx="4" fill="#2a4a8a" opacity="0.9"/>
+          <text x="110" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Arial">70%</text>
+          <text x="110" y="195" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">E-Mail</text>
+
+          <rect x="150" y="40" width="40" height="140" rx="4" fill="#1a3168" opacity="0.8"/>
+          <rect x="150" y="40" width="40" height="126" rx="4" fill="#e67e22" opacity="0.85"/>
+          <text x="170" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Arial">90%</text>
+          <text x="170" y="195" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">Video</text>
+
+          <rect x="210" y="40" width="40" height="140" rx="4" fill="#1a3168" opacity="0.8"/>
+          <rect x="210" y="40" width="40" height="84" rx="4" fill="#8e44ad" opacity="0.85"/>
+          <text x="230" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Arial">60%</text>
+          <text x="230" y="195" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">Social</text>
+
+          <rect x="270" y="40" width="40" height="140" rx="4" fill="#1a3168" opacity="0.8"/>
+          <rect x="270" y="40" width="40" height="119" rx="4" fill="#27ae60" opacity="0.85"/>
+          <text x="290" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Arial">85%</text>
+          <text x="290" y="195" text-anchor="middle" fill="#bdc3cb" font-size="9" font-family="Arial">Ticket</text>
+
+          <line x1="20" y1="180" x2="320" y2="180" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+          <text x="160" y="215" text-anchor="middle" fill="#7fb3ff" font-size="9" font-family="Arial">Quelle: Statista, 2024 (Schätzwerte)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Aktives Zuhören -->
+<div class="slide bg-dark">
+  <div class="section-label">1.4.1 Kommunikation</div>
+  <h2 class="slide-title">Aktives Zuhören</h2>
+  <div class="red-line"></div>
+  <p class="slide-subtitle" style="margin-bottom:20px;">Eine Schlüsselkompetenz im Kundenkontakt</p>
+  <div class="cards-grid cards-3" style="max-width:880px;">
+    <div class="card">
+      <span class="card-icon">👁️</span>
+      <h3>Nonverbale Signale</h3>
+      <p>Augenkontakt, Nicken, offene Körperhaltung signalisieren echtes Interesse.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔁</span>
+      <h3>Paraphrasieren</h3>
+      <p>Das Gehörte in eigenen Worten wiederholen, um Verständnis zu bestätigen: „Verstehe ich richtig, dass..."</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">❓</span>
+      <h3>Offene Fragen</h3>
+      <p>W-Fragen stellen (Was? Wie? Warum?), um tieferes Verständnis zu gewinnen.</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:18px;">
+    <p>Aktives Zuhören steigert die Kundenzufriedenheit und reduziert Reklamationen. Studien zeigen, dass Kunden, die sich verstanden fühlen, 2,4-mal häufiger zu Stammkunden werden (Rogers, 2014, S. 89).</p>
+    <p class="cite">Rogers, C. R. (2014). <em>Die nicht-direktive Beratung.</em> Fischer Verlag. (S. 89)</p>
+  </div>
+</div>
+
+<!-- SLIDE 11: Teamarbeit Einführung -->
+<div class="slide bg-section">
+  <div class="section-label">1.4.2 Teamarbeit</div>
+  <h2 class="slide-title">Teamarbeit &amp; Zusammenarbeit</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Was ist ein Team?</h4>
+        <p>Ein Team ist eine Gruppe von Personen mit komplementären Fähigkeiten, die gemeinsame Ziele verfolgen und gemeinsam Verantwortung tragen (Katzenbach &amp; Smith, 2015, S. 45).</p>
+      </div>
+      <div class="info-box">
+        <h4>Gruppe vs. Team</h4>
+        <ul>
+          <li><strong>Gruppe:</strong> Einzelne Aufgaben, individuelle Verantwortung</li>
+          <li><strong>Team:</strong> Gemeinsame Aufgaben, geteilte Verantwortung, Synergie</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Vorteile von Teamarbeit</h4>
+        <ul>
+          <li>Synergieeffekte (1+1 = 3)</li>
+          <li>Vielfältige Perspektiven</li>
+          <li>Bessere Problemlösung</li>
+          <li>Höhere Motivation</li>
+          <li>Gegenseitige Kontrolle und Qualitätssicherung</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p>Im E-Commerce arbeiten oft interdisziplinäre Teams aus IT, Marketing, Logistik und Kundenservice zusammen – virtuelle Zusammenarbeit ist die Regel.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Tuckman-Modell -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.2 Teamarbeit</div>
+  <h2 class="slide-title">Phasen der Teamentwicklung nach Tuckman</h2>
+  <div class="red-line"></div>
+  <div class="flow-row" style="margin-bottom:16px;">
+    <div class="flow-box" style="border-color:#e74c3c;">
+      <div style="color:#e74c3c; font-weight:700; font-size:0.9rem;">1. Forming</div>
+      <div style="font-size:0.75rem; color:#bdc3cb; margin-top:4px;">Kennenlernen, Orientierung, Unsicherheit</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#e67e22;">
+      <div style="color:#e67e22; font-weight:700; font-size:0.9rem;">2. Storming</div>
+      <div style="font-size:0.75rem; color:#bdc3cb; margin-top:4px;">Konflikte, Rollenklärung, Machtfragen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#f0c040;">
+      <div style="color:#f0c040; font-weight:700; font-size:0.9rem;">3. Norming</div>
+      <div style="font-size:0.75rem; color:#bdc3cb; margin-top:4px;">Regeln entstehen, Vertrauen wächst</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#27ae60;">
+      <div style="color:#27ae60; font-weight:700; font-size:0.9rem;">4. Performing</div>
+      <div style="font-size:0.75rem; color:#bdc3cb; margin-top:4px;">Hochleistung, Selbstorganisation</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#7fb3ff;">
+      <div style="color:#7fb3ff; font-weight:700; font-size:0.9rem;">5. Adjourning</div>
+      <div style="font-size:0.75rem; color:#bdc3cb; margin-top:4px;">Abschluss, Auflösung, Reflexion</div>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <p>Das Tuckman-Modell zeigt: Konflikte (Storming) sind ein normaler Teil der Teamentwicklung, kein Zeichen des Scheiterns. Führungskräfte und Teammitglieder müssen diese Phase aktiv gestalten, um zur Hochleistungsphase zu gelangen.</p>
+    <p class="cite">Tuckman, B. W. (1965). Developmental sequence in small groups. <em>Psychological Bulletin, 63</em>(6), 384–399. https://doi.org/10.1037/h0022100</p>
+  </div>
+</div>
+
+<!-- SLIDE 13: Rollen im Team -->
+<div class="slide bg-dark">
+  <div class="section-label">1.4.2 Teamarbeit</div>
+  <h2 class="slide-title">Teamrollen nach Belbin</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-3" style="max-width:920px;">
+    <div class="card">
+      <h3>Handlungsorientiert</h3>
+      <ul>
+        <li>Macher – treibt voran</li>
+        <li>Umsetzer – strukturiert</li>
+        <li>Perfektionist – kontrolliert</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Kommunikationsorientiert</h3>
+      <ul>
+        <li>Koordinator – moderiert</li>
+        <li>Teamarbeiter – unterstützt</li>
+        <li>Wegbereiter – vernetzt</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Wissensorientiert</h3>
+      <ul>
+        <li>Erfinder – kreativ</li>
+        <li>Beobachter – analysiert</li>
+        <li>Spezialist – Fachwissen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:16px;">
+    <p>Effektive Teams brauchen eine Balance aller Rollentypen. Im E-Commerce-Kontext: Macher für Launches, Spezialisten für SEO/Tech, Teamarbeiter für Kundensupport.</p>
+    <p class="cite">Belbin, R. M. (2010). <em>Team Roles at Work.</em> Butterworth-Heinemann. (S. 22–39)</p>
+  </div>
+</div>
+
+<!-- SLIDE 14: Virtuelle Teams -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.2 Teamarbeit</div>
+  <h2 class="slide-title">Virtuelle Teams im E-Commerce</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Merkmale virtueller Teams</h4>
+        <ul>
+          <li>Räumliche Trennung (Remote Work)</li>
+          <li>Kommunikation über digitale Tools</li>
+          <li>Oft zeitzonenübergreifend</li>
+          <li>Hohe Eigenverantwortung</li>
+          <li>Dokumentation ist entscheidend</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>Typische Tools</h4>
+        <ul>
+          <li>Slack / Microsoft Teams (Kommunikation)</li>
+          <li>Jira / Trello (Aufgabenmanagement)</li>
+          <li>Confluence / Notion (Dokumentation)</li>
+          <li>Zoom / Google Meet (Videokonferenz)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Herausforderungen</h4>
+        <ul>
+          <li>Fehlende nonverbale Kommunikation</li>
+          <li>Zeitzonendifferenzen</li>
+          <li>Geringeres Zusammengehörigkeitsgefühl</li>
+          <li>Technische Probleme</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>Erfolgsfaktoren</h4>
+        <ul>
+          <li>Klare Kommunikationsregeln</li>
+          <li>Regelmäßige virtuelle Meetings</li>
+          <li>Vertrauenskultur statt Kontrolle</li>
+          <li>Transparente Ziele (OKRs)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Konfliktlösung Einführung -->
+<div class="slide bg-section">
+  <div class="section-label">1.4.3 Konfliktlösung</div>
+  <h2 class="slide-title">Konflikte im beruflichen Kontext</h2>
+  <div class="red-line"></div>
+  <div class="highlight-box">
+    <p>"Konflikte sind unvermeidlicher Bestandteil jeder Organisation. Entscheidend ist nicht ihre Abwesenheit, sondern der konstruktive Umgang mit ihnen."</p>
+    <p class="cite">Glasl, F. (2020). <em>Konfliktmanagement: Ein Handbuch für Führungskräfte.</em> Haupt Verlag. (S. 14)</p>
+  </div>
+  <div class="cards-grid cards-3" style="max-width:880px; margin-top:16px;">
+    <div class="card">
+      <h3>Sachkonflikte</h3>
+      <p>Unterschiedliche Meinungen über Fakten, Ziele oder Methoden. Z.B.: „Welches CMS verwenden wir?"</p>
+    </div>
+    <div class="card">
+      <h3>Beziehungskonflikte</h3>
+      <p>Persönliche Spannungen, Antipathien. Z.B.: Kollegen verstehen sich nicht.</p>
+    </div>
+    <div class="card">
+      <h3>Rollenkonflikte</h3>
+      <p>Unklare Zuständigkeiten oder widersprüchliche Erwartungen. Z.B.: Wer entscheidet über das Budget?</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Konflikteskalation nach Glasl -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.3 Konfliktlösung</div>
+  <h2 class="slide-title">Konflikteskalation nach Glasl</h2>
+  <div class="red-line"></div>
+  <div class="svg-container">
+    <svg width="700" height="240" viewBox="0 0 700 240">
+      <!-- Stufen (Treppe) -->
+      <!-- Ebene 1 (Win-Win) -->
+      <rect x="20" y="180" width="200" height="45" rx="6" fill="#27ae60" opacity="0.85"/>
+      <text x="120" y="197" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Arial">Stufe 1–3: Win-Win</text>
+      <text x="120" y="213" text-anchor="middle" fill="white" font-size="9" font-family="Arial">Verhärtung · Debatte · Taten</text>
+      <!-- Ebene 2 (Win-Lose) -->
+      <rect x="250" y="120" width="200" height="45" rx="6" fill="#e67e22" opacity="0.85"/>
+      <text x="350" y="137" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Arial">Stufe 4–6: Win-Lose</text>
+      <text x="350" y="153" text-anchor="middle" fill="white" font-size="9" font-family="Arial">Images · Gesichtsverlust · Drohungen</text>
+      <!-- Ebene 3 (Lose-Lose) -->
+      <rect x="480" y="60" width="200" height="45" rx="6" fill="#2563EB" opacity="0.85"/>
+      <text x="580" y="77" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Arial">Stufe 7–9: Lose-Lose</text>
+      <text x="580" y="93" text-anchor="middle" fill="white" font-size="9" font-family="Arial">Vernichtung · Zersplitterung</text>
+      <!-- Verbindungslinien -->
+      <line x1="220" y1="180" x2="250" y2="145" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      <line x1="450" y1="120" x2="480" y2="85" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      <!-- Labels -->
+      <text x="120" y="235" text-anchor="middle" fill="#27ae60" font-size="10" font-family="Arial">Selbstlösung möglich</text>
+      <text x="350" y="235" text-anchor="middle" fill="#e67e22" font-size="10" font-family="Arial">Moderation nötig</text>
+      <text x="580" y="235" text-anchor="middle" fill="#e74c3c" font-size="10" font-family="Arial">Schiedsverfahren nötig</text>
+    </svg>
+  </div>
+  <div class="highlight-box">
+    <p>Frühzeitiges Eingreifen ist entscheidend. Je höher die Eskalationsstufe, desto schwieriger und kostspieliger wird die Lösung. Im E-Commerce-Alltag: interne Konflikte früh im Win-Win-Bereich lösen.</p>
+    <p class="cite">Glasl, F. (2020). <em>Konfliktmanagement.</em> Haupt Verlag. (S. 233–280)</p>
+  </div>
+</div>
+
+<!-- SLIDE 17: Konfliktlösungsstrategien -->
+<div class="slide bg-dark">
+  <div class="section-label">1.4.3 Konfliktlösung</div>
+  <h2 class="slide-title">Strategien zur Konfliktlösung</h2>
+  <div class="red-line"></div>
+  <table class="data-table" style="max-width:860px;">
+    <thead>
+      <tr><th>Strategie</th><th>Beschreibung</th><th>Wann anwenden?</th><th>Ergebnis</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-green">Kooperation</span></td><td>Gemeinsam Lösung erarbeiten</td><td>Beide Parteien wichtig</td><td>Win-Win</td></tr>
+      <tr><td><span class="badge badge-blue">Kompromiss</span></td><td>Beide geben nach</td><td>Zeitdruck, ähnliche Macht</td><td>Teils-teils</td></tr>
+      <tr><td><span class="badge badge-gold">Nachgeben</span></td><td>Eigene Interessen zurückstellen</td><td>Thema unwichtig für mich</td><td>Lose-Win</td></tr>
+      <tr><td><span class="badge badge-red">Durchsetzen</span></td><td>Eigene Lösung erzwingen</td><td>Notfall, Hierarchie klar</td><td>Win-Lose</td></tr>
+      <tr><td>Vermeiden</td><td>Konflikt ignorieren</td><td>Nur als Zeitgewinn</td><td>Lose-Lose</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight-box" style="margin-top:16px;">
+    <p class="cite">Thomas, K. W., &amp; Kilmann, R. H. (1974). <em>Thomas-Kilmann Conflict Mode Instrument.</em> Xicom. (S. 5–12)</p>
+  </div>
+</div>
+
+<!-- SLIDE 18: Mediation -->
+<div class="slide bg-content">
+  <div class="section-label">1.4.3 Konfliktlösung</div>
+  <h2 class="slide-title">Mediation als Lösungsweg</h2>
+  <div class="red-line"></div>
+  <div class="flow-row" style="margin-bottom:20px; flex-direction:row;">
+    <div class="flow-box">
+      <div style="color:#f0c040; font-weight:700;">Eröffnung</div>
+      <div style="font-size:0.72rem; color:#bdc3cb; margin-top:4px;">Regeln festlegen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="color:#f0c040; font-weight:700;">Themensammlung</div>
+      <div style="font-size:0.72rem; color:#bdc3cb; margin-top:4px;">Alle Aspekte benennen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="color:#f0c040; font-weight:700;">Interessen</div>
+      <div style="font-size:0.72rem; color:#bdc3cb; margin-top:4px;">Bedürfnisse klären</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="color:#f0c040; font-weight:700;">Optionen</div>
+      <div style="font-size:0.72rem; color:#bdc3cb; margin-top:4px;">Lösungen entwickeln</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="color:#f0c040; font-weight:700;">Einigung</div>
+      <div style="font-size:0.72rem; color:#bdc3cb; margin-top:4px;">Vereinbarung schriftlich</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Rolle des Mediators</h4>
+        <ul>
+          <li>Neutral, parteilos</li>
+          <li>Allparteilich (versteht beide Seiten)</li>
+          <li>Trifft keine Entscheidungen</li>
+          <li>Fördert eigenverantwortliche Lösung</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Im E-Commerce-Kontext</h4>
+        <ul>
+          <li>Interne Konflikte zwischen Abteilungen</li>
+          <li>Lieferantenstreitigkeiten</li>
+          <li>Kundenbeschwerden eskalieren lassen</li>
+          <li>Teamkonflikte im Remote-Setting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ SLIDE 1: Soziale Kompetenz & Kommunikation -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; text-align:center;">🧠 Zwischenquiz: Soziale Kompetenz & Kommunikation</h2>
+  <div id="zq1-container">
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">1. Wofür steht das Kürzel KEKK in der sozialen Kompetenz?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ1('zq1-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) Kreativität, Eigeninitiative, Kritikfähigkeit, Kooperation</button>
+        <button onclick="checkZQ1('zq1-q1', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) Kommunikation, Empathie, Kooperation, Konfliktlösung</button>
+        <button onclick="checkZQ1('zq1-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) Können, Erfahrung, Kompetenz, Kreativität</button>
+      </div>
+      <p id="zq1-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">2. Laut Mehrabian (1971): Welchen Anteil hat die Körpersprache bei emotionalen Botschaften?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ1('zq1-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) 7%</button>
+        <button onclick="checkZQ1('zq1-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) 38%</button>
+        <button onclick="checkZQ1('zq1-q2', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) 55%</button>
+      </div>
+      <p id="zq1-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">3. In welcher Tuckman-Phase entstehen Konflikte, Machtkämpfe und Rollenklärungen?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ1('zq1-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) Forming</button>
+        <button onclick="checkZQ1('zq1-q3', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) Storming</button>
+        <button onclick="checkZQ1('zq1-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) Performing</button>
+      </div>
+      <p id="zq1-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ1(qid, btn, correct) {
+    btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#2ecc71' : '#e74c3c';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE 21: Übergang E-Commerce-Arten -->
+<div class="slide bg-section">
+  <div class="section-label">Abschnitt 1.5</div>
+  <h2 class="slide-title" style="font-size:2.6rem;">E-Commerce-Arten</h2>
+  <div class="red-line"></div>
+  <p class="slide-subtitle">Buchseiten 46–53 · Wer handelt mit wem?</p>
+  <div class="svg-container">
+    <svg width="680" height="200" viewBox="0 0 680 200">
+      <defs>
+        <linearGradient id="lgec" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#2563EB;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#1a3168;stop-opacity:0.3"/>
+        </linearGradient>
+      </defs>
+      <!-- Akteure -->
+      <rect x="50" y="70" width="120" height="60" rx="10" fill="url(#lgec)" stroke="#2563EB" stroke-width="1.5"/>
+      <text x="110" y="97" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Business</text>
+      <text x="110" y="115" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">Unternehmen</text>
+
+      <rect x="280" y="70" width="120" height="60" rx="10" fill="url(#lgec)" stroke="#2a4a8a" stroke-width="1.5"/>
+      <text x="340" y="97" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Consumer</text>
+      <text x="340" y="115" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">Verbraucher</text>
+
+      <rect x="510" y="70" width="120" height="60" rx="10" fill="url(#lgec)" stroke="#27ae60" stroke-width="1.5"/>
+      <text x="570" y="97" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Government</text>
+      <text x="570" y="115" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">Öffentl. Hand</text>
+
+      <!-- Verbindungen -->
+      <line x1="170" y1="100" x2="280" y2="100" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="225" y="92" text-anchor="middle" fill="#e74c3c" font-size="10" font-family="Arial">B2C</text>
+
+      <line x1="170" y1="85" x2="280" y2="85" stroke="#f0c040" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="225" y="78" text-anchor="middle" fill="#f0c040" font-size="10" font-family="Arial">B2B</text>
+
+      <path d="M 170 115 Q 225 140 280 115" stroke="#2ecc71" stroke-width="1.5" stroke-dasharray="5,3" fill="none"/>
+      <text x="225" y="148" text-anchor="middle" fill="#2ecc71" font-size="10" font-family="Arial">C2C</text>
+
+      <line x1="400" y1="100" x2="510" y2="100" stroke="#7fb3ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="455" y="92" text-anchor="middle" fill="#7fb3ff" font-size="10" font-family="Arial">B2G</text>
+
+      <text x="340" y="170" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">+ M-Commerce (Mobile Kanal)</text>
+    </svg>
+  </div>
+  <div class="highlight-box">
+    <p>E-Commerce beschreibt alle Formen des elektronischen Handels. Die Klassifizierung erfolgt nach den beteiligten Akteuren: Business (B), Consumer (C) und Government (G) – ergänzt durch den mobilen Kanal.</p>
+    <p class="cite">Wirtz, B. W. (2021). <em>Electronic Business.</em> Springer Gabler. (S. 47)</p>
+  </div>
+</div>
+
+<!-- SLIDE 20: Überblickstabelle -->
+<div class="slide bg-dark">
+  <div class="section-label">1.5 E-Commerce-Arten</div>
+  <h2 class="slide-title">Überblick: Alle Handelsformen</h2>
+  <div class="red-line"></div>
+  <table class="data-table" style="max-width:900px;">
+    <thead>
+      <tr><th>Art</th><th>Vollform</th><th>Akteure</th><th>Beispiele</th><th>Volumen (D)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-red">B2C</span></td><td>Business-to-Consumer</td><td>Unternehmen → Privatkunde</td><td>Amazon, Zalando, REWE</td><td>~104 Mrd. €</td></tr>
+      <tr><td><span class="badge badge-blue">B2B</span></td><td>Business-to-Business</td><td>Unternehmen → Unternehmen</td><td>Mercateo, Amazon Business</td><td>~1.700 Mrd. €</td></tr>
+      <tr><td><span class="badge badge-green">C2C</span></td><td>Consumer-to-Consumer</td><td>Privatkunde → Privatkunde</td><td>eBay Kleinanzeigen, Vinted</td><td>~14 Mrd. €</td></tr>
+      <tr><td><span class="badge badge-gold">B2G</span></td><td>Business-to-Government</td><td>Unternehmen → Staat</td><td>Beschaffungsamt, eVergabe</td><td>~360 Mrd. €</td></tr>
+      <tr><td>M-Com</td><td>Mobile Commerce</td><td>Alle (mobiler Kanal)</td><td>Apps, mobiles Payment</td><td>~60% aller B2C</td></tr>
+    </tbody>
+  </table>
+  <div class="highlight-box" style="margin-top:16px;">
+    <p class="cite">Statista. (2024). <em>E-Commerce-Markt Deutschland 2024.</em> Statista GmbH. https://www.statista.com/outlook/dmo/ecommerce/germany</p>
+  </div>
+</div>
+
+<!-- SLIDE 21: E-Commerce Definition -->
+<div class="slide bg-content">
+  <div class="section-label">1.5 E-Commerce-Arten</div>
+  <h2 class="slide-title">E-Commerce: Definition &amp; Abgrenzung</h2>
+  <div class="red-line"></div>
+  <div class="highlight-box">
+    <p>"Electronic Commerce umfasst die Anbahnung, Aushandlung und Abwicklung von Geschäftstransaktionen zwischen Wirtschaftssubjekten über öffentliche oder private Computernetzwerke."</p>
+    <p class="cite">Wirtz, B. W. (2021). <em>Electronic Business.</em> Springer Gabler. (S. 28)</p>
+  </div>
+  <div class="cards-grid cards-3" style="max-width:880px; margin-top:16px;">
+    <div class="card">
+      <h3>E-Commerce</h3>
+      <p>Fokus auf den Kauf- und Verkaufsprozess. Direkter Handel über digitale Kanäle.</p>
+    </div>
+    <div class="card">
+      <h3>E-Business</h3>
+      <p>Weiterer Begriff: umfasst alle digitalen Geschäftsprozesse (auch intern), nicht nur Handel.</p>
+    </div>
+    <div class="card">
+      <h3>M-Commerce</h3>
+      <p>Teilmenge des E-Commerce: ausschließlich über mobile Endgeräte abgewickelt.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22: B2C -->
+<div class="slide bg-section">
+  <div class="section-label">1.5.1 B2C</div>
+  <h2 class="slide-title">Business-to-Consumer (B2C)</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>B2C bezeichnet den elektronischen Handel zwischen Unternehmen und privaten Endverbrauchern. Dies ist die klassische Form des Online-Shoppings.</p>
+      </div>
+      <div class="info-box">
+        <h4>Merkmale</h4>
+        <ul>
+          <li>Große Zielgruppe (Massenmarkt)</li>
+          <li>Emotionale Kaufentscheidungen</li>
+          <li>Kurze Verkaufszyklen</li>
+          <li>Hohe Marketingausgaben</li>
+          <li>Verbraucherschutzrecht gilt (z.B. 14-Tage-Widerruf)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Bekannte Plattformen</h4>
+        <ul>
+          <li>Amazon (Marktplatz + Eigenmarken)</li>
+          <li>Zalando (Fashion)</li>
+          <li>Otto (Versandhandel)</li>
+          <li>REWE / Edeka (Lebensmittel)</li>
+          <li>MediaMarkt / Saturn (Elektronik)</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p>Der deutsche B2C-Markt wuchs 2023 auf ca. 104 Mrd. € Umsatz. Größte Kategorien: Bekleidung, Elektronik, Wohnen (HDE, 2024, S. 8).</p>
+        <p class="cite">HDE. (2024). <em>Online Monitor 2024.</em> Handelsverband Deutschland. (S. 8)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 23: B2C Besonderheiten -->
+<div class="slide bg-dark">
+  <div class="section-label">1.5.1 B2C</div>
+  <h2 class="slide-title">B2C: Customer Journey</h2>
+  <div class="red-line"></div>
+  <div class="flow-row" style="margin-bottom:20px;">
+    <div class="flow-box" style="border-color:#e74c3c;">
+      <div style="color:#e74c3c; font-size:1.2rem;">👀</div>
+      <div style="font-weight:700; color:#f0c040; font-size:0.85rem;">Awareness</div>
+      <div style="font-size:0.72rem; color:#bdc3cb;">SEO, Social Ads, TV</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="font-size:1.2rem;">🔍</div>
+      <div style="font-weight:700; color:#f0c040; font-size:0.85rem;">Consideration</div>
+      <div style="font-size:0.72rem; color:#bdc3cb;">Produktvergleich</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#27ae60;">
+      <div style="font-size:1.2rem;">🛒</div>
+      <div style="font-weight:700; color:#f0c040; font-size:0.85rem;">Purchase</div>
+      <div style="font-size:0.72rem; color:#bdc3cb;">Checkout, Payment</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div style="font-size:1.2rem;">📦</div>
+      <div style="font-weight:700; color:#f0c040; font-size:0.85rem;">Delivery</div>
+      <div style="font-size:0.72rem; color:#bdc3cb;">Logistik, Tracking</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#7fb3ff;">
+      <div style="font-size:1.2rem;">⭐</div>
+      <div style="font-weight:700; color:#f0c040; font-size:0.85rem;">Retention</div>
+      <div style="font-size:0.72rem; color:#bdc3cb;">Newsletter, Loyalität</div>
+    </div>
+  </div>
+  <div class="cards-grid cards-3" style="max-width:880px;">
+    <div class="card">
+      <h3>Rechtliches</h3>
+      <ul>
+        <li>14 Tage Widerrufsrecht</li>
+        <li>Preistransparenzpflicht</li>
+        <li>DSGVO-konforme Daten</li>
+        <li>Impressumspflicht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Zahlungsarten</h3>
+      <ul>
+        <li>PayPal, Kreditkarte</li>
+        <li>Klarna (BNPL)</li>
+        <li>Sofortüberweisung</li>
+        <li>Apple/Google Pay</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>KPIs im B2C</h3>
+      <ul>
+        <li>Conversion Rate (~2-3%)</li>
+        <li>Warenkorbwert (Ø 75–95€)</li>
+        <li>Customer Lifetime Value</li>
+        <li>Return Rate (~30-50%)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24: B2B -->
+<div class="slide bg-content">
+  <div class="section-label">1.5.2 B2B</div>
+  <h2 class="slide-title">Business-to-Business (B2B)</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>B2B bezeichnet den elektronischen Handel zwischen zwei oder mehr Unternehmen. Das Handelsvolumen übersteigt B2C um ein Vielfaches.</p>
+      </div>
+      <div class="info-box">
+        <h4>Merkmale</h4>
+        <ul>
+          <li>Rationale, planbare Kaufentscheidungen</li>
+          <li>Langfristige Geschäftsbeziehungen</li>
+          <li>Individuelle Konditionen (Rabatte, Zahlungsziele)</li>
+          <li>Ausschreibungsverfahren</li>
+          <li>Komplexe Produktkataloge</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Plattformen &amp; Modelle</h4>
+        <ul>
+          <li>Amazon Business (Marktplatz)</li>
+          <li>Mercateo (Beschaffungsplattform)</li>
+          <li>Eigene Shops mit Preislisten</li>
+          <li>EDI (Electronic Data Interchange)</li>
+          <li>Procurement-Systeme (SAP Ariba)</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p>B2B-E-Commerce in Deutschland: ca. 1.700 Mrd. € Umsatz jährlich (inkl. EDI). Digitalisierungspotenzial noch nicht ausgeschöpft – nur 30% vollständig digital.</p>
+        <p class="cite">Bitkom. (2023). <em>B2B E-Commerce Konjunkturindex 2023.</em> Bitkom e.V. (S. 4)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25: B2B Besonderheiten -->
+<div class="slide bg-dark">
+  <div class="section-label">1.5.2 B2B</div>
+  <h2 class="slide-title">B2B vs. B2C: Der Vergleich</h2>
+  <div class="red-line"></div>
+  <table class="data-table" style="max-width:880px;">
+    <thead>
+      <tr><th>Kriterium</th><th>B2C</th><th>B2B</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Zielgruppe</td><td>Millionen Privatkunden</td><td>Wenige tausend Geschäftskunden</td></tr>
+      <tr><td>Kaufmotiv</td><td>Emotional, impulsiv</td><td>Rational, betriebsnotwendig</td></tr>
+      <tr><td>Kaufzyklus</td><td>Minuten bis Stunden</td><td>Tage bis Monate</td></tr>
+      <tr><td>Bestellwert</td><td>Ø 75–95 €</td><td>Ø 2.000–50.000 €</td></tr>
+      <tr><td>Preisfindung</td><td>Festpreise, öffentlich</td><td>Individuelle Preise, Rabattstaffeln</td></tr>
+      <tr><td>Entscheider</td><td>Einzelperson</td><td>Buying Center (Gremium)</td></tr>
+      <tr><td>Rechtlicher Rahmen</td><td>B2C-Schutzrecht (14-T-Widerruf)</td><td>HGB, Rahmenverträge</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- QUIZ SLIDE 2: E-Commerce-Arten B2C & B2B -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; text-align:center;">🧠 Zwischenquiz: E-Commerce-Arten (B2C & B2B)</h2>
+  <div id="zq2-container">
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">1. Welches Widerrufsrecht gilt im B2C-Handel für Privatverbraucher (§ 312g BGB)?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2('zq2-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) 7 Tage</button>
+        <button onclick="checkZQ2('zq2-q1', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) 14 Tage</button>
+        <button onclick="checkZQ2('zq2-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) 30 Tage</button>
+      </div>
+      <p id="zq2-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">2. Welcher E-Commerce-Kanal hat das größte Handelsvolumen in Deutschland?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2('zq2-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) B2C (ca. 104 Mrd. €)</button>
+        <button onclick="checkZQ2('zq2-q2', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) B2B (ca. 1.700 Mrd. €)</button>
+        <button onclick="checkZQ2('zq2-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) C2C (ca. 14 Mrd. €)</button>
+      </div>
+      <p id="zq2-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">3. Was ist ein typisches Merkmal von B2B-Käufen im Vergleich zu B2C?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2('zq2-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) Kaufentscheidung ist meist emotional und spontan</button>
+        <button onclick="checkZQ2('zq2-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) Es gilt das 14-tägige Verbraucher-Widerrufsrecht</button>
+        <button onclick="checkZQ2('zq2-q3', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) Kaufentscheidungen sind rational und oft durch ein Buying Center getroffen</button>
+      </div>
+      <p id="zq2-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ2(qid, btn, correct) {
+    btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#2ecc71' : '#e74c3c';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE: C2C -->
+<div class="slide bg-content">
+  <div class="section-label">1.5.3 C2C</div>
+  <h2 class="slide-title">Consumer-to-Consumer (C2C)</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>C2C beschreibt den elektronischen Handel zwischen Privatpersonen, meist über Plattformen, die als Intermediär fungieren. Die Plattform verdient durch Gebühren oder Provisionen.</p>
+      </div>
+      <div class="info-box">
+        <h4>Bekannte Plattformen</h4>
+        <ul>
+          <li>eBay Kleinanzeigen / Kleinanzeigen.de</li>
+          <li>Vinted (Second-Hand-Mode)</li>
+          <li>eBay Auktionen</li>
+          <li>Facebook Marketplace</li>
+          <li>Etsy (Handgemachtes)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Merkmale</h4>
+        <ul>
+          <li>Plattform als Vermittler</li>
+          <li>Gebrauchte/selbstgemachte Waren</li>
+          <li>Niedrigere Preise als Neukauf</li>
+          <li>Nachhaltigkeit / Circular Economy</li>
+          <li>Käuferschutz durch Plattform</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p>Der Markt für Second-Hand-Mode wächst jährlich um 15–20%. Sustainability-Trend stärkt C2C. Plattformen werden professioneller (Vinted: +30 Mio. Nutzer in DE).</p>
+        <p class="cite">ThredUp. (2023). <em>2023 Resale Report.</em> ThredUp Inc. (S. 6)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 27: B2G -->
+<div class="slide bg-section">
+  <div class="section-label">1.5.4 B2G</div>
+  <h2 class="slide-title">Business-to-Government (B2G)</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>B2G bezeichnet Geschäftstransaktionen zwischen Unternehmen und staatlichen Institutionen (Bund, Länder, Kommunen). Auch E-Procurement oder Public E-Commerce genannt.</p>
+      </div>
+      <div class="info-box">
+        <h4>Besonderheiten</h4>
+        <ul>
+          <li>Strikte Vergabegesetze (VgV, GWB)</li>
+          <li>Transparenzpflicht bei Ausschreibungen</li>
+          <li>EU-weite Ausschreibung ab Schwellenwert</li>
+          <li>Elektronische Rechnungsstellung (E-Rechnung) Pflicht</li>
+          <li>Lange Beschaffungszyklen</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="info-box">
+        <h4>Plattformen</h4>
+        <ul>
+          <li>Vergabe24 / DTVP</li>
+          <li>Beschaffungsamt des BMI</li>
+          <li>TED (EU-weite Ausschreibungen)</li>
+          <li>eVergabe-Portale der Länder</li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p>Die öffentliche Hand ist mit ~360 Mrd. € jährlich einer der größten Einkäufer Deutschlands. Digitalisierung der Beschaffung ist gesetzlich vorgeschrieben (E-Rechnungsgesetz 2020).</p>
+        <p class="cite">Bundesministerium des Innern. (2023). <em>E-Government in Deutschland.</em> BMI. (S. 22)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 28: M-Commerce -->
+<div class="slide bg-dark">
+  <div class="section-label">1.5.5 M-Commerce</div>
+  <h2 class="slide-title">Mobile Commerce (M-Commerce)</h2>
+  <div class="red-line"></div>
+  <div class="two-col">
+    <div class="col">
+      <div class="info-box">
+        <h4>Definition</h4>
+        <p>M-Commerce bezeichnet alle E-Commerce-Aktivitäten, die über mobile Endgeräte (Smartphones, Tablets) stattfinden. Er ist eine Teilmenge des E-Commerce.</p>
+      </div>
+      <div class="info-box">
+        <h4>Mobile-First-Prinzip</h4>
+        <ul>
+          <li>Webseiten primär für Mobile optimiert</li>
+          <li>Kurze Ladezeiten (Core Web Vitals)</li>
+          <li>Touch-optimierte Navigation</li>
+          <li>Vereinfachter Checkout</li>
+          <li>Push-Notifications für Angebote</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="svg-container">
+        <svg width="280" height="200" viewBox="0 0 280 200">
+          <text x="140" y="16" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Arial">M-Commerce Anteil am E-Commerce</text>
+          <!-- Pie chart -->
+          <!-- M-Commerce: 62% -->
+          <path d="M140 110 L140 55 A55 55 0 1 1 81 147 Z" fill="#2563EB" opacity="0.85"/>
+          <text x="160" y="95" fill="white" font-size="14" font-weight="bold" font-family="Arial">62%</text>
+          <text x="158" y="108" fill="white" font-size="9" font-family="Arial">Mobile</text>
+          <!-- Desktop: 38% -->
+          <path d="M140 110 L81 147 A55 55 0 0 1 140 55 Z" fill="#1a3168" opacity="0.9"/>
+          <text x="98" y="138" fill="white" font-size="12" font-weight="bold" font-family="Arial">38%</text>
+          <text x="94" y="151" fill="white" font-size="9" font-family="Arial">Desktop</text>
+
+          <circle cx="140" cy="110" r="55" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+
+          <!-- Legende -->
+          <rect x="60" y="175" width="12" height="12" fill="#2563EB" rx="2"/>
+          <text x="78" y="185" fill="#bdc3cb" font-size="10" font-family="Arial">Mobile (Smartphone/Tablet)</text>
+          <rect x="60" y="190" width="12" height="12" fill="#1a3168" rx="2"/>
+          <text x="78" y="200" fill="#bdc3cb" font-size="10" font-family="Arial">Desktop / Laptop</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:8px;">
+    <p class="cite">HDE. (2024). <em>Online Monitor 2024.</em> Handelsverband Deutschland. (S. 14) | Statista. (2024). <em>Mobile Commerce Share Germany.</em></p>
+  </div>
+</div>
+
+<!-- SLIDE 29: M-Commerce Technologien -->
+<div class="slide bg-content">
+  <div class="section-label">1.5.5 M-Commerce</div>
+  <h2 class="slide-title">M-Commerce: Technologien &amp; Trends</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-3" style="max-width:880px;">
+    <div class="card">
+      <span class="card-icon">📱</span>
+      <h3>Shopping-Apps</h3>
+      <p>Native Apps bieten bessere UX als Webseiten: schneller, personalisiert, Push-Benachrichtigungen.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">💳</span>
+      <h3>Mobile Payment</h3>
+      <p>Apple Pay, Google Pay, PayPal – Zahlung per Fingerabdruck oder Face-ID. 1-Click-Checkout.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">📷</span>
+      <h3>Social Commerce</h3>
+      <p>Einkauf direkt in Instagram, TikTok Shop, Pinterest. Influencer als Verkäufer.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🗺️</span>
+      <h3>Location-Based</h3>
+      <p>GPS-Daten für lokale Angebote, Click &amp; Collect, Geo-Fencing-Kampagnen.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🤖</span>
+      <h3>KI-Personalisierung</h3>
+      <p>Algorithmen lernen Kaufverhalten und zeigen individuell relevante Produkte.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔮</span>
+      <h3>AR-Shopping</h3>
+      <p>Augmented Reality: Möbel virtuell platzieren (IKEA), Kleidung anprobieren (Zalando).</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 30: Marktdaten Deutschland -->
+<div class="slide bg-section">
+  <div class="section-label">Marktdaten</div>
+  <h2 class="slide-title">E-Commerce in Deutschland: Zahlen &amp; Fakten</h2>
+  <div class="red-line"></div>
+  <div class="svg-container">
+    <svg width="760" height="220" viewBox="0 0 760 220">
+      <!-- Title -->
+      <text x="380" y="18" text-anchor="middle" fill="#f0c040" font-size="12" font-weight="bold" font-family="Arial">B2C E-Commerce Umsatz Deutschland (Mrd. €)</text>
+
+      <!-- Y-Achse -->
+      <line x1="70" y1="30" x2="70" y2="190" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+      <line x1="70" y1="190" x2="740" y2="190" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+
+      <!-- Balken 2019-2024 -->
+      <rect x="95" y="140" width="70" height="50" rx="4" fill="#1a3168" opacity="0.9"/>
+      <text x="130" y="136" text-anchor="middle" fill="white" font-size="10" font-family="Arial">59</text>
+      <text x="130" y="205" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">2019</text>
+
+      <rect x="205" y="110" width="70" height="80" rx="4" fill="#2a4a8a" opacity="0.9"/>
+      <text x="240" y="106" text-anchor="middle" fill="white" font-size="10" font-family="Arial">73</text>
+      <text x="240" y="205" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">2020</text>
+
+      <rect x="315" y="95" width="70" height="95" rx="4" fill="#2563EB" opacity="0.85"/>
+      <text x="350" y="91" text-anchor="middle" fill="white" font-size="10" font-family="Arial">87</text>
+      <text x="350" y="205" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">2021</text>
+
+      <rect x="425" y="85" width="70" height="105" rx="4" fill="#2563EB" opacity="0.9"/>
+      <text x="460" y="81" text-anchor="middle" fill="white" font-size="10" font-family="Arial">99</text>
+      <text x="460" y="205" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">2022</text>
+
+      <rect x="535" y="88" width="70" height="102" rx="4" fill="#e74c3c" opacity="0.85"/>
+      <text x="570" y="84" text-anchor="middle" fill="white" font-size="10" font-family="Arial">95</text>
+      <text x="570" y="205" text-anchor="middle" fill="#bdc3cb" font-size="10" font-family="Arial">2023</text>
+
+      <rect x="645" y="78" width="70" height="112" rx="4" fill="#f0c040" opacity="0.9"/>
+      <text x="680" y="74" text-anchor="middle" fill="#0d1b3e" font-size="10" font-weight="bold" font-family="Arial">104</text>
+      <text x="680" y="205" text-anchor="middle" fill="#f0c040" font-size="10" font-family="Arial">2024*</text>
+
+      <text x="740" y="208" text-anchor="end" fill="#7fb3ff" font-size="8" font-family="Arial">*Prognose</text>
+    </svg>
+  </div>
+  <div class="highlight-box">
+    <p class="cite">HDE. (2024). <em>Online Monitor 2024.</em> Handelsverband Deutschland. (S. 6–9) | Statista. (2024). <em>E-Commerce in Germany.</em></p>
+  </div>
+</div>
+
+<!-- SLIDE 31: Vergleich aller Arten -->
+<div class="slide bg-dark">
+  <div class="section-label">Vergleich</div>
+  <h2 class="slide-title">Vor- &amp; Nachteile im Vergleich</h2>
+  <div class="red-line"></div>
+  <table class="data-table" style="max-width:920px;">
+    <thead>
+      <tr><th>Art</th><th>Vorteile</th><th>Nachteile / Herausforderungen</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-red">B2C</span></td><td>Massenmarkt, skalierbar, bekannte Marken</td><td>Hohe Konkurrenz, Preisdruck, Retouren</td></tr>
+      <tr><td><span class="badge badge-blue">B2B</span></td><td>Hohe Bestellwerte, langfristige Kunden</td><td>Komplexe Systeme, langer Zyklus</td></tr>
+      <tr><td><span class="badge badge-green">C2C</span></td><td>Geringe Kosten, Nachhaltigkeit</td><td>Vertrauensprobleme, wenig Kontrolle</td></tr>
+      <tr><td><span class="badge badge-gold">B2G</span></td><td>Große Aufträge, stabile Kunden</td><td>Bürokratie, langsame Prozesse</td></tr>
+      <tr><td>M-Commerce</td><td>Überall erreichbar, hohe Nutzung</td><td>Datenschutz, kleinere Bildschirme</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SLIDE 32: Hybride Modelle -->
+<div class="slide bg-content">
+  <div class="section-label">Marktentwicklung</div>
+  <h2 class="slide-title">Hybride Geschäftsmodelle &amp; Trends</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-2" style="max-width:860px;">
+    <div class="card">
+      <span class="card-icon">🔄</span>
+      <h3>D2C – Direct to Consumer</h3>
+      <p>Hersteller verkaufen direkt an Endkunden (ohne Händler). Beispiel: Nike, Adidas, Tesla. Höhere Marge, direkte Kundenbeziehung.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🏪</span>
+      <h3>Omnichannel</h3>
+      <p>Nahtlose Verbindung von Online und Offline. Click &amp; Collect, Return in Store. Beispiel: MediaMarkt, IKEA.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">📡</span>
+      <h3>Social Commerce</h3>
+      <p>Einkauf direkt auf Social-Media-Plattformen (TikTok Shop, Instagram Shopping). Gen Z als Hauptzielgruppe.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌱</span>
+      <h3>Recommerce / Re-Commerce</h3>
+      <p>Weiterentwicklung des C2C: Professioneller Handel mit gebrauchten Produkten. Beispiel: Rebuy, BackMarket.</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ SLIDE 3: C2C, B2G, M-Commerce -->
+<div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+  <h2 style="color: #2563EB; margin-bottom: 15px; text-align:center;">🧠 Zwischenquiz: C2C, B2G & M-Commerce</h2>
+  <div id="zq3-container">
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">1. Welche Plattform ist ein bekanntes Beispiel für C2C (Consumer-to-Consumer)?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3('zq3-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) Amazon Business</button>
+        <button onclick="checkZQ3('zq3-q1', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) Zalando</button>
+        <button onclick="checkZQ3('zq3-q1', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) Vinted / eBay Kleinanzeigen</button>
+      </div>
+      <p id="zq3-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">2. Was bezeichnet B2G im E-Commerce?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3('zq3-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) Business to Großhandel</button>
+        <button onclick="checkZQ3('zq3-q2', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) Business to Government (Unternehmen an den Staat)</button>
+        <button onclick="checkZQ3('zq3-q2', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) Business to Gruppenhandel</button>
+      </div>
+      <p id="zq3-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+    <div class="zq-question" style="margin-bottom: 20px; max-width:860px; margin-left:auto; margin-right:auto;">
+      <p style="font-weight: bold; margin-bottom: 8px; color:#ecf0f1;">3. Welcher Anteil aller E-Commerce-Käufe in Deutschland erfolgt über mobile Geräte (Smartphone/Tablet)?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3('zq3-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">A) ca. 20%</button>
+        <button onclick="checkZQ3('zq3-q3', this, false)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">B) ca. 38%</button>
+        <button onclick="checkZQ3('zq3-q3', this, true)" style="display:block; width:100%; text-align:left; padding:8px 12px; margin:4px 0; background:#1a3060; border:1px solid #3a5090; border-radius:6px; color:white; cursor:pointer;">C) ca. 62%</button>
+      </div>
+      <p id="zq3-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ3(qid, btn, correct) {
+    btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const result = document.getElementById(qid + '-result');
+    result.style.display = 'block';
+    result.style.color = correct ? '#2ecc71' : '#e74c3c';
+    result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+    if (!correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+        if (b.onclick && b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+      });
+    }
+  }
+  </script>
+</div>
+
+<!-- SLIDE: Zusammenfassung -->
+<div class="slide bg-section">
+  <div class="section-label">Zusammenfassung</div>
+  <h2 class="slide-title">Die wichtigsten Erkenntnisse</h2>
+  <div class="red-line"></div>
+  <div class="summary-item">
+    <div class="summary-num">1</div>
+    <p><strong>Soziale Kompetenz</strong> ist erlernbar und umfasst Kommunikation, Empathie, Teamfähigkeit und Konfliktlösung. Im digitalen Handel ist sie unverzichtbar.</p>
+  </div>
+  <div class="summary-item">
+    <div class="summary-num">2</div>
+    <p><strong>Kommunikation</strong> geschieht auf vier Ebenen (Schulz von Thun). Digitale Kanäle erhöhen das Missverständnisrisiko – klare Sprache ist essentiell.</p>
+  </div>
+  <div class="summary-item">
+    <div class="summary-num">3</div>
+    <p><strong>Teams</strong> durchlaufen nach Tuckman fünf Phasen. Konflikte im Storming sind normal und konstruktiv lösbar.</p>
+  </div>
+  <div class="summary-item">
+    <div class="summary-num">4</div>
+    <p><strong>B2C</strong> (Massenmarkt), <strong>B2B</strong> (größtes Volumen), <strong>C2C</strong> (Nachhaltigkeit), <strong>B2G</strong> (öffentlich) und <strong>M-Commerce</strong> (mobil) sind die fünf zentralen E-Commerce-Arten.</p>
+  </div>
+  <div class="summary-item">
+    <div class="summary-num">5</div>
+    <p><strong>Trends</strong>: D2C, Omnichannel, Social Commerce und Recommerce prägen die Zukunft des E-Commerce.</p>
+  </div>
+</div>
+
+<!-- SLIDE 34: Lernzielkontrolle -->
+<div class="slide bg-dark">
+  <div class="section-label">Lernzielkontrolle</div>
+  <h2 class="slide-title">Wissenscheck</h2>
+  <div class="red-line"></div>
+  <div class="cards-grid cards-2" style="max-width:860px;">
+    <div class="card" style="border-left:3px solid #e74c3c;">
+      <h3 style="color:#e74c3c;">Frage 1</h3>
+      <p>Nennen Sie drei Dimensionen sozialer Kompetenz und erläutern Sie deren Bedeutung im E-Commerce-Kontext.</p>
+    </div>
+    <div class="card" style="border-left:3px solid #f0c040;">
+      <h3 style="color:#f0c040;">Frage 2</h3>
+      <p>Was versteht man unter dem 4-Ohren-Modell von Schulz von Thun? Geben Sie ein Beispiel aus dem Kundensupport.</p>
+    </div>
+    <div class="card" style="border-left:3px solid #27ae60;">
+      <h3 style="color:#27ae60;">Frage 3</h3>
+      <p>Beschreiben Sie die fünf Phasen der Teamentwicklung nach Tuckman und erklären Sie, was in der Storming-Phase passiert.</p>
+    </div>
+    <div class="card" style="border-left:3px solid #7fb3ff;">
+      <h3 style="color:#7fb3ff;">Frage 4</h3>
+      <p>Grenzen Sie B2C und B2B voneinander ab. Nennen Sie jeweils zwei Beispiele und einen wesentlichen Unterschied.</p>
+    </div>
+    <div class="card" style="border-left:3px solid #9b59b6;">
+      <h3 style="color:#9b59b6;">Frage 5</h3>
+      <p>Was ist M-Commerce und warum hat er in den letzten Jahren stark an Bedeutung gewonnen? Welche Technologien treiben ihn an?</p>
+    </div>
+    <div class="card" style="border-left:3px solid #e67e22;">
+      <h3 style="color:#e67e22;">Frage 6</h3>
+      <p>Erklären Sie den Begriff B2G und nennen Sie zwei spezifische Besonderheiten im Vergleich zu B2C.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 35: Literaturverzeichnis -->
+<div class="slide bg-content">
+  <div class="section-label">Literaturverzeichnis</div>
+  <h2 class="slide-title">Quellen (APA 7)</h2>
+  <div class="red-line"></div>
+  <ul class="ref-list">
+    <li>Belbin, R. M. (2010). <em>Team roles at work</em> (2nd ed.). Butterworth-Heinemann.</li>
+    <li>Bitkom. (2023). <em>B2B E-Commerce Konjunkturindex 2023.</em> Bitkom e.V.</li>
+    <li>Bundesministerium des Innern. (2023). <em>E-Government in Deutschland: Umsetzungsbericht.</em> BMI.</li>
+    <li>Glasl, F. (2020). <em>Konfliktmanagement: Ein Handbuch für Führungskräfte, Beraterinnen und Berater</em> (12. Aufl.). Haupt Verlag.</li>
+    <li>HDE. (2024). <em>Online Monitor 2024.</em> Handelsverband Deutschland.</li>
+    <li>Katzenbach, J. R., &amp; Smith, D. K. (2015). <em>The wisdom of teams: Creating the high-performance organization.</em> Harvard Business Review Press.</li>
+    <li>Rogers, C. R. (2014). <em>Die nicht-direktive Beratung: Counseling and psychotherapy.</em> Fischer Verlag.</li>
+    <li>Schulz von Thun, F. (2019). <em>Miteinander reden 1: Störungen und Klärungen</em> (56. Aufl.). Rowohlt.</li>
+    <li>Schulz von Thun, F., Ruppel, J., &amp; Stratmann, R. (2017). <em>Miteinander reden: Kommunikationspsychologie für Führungskräfte.</em> Rowohlt.</li>
+    <li>Shannon, C. E., &amp; Weaver, W. (1949). <em>The mathematical theory of communication.</em> University of Illinois Press.</li>
+    <li>Statista. (2024). <em>E-Commerce in Germany: Market forecast and statistics 2024.</em> Statista GmbH. https://www.statista.com/outlook/dmo/ecommerce/germany</li>
+    <li>Stauber, G., &amp; Wittmann, R. (2020). <em>Kommunikation im digitalen Zeitalter.</em> Springer Gabler.</li>
+    <li>Thomas, K. W., &amp; Kilmann, R. H. (1974). <em>Thomas-Kilmann conflict mode instrument.</em> Xicom.</li>
+    <li>ThredUp. (2023). <em>2023 resale report.</em> ThredUp Inc. https://www.thredup.com/resale</li>
+    <li>Tuckman, B. W. (1965). Developmental sequence in small groups. <em>Psychological Bulletin, 63</em>(6), 384–399. https://doi.org/10.1037/h0022100</li>
+    <li>Watzlawick, P., Beavin, J. H., &amp; Jackson, D. D. (2017). <em>Menschliche Kommunikation: Formen, Störungen, Paradoxien</em> (13. Aufl.). Hogrefe.</li>
+    <li>Wirtz, B. W. (2021). <em>Electronic business</em> (7. Aufl.). Springer Gabler.</li>
+  </ul>
+</div>
+
+</div><!-- end #slides -->
+
+
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 40</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Soziale Kompetenz & E-Commerce-Arten &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

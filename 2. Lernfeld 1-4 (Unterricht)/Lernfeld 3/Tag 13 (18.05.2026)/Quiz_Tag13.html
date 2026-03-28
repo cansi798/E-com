@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Tag 13: Weitere wichtige Vertragsarten</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --accent: #f59e0b;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; text-align: center; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; }
+  .progress-bar-wrap { width: 100%; max-width: 680px; height: 6px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; }
+  .progress-bar { height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.4s ease; }
+  .dots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 680px; margin-bottom: 1.5rem; }
+  .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .dot.current { border-color: var(--primary); color: var(--primary); background: #ede9fe; }
+  .dot.answered-ok { background: var(--success); color: #fff; border-color: var(--success); }
+  .dot.answered-err { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .quiz-area { width: 100%; max-width: 680px; position: relative; }
+  .q-card { display: none; background: var(--card); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .q-card.active { display: block; }
+  .q-number { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .q-text { font-size: 1.1rem; font-weight: 600; line-height: 1.5; margin-bottom: 1.5rem; }
+  .options { display: flex; flex-direction: column; gap: 0.75rem; }
+  .opt { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.4; background: #fafafa; }
+  .opt:hover:not(.locked) { border-color: var(--primary); background: #ede9fe; }
+  .opt .badge { min-width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+  .opt.correct { border-color: var(--success); background: #f0fdf4; }
+  .opt.correct .badge { background: var(--success); color: #fff; }
+  .opt.wrong { border-color: var(--danger); background: #fff5f5; }
+  .opt.wrong .badge { background: var(--danger); color: #fff; }
+  .opt.locked { cursor: default; }
+  .feedback { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.5; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+  .feedback.err { background: #fff5f5; border: 1px solid #fecaca; color: #b91c1c; }
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-next { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.4rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: none; transition: background 0.2s; }
+  .btn-next:hover { background: #4338ca; }
+  .btn-next.show { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .result-card { display: none; background: var(--card); border-radius: 16px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); text-align: center; width: 100%; max-width: 680px; }
+  .result-card.show { display: block; }
+  .result-score { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+  .result-label { font-size: 1.15rem; font-weight: 600; margin: 0.5rem 0 1rem; }
+  .result-msg { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .btn-restart { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.7rem 1.6rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+  .btn-restart:hover { background: #4338ca; }
+</style>
+</head>
+<body>
+
+<h1>Quiz – Tag 13</h1>
+<p class="subtitle">3.13 Weitere wichtige Vertragsarten · 20 Fragen</p>
+
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<div class="dots" id="dotsContainer"></div>
+
+<div class="quiz-area" id="quizArea">
+
+  <!-- Frage 1 -->
+  <div class="q-card active" id="q1">
+    <div class="q-number">Frage 1 von 20</div>
+    <div class="q-text">Was ist der wesentliche Unterschied zwischen einem Dienstvertrag und einem Werkvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Beim Dienstvertrag schuldet man einen Erfolg, beim Werkvertrag eine Tätigkeit</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Beim Dienstvertrag schuldet man eine Tätigkeit, beim Werkvertrag einen Erfolg</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Beide Vertragsarten sind rechtlich identisch</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Dienstvertrag ist immer schriftlich, der Werkvertrag kann mündlich sein</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Dienstvertrag verpflichtet zur Erbringung einer Tätigkeit (ohne Erfolgszusage), der Werkvertrag zum Herbeiführen eines bestimmten Werkergebnisses (Erfolg geschuldet).</div>
+    <div class="feedback err">Nicht korrekt. Merke: Dienstvertrag = Tätigkeit; Werkvertrag = Erfolg. Beim Werkvertrag kann man nachbessern, beim Dienstvertrag nicht.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card" id="q2">
+    <div class="q-number">Frage 2 von 20</div>
+    <div class="q-text">Ein Unternehmen beauftragt eine Agentur mit der Erstellung einer neuen Unternehmenswebsite. Um welche Vertragsart handelt es sich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Dienstvertrag, weil digitale Arbeit geleistet wird</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Werkvertrag, weil ein konkretes Ergebnis (Website) geschuldet ist</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Mietvertrag, weil die Website gemietet wird</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Kaufvertrag, weil ein digitales Produkt erworben wird</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Erstellung einer Website ist ein Werkvertrag, weil ein konkretes, abnahmefähiges Ergebnis (das fertige Website-Werk) geschuldet ist. Der Auftraggeber kann bei Mängeln Nacherfüllung verlangen.</div>
+    <div class="feedback err">Nicht korrekt. Website-Erstellung = Werkvertrag, weil ein konkretes Ergebnis (fertige, funktionsfähige Website) geschuldet ist – nicht bloß die Arbeit daran.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card" id="q3">
+    <div class="q-number">Frage 3 von 20</div>
+    <div class="q-text">Ein Onlineshop beauftragt eine SEO-Agentur mit der laufenden Suchmaschinenoptimierung. Welche Vertragsart liegt typischerweise vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="badge">A</span>Dienstvertrag, weil laufende SEO-Arbeit geschuldet ist, aber kein garantiertes Ranking</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Werkvertrag, weil ein bestimmtes Google-Ranking als Erfolg geschuldet ist</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Mietvertrag, weil der Onlineshop SEO-Leistungen mietet</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Darlehensvertrag, weil die Agentur in Vorleistung geht</div>
+    </div>
+    <div class="feedback ok">Richtig! SEO ist ein Dienstvertrag: Die Agentur schuldet die Erbringung von Optimierungsmaßnahmen, aber kein garantiertes Ranking – ein konkreter Erfolg lässt sich nicht versprechen.</div>
+    <div class="feedback err">Nicht korrekt. SEO = Dienstvertrag: Es wird eine Tätigkeit (Optimierungsarbeit) geschuldet, aber kein messbarer Erfolg (z. B. Platz 1 bei Google) garantiert.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card" id="q4">
+    <div class="q-number">Frage 4 von 20</div>
+    <div class="q-text">Was versteht man bei einem Werkvertrag unter „Abnahme"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Die Lieferung der bestellten Ware durch den Verkäufer</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Die Anzahlung des Kunden vor Leistungsbeginn</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Die Anerkennung des Werks als vertragsgemäß erbracht durch den Auftraggeber</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Das Stornieren eines laufenden Auftrags</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Werkvertrag ist die Abnahme ein zentraler Rechtsakt: Der Auftraggeber erklärt, dass das Werk vertragsgemäß erbracht wurde. Erst danach werden Vergütung fällig und Verjährungsfristen für Mängel ausgelöst.</div>
+    <div class="feedback err">Nicht korrekt. Abnahme beim Werkvertrag bedeutet: Der Auftraggeber erkennt das fertige Werk als vertragsgemäß an. Sie ist Voraussetzung für die Vergütungsfälligkeit.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card" id="q5">
+    <div class="q-number">Frage 5 von 20</div>
+    <div class="q-text">Welche Mängelrechte stehen dem Auftraggeber beim Werkvertrag zu, wenn das Werk mangelhaft ist?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Nur Rücktritt vom Vertrag, keine anderen Optionen</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Nur Schadensersatz in Höhe des vollen Werkpreises</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Nacherfüllung, Rücktritt, Minderung und ggf. Schadensersatz</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Gar keine – der Auftraggeber muss das Werk akzeptieren</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei mangelhaftem Werk stehen dem Auftraggeber folgende Rechte zu: zunächst Nacherfüllung (Nachbesserung/Neuherstellung), und wenn diese scheitert: Rücktritt, Minderung oder Schadensersatz.</div>
+    <div class="feedback err">Nicht korrekt. Beim Werkvertrag gibt es ein abgestuftes Mängelrechtssystem: zuerst Nacherfüllung, dann Rücktritt, Minderung oder Schadensersatz.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card" id="q6">
+    <div class="q-number">Frage 6 von 20</div>
+    <div class="q-text">Hat der Auftraggeber beim Dienstvertrag ein Recht auf Nachbesserung, wenn das Ergebnis nicht zufriedenstellend ist?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Ja, immer – das gilt für alle Vertragsarten</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Nein – beim Dienstvertrag wird nur die Tätigkeit geschuldet, kein Erfolg; kein Nachbesserungsrecht</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Ja, aber nur wenn der Dienstleister das Ergebnis vorab garantiert hat</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Nur wenn der Vertrag mindestens 6 Monate läuft</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Dienstvertrag wird nur eine Tätigkeit, kein Erfolg geschuldet. Daher gibt es kein Recht auf Nachbesserung – ist das Ergebnis schlecht, aber die Tätigkeit ordentlich erbracht, liegt kein Mangel vor.</div>
+    <div class="feedback err">Nicht korrekt. Beim Dienstvertrag gibt es kein Nachbesserungsrecht, weil kein konkreter Erfolg geschuldet ist – nur die Tätigkeit selbst.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card" id="q7">
+    <div class="q-number">Frage 7 von 20</div>
+    <div class="q-text">Was unterscheidet einen freien Dienstvertrag von einem Arbeitsvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Beim Arbeitsvertrag wird ein Erfolgsprojekt abgeliefert</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Beim Arbeitsvertrag besteht eine persönliche Abhängigkeit (Weisungsgebundenheit); beim freien DV nicht</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der freie Dienstvertrag ist schriftlich, der Arbeitsvertrag immer mündlich</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Beim Arbeitsvertrag wird pro Stunde, beim freien DV pauschal abgerechnet</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Arbeitsvertrag ist ein Sonderfall des Dienstvertrags mit persönlicher Abhängigkeit: Der Arbeitnehmer ist weisungsgebunden (Zeit, Ort, Art der Tätigkeit). Freie Dienstleister arbeiten selbstständig und weisungsfrei.</div>
+    <div class="feedback err">Nicht korrekt. Der Unterschied liegt in der Weisungsgebundenheit: Arbeitsvertrag = persönliche Abhängigkeit; freier Dienstvertrag = selbstständige, weisungsfreie Tätigkeit.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card" id="q8">
+    <div class="q-number">Frage 8 von 20</div>
+    <div class="q-text">Welche der folgenden Aussagen zum Mietvertrag ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Ein Mietvertrag kann nur für unbewegliche Sachen (Immobilien) abgeschlossen werden</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Ein Mietvertrag kann für bewegliche und unbewegliche Sachen abgeschlossen werden</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Beim Mietvertrag geht das Eigentum auf den Mieter über</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Mietvertrag ist immer schriftlich und befristet</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Mietvertrag gilt für bewegliche Sachen (z. B. Fahrzeuge, Geräte) und unbewegliche Sachen (z. B. Wohnungen, Büros). Er kann befristet oder unbefristet sein – Eigentum geht nicht über.</div>
+    <div class="feedback err">Nicht korrekt. Der Mietvertrag kann für bewegliche (z. B. Mietfahrzeug, Maschine) und unbewegliche Sachen (z. B. Wohnung) gelten.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card" id="q9">
+    <div class="q-number">Frage 9 von 20</div>
+    <div class="q-text">Welche Hauptpflicht hat der Vermieter beim Mietvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Die Mietsache nach Vertragsende zu erwerben</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Die Mietsache in gebrauchsfähigem Zustand zu überlassen und zu erhalten</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Den Mietzins auf eigene Kosten zu versichern</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Mietsache am Ende kostenlos zu renovieren</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Vermieter muss die Mietsache in einem vertragsgemäßen, gebrauchstauglichen Zustand überlassen und während der Mietzeit erhalten. Mängel muss er beseitigen.</div>
+    <div class="feedback err">Nicht korrekt. Der Vermieter muss die Mietsache gebrauchsfähig überlassen und in diesem Zustand erhalten – das ist seine Hauptpflicht.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card" id="q10">
+    <div class="q-number">Frage 10 von 20</div>
+    <div class="q-text">Ein Onlineshop nutzt eine Shopsoftware als SaaS (Software as a Service) und zahlt monatliche Gebühren. Welche Vertragsart liegt vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Kaufvertrag, weil Software erworben wird</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Werkvertrag, weil die Software ein fertiges Produkt ist</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Mietvertrag, weil die Software zeitlich begrenzt genutzt (nicht gekauft) wird</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Dienstvertrag, weil der Anbieter die Software betreibt</div>
+    </div>
+    <div class="feedback ok">Richtig! SaaS ist ein Mietvertrag: Der Shopbetreiber mietet die Nutzung der Software für einen bestimmten Zeitraum, ohne sie zu kaufen. Monatliche Zahlungen sind der Mietzins.</div>
+    <div class="feedback err">Nicht korrekt. SaaS = Mietvertrag: Die Software wird zeitlich begrenzt genutzt (gemietet), nicht dauerhaft erworben. Monatliche Gebühren = Mietzins.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card" id="q11">
+    <div class="q-number">Frage 11 von 20</div>
+    <div class="q-text">Was ist der wesentliche Unterschied zwischen Miete und Leihe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Bei der Miete wird Eigentum übertragen, bei der Leihe nicht</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Die Leihe ist unentgeltlich; die Miete ist entgeltlich</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Bei der Leihe haftet der Verleiher für alle Schäden</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Leihe muss notariell beurkundet werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Der entscheidende Unterschied: Miete ist entgeltlich (es wird Mietzins gezahlt), Leihe ist unentgeltlich (kostenlose Überlassung). In beiden Fällen geht kein Eigentum über.</div>
+    <div class="feedback err">Nicht korrekt. Miete = entgeltlich (Mietzins); Leihe = unentgeltlich (kostenlos). Das ist der wesentliche Unterschied.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card" id="q12">
+    <div class="q-number">Frage 12 von 20</div>
+    <div class="q-text">Was ist der wesentliche Inhalt eines Darlehensvertrags?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Darlehensgeber überträgt Eigentum an Sachen gegen Ratenzahlung</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Darlehensgeber überlässt Geld (oder Sachen) zur zeitweisen Nutzung gegen Zinsen und Rückzahlung</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Darlehensnehmer schuldet nur Zinsen, nicht die Rückzahlung des Kapitals</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Ein Darlehen ist immer unentgeltlich (ohne Zinsen)</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Darlehensvertrag überlässt der Darlehensgeber dem Darlehensnehmer einen Geldbetrag (oder vertretbare Sachen) zur zeitweisen Nutzung. Der Nehmer verpflichtet sich zur Rückzahlung und – in der Regel – zur Zahlung von Zinsen.</div>
+    <div class="feedback err">Nicht korrekt. Beim Darlehen überlässt der Geber Geld zur befristeten Nutzung; der Nehmer muss es zurückzahlen, üblicherweise mit Zinsen.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card" id="q13">
+    <div class="q-number">Frage 13 von 20</div>
+    <div class="q-text">Welche Pflichten hat der Mieter im Rahmen des Mietvertrags?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Die Mietsache nach Ablauf des Vertrags zu kaufen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Den Mietzins pünktlich zahlen und die Mietsache pfleglich behandeln und zurückgeben</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Alle Reparaturen auf eigene Kosten durchführen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Eine Versicherung für die Mietsache abzuschließen</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Mieter muss den vereinbarten Mietzins pünktlich zahlen, die Mietsache sorgfältig und vertragsgemäß nutzen und sie nach Vertragsende zurückgeben.</div>
+    <div class="feedback err">Nicht korrekt. Die Hauptpflichten des Mieters: Mietzins zahlen, Mietsache pfleglich behandeln und nach Vertragsende zurückgeben.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card" id="q14">
+    <div class="q-number">Frage 14 von 20</div>
+    <div class="q-text">Eine Freelancerin erstellt monatliche Social-Media-Beiträge für einen Onlineshop. Welcher Vertragstyp liegt vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Werkvertrag, weil Beiträge ein fertiges Produkt darstellen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Dienstvertrag, weil laufende Tätigkeit geschuldet ist ohne garantierten Reichweitenerfolg</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Mietvertrag, weil die Freelancerin ihren Content vermietet</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Kaufvertrag, weil digitale Inhalte übergeben werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Laufende Social-Media-Betreuung ist ein Dienstvertrag: Es wird die monatliche Erstellung und Pflege von Beiträgen geschuldet, nicht ein messbarer Erfolg (z. B. X Follower-Zuwachs).</div>
+    <div class="feedback err">Nicht korrekt. Laufende Social-Media-Arbeit = Dienstvertrag. Es wird eine kontinuierliche Tätigkeit geschuldet, kein garantierter Erfolg.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card" id="q15">
+    <div class="q-number">Frage 15 von 20</div>
+    <div class="q-text">Was bedeutet „Minderung" als Mängelrecht beim Werkvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Auftraggeber erhält das gesamte Entgelt zurück</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Werklohn wird entsprechend dem Mangel verhältnismäßig herabgesetzt</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Auftragnehmer muss das Werk kostenlos neu erstellen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Auftraggeber kann den Vertrag fristlos kündigen</div>
+    </div>
+    <div class="feedback ok">Richtig! Minderung bedeutet: Der vereinbarte Werklohn wird im Verhältnis des Mangels zur Gesamtleistung herabgesetzt. Der Auftraggeber behält das (mangelhafte) Werk, zahlt aber weniger.</div>
+    <div class="feedback err">Nicht korrekt. Minderung = verhältnismäßige Herabsetzung des Werklohns entsprechend dem Mangel. Das Werk bleibt beim Auftraggeber.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card" id="q16">
+    <div class="q-number">Frage 16 von 20</div>
+    <div class="q-text">Wann kommt beim Werkvertrag die Vergütungspflicht (Zahlung) des Auftraggebers fällig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Bei Vertragsschluss als Vorauszahlung</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Nach der Abnahme des fertigen Werks</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>In monatlichen Raten während der Erstellung</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Erst nach Ablauf der gesetzlichen Gewährleistungsfrist</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Werkvertrag wird die Vergütung erst nach der Abnahme des Werks fällig. Die Abnahme ist der formale Akt, mit dem der Auftraggeber das Werk als vertragsgemäß akzeptiert.</div>
+    <div class="feedback err">Nicht korrekt. Beim Werkvertrag wird die Zahlung nach der Abnahme des fertigen Werks fällig – die Abnahme ist Voraussetzung für die Vergütungsfälligkeit.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card" id="q17">
+    <div class="q-number">Frage 17 von 20</div>
+    <div class="q-text">Welche Aussage zum Leihvertrag ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Entleiher muss eine Kaution hinterlegen</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Die Leihe kann nicht widerrufen werden</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Der Entleiher muss die Sache nach Ablauf zurückgeben und haftet für Verschlechterungen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Beim Leihvertrag muss kein Entgelt, aber Zinsen gezahlt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Leihvertrag ist die Überlassung unentgeltlich. Der Entleiher muss die geliehene Sache nach Vertragsende zurückgeben und haftet für schuldhaft verursachte Verschlechterungen.</div>
+    <div class="feedback err">Nicht korrekt. Beim Leihvertrag: kostenlose Nutzung, aber Rückgabepflicht und Haftung für schuldhafte Beschädigungen.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card" id="q18">
+    <div class="q-number">Frage 18 von 20</div>
+    <div class="q-text">Ein Handwerker renoviert das Ladenlokal eines Onlineshop-Betreibers. Welche Vertragsart liegt vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Dienstvertrag, weil Handwerksarbeit geleistet wird</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Werkvertrag, weil eine mangelfreie, abnahmefähige Renovierung als Erfolg geschuldet ist</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Kaufvertrag, weil Materialien geliefert werden</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Mietvertrag, weil der Handwerker sein Werkzeug einsetzt</div>
+    </div>
+    <div class="feedback ok">Richtig! Handwerksarbeiten wie Renovierungen sind Werkverträge: Es wird ein konkretes, abnahmefähiges Ergebnis (fertig renoviertes Ladenlokal) geschuldet – mit Mängelrechten für den Auftraggeber.</div>
+    <div class="feedback err">Nicht korrekt. Renovierung = Werkvertrag, da ein konkretes Ergebnis (fertige Renovierung) geschuldet ist, nicht nur die Arbeit selbst.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card" id="q19">
+    <div class="q-number">Frage 19 von 20</div>
+    <div class="q-text">Welches Mängelrecht muss beim Werkvertrag zuerst in Anspruch genommen werden, bevor andere Rechte geltend gemacht werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Sofort Rücktritt vom Vertrag</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Direkt Schadensersatz verlangen</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Zunächst Nacherfüllung (Nachbesserung oder Neuherstellung) verlangen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Sofortige Minderung ohne Fristsetzung</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Gesetz sieht beim Werkvertrag ein abgestuftes System vor: Zunächst muss der Auftraggeber Nacherfüllung verlangen und dem Auftragnehmer eine angemessene Frist setzen. Erst wenn diese scheitert, kommen Rücktritt, Minderung oder Schadensersatz in Betracht.</div>
+    <div class="feedback err">Nicht korrekt. Beim Werkvertrag gilt Vorrang der Nacherfüllung: Erst muss Nachbesserung oder Neuherstellung verlangt werden, dann erst weitere Rechte.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card" id="q20">
+    <div class="q-number">Frage 20 von 20</div>
+    <div class="q-text">Ein IT-Dienstleister hostet die Server eines Onlineshops und garantiert 99,9 % Verfügbarkeit. Welche Vertragsart liegt am ehesten vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Kaufvertrag, weil Serverkapazität erworben wird</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Werkvertrag, weil ein konkretes Ergebnis (99,9 % Uptime) vereinbart ist</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Mietvertrag (IaaS/Hosting), weil Infrastruktur zeitlich überlassen wird</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Leihvertrag, weil Server kostenlos bereitgestellt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Server-Hosting ist typischerweise ein Mietvertrag (Infrastructure as a Service): Der Anbieter überlässt Serverkapazitäten zeitlich gegen Entgelt. SLA-Klauseln (wie 99,9 % Uptime) sind Nebenabreden.</div>
+    <div class="feedback err">Nicht korrekt. Server-Hosting = Mietvertrag (IaaS): IT-Infrastruktur wird zeitlich und gegen Entgelt überlassen – keine dauerhafte Übertragung.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+</div><!-- end quiz-area -->
+
+<!-- Result Card -->
+<div class="result-card" id="resultCard">
+  <div class="result-score" id="resultScore">0/20</div>
+  <div class="result-label" id="resultLabel">Ergebnis</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn-restart" onclick="restartQuiz()">Quiz wiederholen</button>
+</div>
+
+<script>
+  const totalQ = 20;
+  let answers = new Array(totalQ).fill(null);
+  let currentQ = 0;
+
+  const dots = document.getElementById('dotsContainer');
+  const progressBar = document.getElementById('progressBar');
+  const quizArea = document.getElementById('quizArea');
+  const resultCard = document.getElementById('resultCard');
+
+  function buildDots() {
+    dots.innerHTML = '';
+    for (let i = 0; i < totalQ; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' current' : '');
+      d.textContent = i + 1;
+      d.addEventListener('click', () => goTo(i));
+      dots.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const allDots = dots.querySelectorAll('.dot');
+    allDots.forEach((d, i) => {
+      d.className = 'dot';
+      if (answers[i] === true) d.classList.add('answered-ok');
+      else if (answers[i] === false) d.classList.add('answered-err');
+      if (i === currentQ) d.classList.add('current');
+    });
+  }
+
+  function updateProgress() {
+    const answered = answers.filter(a => a !== null).length;
+    progressBar.style.width = (answered / totalQ * 100) + '%';
+  }
+
+  function goTo(index) {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards[currentQ].classList.remove('active');
+    currentQ = index;
+    cards[currentQ].classList.add('active');
+    updateDots();
+  }
+
+  function lockCard(card, chosenOpt, isCorrect) {
+    const opts = card.querySelectorAll('.opt');
+    opts.forEach(o => {
+      o.classList.add('locked');
+      if (o.dataset.correct === 'true') o.classList.add('correct');
+    });
+    if (!isCorrect) chosenOpt.classList.add('wrong');
+    const fbOk = card.querySelector('.feedback.ok');
+    const fbErr = card.querySelector('.feedback.err');
+    if (isCorrect) fbOk.classList.add('show');
+    else fbErr.classList.add('show');
+    const btn = card.querySelector('.btn-next');
+    btn.classList.add('show');
+    if (currentQ === totalQ - 1) btn.textContent = 'Auswertung →';
+  }
+
+  function initOptions() {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      const opts = card.querySelectorAll('.opt');
+      opts.forEach(opt => {
+        opt.addEventListener('click', function () {
+          if (opt.classList.contains('locked')) return;
+          const isCorrect = opt.dataset.correct === 'true';
+          answers[idx] = isCorrect;
+          lockCard(card, opt, isCorrect);
+          updateDots();
+          updateProgress();
+        });
+      });
+      const btn = card.querySelector('.btn-next');
+      btn.addEventListener('click', () => {
+        if (currentQ < totalQ - 1) goTo(currentQ + 1);
+        else showResult();
+      });
+    });
+  }
+
+  function showResult() {
+    quizArea.style.display = 'none';
+    dots.style.display = 'none';
+    document.querySelector('.progress-bar-wrap').style.display = 'none';
+    resultCard.classList.add('show');
+    const correct = answers.filter(a => a === true).length;
+    const pct = Math.round(correct / totalQ * 100);
+    document.getElementById('resultScore').textContent = correct + '/' + totalQ;
+    let label, msg;
+    if (pct >= 85) { label = 'Ausgezeichnet!'; msg = 'Hervorragende Leistung – du kennst alle wichtigen Vertragsarten sehr gut.'; }
+    else if (pct >= 70) { label = 'Gut gemacht!'; msg = 'Gutes Wissen – einzelne Vertragstypen noch vertiefen.'; }
+    else if (pct >= 50) { label = 'Bestanden'; msg = 'Grundkenntnisse vorhanden – die Unterschiede Dienst- vs. Werkvertrag nochmals üben.'; }
+    else { label = 'Weiter üben'; msg = 'Präsentation Tag 13 noch einmal durcharbeiten und dann erneut versuchen.'; }
+    document.getElementById('resultLabel').textContent = label;
+    document.getElementById('resultMsg').textContent = msg;
+  }
+
+  function restartQuiz() {
+    answers = new Array(totalQ).fill(null);
+    currentQ = 0;
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      card.classList.remove('active');
+      card.querySelectorAll('.opt').forEach(o => { o.className = 'opt'; });
+      card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+      card.querySelector('.btn-next').classList.remove('show');
+      if (idx === 0) card.classList.add('active');
+    });
+    quizArea.style.display = '';
+    dots.style.display = '';
+    document.querySelector('.progress-bar-wrap').style.display = '';
+    resultCard.classList.remove('show');
+    progressBar.style.width = '0%';
+    updateDots();
+  }
+
+  buildDots();
+  initOptions();
+  updateDots();
+</script>
+</body>
+</html>

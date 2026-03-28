@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 9: Usability und Duale Berufsausbildung – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 9: Usability und Duale Berufsausbildung</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 9: Usability und Duale Berufsausbildung</div><div class="quiz-meta">61 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">61</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 9</footer>
+<script>
+const TOTAL=61;
+const questions=[
+  {
+    num: 1, cat: "usability",
+    text: "Was bedeutet der Begriff Usability auf Deutsch?",
+    choices: [
+      {label: "A", text: "Benutzerfreundlichkeit / Gebrauchstauglichkeit"},
+      {label: "B", text: "Suchmaschinenoptimierung"},
+      {label: "C", text: "Datenschutzkonformität"},
+      {label: "D", text: "Barrierefreiheit"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 2, cat: "usability",
+    text: "Welche Norm definiert Usability als Effektivität, Effizienz und Zufriedenheit?",
+    choices: [
+      {label: "A", text: "DIN EN 9001"},
+      {label: "B", text: "ISO 9241-11"},
+      {label: "C", text: "EU DSGVO Art. 13"},
+      {label: "D", text: "IEEE 802.11"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "usability",
+    text: "Was beschreibt die Dimension „Effektivität“ nach ISO 9241-11?",
+    choices: [
+      {label: "A", text: "Wie angenehm die Nutzung ist"},
+      {label: "B", text: "Welcher Aufwand nötig ist, um das Ziel zu erreichen"},
+      {label: "C", text: "Ob die Ziele vollständig und korrekt erreicht werden"},
+      {label: "D", text: "Wie schnell die Website lädt"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 4, cat: "usability",
+    text: "Was beschreibt die Dimension „Effizienz“ nach ISO 9241-11?",
+    choices: [
+      {label: "A", text: "Ob die Ziele vollständig und korrekt erreicht werden"},
+      {label: "B", text: "Welcher Aufwand (Zeit, Ressourcen) nötig ist, um das Ziel zu erreichen"},
+      {label: "C", text: "Wie zufrieden der Nutzer mit dem Ergebnis ist"},
+      {label: "D", text: "Wie viele Fehler beim Checkout auftreten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 5, cat: "usability",
+    text: "Welche drei Dimensionen enthält das ISO-Usability-Dreieck? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Effektivität und Effizienz"},
+      {label: "B", text: "Skalierbarkeit und Sicherheit"},
+      {label: "C", text: "Zufriedenheit"},
+      {label: "D", text: "Responsivität und Performance"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 6, cat: "usability",
+    text: "Was ist die Eselsbrücke E-E-Z im Kontext von Usability?",
+    choices: [
+      {label: "A", text: "E-Commerce – E-Mail – Zustellung"},
+      {label: "B", text: "Effektivität – Effizienz – Zufriedenheit (die drei ISO-9241-Dimensionen)"},
+      {label: "C", text: "Erreichbarkeit – Erweiterbarkeit – Zugänglichkeit"},
+      {label: "D", text: "Eingabe – Eingabefeld – Zeichenanzahl"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 7, cat: "usability",
+    text: "Was ist der Unterschied zwischen Usability und User Experience (UX)?",
+    choices: [
+      {label: "A", text: "Usability und UX sind identisch"},
+      {label: "B", text: "UX ist ein Teilbereich der Usability"},
+      {label: "C", text: "Usability ist ein Teilbereich von UX – UX umfasst alle Erfahrungen vor, während und nach der Nutzung"},
+      {label: "D", text: "UX bezieht sich nur auf mobile Apps, Usability nur auf Webshops"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 8, cat: "usability",
+    text: "Kann ein System gute Usability haben, aber schlechte UX?",
+    choices: [
+      {label: "A", text: "Nein – gute Usability bedeutet immer auch gute UX"},
+      {label: "B", text: "Ja – ein System kann einfach zu bedienen, aber langweilig und emotionslos sein"},
+      {label: "C", text: "Nein – UX und Usability sind untrennbar verbunden"},
+      {label: "D", text: "Ja – aber nur bei mobilen Websites"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 9, cat: "usability",
+    text: "Wer hat die 10 Usability-Heuristiken entwickelt?",
+    choices: [
+      {label: "A", text: "Tim Berners-Lee"},
+      {label: "B", text: "Steve Jobs"},
+      {label: "C", text: "Jacob Nielsen"},
+      {label: "D", text: "Donald Norman"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 10, cat: "usability",
+    text: "Was beschreibt Heuristik Nr. 1 „Sichtbarkeit des Systemstatus“?",
+    choices: [
+      {label: "A", text: "Der Nutzer kann Aktionen rückgängig machen"},
+      {label: "B", text: "Der Nutzer wird immer über den aktuellen Zustand des Systems informiert"},
+      {label: "C", text: "Die Website ist für Suchmaschinen sichtbar"},
+      {label: "D", text: "Das Design ist minimalistisch und klar"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "usability",
+    text: "Welches Webshop-Beispiel zeigt Heuristik Nr. 1 (Sichtbarkeit des Systemstatus)?",
+    choices: [
+      {label: "A", text: "Einheitliche Button-Farbe für alle CTAs"},
+      {label: "B", text: "Ladebalken beim Checkout und „In den Warenkorb gelegt“-Meldung"},
+      {label: "C", text: "Gastbestellung ohne Konto"},
+      {label: "D", text: "FAQ und Live-Chat"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "usability",
+    text: "Was bedeutet Heuristik Nr. 3 „Nutzerkontrolle und Freiheit“?",
+    choices: [
+      {label: "A", text: "Der Nutzer kann die Farbe der Website anpassen"},
+      {label: "B", text: "Nur erfahrene Nutzer können alle Funktionen nutzen"},
+      {label: "C", text: "Der Nutzer kann Aktionen rückgängig machen (z. B. „Zurück“-Button, Artikel aus Warenkorb entfernen)"},
+      {label: "D", text: "Der Nutzer hat freien Zugang zu allen Produkten ohne Anmeldung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 13, cat: "usability",
+    text: "Welche Heuristik beschreibt, dass gleiche Dinge immer gleich aussehen sollen?",
+    choices: [
+      {label: "A", text: "Heuristik Nr. 1 – Sichtbarkeit des Systemstatus"},
+      {label: "B", text: "Heuristik Nr. 4 – Konsistenz und Standards"},
+      {label: "C", text: "Heuristik Nr. 7 – Flexibilität und Effizienz"},
+      {label: "D", text: "Heuristik Nr. 10 – Hilfe und Dokumentation"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 14, cat: "usability",
+    text: "Was ist ein Webshop-Beispiel für Heuristik Nr. 5 „Fehlervermeidung“?",
+    choices: [
+      {label: "A", text: "FAQ und Live-Chat für Hilfebedarf"},
+      {label: "B", text: "Formularvalidierung in Echtzeit, Pflichtfelder markieren"},
+      {label: "C", text: "Breadcrumb-Navigation und zuletzt angesehene Produkte"},
+      {label: "D", text: "Schnellkauf-Button und Gastbestellung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "usability",
+    text: "Was beschreibt Heuristik Nr. 6 „Wiedererkennung statt Erinnerung“?",
+    choices: [
+      {label: "A", text: "Optionen sichtbar machen, statt den Nutzer etwas auswendig lernen zu lassen"},
+      {label: "B", text: "Nutzer muss sich an seine Bestellnummer erinnern"},
+      {label: "C", text: "Das Logo muss auf jeder Seite sichtbar sein"},
+      {label: "D", text: "Passwörter werden automatisch gespeichert"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 16, cat: "usability",
+    text: "Welches Webshop-Beispiel illustriert Heuristik Nr. 6?",
+    choices: [
+      {label: "A", text: "One-Page-Checkout"},
+      {label: "B", text: "Einheitliche Button-Farben"},
+      {label: "C", text: "Zuletzt angesehene Produkte und Breadcrumb-Navigation"},
+      {label: "D", text: "SSL-Siegel und Trusted Shops"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 17, cat: "usability",
+    text: "Was ist Heuristik Nr. 7 „Flexibilität und Effizienz“?",
+    choices: [
+      {label: "A", text: "Erfahrene Nutzer können Abkürzungen nutzen (z. B. Gastbestellung, Schnellkauf-Button)"},
+      {label: "B", text: "Alle Nutzer haben denselben Zugang zu allen Funktionen"},
+      {label: "C", text: "Die Website muss auf allen Browsern gleich aussehen"},
+      {label: "D", text: "Das Menü muss auf jeder Seite sichtbar sein"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 18, cat: "usability",
+    text: "Was beschreibt Heuristik Nr. 8 „Ästhetisches und minimales Design“?",
+    choices: [
+      {label: "A", text: "Die Website muss mit vielen bunten Farben gestaltet sein"},
+      {label: "B", text: "Nur relevante Informationen anzeigen – kein Bild-Chaos, klare Produktdarstellung"},
+      {label: "C", text: "Alle Produktkategorien müssen auf der Startseite sichtbar sein"},
+      {label: "D", text: "Große Schrift für alle Altersgruppen verwenden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "usability",
+    text: "Welches Webshop-Beispiel zeigt Heuristik Nr. 9 „Fehlererkennung und -behebung“?",
+    choices: [
+      {label: "A", text: "Fehler 403 – bitte neu einloggen"},
+      {label: "B", text: "„PLZ ungültig – Bitte 5-stellige Zahl eingeben“"},
+      {label: "C", text: "Der Benutzer wird automatisch zur Startseite weitergeleitet"},
+      {label: "D", text: "Das Formular wird nach einer Fehleingabe komplett geleert"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 20, cat: "usability",
+    text: "Was bietet Heuristik Nr. 10 „Hilfe und Dokumentation“?",
+    choices: [
+      {label: "A", text: "Automatische Fehlerkorrektur im Formular"},
+      {label: "B", text: "Leicht zugängliche Hilfe bei Bedarf (z. B. FAQ, Live-Chat, Tooltips)"},
+      {label: "C", text: "Eine Schritt-für-Schritt-Anleitung für alle Produkte"},
+      {label: "D", text: "Mehrsprachige Produktbeschreibungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "usability",
+    text: "Welche Usability-Testing-Methode ist günstig und erfordert geringen Aufwand, bei der Testpersonen laut sprechen?",
+    choices: [
+      {label: "A", text: "Eye-Tracking"},
+      {label: "B", text: "A/B-Test"},
+      {label: "C", text: "Think-Aloud"},
+      {label: "D", text: "Cognitive Walkthrough"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 22, cat: "usability",
+    text: "Was ist Eye-Tracking?",
+    choices: [
+      {label: "A", text: "Eine günstige Methode, bei der Nutzer Fragen beantworten"},
+      {label: "B", text: "Eine teure Methode, bei der Blickbewegungen aufgezeichnet werden, um zu zeigen, wohin Nutzer schauen"},
+      {label: "C", text: "Eine Methode, bei der Experten Nutzeraufgaben simulieren"},
+      {label: "D", text: "Eine Methode, bei der zwei Seitenversionen verglichen werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "usability",
+    text: "Was wird beim A/B-Test verglichen?",
+    choices: [
+      {label: "A", text: "Die Blickbewegungen von zwei verschiedenen Nutzergruppen"},
+      {label: "B", text: "Zwei Versionen einer Seite, die gleichzeitig verschiedenen Nutzergruppen gezeigt werden"},
+      {label: "C", text: "Die Ladezeiten zweier verschiedener Server"},
+      {label: "D", text: "Zwei verschiedene Produkte im Webshop"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 24, cat: "usability",
+    text: "Was zeigen Heatmaps?",
+    choices: [
+      {label: "A", text: "Die Temperaturverteilung im Rechenzentrum"},
+      {label: "B", text: "Klick-, Scroll- und Mausbewegungsverhalten aller Nutzer visualisiert"},
+      {label: "C", text: "Den Energieverbrauch des Webservers"},
+      {label: "D", text: "Kundenbewertungen nach Produktkategorie"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "usability",
+    text: "Was ist der Cognitive Walkthrough?",
+    choices: [
+      {label: "A", text: "Nutzer testen den Shop live und geben Feedback"},
+      {label: "B", text: "Experten simulieren typische Nutzeraufgaben und identifizieren Probleme"},
+      {label: "C", text: "Ein standardisierter Fragebogen nach der Nutzung"},
+      {label: "D", text: "Blickbewegungen werden im Labor aufgezeichnet"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "usability",
+    text: "Was ist der SUS (System Usability Scale)?",
+    choices: [
+      {label: "A", text: "Ein standardisierter Fragebogen nach der Nutzung zur Messung der Usability"},
+      {label: "B", text: "Ein Protokoll zur Verschlüsselung von Nutzerdaten"},
+      {label: "C", text: "Eine Heuristik von Jacob Nielsen"},
+      {label: "D", text: "Eine KPI-Kennzahl für den Webshop"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 27, cat: "usability",
+    text: "Was besagt Nielsens 5-Nutzer-Regel?",
+    choices: [
+      {label: "A", text: "Für ein Usability-Test werden mindestens 50 Testpersonen benötigt"},
+      {label: "B", text: "5 Testpersonen finden bereits 85 % aller Usability-Probleme"},
+      {label: "C", text: "Pro Heuristik muss eine separate Testperson eingesetzt werden"},
+      {label: "D", text: "Usability-Tests sind erst ab 5 Mitarbeitern sinnvoll"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "usability",
+    text: "Welche Usability-Testing-Methode wird bei sehr begrenztem Budget empfohlen? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Eye-Tracking"},
+      {label: "B", text: "Think-Aloud mit 5 Testpersonen"},
+      {label: "C", text: "Usability-Fragebogen (z. B. SUS)"},
+      {label: "D", text: "Dedicated-Server-Analyse"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 29, cat: "usability",
+    text: "Wie hoch ist die durchschnittliche Warenkorbabbruchrate laut Handout?",
+    choices: [
+      {label: "A", text: "Ca. 20 %"},
+      {label: "B", text: "Ca. 45 %"},
+      {label: "C", text: "Ca. 70 %"},
+      {label: "D", text: "Ca. 90 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 30, cat: "usability",
+    text: "Welches ist ein häufiger Abbruchgrund beim Checkout?",
+    choices: [
+      {label: "A", text: "Zu viele Produktbilder auf der Produktseite"},
+      {label: "B", text: "Pflichtregistrierung vor dem Kauf"},
+      {label: "C", text: "Zu niedrige Preise"},
+      {label: "D", text: "Zu wenige Produkte im Sortiment"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 31, cat: "ausbildung",
+    text: "Welche Lösung empfiehlt das Handout gegen den Abbruchgrund „unerwartete Versandkosten“?",
+    choices: [
+      {label: "A", text: "Versandkosten erst auf der Bestellbestätigungsseite zeigen"},
+      {label: "B", text: "Versandkosten früh und transparent kommunizieren"},
+      {label: "C", text: "Versandkosten komplett abschaffen"},
+      {label: "D", text: "Versandkosten nur im Kleingedruckten erwähnen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 32, cat: "ausbildung",
+    text: "Was ist ein One-Page-Checkout?",
+    choices: [
+      {label: "A", text: "Ein Checkout mit nur einem einzigen Produkt"},
+      {label: "B", text: "Ein Checkout, bei dem alle Schritte auf einer einzigen Seite zusammengefasst sind"},
+      {label: "C", text: "Ein Checkout ohne Zahlungsauswahl"},
+      {label: "D", text: "Ein Checkout, der ausschließlich auf Mobilgeräten funktioniert"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "ausbildung",
+    text: "Um wie viel Prozent kann ein optimierter Checkout die Abbruchrate senken?",
+    choices: [
+      {label: "A", text: "1–5 %"},
+      {label: "B", text: "5–10 %"},
+      {label: "C", text: "20–35 %"},
+      {label: "D", text: "60–80 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 34, cat: "ausbildung",
+    text: "Was sind Vertrauenssignale im Checkout? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "SSL-Siegel und Trusted-Shops-Zertifikat"},
+      {label: "B", text: "Viele verschiedene Schriftarten"},
+      {label: "C", text: "Kundenbewertungen"},
+      {label: "D", text: "Animierte Produktbilder"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 35, cat: "ausbildung",
+    text: "Was beschreibt das duale Ausbildungssystem?",
+    choices: [
+      {label: "A", text: "Eine Ausbildung, die ausschließlich im Betrieb stattfindet"},
+      {label: "B", text: "Eine Ausbildung an zwei Lernorten – Ausbildungsbetrieb und Berufsschule"},
+      {label: "C", text: "Eine Ausbildung mit zwei gleichzeitigen Berufsabschlüssen"},
+      {label: "D", text: "Eine Ausbildung in zwei verschiedenen Betrieben"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 36, cat: "ausbildung",
+    text: "Wie viele Tage pro Woche verbringen Auszubildende typischerweise im Betrieb?",
+    choices: [
+      {label: "A", text: "1–2 Tage"},
+      {label: "B", text: "3–4 Tage"},
+      {label: "C", text: "5 Tage"},
+      {label: "D", text: "Wechselnd – immer ganzen Monat im Betrieb, dann ganzen Monat in der Schule"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 37, cat: "ausbildung",
+    text: "Wie viele Tage pro Woche gehen Auszubildende typischerweise in die Berufsschule?",
+    choices: [
+      {label: "A", text: "1–2 Tage"},
+      {label: "B", text: "3–4 Tage"},
+      {label: "C", text: "5 Tage"},
+      {label: "D", text: "Gar nicht – Berufsschule ist optional"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 38, cat: "ausbildung",
+    text: "Welche Institution stellt das Abschlusszeugnis für Kaufleute im E-Commerce aus?",
+    choices: [
+      {label: "A", text: "Die Berufsschule"},
+      {label: "B", text: "Das Ausbildungsunternehmen"},
+      {label: "C", text: "Die Industrie- und Handelskammer (IHK)"},
+      {label: "D", text: "Das Bundesministerium für Bildung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 39, cat: "ausbildung",
+    text: "Wie viele Jugendliche beginnen laut Handout jährlich eine duale Ausbildung in Deutschland?",
+    choices: [
+      {label: "A", text: "Ca. 100.000"},
+      {label: "B", text: "Ca. 500.000"},
+      {label: "C", text: "Ca. 1,3 Millionen"},
+      {label: "D", text: "Ca. 5 Millionen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 40, cat: "ausbildung",
+    text: "Was muss vor Beginn der Ausbildung schriftlich abgeschlossen und bei der IHK eingetragen sein?",
+    choices: [
+      {label: "A", text: "Der Arbeitszeugnis-Antrag"},
+      {label: "B", text: "Der Ausbildungsvertrag"},
+      {label: "C", text: "Das Berichtsheft"},
+      {label: "D", text: "Die Prüfungsanmeldung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "ausbildung",
+    text: "Welcher Paragraph des BBiG regelt die Pflichtbestandteile des Ausbildungsvertrags?",
+    choices: [
+      {label: "A", text: "5 BBiG"},
+      {label: "B", text: "11 BBiG"},
+      {label: "C", text: "17 BBiG"},
+      {label: "D", text: "23 BBiG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 42, cat: "ausbildung",
+    text: "Wie lange ist die Probezeit im Ausbildungsvertrag minimal und maximal?",
+    choices: [
+      {label: "A", text: "Mindestens 2 Wochen, max. 2 Monate"},
+      {label: "B", text: "Mindestens 1 Monat, max. 4 Monate"},
+      {label: "C", text: "Mindestens 3 Monate, max. 6 Monate"},
+      {label: "D", text: "Es gibt keine Probezeit in der Ausbildung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 43, cat: "ausbildung",
+    text: "Wie viele Stunden pro Woche dürfen Jugendliche laut Ausbildungsrecht maximal arbeiten?",
+    choices: [
+      {label: "A", text: "35 Stunden"},
+      {label: "B", text: "40 Stunden"},
+      {label: "C", text: "45 Stunden"},
+      {label: "D", text: "48 Stunden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "ausbildung",
+    text: "Wie lang dauert die Ausbildung zum Kaufmann/zur Kauffrau im E-Commerce in der Regel?",
+    choices: [
+      {label: "A", text: "2 Jahre"},
+      {label: "B", text: "3 Jahre"},
+      {label: "C", text: "4 Jahre"},
+      {label: "D", text: "5 Jahre"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "ausbildung",
+    text: "Wie hoch ist die gesetzliche Mindestausbildungsvergütung im ersten Ausbildungsjahr 2024?",
+    choices: [
+      {label: "A", text: "350 EUR/Monat"},
+      {label: "B", text: "520 EUR/Monat"},
+      {label: "C", text: "649 EUR/Monat"},
+      {label: "D", text: "900 EUR/Monat"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 46, cat: "ausbildung",
+    text: "Seit wann ist die gesetzliche Mindestausbildungsvergütung im BBiG geregelt?",
+    choices: [
+      {label: "A", text: "Seit 01.01.2010"},
+      {label: "B", text: "Seit 01.01.2015"},
+      {label: "C", text: "Seit 01.01.2020"},
+      {label: "D", text: "Seit 01.01.2024"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 47, cat: "ausbildung",
+    text: "Welcher Paragraph des BBiG regelt die Mindestausbildungsvergütung?",
+    choices: [
+      {label: "A", text: "11 BBiG"},
+      {label: "B", text: "13 BBiG"},
+      {label: "C", text: "14 BBiG"},
+      {label: "D", text: "17 BBiG"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 48, cat: "ausbildung",
+    text: "Welche Pflichten haben Auszubildende nach 13 BBiG? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Lernpflicht: aktiv am Lernen teilnehmen"},
+      {label: "B", text: "Vergütung selbst verhandeln"},
+      {label: "C", text: "Berufsschulpflicht: die Berufsschule besuchen"},
+      {label: "D", text: "Ausbildungsmittel selbst kaufen"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 49, cat: "ausbildung",
+    text: "Was ist das Berichtsheft in der Ausbildung?",
+    choices: [
+      {label: "A", text: "Ein Bericht über den Ausbilder an die IHK"},
+      {label: "B", text: "Ein Ausbildungsnachweis, den der Auszubildende führen muss"},
+      {label: "C", text: "Eine Schulzeugniskopie für den Betrieb"},
+      {label: "D", text: "Ein Protokoll der Prüfungsvorbereitung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "ausbildung",
+    text: "Welche Rechte haben Auszubildende? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Urlaub (mindestens 24 Werktage pro Jahr)"},
+      {label: "B", text: "Das Recht, den Ausbilder zu wechseln"},
+      {label: "C", text: "Ausbildungsmittel kostenfrei erhalten"},
+      {label: "D", text: "Das Recht auf Überstunden nach Wahl"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 51, cat: "ausbildung",
+    text: "Was ist eine Pflicht des Ausbildungsbetriebs nach 14 BBiG?",
+    choices: [
+      {label: "A", text: "Dem Azubi ein eigenes Büro zur Verfügung stellen"},
+      {label: "B", text: "Ausbildungsmittel kostenfrei bereitstellen"},
+      {label: "C", text: "Dem Azubi ein Firmenfahrzeug zur Verfügung stellen"},
+      {label: "D", text: "Den Azubi für Sportveranstaltungen freistellen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 52, cat: "ausbildung",
+    text: "Wann kann der Ausbildungsbetrieb in der Probezeit kündigen?",
+    choices: [
+      {label: "A", text: "Nur mit 4-wöchiger Kündigungsfrist"},
+      {label: "B", text: "Jederzeit ohne Begründung in der Probezeit"},
+      {label: "C", text: "Nur aus wichtigem Grund"},
+      {label: "D", text: "Erst nach 6 Monaten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 53, cat: "ausbildung",
+    text: "Wann findet die Zwischenprüfung in der Ausbildung statt?",
+    choices: [
+      {label: "A", text: "Zu Beginn der Ausbildung"},
+      {label: "B", text: "Nach ca. 18 Monaten – in der Mitte der Ausbildung"},
+      {label: "C", text: "Am Ende des dritten Ausbildungsjahres"},
+      {label: "D", text: "Direkt vor der Abschlussprüfung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "ausbildung",
+    text: "Was ist die gestreckte Abschlussprüfung?",
+    choices: [
+      {label: "A", text: "Eine Prüfung, die über mehrere Tage verteilt ist"},
+      {label: "B", text: "Eine Abschlussprüfung, die in zwei Teilen stattfindet (AP Teil 1 am Ende von Jahr 2, AP Teil 2 am Ende der Ausbildung)"},
+      {label: "C", text: "Eine verlängerte Zwischenprüfung"},
+      {label: "D", text: "Eine mündliche Prüfung, die mehrfach wiederholt werden darf"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "ausbildung",
+    text: "Welchen Anteil hat der Prüfungsbereich „E-Commerce (schriftlich)“ an der Abschlussprüfung?",
+    choices: [
+      {label: "A", text: "10 %"},
+      {label: "B", text: "20 %"},
+      {label: "C", text: "25 %"},
+      {label: "D", text: "30 %"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 56, cat: "ausbildung",
+    text: "Welchen Anteil hat das Fachgespräch (AP Teil 2) an der Abschlussprüfung?",
+    choices: [
+      {label: "A", text: "10 %"},
+      {label: "B", text: "15 %"},
+      {label: "C", text: "20 %"},
+      {label: "D", text: "25 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 57, cat: "ausbildung",
+    text: "Wie lang ist das Fachgespräch bei der IHK-Abschlussprüfung?",
+    choices: [
+      {label: "A", text: "5 Minuten"},
+      {label: "B", text: "15 Minuten"},
+      {label: "C", text: "30 Minuten"},
+      {label: "D", text: "60 Minuten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "ausbildung",
+    text: "Welche Aufgaben hat die IHK bei der Ausbildung? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Organisation und Durchführung der Zwischen- und Abschlussprüfungen"},
+      {label: "B", text: "Festlegung des täglichen Stundenplans der Berufsschule"},
+      {label: "C", text: "Ausstellung des IHK-Abschlusszeugnisses"},
+      {label: "D", text: "Zahlung der Ausbildungsvergütung"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 59, cat: "ausbildung",
+    text: "Welche Usability-Heuristik beschreibt, dass ein Webshop Sprache und Konzepte aus dem Alltag des Nutzers verwenden soll (z. B. „Warenkorb“ statt „Einkaufswagen-Container“)?",
+    choices: [
+      {label: "A", text: "Heuristik Nr. 1 – Sichtbarkeit des Systemstatus"},
+      {label: "B", text: "Heuristik Nr. 2 – Übereinstimmung mit der realen Welt"},
+      {label: "C", text: "Heuristik Nr. 5 – Fehlervermeidung"},
+      {label: "D", text: "Heuristik Nr. 8 – Ästhetisches und minimales Design"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "ausbildung",
+    text: "Was ist die Eselsbrücke T-E-A-H für Usability-Testing?",
+    choices: [
+      {label: "A", text: "Test – Evaluation – Analyse – Heuristik"},
+      {label: "B", text: "Think-Aloud – Eye-Tracking – A/B-Test – Heatmap"},
+      {label: "C", text: "Tracking – Eingabe – Auswertung – Heatmap"},
+      {label: "D", text: "Think – Evaluate – Apply – Heuristics"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 61, cat: "ausbildung",
+    text: "Was leistet die IHK bei Streitigkeiten zwischen Betrieb und Azubi?",
+    choices: [
+      {label: "A", text: "Sie kündigt automatisch den Ausbildungsvertrag"},
+      {label: "B", text: "Sie vermittelt und schlichtet bei Ausbildungsproblemen"},
+      {label: "C", text: "Sie überweist dem Azubi direkt die Vergütung"},
+      {label: "D", text: "Sie übernimmt die Ausbildung selbst"}
+    ],
+    multi: false, correct: []
+  }
+];
+const catLabels={
+  usability: {label: "Usability", cls: "cat-definition"},
+  ausbildung: {label: "Ausbildung", cls: "cat-recht"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 20 – LF3: Cross-Selling und Up-Selling</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128260; Quiz – Tag 20: Cross-Selling und Up-Selling</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist das Hauptziel von Produktempfehlungen in einem Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Ladezeit der Webseite zu verringern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Umsatzsteigerung durch ergänzende oder höherwertige Produkte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Den Kunden von einer Bestellung abzuhalten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Retourenquote zu senken</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Hauptziel von Produktempfehlungen ist die Umsatzsteigerung. Sie spielen an zwei Stellen im Webshop eine große Rolle: auf den Produktdetailseiten und im Checkout-Prozess. Zusätzlich informieren sie Kunden über das Sortiment und bieten weitere Navigationswege.</div>
+    <div class="feedback err">Falsch. Das Hauptziel von Produktempfehlungen ist die Umsatzsteigerung – durch mehr Artikel pro Bestellung (Cross-Selling) oder teurere Produkte (Up-Selling). Sie spielen auf Produktdetailseiten und im Checkout-Prozess eine zentrale Rolle.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was ist der Unterschied zwischen einem notwendigen und einem sinnvollen Ergänzungsartikel?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Notwendige Artikel sind teurer, sinnvolle sind günstiger</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Notwendige Artikel sind unentbehrlich für die Nutzung; sinnvolle erhöhen den Gebrauchswert</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Notwendige Artikel werden vom Händler empfohlen, sinnvolle vom Kunden selbst gewählt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Es gibt keinen Unterschied – beide Begriffe bedeuten dasselbe</div>
+    </div>
+    <div class="feedback ok">Richtig! Notwendige Ergänzungsartikel sind unentbehrlich – ohne sie funktioniert der Hauptartikel nicht (z. B. Batterien für eine Taschenlampe). Sinnvolle Ergänzungsartikel erhöhen den Gebrauchswert oder verbessern ihn (z. B. Spezialobjektive für Fotoapparate).</div>
+    <div class="feedback err">Falsch. Notwendige Ergänzungen sind unentbehrlich (der Hauptartikel funktioniert ohne sie nicht – z. B. Staubsaugerbeutel). Sinnvolle Ergänzungen erhöhen den Gebrauchswert (z. B. Pflegemittel für Schuhe). Preis und Herkunft der Empfehlung sind kein Unterscheidungsmerkmal.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was versteht man unter Cross-Selling?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Anbieten eines günstigeren Alternativprodukts</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Anbieten von Ergänzungsartikeln aus einem anderen Sortimentsbereich zum gewählten Artikel</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Das Anbieten einer hochwertigeren Variante des gleichen Produkts</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Bündeln mehrerer Produkte zu einem Gesamtpaket</div>
+    </div>
+    <div class="feedback ok">Richtig! Cross-Selling (Querverkauf) bezeichnet das Anbieten von Ergänzungsartikeln, die aus einem anderen Sortimentsbereich stammen und zum gewählten Artikel passen. Beispiel: Kunde kauft Kaffeemaschine → verschiedene Kaffeesorten werden vorgestellt.</div>
+    <div class="feedback err">Falsch. Cross-Selling bedeutet: Ergänzungsartikel aus einem anderen Sortimentsbereich anbieten. Das Anbieten einer hochwertigeren Variante ist Up-Selling. Ein günstigeres Alternativprodukt ist Down-Selling. Pakete zu Sonderpreisen ist Bundling.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Ein Kunde legt einen Fernseher in den Warenkorb. Der Webshop schlägt ihm ein HDMI-Kabel vor. Um welche Strategie handelt es sich?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span>Cross-Selling</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Up-Selling</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Down-Selling</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Bundling</div>
+    </div>
+    <div class="feedback ok">Richtig! Das HDMI-Kabel ist ein Ergänzungsartikel aus einem anderen Sortimentsbereich (Zubehör) zum Hauptartikel Fernseher – das ist Cross-Selling. Ein weiteres Beispiel aus der Präsentation: Babette Maibaum kauft einen Fernseher → HDMI-Kabel wird angeboten.</div>
+    <div class="feedback err">Falsch. Das Vorschlagen eines HDMI-Kabels zum Fernseher ist Cross-Selling – ein Ergänzungsartikel aus einem anderen Sortimentsbereich. Up-Selling wäre das Vorschlagen eines größeren, teureren Fernsehers. Bundling wäre Fernseher + Kabel als Paket zu einem Sonderpreis.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welche drei technischen Verfahren zur Realisierung von Cross-Selling werden in der Präsentation genannt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>SEO, SEM und Social Media Marketing</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Schlagwort-Verfahren, Stammdaten-Verknüpfung und Tagging</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Chatbot, Newsletter und Push-Benachrichtigungen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>A/B-Test, Heatmap und Conversion-Tracking</div>
+    </div>
+    <div class="feedback ok">Richtig! Die drei technischen Verfahren sind: (1) Schlagwort-Verfahren (Suche nach Artikeln mit passenden Schlagwörtern), (2) Stammdaten-Verknüpfung (direkte Verknüpfung in der Datenbank), (3) Tagging (Kunden klicken Schlagwörter an und erhalten passende Artikel).</div>
+    <div class="feedback err">Falsch. Die technischen Verfahren für Cross-Selling sind: Schlagwort-Verfahren, Stammdaten-Verknüpfung und Tagging. SEO oder Chatbots sind keine technischen Umsetzungsmethoden für Cross-Selling im engeren Sinne.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Wo werden Cross-Selling-Produkte im Webshop typischerweise platziert?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Im Seitenkopf (Header) des Webshops</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Ausschließlich auf der Startseite</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Unter dem eigentlichen Artikel oder rechts davon auf der Produktdetailseite</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Nur in der Bestellbestätigungs-E-Mail</div>
+    </div>
+    <div class="feedback ok">Richtig! Cross-Selling-Produkte werden in der Regel unter dem eigentlichen Artikel oder rechts davon angezeigt – direkt auf der Produktdetailseite. So sieht der Kunde die Ergänzungen, während er sich noch mit dem Hauptprodukt beschäftigt.</div>
+    <div class="feedback err">Falsch. Cross-Selling-Produkte werden typischerweise unter dem Artikel oder rechts davon auf der Produktdetailseite angezeigt. Der Header oder die Startseite sind keine optimalen Positionen für artikelspezifische Ergänzungsempfehlungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was kennzeichnet Up-Selling im Vergleich zu Cross-Selling?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Beim Up-Selling wird ein günstigerer Artikel empfohlen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Beim Up-Selling wird eine höherwertige Variante des gleichen Produkts empfohlen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Beim Up-Selling werden mehrere Artikel zu einem Paket gebündelt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Beim Up-Selling werden Artikel aus verschiedenen Kategorien kombiniert</div>
+    </div>
+    <div class="feedback ok">Richtig! Up-Selling (Höherverkauf) bedeutet, dem Kunden eine hochwertigere, teurere Variante des gleichen Produkts anzubieten. Beispiel: Kunde möchte Fernseher für 500 € → Webshop empfiehlt Modell für 800 € mit 4K-Auflösung. Cross-Selling dagegen empfiehlt Artikel aus anderen Kategorien.</div>
+    <div class="feedback err">Falsch. Up-Selling empfiehlt eine höherwertige Variante des gleichen Produkts (z. B. teurerer Fernseher mit besserer Auflösung). Ein günstigeres Alternativprodukt ist Down-Selling. Pakete zu Sonderpreisen ist Bundling. Artikel aus verschiedenen Kategorien ist Cross-Selling.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Welche Angabe sollte beim Up-Selling zwingend gemacht werden, damit Kunden die teurere Variante wählen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der Hinweis auf kostenlose Lieferung für alle Produkte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Gründe für den höheren Preis (z. B. bessere Auflösung, mehr Speicherplatz)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Name des Herstellers und das Herstellungsjahr</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Der Preis des günstigeren Alternativprodukts zum Vergleich</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Up-Selling müssen die Gründe für den höheren Preis klar kommuniziert werden – z. B. „Längere Akkulaufzeit", „500 GB mehr Speicherplatz", „4K-Auflösung statt Full HD". Nur wenn der Mehrwert deutlich wird, ist der Kunde bereit, mehr zu zahlen.</div>
+    <div class="feedback err">Falsch. Beim Up-Selling müssen die Vorteile des teureren Produkts explizit genannt werden: z. B. bessere Auflösung, mehr Speicher, längere Akkulaufzeit. Ohne klare Begründung für den Mehrpreis wählen Kunden in der Regel das günstigere Produkt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was ist Down-Selling?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Anbieten von Zusatzartikeln aus anderen Sortimentsbereichen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Anbieten einer günstigeren Alternative, wenn der Kunde Kaufbedenken zeigt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Das Bündeln mehrerer Produkte zu einem Sparpaket</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Senken aller Preise im Webshop während einer Rabattaktion</div>
+    </div>
+    <div class="feedback ok">Richtig! Down-Selling ist das Gegenteil von Up-Selling: Dem Kunden wird eine günstigere Alternative angeboten, wenn er Kaufbedenken zeigt oder den Warenkorb verlassen möchte. Ziel: Lieber einen günstigeren Verkauf als gar keinen.</div>
+    <div class="feedback err">Falsch. Down-Selling bietet eine günstigere Alternative an, wenn ein Kunde zögert oder abspringen will. Es ist das Gegenteil von Up-Selling. Zusatzartikel aus anderen Bereichen ist Cross-Selling; gebündelte Pakete sind Bundling.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was versteht man unter Bundling?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Bündeln aller Bestellungen eines Kunden zu einer Lieferung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Anbieten mehrerer Produkte als Paket zu einem Sonderpreis</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Das Empfehlen eines hochwertigeren Produkts der gleichen Kategorie</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Bündelung aller Produktbewertungen auf einer Übersichtsseite</div>
+    </div>
+    <div class="feedback ok">Richtig! Bundling kombiniert Cross-Selling mit einem Preisanreiz: Mehrere Produkte werden als Paket zu einem Sonderpreis angeboten. Beispiel aus der Präsentation: Laptop + Tasche + Maus als Komplettpaket. Der Kunde spart, der Händler erhöht den Warenkorbwert.</div>
+    <div class="feedback err">Falsch. Bundling bedeutet, mehrere Produkte als Paket zu einem Sonderpreis anzubieten – z. B. Laptop + Tasche + Maus als Bundle. Es ist eine Kombination aus Cross-Selling und Preisanreiz. Das Empfehlen einer teureren Variante ist Up-Selling.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Wie funktioniert Collaborative Filtering bei Produktempfehlungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ein Redaktionsteam wählt täglich manuell passende Produkte aus</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Algorithmen analysieren das Kaufverhalten vieler Kunden und empfehlen Produkte basierend auf ähnlichen Käufern</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Hersteller gibt vor, welche Produkte zusammen empfohlen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Kunden bewerten Produktkombinationen und die besten werden angezeigt</div>
+    </div>
+    <div class="feedback ok">Richtig! Collaborative Filtering ist ein Algorithmus, der das Kaufverhalten von Millionen Kunden analysiert und Produkte empfiehlt, die ähnliche Käufer ebenfalls gekauft haben – „Kunden, die X kauften, kauften auch Y". Amazon ist das bekannteste Beispiel dafür.</div>
+    <div class="feedback err">Falsch. Collaborative Filtering analysiert das Kaufverhalten vieler Kunden automatisiert und leitet daraus Empfehlungen ab: „Kunden, die X kauften, kauften auch Y". Es ist keine manuelle Auswahl und keine Herstellervorgabe.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welchen Anteil seines Gesamtumsatzes generiert Amazon laut Präsentation durch Produktempfehlungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>10 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>20 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>35 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>50 %</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut Präsentation werden bei Amazon bis zu 35 % des Gesamtumsatzes durch Produktempfehlungen generiert. Das zeigt, wie bedeutend Cross- und Up-Selling für den Umsatz eines Webshops sein können.</div>
+    <div class="feedback err">Falsch. Laut Präsentation generiert Amazon bis zu 35 % seines Gesamtumsatzes durch Produktempfehlungen. Diese Zahl verdeutlicht das enorme Potenzial von Cross- und Up-Selling-Strategien.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was ist eine Layer-Technik im Webshop-Kontext?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Eine technische Maßnahme zur Beschleunigung der Ladezeit</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Eine Einblendung, die sich über den Bildschirm legt, ohne ein neues Browserfenster zu öffnen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein neues Browserfenster (Pop-up) mit Werbeangeboten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine HTML-Ebene zur Strukturierung der Produktkategorien</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Layer (Layer Ad) ist eine Einblendung, die sich über den Bildschirm legt – im Gegensatz zu einem Pop-up öffnet er kein neues Browserfenster. Der Nutzer bleibt auf der Produktseite und kann den Ergänzungsartikel direkt im Layer in den Warenkorb legen.</div>
+    <div class="feedback err">Falsch. Eine Layer-Technik ist eine Einblendung über dem Seiteninhalt ohne neues Browserfenster. Das ist der Vorteil gegenüber Pop-ups: Kein Kontextwechsel, der Käufer bleibt auf der Produktseite und kann direkt im Layer in den Warenkorb legen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Welche Regel gilt für Cross-Selling-Produkte in Bezug auf ihre Relevanz?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Es können beliebige Produkte empfohlen werden, da mehr Auswahl immer besser ist</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Vorgestellte Artikel müssen tatsächlich zum Produkt passen, um Kundenzufriedenheit zu steigern</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Cross-Selling-Produkte sollten immer die günstigsten im Sortiment sein</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Es dürfen maximal 2 Ergänzungsprodukte je Artikel angeboten werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Cross-Selling-Produkte müssen tatsächlich zum Artikel passen. Irrelevante Empfehlungen führen zu Frustration und erhöhen die Rücksendungsquote. Relevante Empfehlungen hingegen steigern Kundenzufriedenheit und reduzieren Retouren.</div>
+    <div class="feedback err">Falsch. Die Präsentation betont: Cross-Selling-Artikel müssen tatsächlich zum Produkt passen. Irrelevante Empfehlungen senken die Kundenzufriedenheit und erhöhen Rücksendungen. Es gibt keine gesetzliche Mengenbeschränkung für Empfehlungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Warum wird bei Cross-Selling die Layer-Technik gegenüber dem Öffnen einer neuen Seite bevorzugt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Weil neue Seiten durch den Browser blockiert werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Weil kein Kontextwechsel stattfindet und der Nutzer auf der Produktdetailseite bleibt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Weil Layer rechtlich vorgeschrieben sind</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Weil Layer schneller laden als normale Webseiten</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Vorteil der Layer-Technik: Kein Kontextwechsel – der Nutzer bleibt auf der Produktseite und kann den Ergänzungsartikel direkt im Layer in den Warenkorb legen. Das verhindert Ablenkung und ermöglicht schnelle Kaufentscheidungen ohne Navigation.</div>
+    <div class="feedback err">Falsch. Die Layer-Technik wird bevorzugt, weil kein Kontextwechsel stattfindet – der Nutzer bleibt auf der Produktdetailseite und kann direkt im Layer kaufen. Es gibt keine rechtliche Pflicht für Layer, und Ladezeiten sind kein Hauptargument.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Was ist der grundlegende Unterschied zwischen Cross-Selling und Up-Selling?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Cross-Selling ist nur für B2B-Shops, Up-Selling nur für B2C-Shops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Cross-Selling = mehr Produkte (anderer Bereich); Up-Selling = teureres Produkt (gleicher Bereich)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Cross-Selling erhöht den Gewinn, Up-Selling nur den Umsatz</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Cross-Selling findet nach dem Kauf statt, Up-Selling vor dem Kauf</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Kerndifferenzierung laut Präsentation: Cross-Selling = mehr Produkte aus einem anderen Sortimentsbereich. Up-Selling = teureres Produkt aus dem gleichen Sortimentsbereich. Beide dienen der Umsatzsteigerung, unterscheiden sich aber grundlegend im Ansatz.</div>
+    <div class="feedback err">Falsch. Der grundlegende Unterschied: Cross-Selling empfiehlt Ergänzungsartikel aus einem anderen Sortimentsbereich (mehr Produkte), Up-Selling empfiehlt eine teurere Variante aus dem gleichen Bereich. Beide können vor und nach dem Kauf eingesetzt werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche Empfehlung gilt für Webshops mit einem sehr großen Sortiment bei Cross-Selling-Produkten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Alle Cross-Selling-Produkte auf einer einzigen Seite bündeln</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Cross-Selling-Produkte in Gruppen/Kategorien einteilen, damit Kunden die Übersicht behalten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Bei großem Sortiment ganz auf Cross-Selling verzichten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Immer maximal 3 Cross-Selling-Produkte anzeigen, unabhängig vom Sortiment</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei großem Sortiment sollten Cross-Selling-Produkte in Gruppen und Kategorien eingeteilt werden, damit Kunden die Übersicht behalten. Die Präsentation nennt dies als explizite Regel: Kategorisierung verbessert die Nutzererfahrung erheblich.</div>
+    <div class="feedback err">Falsch. Bei großem Sortiment gilt: Cross-Selling-Produkte in Gruppen/Kategorien einteilen, damit Kunden nicht überfordert werden. Auf Cross-Selling zu verzichten wäre ein Umsatzverlust; eine starre Maximalliste von 3 Produkten wird nicht empfohlen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche typische Formulierung nutzt Amazon für Cross-Selling-Empfehlungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>„Preis-Leistungs-Sieger dieser Kategorie"</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>„Kunden, die diesen Artikel gekauft haben, kauften auch"</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>„Sonderangebot nur für heute"</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>„Von unserem Team handverlesen"</div>
+    </div>
+    <div class="feedback ok">Richtig! „Kunden, die diesen Artikel gekauft haben, kauften auch" ist eine klassische Amazon-Formulierung für Cross-Selling. Sie nutzt Social Proof (Schwarmintelligenz) und Collaborative Filtering. Weitere Amazon-Formulierungen: „Wird oft zusammen gekauft", „Verwandte Produkte".</div>
+    <div class="feedback err">Falsch. Amazon nutzt für Cross-Selling Formulierungen wie „Kunden, die diesen Artikel gekauft haben, kauften auch", „Wird oft zusammen gekauft" oder „Verwandte Produkte". Diese Formulierungen basieren auf Collaborative Filtering.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">An welchen zwei Stellen im Webshop spielen Produktempfehlungen laut Präsentation eine besonders große Rolle?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Auf der Startseite und in der Suchleiste</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Auf den Produktdetailseiten und in der Kaufabwicklung (Checkout-Prozess)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Im Warenkorb und in der Bestellbestätigungs-E-Mail</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Im Kundenkonto und auf der Kontaktseite</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut Präsentation spielen Produktempfehlungen an zwei Stellen die größte Rolle: (1) auf den Produktdetailseiten und (2) in der Kaufabwicklung (Checkout-Prozess). Hier ist die Kaufbereitschaft des Kunden am höchsten.</div>
+    <div class="feedback err">Falsch. Laut Präsentation haben Produktempfehlungen auf den Produktdetailseiten und im Checkout-Prozess die größte Wirkung. Dort ist die Kaufbereitschaft des Kunden am höchsten, weshalb Ergänzungsempfehlungen besonders wirksam sind.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche Funktion sollte ein Webshop beim Up-Selling anbieten, damit Kunden die Unterschiede objektiv bewerten können?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Eine Umfragefunktion zur Kundenzufriedenheit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Eine Chatbot-Funktion für Produktfragen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Eine Vergleichsfunktion, damit Kunden Produkte objektiv vergleichen können</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine Wunschlisten-Funktion für spätere Käufe</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Präsentation empfiehlt explizit, eine Vergleichsfunktion anzubieten, damit Kunden das Basisprodukt und die höherwertige Variante objektiv vergleichen können. Transparenz beim Up-Selling erhöht die Konversionsrate, da Kunden informierte Entscheidungen treffen.</div>
+    <div class="feedback err">Falsch. Beim Up-Selling sollte eine Vergleichsfunktion angeboten werden, damit Kunden Basisprodukt und teurere Variante direkt gegenüberstellen können. Objektive Vergleiche erhöhen das Vertrauen und die Bereitschaft, mehr Geld auszugeben.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 20</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

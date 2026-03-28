@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lernfeld 1 – Das Unternehmen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#f97316;--primary-light:#fff7ed;--primary-dark:#ea580c;--bg:#f8fafc;--text:#1e293b;--muted:#64748b;--border:#e2e8f0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0f172a,#1e293b);padding:0 32px;display:flex;align-items:center;height:60px;gap:16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.back-btn{color:#94a3b8;text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s}
+.back-btn:hover{color:#f1f5f9}
+.sep{color:#334155}
+.topbar-title{color:#f1f5f9;font-weight:700;font-size:.95rem}
+.header{background:linear-gradient(135deg,#0f172a 0%,#1c1a35 100%);padding:40px 32px 36px;border-bottom:3px solid var(--primary)}
+.lf-badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.header h1{color:#f1f5f9;font-size:2rem;font-weight:800;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.9rem}
+.content{max-width:1100px;margin:0 auto;padding:36px 24px}
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;transition:box-shadow .2s,transform .2s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary)}
+.card:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
+.tag-num{font-size:.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.tag-topic{font-size:.97rem;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.4}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s;border:none}
+.btn-praes{background:var(--primary);color:#fff}
+.btn-praes:hover{background:var(--primary-dark)}
+.btn-quiz{background:var(--primary-light);color:var(--primary-dark);border:1px solid #fed7aa}
+.btn-quiz:hover{background:#ffedd5}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back-btn" href="../index.html">← Dashboard</a>
+  <span class="sep">|</span>
+  <span class="topbar-title">Lernfeld 1 – Das Unternehmen</span>
+</div>
+<div class="header">
+  <div class="lf-badge">Lernfeld 1</div>
+  <h1>Das Unternehmen</h1>
+  <p>15 Unterrichtstage &nbsp;·&nbsp; Modellunternehmen, E-Commerce-Grundlagen, Vertriebskanäle, Rechtsformen</p>
+</div>
+<div class="content">
+  <div class="section-label">Unterrichtstage</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="tag-num">Tag 1</div>
+      <div class="tag-topic">1.1 Das Modellunternehmen</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 1/Praesentation_Tag1.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 1/Quiz_Tag1.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 2</div>
+      <div class="tag-topic">1.2 Orientierung im Unternehmen + 1.3 Aktives Lesen</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 2/Praesentation_Tag2.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 2/Quiz_Tag2.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 3</div>
+      <div class="tag-topic">1.3 Handlungskompetenz &amp; Feedback</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 3/Praesentation_Tag3.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 3/Quiz_Tag3.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 4</div>
+      <div class="tag-topic">1.4 Soziale Kompetenz + 1.5 E-Commerce-Arten</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 4/Praesentation_Tag4.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 4/Quiz_Tag4.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 5</div>
+      <div class="tag-topic">1.6 Vertriebskanäle</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 5/Praesentation_Tag5.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 5/Quiz_Tag5.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 6</div>
+      <div class="tag-topic">1.7 Einrichtung eines Webshops</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 6/Praesentation_Tag6.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 6/Quiz_Tag6.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 7</div>
+      <div class="tag-topic">1.8 Webshop Name &amp; Adresse Teil 1</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 7/Praesentation_Tag7.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 7/Quiz_Tag7.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 8</div>
+      <div class="tag-topic">1.8 Webshop Name &amp; Adresse Teil 2</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 8/Praesentation_Tag8.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 8/Quiz_Tag8.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 9</div>
+      <div class="tag-topic">1.9 Usability + 1.10 Duale Berufsausbildung</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 9/Praesentation_Tag9.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 9/Quiz_Tag9.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 10</div>
+      <div class="tag-topic">1.11 Rechte &amp; Pflichten + 1.12 Jugendarbeitsschutz + 1.13 Tarifverträge</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 10/Praesentation_Tag10.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 10/Quiz_Tag10.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 11</div>
+      <div class="tag-topic">1.14 Mitbestimmung + 1.15 Entgeltabrechnung</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 11/Praesentation_Tag11.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 11/Quiz_Tag11.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 12</div>
+      <div class="tag-topic">1.16 Weiterbildung + 1.17 Unternehmensziele</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 12/Praesentation_Tag12.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 12/Quiz_Tag12.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 13</div>
+      <div class="tag-topic">1.18 Wirtschaftskreislauf &amp; Produktionsfaktoren</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 13/Praesentation_Tag13.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 13/Quiz_Tag13.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 14</div>
+      <div class="tag-topic">1.19 Rechtsformen Teil 1 (Einzelunternehmen, Personengesellschaften)</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 14/Praesentation_Tag14.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 14/Quiz_Tag14.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tag-num">Tag 15</div>
+      <div class="tag-topic">1.20 Rechtsformen Teil 2 (Kapitalgesellschaften)</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 15/Praesentation_Tag15.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 1/Tag 15/Quiz_Tag15.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+if(sessionStorage.getItem('ecom-auth')!=='ok') window.location='../index.html';
+</script>
+</body>
+</html>

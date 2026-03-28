@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 19 – LF3: Der Abschluss des Checkout-Prozesses</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128722; Quiz – Tag 19: Der Abschluss des Checkout-Prozesses</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">In welcher Reihenfolge laufen die letzten 5 Schritte des Checkout-Prozesses ab?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Übersichtsseite → Versandart → Zahlungsart → Kaufvertrag → Dank &amp; Bestätigung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Zahlungsart → Versandart → Übersichtsseite → Kaufvertrag → Dank &amp; Bestätigung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Zahlungsart → Kaufvertrag → Übersichtsseite → Versandart → Dank &amp; Bestätigung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Versandart → Zahlungsart → Kaufvertrag → Übersichtsseite → Dank &amp; Bestätigung</div>
+    </div>
+    <div class="feedback ok">Richtig! Die 5 letzten Checkout-Schritte sind: (1) Zahlungsart auswählen, (2) Versandart auswählen, (3) Übersichtsseite prüfen, (4) Kaufvertrag abschließen (Button-Lösung), (5) Dank &amp; Bestätigung. Diese Reihenfolge sorgt für ein transparentes und rechtskonformes Kauferlebnis.</div>
+    <div class="feedback err">Falsch. Die korrekte Reihenfolge lautet: Zahlungsart → Versandart → Übersichtsseite → Kaufvertrag → Dank &amp; Bestätigung. Erst nach Auswahl von Zahlungs- und Versandart prüft der Kunde alles auf der Übersichtsseite.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Warum sollte ein Webshop möglichst viele Zahlungsarten anbieten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Weil das Gesetz mindestens 5 Zahlungsarten vorschreibt</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Weil mehr Zahlungsarten die Serverkosten senken</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Weil fehlende Zahlungsmethoden einer der häufigsten Gründe für Warenkorbabbrüche sind (ca. 53 %)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Weil Kunden sonst rechtliche Schritte einleiten können</div>
+    </div>
+    <div class="feedback ok">Richtig! Untersuchungen zeigen, dass ca. 53 % der Warenkorbabbrüche auf fehlende Zahlungsmethoden zurückzuführen sind. Kunden beurteilen Zahlungsarten sehr unterschiedlich und lehnen bestimmte Methoden strikt ab. Mehr Vielfalt = mehr abgeschlossene Käufe.</div>
+    <div class="feedback err">Falsch. Ca. 53 % der Warenkorbabbrüche entstehen, weil die bevorzugte Zahlungsmethode fehlt. Es gibt keine gesetzliche Mindestanzahl an Zahlungsarten, aber Vielfalt erhöht nachweislich den Umsatz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche Pflichtangabe muss die Übersichtsseite laut Preisangabenverordnung zwingend enthalten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Bankverbindung des Verkäufers</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Die Lieferzeiten aller angebotenen Versanddienstleister</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Den Gesamtpreis inklusive aller weiteren Kosten (Versand, Zahlungsart)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die vollständige AGB in ausgedruckter Form</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Übersichtsseite muss laut Gesetz enthalten: die ausgewählten Waren/Dienstleistungen, deren wesentliche Merkmale, den Gesamtpreis (Preisangabenverordnung) sowie Hinweise auf weitere Kosten wie Versand oder Zahlungsart-Zuschläge.</div>
+    <div class="feedback err">Falsch. Die Übersichtsseite muss den Gesamtpreis (gemäß Preisangabenverordnung) inkl. aller Zusatzkosten enthalten. Die Bankverbindung des Verkäufers gehört nicht zu den Pflichtangaben der Übersichtsseite.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was regelt die Button-Lösung gemäß § 312j BGB?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Dass der Bestellbutton in der Farbe Grün erscheinen muss</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Dass der Bestellbutton den Kunden klar über die finanzielle Verpflichtung informieren muss</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Dass der Kaufvertrag erst nach 24 Stunden rechtsgültig ist</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Dass der Button mindestens 50 Pixel groß sein muss</div>
+    </div>
+    <div class="feedback ok">Richtig! § 312j BGB schreibt vor, dass der Bestellbutton klar erkennen lassen muss, dass der Kauf eine kostenpflichtige Verpflichtung auslöst. Die Kostenpflicht muss aus der Beschriftung hervorgehen. Fehlt der korrekte Button, kommt kein rechtsgültiger Kaufvertrag zustande.</div>
+    <div class="feedback err">Falsch. Die Button-Lösung (§ 312j BGB) verlangt, dass der Bestellbutton die finanzielle Verpflichtung des Kaufs klar kommuniziert. Es gibt keine Vorschriften zu Farbe oder Pixelgröße des Buttons.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welche der folgenden Beschriftungen ist laut § 312j BGB für den Bestellbutton erlaubt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>„Bestellung abschicken"</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>„Weiter zum nächsten Schritt"</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>„Zahlungspflichtig bestellen"</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>„Artikel reservieren"</div>
+    </div>
+    <div class="feedback ok">Richtig! „Zahlungspflichtig bestellen" ist eine der ausdrücklich erlaubten Formulierungen. Weitere zulässige Beschriftungen sind: „Kostenpflichtig bestellen", „Kaufvertrag abschließen" und „Kauf abschließen". Allen gemeinsam ist, dass die Kostenpflicht eindeutig hervorgeht.</div>
+    <div class="feedback err">Falsch. Die erlaubten Beschriftungen laut § 312j BGB sind: „Zahlungspflichtig bestellen", „Kostenpflichtig bestellen", „Kaufvertrag abschließen" und „Kauf abschließen". „Bestellung abschicken" oder „Weiter" machen die Kostenpflicht nicht ausreichend deutlich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was passiert rechtlich, wenn ein Webshop den Bestellbutton falsch beschriftet oder weglässt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der Kaufvertrag gilt automatisch als geschlossen, sobald Geld überwiesen wird</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Es kommt kein rechtsgültiger Kaufvertrag zustande</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Kaufvertrag gilt nach 14 Tagen als stillschweigend akzeptiert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Der Händler erhält eine Abmahnung, aber der Vertrag bleibt gültig</div>
+    </div>
+    <div class="feedback ok">Richtig! Fehlt der korrekte Bestellbutton oder ist er unzureichend beschriftet, kommt nach § 312j BGB kein rechtsgültiger Kaufvertrag zustande. Der Gesetzgeber schützt damit Verbraucher vor ungewollten kostenpflichtigen Abonnements und Käufen.</div>
+    <div class="feedback err">Falsch. Laut § 312j BGB kommt kein rechtsgültiger Kaufvertrag zustande, wenn der Bestellbutton fehlt oder falsch beschriftet ist. Eine Geldüberweisung allein reicht nicht aus, um einen Vertrag zu begründen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Welche Maßnahme gehört zu einem benutzerfreundlichen Checkout-Prozess im Bereich „Vertrauen"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Möglichst viele Produktempfehlungen im Checkout anzeigen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Tunnelling: Ablenkungen ausblenden und Trust-Siegel anzeigen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Den Kunden zur Registrierung zwingen, um seine Daten zu speichern</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Lange Formulare mit vielen Pflichtfeldern verwenden</div>
+    </div>
+    <div class="feedback ok">Richtig! Zu den Vertrauenssignalen im Checkout gehören: Datenschutz- und Trust-Siegel, Tunnelling (Ablenkungen wie Navigation ausblenden), Fortschrittsanzeige und die Möglichkeit zum Gast-Einkauf. Diese Maßnahmen reduzieren Kaufabbrüche erheblich.</div>
+    <div class="feedback err">Falsch. Im Checkout sind Vertrauensmaßnahmen wie Trust-Siegel, SSL-Hinweise und Tunnelling (Ablenkungen ausblenden) wichtig. Registrierungszwang und lange Formulare sind hingegen häufige Gründe für Kaufabbrüche.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Wie viele Schritte sollte ein Checkout-Prozess maximal umfassen, um Kaufabbrüche zu minimieren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>3 Schritte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>5 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>7 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>10 Schritte</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Ziel lautet: maximal 5 Schritte bis zum Kaufabschluss. Jeder zusätzliche Schritt erhöht die Wahrscheinlichkeit eines Kaufabbruchs. Die Präsentation nennt explizit: „Maximal 5 Schritte bis zum Kaufabschluss."</div>
+    <div class="feedback err">Falsch. Der Checkout sollte maximal 5 Schritte umfassen. Mehr Schritte erhöhen die Abbruchrate, weniger könnten wichtige Informationen weglassen. 5 Schritte bilden den bewährten Kompromiss aus Transparenz und Effizienz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welche Angabe sollte bei jeder Versandoption im Checkout angezeigt werden, um Kaufabbrüche zu vermeiden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der Name des Fahrers, der die Bestellung ausliefert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Der voraussichtliche Liefertermin</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Telefonnummer des Versanddienstleisters</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Gewicht des Pakets</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei jeder Versandoption sollte der voraussichtliche Liefertermin angegeben werden. Kunden möchten wissen, wann sie ihre Bestellung erhalten. Unklare Lieferzeiten sind ein häufiger Grund für Warenkorbabbrüche.</div>
+    <div class="feedback err">Falsch. Bei den Versandoptionen sollte der voraussichtliche Liefertermin angezeigt werden. Das ist ein wichtiges Best Practice, da unklare Lieferzeiten laut Präsentation zu Kaufabbrüchen führen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was beschreibt die Dankseite (Thank-You-Page) im Checkout-Prozess am besten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die erste Seite, die der Kunde beim Betreten des Webshops sieht</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die letzte Phase der Verkaufsabwicklung, die über Wiederkauf entscheidet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Eine optionale Seite nur für Stammkunden mit Rabattcode</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Seite mit der detaillierten Bestellbestätigung per PDF</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Dankseite ist die letzte Phase der Verkaufsabwicklung. Wie es in der Präsentation heißt: „Der erste Eindruck zählt, der letzte bleibt." Die Dankseite entscheidet oft, ob der Kunde wiederkommt. Hier sollte man dem Kunden danken, seine Kaufentscheidung bestätigen und Hinweise geben.</div>
+    <div class="feedback err">Falsch. Die Dankseite ist die letzte Phase der Verkaufsabwicklung. Sie ist nicht optional, sondern entscheidend für die Kundenbindung. Die Präsentation zitiert dazu: „Der erste Eindruck zählt, der letzte bleibt."</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Welche Information sollte auf der Dankseite zwingend angezeigt werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der vollständige AGBs-Text zum erneuten Durchlesen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Bestellnummer und der voraussichtliche Liefertermin</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Kontodaten des Webshop-Betreibers</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine Pflichtumfrage zur Kundenzufriedenheit</div>
+    </div>
+    <div class="feedback ok">Richtig! Zur Dankseite gehören: Bestellnummer, voraussichtliches Lieferdatum, Kontaktmöglichkeit für Fragen sowie optional Cross-Selling-Empfehlungen, Newsletter-Anmeldung und Social-Media-Sharing. Diese Elemente schaffen Sicherheit und positive Nachwirkung.</div>
+    <div class="feedback err">Falsch. Die Dankseite sollte Bestellnummer und voraussichtlichen Liefertermin anzeigen sowie eine Kontaktmöglichkeit bieten. Der vollständige AGB-Text gehört nicht auf die Dankseite – der wurde bereits auf der Übersichtsseite bestätigt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Wann gilt der Kaufvertrag in einem Webshop als rechtlich abgeschlossen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Wenn der Kunde den Warenkorb befüllt hat</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Wenn der Kunde die Zahlungsart ausgewählt hat</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Spätestens wenn der Webshop die Bestellung per E-Mail bestätigt hat</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Wenn die Ware beim Kunden angekommen ist</div>
+    </div>
+    <div class="feedback ok">Richtig! Spätestens wenn der Webshop die Bestellung bestätigt hat, gilt der Kaufvertrag als abgeschlossen. Die Bestellbestätigung per E-Mail ist eine automatisch erzeugte Empfangsbestätigung und stellt den rechtlichen Abschluss des Vertrags dar.</div>
+    <div class="feedback err">Falsch. Der Kaufvertrag gilt spätestens mit der E-Mail-Bestätigung durch den Webshop als abgeschlossen. Das Befüllen des Warenkorbs oder die Zahlungsartwahl begründen noch keinen Vertrag.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Welcher Pflichtinhalt muss in der Bestellbestätigung per E-Mail enthalten sein?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Passwort des Kundenkontos</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Angaben zum Widerrufs- oder Rückgaberecht</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Eine Einladung zur Bewertung des Shops auf Google</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die vollständige Steuererklärung des Händlers</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Bestellbestätigung muss folgende Pflichtinhalte enthalten: Informationen zum Verkäufer, alle Vertragsbedingungen (AGB, Zahlungsbedingungen), Angaben zum Widerrufs- oder Rückgaberecht, Daten der gekauften Artikel (Preise, Beschreibung), Gewährleistungsbedingungen und Angaben zum Kundendienst.</div>
+    <div class="feedback err">Falsch. Zu den Pflichtinhalten der Bestellbestätigung gehören Verkäuferinfos, AGB, Zahlungsbedingungen, Angaben zum Widerrufsrecht, Artikeldaten mit Preisen sowie Gewährleistungs- und Kundendienstangaben. Das Passwort darf aus Sicherheitsgründen nicht per E-Mail verschickt werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was versteht man unter „After-Sales-Management" im E-Commerce?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Verwaltung von Retouren und Rückerstattungen nach einem Kauf</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Maßnahmen nach dem Kauf, die eine positive Nachwirkung erzeugen und zur Kundenbindung beitragen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Das Abschalten des Webshops außerhalb der Geschäftszeiten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Buchhaltung nach Abschluss des Verkaufsjahres</div>
+    </div>
+    <div class="feedback ok">Richtig! After-Sales-Management umfasst alle Maßnahmen nach dem Kauf, die beim Kunden eine positive Nachwirkung erzeugen: Kaufbestätigung, Gutscheinaktionen, Social Sharing und mehr. Das Ziel ist Kundenbindung – also ob der Kunde wiederkommt.</div>
+    <div class="feedback err">Falsch. After-Sales-Management beschreibt alle Maßnahmen nach dem Kauf zur Kundenbindung: Kaufbestätigung, Gutscheine, Social Sharing. Es geht darum, positive Nachwirkung zu erzeugen, nicht nur Retouren zu verwalten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welche After-Sales-Maßnahme nutzt soziale Netzwerke zur Kundengewinnung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Inline-Validierung der Formulare</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Anzeige des Fortschrittsbalkens im Checkout</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Vorformulierte Mitteilungsboxen für Social-Sharing (z. B. Facebook, Twitter)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Automatische Rechnungsstellung per PDF</div>
+    </div>
+    <div class="feedback ok">Richtig! Social Sharing ist eine After-Sales-Maßnahme: Vorformulierte Mitteilungsboxen für Facebook, Twitter u. a. ermöglichen es dem Kunden, seinen Kauf zu teilen – z. B. „Ich habe gerade diesen tollen Artikel gekauft!" mit Verlinkung zur Produktseite. Das ist kostenlose Werbung im sozialen Netzwerk.</div>
+    <div class="feedback err">Falsch. Social Sharing (vorformulierte Nachrichten für Facebook, Twitter) ist eine After-Sales-Maßnahme, die sozialen Netzwerke als Werbekanal nutzt. Fortschrittsbalken und Inline-Validierung sind Checkout-Usability-Maßnahmen, keine After-Sales-Maßnahmen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Warum ist es wichtig, dem Kunden nach dem Kauf Rechtfertigungsgründe für seine Kaufentscheidung zu liefern?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Weil das Gesetz eine Kaufbestätigung innerhalb von 24 Stunden vorschreibt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Weil Kunden nach dem Kauf oft Zweifel und Bedenken entwickeln und positiv bestätigt werden müssen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Weil Kunden sonst ihr Widerrufsrecht ausüben</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Weil die AGB eine Bestätigungspflicht vorschreiben</div>
+    </div>
+    <div class="feedback ok">Richtig! Nach dem Kauf entstehen beim Kunden oft Zweifel: „War das die richtige Entscheidung?" Durch Hervorheben von Garantieleistungen, Serviceangeboten, verwandten Artikeln und Gutscheinen wird die Kaufentscheidung positiv bestätigt und das Vertrauen gestärkt.</div>
+    <div class="feedback err">Falsch. Kunden entwickeln nach dem Kauf oft Zweifel und Bedenken (Präsentation: „Vielleicht hätte ich doch meinen Mann fragen sollen?"). Der Verkäufer muss daher Rechtfertigungsgründe liefern – Garantien, Service, Gutscheine – um die Entscheidung zu bestätigen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche Maßnahme hilft, Warenkorbabbrüche wegen eines Kundenkonto-Zwangs zu vermeiden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Den Kunden per E-Mail zur Registrierung auffordern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Einen Gastzugang ohne Pflicht zur Kontoerstellung anbieten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Registrierung mit einem 5-Euro-Gutschein belohnen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Den Checkout auf 10 Schritte ausweiten</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Kundenkonto-Zwang ist ein häufiger Grund für Warenkorbabbrüche. Die Lösung: Gastzugang ermöglichen. So können Kunden ohne Registrierung kaufen. Optionale Kontoerstellung nach dem Kauf ist nutzerfreundlicher als Pflichtregistrierung davor.</div>
+    <div class="feedback err">Falsch. Ein Gastzugang ist die direkte Lösung für das Problem des Kundenkonto-Zwangs. Kunden, die sich nicht registrieren möchten, können trotzdem kaufen. Eine E-Mail-Aufforderung oder ein Gutschein lösen das Problem nicht strukturell.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche Beschriftung des Bestellbuttons ist laut § 312j BGB NICHT zulässig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>„Kostenpflichtig bestellen"</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>„Kaufvertrag abschließen"</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>„Jetzt bestellen"</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>„Kauf abschließen"</div>
+    </div>
+    <div class="feedback ok">Richtig! „Jetzt bestellen" ist nicht zulässig, weil daraus keine Kostenpflicht hervorgeht. Die erlaubten Beschriftungen sind: „Zahlungspflichtig bestellen", „Kostenpflichtig bestellen", „Kaufvertrag abschließen" und „Kauf abschließen". Alle anderen Formulierungen sind rechtswidrig.</div>
+    <div class="feedback err">Falsch. „Jetzt bestellen" ist nicht zulässig – die Kostenpflicht ist nicht erkennbar. Zulässig sind: „Zahlungspflichtig bestellen", „Kostenpflichtig bestellen", „Kaufvertrag abschließen" und „Kauf abschließen". Die anderen drei Antwortmöglichkeiten sind alle erlaubt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was ist der Hauptzweck einer Gutscheinaktion auf der Dankseite nach einem Kauf?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Rückgabe der Ware zu verhindern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Den Kunden durch eine Überraschung zur Wiederkehr zu animieren und neue Zielgruppen zu erreichen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Den gesetzlichen Anforderungen der Bestellbestätigung zu genügen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Den Kaufpreis rückwirkend zu senken</div>
+    </div>
+    <div class="feedback ok">Richtig! Eine Gutscheinaktion wie „Sie sparen beim nächsten Kauf 7 Euro!" überrascht den Kunden positiv, animiert zur Wiederkehr und kann als kostenlose Werbung in neuen Zielgruppen wirken – wenn der Gutschein z. B. mit Freunden geteilt wird.</div>
+    <div class="feedback err">Falsch. Gutscheinaktionen auf der Dankseite dienen der Kundenbindung und dem Anreiz zur Wiederkehr. Sie sind eine überraschende Belohnung für den Kunden und gleichzeitig kostenlose Werbung. Es ist keine gesetzliche Pflicht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was sollte ein Webshop tun, wenn Versandkosten höher als erwartet zu Warenkorbabbrüchen führen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Versandkosten aus der Bestellbestätigung weglassen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Versandkosten transparent und früh im Prozess anzeigen sowie kostenlose Lieferung ab einem Mindestbestellwert kommunizieren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Versandkosten immer auf die Produktpreise aufschlagen und als kostenlosen Versand bewerben</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Versandkosten erst auf der Rechnung ausweisen</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Lösung für Kaufabbrüche wegen unerwarteter Versandkosten lautet: Kosten früh und transparent anzeigen und kostenlose Lieferung ab einem Mindestbestellwert kommunizieren. Überraschende Zusatzkosten kurz vor dem Kaufabschluss sind einer der häufigsten Abbruchgründe.</div>
+    <div class="feedback err">Falsch. Versandkosten müssen transparent und frühzeitig angezeigt werden. Das Verstecken oder nachträgliche Ausweisen verletzt die Preistransparenzpflicht und führt zu Kaufabbrüchen sowie Vertrauensverlust.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 19</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

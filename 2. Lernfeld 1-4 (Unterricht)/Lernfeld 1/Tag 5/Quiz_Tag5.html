@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 5: Vertriebskanäle – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #b41e1e;
+    --blue: #1e3c78;
+    --dark: #1a1a2e;
+    --green: #2d8a4e;
+    --orange: #d97706;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+  }
+  header h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  header p { color: #aaa; font-size: 0.85rem; }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: #666; margin-top: 3px; }
+
+  .score-box { display: flex; gap: 16px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 70px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--blue); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border: 1px solid var(--border);
+    border-radius: 16px; background: white; cursor: pointer; font-size: 0.8rem;
+  }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 1rem; line-height: 1.5; margin-bottom: 14px; font-weight: 500; }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.92rem; line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: #eef1f9; }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: #d4f0df; }
+  .choice-btn.wrong-selected { border-color: var(--red); background: #fde8e8; }
+  .choice-btn.missed { border-color: var(--orange); background: #fef3e2; }
+  .choice-btn:disabled { cursor: default; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #d4f0df; color: #1a5c30; }
+  .q-feedback.partial { background: #fef3e2; color: #8a5c00; }
+  .q-feedback.fail { background: #fde8e8; color: #8a0000; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--blue);
+    color: white; border: none; border-radius: 7px; cursor: pointer; font-size: 0.88rem;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: white; border-radius: 12px; padding: 24px;
+    text-align: center; margin-bottom: 20px; display: none;
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 8px 0; }
+  .final-banner .sub { color: #ccc; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#127891; Quiz – Tag 5: Vertriebskanäle</h1>
+  <p>Kaufmann im E-Commerce &middot; Lernfeld 1 &middot; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 5: Vertriebskanäle</div>
+      <div class="quiz-meta">60 Fragen &middot; Bei jeder Frage sind 1 oder 2 Antworten korrekt</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div>Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    num: 1,
+    text: `Was beschreibt ein Vertriebskanal (Distributionskanal)?`,
+    choices: [
+    {"label": "A", "text": "Einen Kommunikationskanal zwischen Kunden und Kundendienst"},
+    {"label": "B", "text": "Den Weg der Ware vom Hersteller zum Endkunden"},
+    {"label": "C", "text": "Eine Marketingstrategie zur Neukundengewinnung"},
+    {"label": "D", "text": "Die interne IT-Infrastruktur eines Unternehmens enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 2,
+    text: `Welchem der vier klassischen Marketing-Instrumente (4P) wird die Distributionspolitik zugeordnet?`,
+    choices: [
+    {"label": "A", "text": "Product"},
+    {"label": "B", "text": "Price"},
+    {"label": "C", "text": "Place"},
+    {"label": "D", "text": "Promotion enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 3,
+    text: `Was kennzeichnet den Direktvertrieb?`,
+    choices: [
+    {"label": "A", "text": "Der Hersteller nutzt Großhändler als Zwischenhändler"},
+    {"label": "B", "text": "Der Hersteller verkauft ohne Zwischenhändler direkt an den Endkunden"},
+    {"label": "C", "text": "Ein Marktplatz vermittelt zwischen Hersteller und Endkunden"},
+    {"label": "D", "text": "Einzelhändler kaufen beim Hersteller und verkaufen an Privatkunden weiter enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 4,
+    text: `Was beschreibt den indirekten Vertrieb?`,
+    choices: [
+    {"label": "A", "text": "Der Hersteller verkauft ausschließlich im eigenen Online-Shop"},
+    {"label": "B", "text": "Der Hersteller nutzt Zwischenhändler wie Großhändler, Einzelhändler oder Marktplätze"},
+    {"label": "C", "text": "D2C-Modelle ohne jeglichen Mittler"},
+    {"label": "D", "text": "Der Hersteller verkauft direkt an Staatseinrichtungen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 5,
+    text: `Welche der folgenden Aussagen beschreibt einen Vorteil des stationären Handels?`,
+    choices: [
+    {"label": "A", "text": "Unbegrenzte geografische Reichweite weltweit"},
+    {"label": "B", "text": "Keine Personalkosten erforderlich"},
+    {"label": "C", "text": "Produkte können angefasst, ausprobiert und anprobiert werden"},
+    {"label": "D", "text": "Einfache Skalierbarkeit ohne zusätzliche Kosten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 6,
+    text: `Was ist ein wesentlicher Nachteil des stationären Handels?`,
+    choices: [
+    {"label": "A", "text": "Kunden können keine Beratung erhalten"},
+    {"label": "B", "text": "Hohe Fixkosten (Miete, Personal)"},
+    {"label": "C", "text": "Keine Möglichkeit zur Impulskäufen"},
+    {"label": "D", "text": "Produkte sind nie sofort verfügbar enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 7,
+    text: `Welche zwei Vorteile hat der stationäre Handel laut Handout? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Sofortige Verfügbarkeit der Ware"},
+    {"label": "B", "text": "Unbegrenzte Öffnungszeiten rund um die Uhr"},
+    {"label": "C", "text": "Persönliche Beratung durch Mitarbeiter"},
+    {"label": "D", "text": "Sehr einfache Skalierbarkeit des Geschäfts enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 8,
+    text: `Welche Shopsysteme werden laut Handout als Online-Vertriebskanäle für Webshops genannt? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Shopify"},
+    {"label": "B", "text": "SAP ERP"},
+    {"label": "C", "text": "Shopware"},
+    {"label": "D", "text": "Microsoft Excel enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 9,
+    text: `Was ist ein zentrales Merkmal von Marktplätzen als Online-Vertriebskanal?`,
+    choices: [
+    {"label": "A", "text": "Sie bieten sofortige hohe Reichweite durch eine vorhandene Nutzerbasis"},
+    {"label": "B", "text": "Sie bieten vollständige Kontrolle über das eigene Branding"},
+    {"label": "C", "text": "Die Kundendaten gehören ausschließlich dem verkaufenden Unternehmen"},
+    {"label": "D", "text": "Es entstehen keine Kosten in Form von Provisionen enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 10,
+    text: `Wie hoch beträgt die typische Provision eines Marktplatzes (z. B. Amazon) pro Verkauf laut Handout?`,
+    choices: [
+    {"label": "A", "text": "ca. 1--3 %"},
+    {"label": "B", "text": "ca. 8--15 %"},
+    {"label": "C", "text": "ca. 25--35 %"},
+    {"label": "D", "text": "ca. 50 % enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 11,
+    text: `Welcher Vorteil spricht laut Handout für den eigenen Webshop gegenüber einem Marktplatz?`,
+    choices: [
+    {"label": "A", "text": "Sofortige Millionen-Reichweite ohne Marketingaufwand"},
+    {"label": "B", "text": "Vollständige Kontrolle über Kundendaten, Design und Preise"},
+    {"label": "C", "text": "Keine technischen Einrichtungskosten"},
+    {"label": "D", "text": "Niedrigere laufende Kosten als jeder Marktplatz enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 12,
+    text: `Wofür steht das Akronym KRAK im Kontext des Handouts?`,
+    choices: [
+    {"label": "A", "text": "Kommunikation, Reichweite, Automatisierung, Kosten"},
+    {"label": "B", "text": "Kosten, Reichweite, Aufwand, Kontrolle"},
+    {"label": "C", "text": "Kanäle, Reichweite, Auslieferung, Kontrolle"},
+    {"label": "D", "text": "Kunden, Rabatte, Angebote, Konditionen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 13,
+    text: `Beim KRAK-Vergleich: Bei welchem Kriterium punktet der Marktplatz deutlich gegenüber dem eigenen Webshop?`,
+    choices: [
+    {"label": "A", "text": "Kontrolle"},
+    {"label": "B", "text": "Kundendaten"},
+    {"label": "C", "text": "Reichweite"},
+    {"label": "D", "text": "Markenaufbau enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 14,
+    text: `Wem gehören die Kundendaten bei einem Verkauf über einen Marktplatz?`,
+    choices: [
+    {"label": "A", "text": "Dem verkaufenden Unternehmen"},
+    {"label": "B", "text": "Dem Kunden selbst"},
+    {"label": "C", "text": "Dem Marktplatz (z. B. Amazon)"},
+    {"label": "D", "text": "Dem Hersteller der Produkte enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 15,
+    text: `Was empfiehlt das Handout als häufig sinnvollste Strategie für Unternehmen im E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Ausschließlich auf Marktplätzen verkaufen"},
+    {"label": "B", "text": "Ausschließlich einen eigenen Webshop nutzen"},
+    {"label": "C", "text": "Hybridstrategie -- sowohl Marktplätze als auch eigener Shop"},
+    {"label": "D", "text": "Nur stationären Handel betreiben enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 16,
+    text: `Was kennzeichnet die Single-Channel-Strategie?`,
+    choices: [
+    {"label": "A", "text": "Das Unternehmen nutzt mehrere unabhängige Kanäle"},
+    {"label": "B", "text": "Das Unternehmen nutzt genau einen Vertriebskanal"},
+    {"label": "C", "text": "Alle Kanäle sind vollständig miteinander integriert"},
+    {"label": "D", "text": "Kunden können zwischen Online und Offline nahtlos wechseln enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 17,
+    text: `Was unterscheidet Multi-Channel von Cross-Channel?`,
+    choices: [
+    {"label": "A", "text": "Bei Multi-Channel sind die Kanäle verbunden; bei Cross-Channel nicht"},
+    {"label": "B", "text": "Bei Multi-Channel sind die Kanäle unabhängig voneinander; bei Cross-Channel sind sie verbunden"},
+    {"label": "C", "text": "Beide Begriffe meinen dasselbe"},
+    {"label": "D", "text": "Cross-Channel bedeutet nur digitale Kanäle, Multi-Channel schließt stationären Handel ein enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 18,
+    text: `Welches Beispiel beschreibt eine Cross-Channel-Strategie?`,
+    choices: [
+    {"label": "A", "text": "Das Unternehmen betreibt nur einen stationären Laden"},
+    {"label": "B", "text": "Das Unternehmen verkauft auf Amazon und im eigenen Shop, die Lagerbestände sind getrennt"},
+    {"label": "C", "text": "Kunden können online bestellen und die Ware im Ladengeschäft zurückgeben"},
+    {"label": "D", "text": "Alle Kanäle sind vollständig synchronisiert und der Kundenservice sieht alles auf einmal enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 19,
+    text: `Was ist das Ziel der Omnichannel-Strategie?`,
+    choices: [
+    {"label": "A", "text": "Möglichst viele unabhängige Kanäle zu betreiben"},
+    {"label": "B", "text": "Eine einheitliche, kanalübergreifende Customer Experience aus Kundensicht zu schaffen"},
+    {"label": "C", "text": "Ausschließlich mobile Kanäle zu nutzen"},
+    {"label": "D", "text": "Die Anzahl der Vertriebskanäle auf maximal zwei zu begrenzen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 20,
+    text: `Was bedeutet der Begriff „Omni" laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Digital"},
+    {"label": "B", "text": "Schnell"},
+    {"label": "C", "text": "Alles (lateinischer Ursprung)"},
+    {"label": "D", "text": "Vernetzt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 21,
+    text: `Welches Unternehmen wird im Handout als Beispiel für eine Omnichannel-Strategie genannt?`,
+    choices: [
+    {"label": "A", "text": "Alibaba"},
+    {"label": "B", "text": "Zalando (App, Web, App-to-Store -- alles synchron)"},
+    {"label": "C", "text": "Vinted"},
+    {"label": "D", "text": "Beschaffung.de enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 22,
+    text: `In welcher Reihenfolge entwickeln sich die Kanalstrategien laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Multi-Channel Single Channel Cross-Channel Omnichannel"},
+    {"label": "B", "text": "Single Channel Multi-Channel Cross-Channel Omnichannel"},
+    {"label": "C", "text": "Omnichannel Cross-Channel Multi-Channel Single Channel"},
+    {"label": "D", "text": "Cross-Channel Single Channel Omnichannel Multi-Channel enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 23,
+    text: `Was zeichnet die intensive Distributionsstrategie aus?`,
+    choices: [
+    {"label": "A", "text": "Produkte werden nur bei wenigen, exklusiven Partnern angeboten"},
+    {"label": "B", "text": "Produkte werden bei möglichst vielen Absatzstellen angeboten (maximale Verfügbarkeit)"},
+    {"label": "C", "text": "Produkte werden nur in ausgewählten Fachgeschäften verkauft"},
+    {"label": "D", "text": "Distribution wird auf eine einzige Filiale beschränkt enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 24,
+    text: `Welches Produkt ist ein Beispiel für intensive Distribution laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Rolex-Uhren"},
+    {"label": "B", "text": "Ferrari-Sportwagen"},
+    {"label": "C", "text": "Coca-Cola"},
+    {"label": "D", "text": "Levi's Jeans enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 25,
+    text: `Was ist das Ziel der selektiven Distributionsstrategie?`,
+    choices: [
+    {"label": "A", "text": "Maximale Verfügbarkeit durch möglichst viele Absatzpunkte"},
+    {"label": "B", "text": "Image und Kontrolle durch ausgewählte Händler und Kanäle"},
+    {"label": "C", "text": "Exklusivität und Prestige durch nur wenige Partner"},
+    {"label": "D", "text": "Direktverkauf ohne Zwischenhändler enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 26,
+    text: `Welche Marke wird im Handout als Beispiel für selektive Distribution genannt?`,
+    choices: [
+    {"label": "A", "text": "Haribo"},
+    {"label": "B", "text": "Rolex"},
+    {"label": "C", "text": "Samsung"},
+    {"label": "D", "text": "Coca-Cola enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 27,
+    text: `Für welche Produktkategorie eignet sich die exklusive Distribution?`,
+    choices: [
+    {"label": "A", "text": "Massenprodukte wie Süßigkeiten"},
+    {"label": "B", "text": "Mittelklasse-Produkte mit breiter Zielgruppe"},
+    {"label": "C", "text": "Luxus- und Prestigeprodukte mit wenigen, exklusiven Partnern"},
+    {"label": "D", "text": "Günstige Eigenmarken des Discounters enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 28,
+    text: `Welches Unternehmen wird im Handout als Beispiel für exklusive Distribution genannt?`,
+    choices: [
+    {"label": "A", "text": "Samsung"},
+    {"label": "B", "text": "Haribo"},
+    {"label": "C", "text": "Levi's"},
+    {"label": "D", "text": "Rolex enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 29,
+    text: `Was beschreibt die Exclusiva GmbH laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Ein globaler Marktplatz für Massenprodukte"},
+    {"label": "B", "text": "Ein fiktives deutsches Unternehmen, das hochwertige Ledertaschen herstellt und vertreibt"},
+    {"label": "C", "text": "Eine SaaS-Plattform für kleine Online-Händler"},
+    {"label": "D", "text": "Ein staatliches Beschaffungsportal für Luxusgüter enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 30,
+    text: `Welcher Distributionsstrategie folgte Exclusiva bisher?`,
+    choices: [
+    {"label": "A", "text": "Intensive Distribution über alle verfügbaren Kanäle"},
+    {"label": "B", "text": "Selektive Distribution über ausgewählte Onlineshops"},
+    {"label": "C", "text": "Single Channel mit exklusiver Distribution über eigene Flagship-Stores"},
+    {"label": "D", "text": "Multi-Channel-Strategie mit Amazon und eigenem Shop enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 31,
+    text: `Wie hoch war der Jahresumsatz der Exclusiva GmbH laut Handout?`,
+    choices: [
+    {"label": "A", "text": "ca. 1 Mio. EUR"},
+    {"label": "B", "text": "ca. 3,5 Mio. EUR"},
+    {"label": "C", "text": "ca. 10 Mio. EUR"},
+    {"label": "D", "text": "ca. 50 Mio. EUR enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 32,
+    text: `Warum empfiehlt das Handout für Exclusiva, Amazon zu vermeiden? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Die Massenwirkung von Amazon schadet dem Luxus-Image"},
+    {"label": "B", "text": "Amazon hat zu wenige Nutzer für Luxusprodukte"},
+    {"label": "C", "text": "Die Preiskontrolle ist bei Amazon schwierig"},
+    {"label": "D", "text": "Exclusiva hat bereits zu viele eigene Shops enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 33,
+    text: `Welche Empfehlung gibt das Handout der Exclusiva GmbH für den digitalen Vertrieb?`,
+    choices: [
+    {"label": "A", "text": "Sofortige Präsenz auf Amazon, eBay und Zalando"},
+    {"label": "B", "text": "Eigener Webshop mit exklusivem Design, z. B. auf Shopware-Basis"},
+    {"label": "C", "text": "Ausschließlich C2C-Plattformen nutzen"},
+    {"label": "D", "text": "Vollständiger Verzicht auf digitale Kanäle enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 34,
+    text: `Was versteht man unter D2C (Direct to Consumer)?`,
+    choices: [
+    {"label": "A", "text": "Hersteller verkauft ausschließlich über Einzelhändler"},
+    {"label": "B", "text": "Hersteller verkauft direkt an den Endkunden ohne Zwischenhändler"},
+    {"label": "C", "text": "Digitale Transformation für Consumer-Marken"},
+    {"label": "D", "text": "Direktlieferung innerhalb von 24 Stunden enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 35,
+    text: `Welches Unternehmen ist ein Beispiel für D2C laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Alibaba"},
+    {"label": "B", "text": "Nike.com"},
+    {"label": "C", "text": "eBay Kleinanzeigen"},
+    {"label": "D", "text": "Mercateo enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 36,
+    text: `Was ist Social Commerce laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Einkaufen in gemeinschaftlich genutzten Läden"},
+    {"label": "B", "text": "Der Kaufprozess findet direkt in Social-Media-Apps statt"},
+    {"label": "C", "text": "Kundenbewertungen und Empfehlungen in Foren"},
+    {"label": "D", "text": "Social-Media-Marketing ohne direkten Kauf in der App enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 37,
+    text: `Wann wurde TikTok Shop in Deutschland gestartet laut Handout?`,
+    choices: [
+    {"label": "A", "text": "2019"},
+    {"label": "B", "text": "2021"},
+    {"label": "C", "text": "2023"},
+    {"label": "D", "text": "2025 enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 38,
+    text: `Was ist Live Shopping laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Einkaufen in Echtzeit im stationären Handel mit Live-Beratung"},
+    {"label": "B", "text": "Produkte werden live per Video präsentiert und in Echtzeit verkauft"},
+    {"label": "C", "text": "Ein Abonnement-Modell für regelmäßige Produktlieferungen"},
+    {"label": "D", "text": "Bestellung per Sprachassistent ohne Bildschirm enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 39,
+    text: `Wie hoch ist der Anteil von Live Shopping am E-Commerce in China laut Handout (2022)?`,
+    choices: [
+    {"label": "A", "text": "ca. 1 %"},
+    {"label": "B", "text": "ca. 5 %"},
+    {"label": "C", "text": "über 10 %"},
+    {"label": "D", "text": "ca. 50 % enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 40,
+    text: `Was ist Voice Commerce?`,
+    choices: [
+    {"label": "A", "text": "Bestellung per Video-Anruf beim Kundenservice"},
+    {"label": "B", "text": "Bestellung per Sprachassistent wie Alexa, Siri oder Google Assistant"},
+    {"label": "C", "text": "Spracherkennung zur Optimierung von Produktbeschreibungen"},
+    {"label": "D", "text": "Telefon-Bestellung im klassischen Versandhandel enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 41,
+    text: `Welches Beispiel für Voice Commerce nennt das Handout?`,
+    choices: [
+    {"label": "A", "text": "„OK Google, zeig mir Sportschuhe\""},
+    {"label": "B", "text": "Alexa: „Bestell Waschmittel!\""},
+    {"label": "C", "text": "Siri: „Suche nach günstigen Flügen\""},
+    {"label": "D", "text": "Google Assistant: „Öffne Amazon\" enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 42,
+    text: `Was ist Subscription Commerce laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Einmalige Großbestellungen mit langfristiger Lieferbindung"},
+    {"label": "B", "text": "Abo-Modell: Regelmäßige Lieferung gegen monatliche Zahlung"},
+    {"label": "C", "text": "Soziales Einkaufen in Gemeinschaftsprojekten"},
+    {"label": "D", "text": "Direktverkauf ohne Zwischenhändler im B2B-Bereich enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 43,
+    text: `Welche Plattform ist ein Beispiel für Subscription Commerce?`,
+    choices: [
+    {"label": "A", "text": "eBay Kleinanzeigen"},
+    {"label": "B", "text": "Alibaba"},
+    {"label": "C", "text": "HelloFresh"},
+    {"label": "D", "text": "Beschaffung.de enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 44,
+    text: `Auf welchen Buchseiten finden sich laut Handout die Inhalte von Tag 5?`,
+    choices: [
+    {"label": "A", "text": "40--53"},
+    {"label": "B", "text": "54--67"},
+    {"label": "C", "text": "68--75"},
+    {"label": "D", "text": "76--90 enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 45,
+    text: `Welche der folgenden Aussagen über den eigenen Webshop ist laut KRAK-Modell korrekt?`,
+    choices: [
+    {"label": "A", "text": "Hohe Reichweite ohne zusätzlichen Marketingaufwand"},
+    {"label": "B", "text": "Geringer Einrichtungsaufwand im Vergleich zum Marktplatz"},
+    {"label": "C", "text": "Vollständige Kontrolle über Kundendaten und Design"},
+    {"label": "D", "text": "Keine monatlichen oder einmaligen Kosten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 46,
+    text: `Welche Aussage ist laut Handout ein Nachteil des Marktplatzes?`,
+    choices: [
+    {"label": "A", "text": "Geringe Reichweite bei Marktplatzeintritt"},
+    {"label": "B", "text": "Hohe Abhängigkeit von Algorithmen und Gebühren des Marktplatzes"},
+    {"label": "C", "text": "Sehr hohe Einrichtungskosten für den Händler"},
+    {"label": "D", "text": "Keine Möglichkeit, Massenprodukte zu verkaufen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 47,
+    text: `Was bedeutet es, dass beim Omnichannel alle Kanäle synchronisiert sind?`,
+    choices: [
+    {"label": "A", "text": "Alle Kanäle haben dieselben Öffnungszeiten"},
+    {"label": "B", "text": "Kunden können zwischen allen Kanälen wechseln, ohne Infos oder Warenkorbinhalte zu verlieren"},
+    {"label": "C", "text": "Alle Produkte sind in jedem Kanal zum gleichen Preis erhältlich"},
+    {"label": "D", "text": "Nur ein einziger Mitarbeiter betreut alle Kanäle gleichzeitig enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 48,
+    text: `Ein Shopbetreiber verkauft auf Amazon und hat einen eigenen Instagram-Shop, die Lagerbestände sind aber getrennt verwaltet. Welche Kanalstrategie liegt vor?`,
+    choices: [
+    {"label": "A", "text": "Single Channel"},
+    {"label": "B", "text": "Multi-Channel"},
+    {"label": "C", "text": "Cross-Channel"},
+    {"label": "D", "text": "Omnichannel enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 49,
+    text: `Ein Sportartikelhändler lässt Kunden online bestellen und im Ladengeschäft zurückgeben. Welche Kanalstrategie nutzt er?`,
+    choices: [
+    {"label": "A", "text": "Single Channel"},
+    {"label": "B", "text": "Multi-Channel"},
+    {"label": "C", "text": "Cross-Channel"},
+    {"label": "D", "text": "Omnichannel enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 50,
+    text: `Welcher Wissenschaftler wird im Handout im Zusammenhang mit dem 4P-Marketing-Mix genannt?`,
+    choices: [
+    {"label": "A", "text": "Bruce Tuckman"},
+    {"label": "B", "text": "Albert Mehrabian"},
+    {"label": "C", "text": "Kotler & Armstrong"},
+    {"label": "D", "text": "Tobias Kollmann enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 51,
+    text: `Welche Distributionsstrategie passt zu einem Massenprodukt wie Haribo-Gummibären?`,
+    choices: [
+    {"label": "A", "text": "Exklusive Distribution"},
+    {"label": "B", "text": "Selektive Distribution"},
+    {"label": "C", "text": "Intensive Distribution"},
+    {"label": "D", "text": "Direktvertrieb ohne Handel enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 52,
+    text: `Eine Luxusuhrenmarke verkauft nur über drei autorisierte Händler in ganz Deutschland. Welche Distributionsstrategie ist das?`,
+    choices: [
+    {"label": "A", "text": "Intensive Distribution"},
+    {"label": "B", "text": "Selektive Distribution"},
+    {"label": "C", "text": "Exklusive Distribution"},
+    {"label": "D", "text": "Multi-Channel-Distribution enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 53,
+    text: `Was versteht man unter „Click & Collect"?`,
+    choices: [
+    {"label": "A", "text": "Produkte werden ausschließlich online verkauft und per Post verschickt"},
+    {"label": "B", "text": "Online bestellen und die Ware im Ladengeschäft abholen"},
+    {"label": "C", "text": "Kunden bewerten Produkte nach der Lieferung online"},
+    {"label": "D", "text": "Automatische Nachbestellung bei niedrigem Lagerbestand enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 54,
+    text: `Welcher Distributionstyp weist bei gleicher Breite das höchste Prestige auf?`,
+    choices: [
+    {"label": "A", "text": "Intensive Distribution"},
+    {"label": "B", "text": "Selektive Distribution"},
+    {"label": "C", "text": "Exklusive Distribution"},
+    {"label": "D", "text": "Keine der genannten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 55,
+    text: `Was ist laut Handout ein wesentlicher Vorteil des D2C-Modells?`,
+    choices: [
+    {"label": "A", "text": "Hersteller können Zwischenhändlermargen einsparen und direkten Kundenkontakt aufbauen"},
+    {"label": "B", "text": "Hersteller sind unabhängig von eigenen Produktionskosten"},
+    {"label": "C", "text": "D2C ist immer günstiger als B2C über Drittanbieter"},
+    {"label": "D", "text": "D2C erfordert keine eigene Website oder App enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 56,
+    text: `Was beschreibt laut Handout den Begriff „Vertriebskanal" in der Distributionspolitik genauer?`,
+    choices: [
+    {"label": "A", "text": "Nur digitale Wege des Vertriebs"},
+    {"label": "B", "text": "Alle Institutionen, Personen und Maßnahmen, die am Warenfluss beteiligt sind"},
+    {"label": "C", "text": "Ausschließlich eigene Filialen und Flagship-Stores"},
+    {"label": "D", "text": "Nur externe Logistikdienstleister enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 57,
+    text: `Welche zwei neuen Vertriebsformen gewinnen laut Handout zunehmend an Bedeutung? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Live Shopping"},
+    {"label": "B", "text": "Briefkatalog-Versandhandel"},
+    {"label": "C", "text": "Voice Commerce"},
+    {"label": "D", "text": "Stationärer Fachhandel enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 58,
+    text: `Wofür steht das Handout-Fazit: „Marktplätze punkten bei R, eigener Shop bei K (Kontrolle)"?`,
+    choices: [
+    {"label": "A", "text": "Rentabilität und Kooperation"},
+    {"label": "B", "text": "Reichweite (R) und Kontrolle (K) im KRAK-Modell"},
+    {"label": "C", "text": "Rabatte und Kundenbindung"},
+    {"label": "D", "text": "Risiko und Kapital enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 59,
+    text: `Welche Aussage zu Social Commerce und TikTok Shop ist laut Handout korrekt?`,
+    choices: [
+    {"label": "A", "text": "TikTok Shop erlaubt Käufe nur über den Browser, nicht in der App"},
+    {"label": "B", "text": "Nutzer sehen ein Produkt im Video und können es sofort kaufen, ohne die App zu verlassen"},
+    {"label": "C", "text": "TikTok Shop existiert in Deutschland noch nicht"},
+    {"label": "D", "text": "Live Shopping und TikTok Shop sind völlig unabhängige Konzepte enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 60,
+    text: `Welche zwei Kriterien des KRAK-Modells sprechen laut Handout für den eigenen Webshop? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Kontrolle (vollständige Kontrolle über Daten und Design)"},
+    {"label": "B", "text": "Reichweite (sofort hohe Nutzerzahl)"},
+    {"label": "C", "text": "Kundendaten (gehören dem eigenen Unternehmen)"},
+    {"label": "D", "text": "Aufwand (geringer Einstiegsaufwand) enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+];
+
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">ℹ Mehrfachauswahl: 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '✓ Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '◑ Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '✗ Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% · Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

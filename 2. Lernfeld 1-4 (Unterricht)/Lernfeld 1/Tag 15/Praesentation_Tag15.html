@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 15 – Rechtsformen Teil 2: Kapitalgesellschaften | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+#copyright{display:none} #nav-hint{display:none}
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+<style>
+/* ══════════════════════════════════════════════
+   SUPPLEMENTAL STYLES – Tag 15
+   Matching Tag 7 professional design language
+   ══════════════════════════════════════════════ */
+
+/* Progress bar container */
+#progress-bar-container {
+  position:fixed; top:0; left:0; right:0; height:4px;
+  background:var(--bg-alt); z-index:99;
+}
+
+/* Slides wrapper / Deck */
+.slides-wrapper, .deck {
+  width:100vw; height:100vh; position:relative; overflow:hidden;
+}
+
+/* Keyboard hint */
+.kbd-hint {
+  position:fixed; top:8px; right:20px; z-index:60;
+  font-size:.68rem; color:var(--text-muted);
+  background:rgba(255,255,255,.85); backdrop-filter:blur(8px);
+  padding:4px 14px; border-radius:20px;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+  opacity:.6; transition:opacity .3s;
+}
+.kbd-hint:hover { opacity:1; }
+
+/* Cover slide variants */
+.slide.cover {
+  background:var(--bg); justify-content:center; text-align:center;
+}
+.cover-inner {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:4px; max-width:680px;
+}
+.cover-inner h1 {
+  font-size:2.6rem; font-weight:800; line-height:1.15;
+  color:var(--text); margin-bottom:8px;
+}
+.cover-inner h1 span {
+  display:block; font-size:1.3rem; font-weight:400;
+  color:var(--text-muted); margin-top:4px;
+}
+.cover-inner .subtitle {
+  font-size:1.1rem; color:var(--text-muted); margin-bottom:16px;
+}
+.cover-inner .copyright {
+  font-size:.72rem; color:var(--text-muted); margin-top:12px;
+}
+
+/* Badge (cover tag) */
+.badge, .cover-inner .badge {
+  display:inline-block; font-size:.78rem; font-weight:700;
+  padding:5px 16px; border-radius:20px; letter-spacing:1px;
+  text-transform:uppercase; color:#fff;
+  background:var(--primary); margin-bottom:12px;
+}
+
+/* Meta grid (cover) */
+.meta-grid {
+  display:flex; gap:16px; justify-content:center;
+  flex-wrap:wrap; margin:16px 0;
+}
+.meta-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:10px 18px; text-align:center;
+  box-shadow:var(--shadow); min-width:140px;
+}
+.meta-card .label {
+  font-size:.68rem; color:var(--text-muted); text-transform:uppercase;
+  letter-spacing:1px; font-weight:600; margin-bottom:4px;
+}
+.meta-card .value {
+  font-size:.85rem; color:var(--text); font-weight:600;
+}
+
+/* Slide header bar */
+.slide-header {
+  display:flex; align-items:center; gap:14px;
+  padding:0 0 14px; border-bottom:2px solid var(--border);
+  width:100%; margin-bottom:16px; align-self:flex-start;
+}
+.slide-header .logo { flex-shrink:0; }
+.slide-header h1 {
+  font-size:1.35rem; font-weight:700; color:var(--primary);
+  line-height:1.3; flex:1;
+}
+.slide-header .chapter {
+  font-size:.72rem; color:var(--text-muted);
+  white-space:nowrap; text-align:right;
+}
+
+/* Slide body */
+.slide-body {
+  flex:1; width:100%; display:flex; flex-direction:column;
+  gap:10px; overflow:hidden;
+}
+
+/* Section title/subtitle (inside slide-body) */
+.slide-body .section-title, .section-title {
+  font-size:1.15rem; font-weight:700; color:var(--primary);
+  margin-bottom:6px;
+}
+.section-sub {
+  font-size:.85rem; color:var(--text-muted); margin-bottom:10px;
+}
+
+/* Slide footer (per-slide) */
+.slide-footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.95); z-index:10;
+}
+.slide-footer .copy { color:var(--text-muted); }
+
+/* Goal list (Lernziele) */
+.goal-list {
+  list-style:none; padding:0; display:flex; flex-direction:column;
+  gap:8px; width:100%;
+}
+.goal-list li {
+  display:flex; align-items:flex-start; gap:12px;
+  font-size:.85rem; line-height:1.6; color:var(--text);
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:10px 16px;
+  border-left:4px solid var(--success);
+  box-shadow:var(--shadow);
+}
+.goal-list .num {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700; flex-shrink:0;
+}
+
+/* Highlight box */
+.highlight {
+  background:var(--primary-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--primary);
+  font-size:.82rem; line-height:1.6; color:var(--text);
+  box-shadow:var(--shadow); margin-top:6px;
+}
+
+/* Cards grid (cols variants) */
+.cards {
+  display:grid; gap:10px; width:100%; flex:1;
+}
+.cards.cols-2 { grid-template-columns:1fr 1fr; }
+.cards.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+
+/* Card color top-border variants */
+.card.blue-top { border-top:3px solid var(--primary); }
+.card.blue-top::before { background:var(--primary); }
+.card.gold-top { border-top:3px solid var(--accent); }
+.card.gold-top::before { background:var(--accent); }
+.card.green-top { border-top:3px solid var(--success); }
+.card.green-top::before { background:var(--success); }
+.card.blue-top h3 { color:var(--primary); }
+.card.gold-top h3 { color:var(--accent); }
+.card.green-top h3 { color:var(--success); }
+
+/* Big number display */
+.big-num {
+  font-size:2.2rem; font-weight:900; color:var(--primary);
+  line-height:1.1;
+}
+
+/* Body list */
+.body-list {
+  list-style:none; padding:0;
+  display:flex; flex-direction:column; gap:6px;
+}
+.body-list li {
+  font-size:.82rem; color:var(--text); line-height:1.5;
+  padding:4px 0 4px 16px; position:relative;
+}
+.body-list li::before {
+  content:''; position:absolute; left:0; top:10px;
+  width:6px; height:6px; border-radius:50%;
+  background:var(--primary);
+}
+
+/* Comparison table */
+.comp-table {
+  width:100%; border-collapse:collapse; font-size:.76rem;
+}
+.comp-table th {
+  background:var(--primary); color:#fff; padding:8px 10px;
+  text-align:left; font-weight:700; font-size:.76rem;
+}
+.comp-table td {
+  padding:7px 10px; color:var(--text);
+  border-bottom:1px solid var(--border);
+}
+.comp-table tr:nth-child(even) td { background:var(--bg-alt); }
+.comp-table tr:hover td { background:var(--primary-light); }
+.comp-table thead th:first-child { border-radius:8px 0 0 0; }
+.comp-table thead th:last-child { border-radius:0 8px 0 0; }
+
+/* Criteria list (Rechtsformwahl) */
+.criteria {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;
+}
+.crit-item {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px;
+  border-left:4px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+.crit-item h4 {
+  font-size:.88rem; font-weight:700; color:var(--primary);
+  margin-bottom:6px;
+}
+.crit-item p {
+  font-size:.78rem; color:var(--text-muted); line-height:1.5;
+}
+
+/* Pill badge */
+.pill {
+  display:inline-block; padding:6px 16px; border-radius:20px;
+  font-size:.78rem; font-weight:700; color:#fff;
+  background:var(--primary);
+}
+.pill.green { background:var(--success); }
+.pill.gold { background:var(--accent); }
+
+/* Summary grid (Tag 15 final slide) */
+.summary-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;
+}
+.s-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px;
+  border-left:4px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+.s-box h4 {
+  font-size:.88rem; font-weight:700; color:var(--primary);
+  margin-bottom:6px;
+}
+.s-box ul { padding-left:14px; }
+.s-box li { font-size:.78rem; color:var(--text-muted); line-height:1.5; margin-bottom:3px; }
+.s-box.b { border-left-color:var(--primary); }
+.s-box.b h4 { color:var(--primary); }
+.s-box.g { border-left-color:var(--success); }
+.s-box.g h4 { color:var(--success); }
+
+/* Literature list */
+.lit-list {
+  list-style:none; padding:0; display:flex; flex-direction:column;
+  gap:8px; width:100%; overflow-y:auto; flex:1;
+}
+.lit-list li {
+  font-size:.75rem; color:var(--text-muted); line-height:1.6;
+  padding:8px 14px; padding-left:20px;
+  background:var(--bg-card); border-radius:8px;
+  border:1px solid var(--border); border-left:3px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+.apa-type {
+  display:inline-block; font-size:.65rem; font-weight:700;
+  padding:2px 8px; border-radius:10px; letter-spacing:.3px;
+  background:var(--primary); color:#fff; margin-bottom:4px;
+}
+
+/* CSS variables for dark-themed slides (quizzes) */
+.slide[style*="background:linear-gradient"] .slide-header h1,
+.slide[style*="background:linear-gradient"] .section-title {
+  color:var(--primary);
+}
+
+/* Animations for supplemental elements */
+.slide.active .slide-header { animation:fadeUp .3s ease both; }
+.slide.active .slide-body { animation:fadeUp .4s ease both; animation-delay:.1s; }
+.slide.active .cards { animation:fadeUp .5s ease both; animation-delay:.15s; }
+.slide.active .goal-list { animation:fadeUp .5s ease both; animation-delay:.15s; }
+.slide.active .criteria { animation:fadeUp .5s ease both; animation-delay:.15s; }
+.slide.active .comp-table { animation:fadeUp .5s ease both; animation-delay:.15s; }
+.slide.active .highlight { animation:fadeUp .5s ease both; animation-delay:.2s; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+
+<div class="kbd-hint">&#9664; &#9654; Pfeiltasten &nbsp;|&nbsp; Leertaste: vor &nbsp;|&nbsp; Pos1/Ende</div>
+
+<div class="deck slides-wrapper" id="deck">
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 1 – DECKBLATT
+══════════════════════════════════════════════════ -->
+<div class="slide cover active" id="s1">
+  <div class="cover-inner">
+    <!-- SVG Logo -->
+    <svg width="72" height="72" viewBox="0 0 72 72" style="margin-bottom:18px" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="36" cy="36" r="36" fill="#1a3272"/>
+      <rect x="18" y="22" width="36" height="5" rx="2" fill="#2563EB"/>
+      <rect x="18" y="33" width="26" height="5" rx="2" fill="#f0c040"/>
+      <rect x="18" y="44" width="36" height="5" rx="2" fill="#ecf0f1"/>
+      <circle cx="52" cy="48" r="10" fill="#2563EB"/>
+      <text x="52" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">§</text>
+    </svg>
+
+    <div class="badge">Lernfeld 1 &nbsp;·&nbsp; Tag 15</div>
+    <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+      <defs><linearGradient id="corpGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+      <rect x="30" y="35" width="60" height="55" rx="4" fill="url(#corpGrad)" opacity="0.9"/>
+      <rect x="25" y="30" width="70" height="8" rx="3" fill="#1e4db7"/>
+      <polygon points="60,15 25,30 95,30" fill="url(#corpGrad)" opacity="0.8"/>
+      <rect x="40" y="45" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="55" y="45" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="70" y="45" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="40" y="60" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="55" y="60" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="70" y="60" width="10" height="10" rx="1" fill="white" opacity="0.5"/>
+      <rect x="52" y="75" width="16" height="15" rx="2" fill="#F59E0B" opacity="0.8"/>
+      <text x="60" y="105" text-anchor="middle" fill="#1e4db7" font-size="12" font-weight="700" font-family="Segoe UI">GmbH · UG · AG</text>
+    </svg>
+    <h1>1.20 Rechtsformen <span>Teil 2</span></h1>
+    <p class="subtitle">Kapitalgesellschaften &nbsp;·&nbsp; Buchseiten 150–157</p>
+
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="label">Fach</div>
+        <div class="value">Betriebswirtschaft</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">Datum</div>
+        <div class="value">02. März 2026</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">Erstellt von</div>
+        <div class="value">Can Siebert &amp; Hamzah Meyer</div>
+      </div>
+    </div>
+
+    <!-- decorative SVG bar -->
+    <svg width="100%" height="4" style="margin-bottom:18px" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1"/>
+          <stop offset="50%" style="stop-color:#f0c040;stop-opacity:1"/>
+          <stop offset="100%" style="stop-color:#1a3272;stop-opacity:1"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="4" rx="2" fill="url(#grad1)"/>
+    </svg>
+
+    <p class="copyright">&#169; Can Siebert &amp; Hamzah Meyer &nbsp;·&nbsp; Alle Rechte vorbehalten</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 2 – LERNZIELE
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#f0c040">&#127919;</text>
+      </svg>
+    </div>
+    <h1>Lernziele</h1>
+    <div class="chapter">Folie 2 · Lernfeld 1 – Tag 15</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Was lerne ich heute?</div>
+    <div class="section-sub">Nach dieser Einheit kannst du …</div>
+    <ul class="goal-list">
+      <li><div class="num">1</div>die Merkmale von GmbH, AG und UG (haftungsbeschränkt) erklären und vergleichen.</li>
+      <li><div class="num">2</div>das Mindestkapital und die Haftungsregelungen der Kapitalgesellschaften nennen.</li>
+      <li><div class="num">3</div>die Organe der GmbH und AG benennen und deren Aufgaben beschreiben.</li>
+      <li><div class="num">4</div>Kapitalgesellschaften von Personengesellschaften in einer Tabelle gegenüberstellen.</li>
+      <li><div class="num">5</div>Kriterien für die Wahl einer geeigneten Rechtsform anwenden.</li>
+      <li><div class="num">6</div>die Genossenschaft als Sonderform einordnen und deren Zweck erläutern.</li>
+    </ul>
+    <div class="highlight"><strong>Buchseiten:</strong> 150–157 &nbsp;|&nbsp; <strong>Schwerpunkt:</strong> Kapitalgesellschaften im deutschen Handelsrecht</div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 3 – GmbH ÜBERBLICK & GRÜNDUNG
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="27" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">GmbH</text>
+      </svg>
+    </div>
+    <h1>GmbH – Gesellschaft mit beschränkter Haftung</h1>
+    <div class="chapter">Folie 3 · S. 150–152</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Überblick &amp; Gründung</div>
+    <div class="two-col">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card">
+          <h3>Rechtsnatur</h3>
+          <ul>
+            <li><strong>Juristische Person</strong> des Privatrechts</li>
+            <li>Rechtsfähig, klagefähig, eigenes Vermögen</li>
+            <li>Geregelt im <strong>GmbHG</strong> (GmbH-Gesetz)</li>
+            <li>Häufigste Kapitalgesellschaft in Deutschland</li>
+          </ul>
+        </div>
+        <div class="card blue-top">
+          <h3>Gründung</h3>
+          <ul>
+            <li>Mindestens <strong>1 Gesellschafter</strong> (auch 1-Personen-GmbH)</li>
+            <li>Notariell beurkundeter <strong>Gesellschaftsvertrag</strong></li>
+            <li>Eintragung ins <strong>Handelsregister</strong> (HR Abt. B)</li>
+            <li>Vorher: GmbH in Gründung (GmbH i.G.)</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card gold-top" style="text-align:center;flex:1;justify-content:center;align-items:center">
+          <h3>Stammkapital</h3>
+          <div class="big-num">25.000 €<span style="display:block;font-size:.75rem;margin-top:4px">Mindest-Stammkapital (§ 5 GmbHG)</span></div>
+          <p style="margin-top:10px;font-size:.75rem;color:var(--grey)">Davon bei Gründung mindestens<br><strong style="color:var(--accent)">12.500 € eingezahlt</strong> (Hälfte)</p>
+        </div>
+        <div class="card green-top">
+          <h3>Firma</h3>
+          <ul>
+            <li>Sach-, Personen- oder Fantasiefirma möglich</li>
+            <li>Pflichtbestandteil: Zusatz <strong>„GmbH"</strong></li>
+            <li>Handelsgewerbe kraft Rechtsform</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 4 – GmbH HAFTUNG & KAPITAL
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="27" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">GmbH</text>
+      </svg>
+    </div>
+    <h1>GmbH – Haftung &amp; Kapitalstruktur</h1>
+    <div class="chapter">Folie 4 · S. 150–152</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Haftung &amp; Kapitalstruktur</div>
+    <div class="cards cols-3" style="flex:unset;height:auto">
+      <div class="card">
+        <h3>&#128737; Haftung</h3>
+        <ul>
+          <li>Nur die <strong>GmbH haftet</strong> mit ihrem Gesellschaftsvermögen</li>
+          <li>Gesellschafter haften <strong>nicht persönlich</strong></li>
+          <li>Ausnahme: Kapitalaufbringungs- und Erhaltungspflichten</li>
+          <li>Durchgriffshaftung bei Missbrauch möglich</li>
+        </ul>
+      </div>
+      <div class="card blue-top">
+        <h3>&#128181; Geschäftsanteile</h3>
+        <ul>
+          <li>Stammkapital → aufgeteilt in <strong>Geschäftsanteile</strong></li>
+          <li>Mind. 1 € Nennbetrag pro Anteil</li>
+          <li>Nicht frei handelbar (kein Börsenhandel)</li>
+          <li>Übertragung erfordert notarielle Form</li>
+        </ul>
+      </div>
+      <div class="card gold-top">
+        <h3>&#128200; Gewinn &amp; Verlust</h3>
+        <ul>
+          <li>Gewinnverteilung nach <strong>Geschäftsanteilen</strong></li>
+          <li>Gesellschafterversammlung beschließt Ausschüttung</li>
+          <li>Thesaurierung möglich (Rücklagen)</li>
+          <li>Bilanzierungspflicht nach HGB</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:8px">
+      <strong>Kernmerkmal:</strong> Die <strong>beschränkte Haftung</strong> ist das entscheidende Merkmal der GmbH – das Privatvermögen der Gesellschafter ist geschützt. Dies unterscheidet sie grundlegend von OHG und KG.
+    </div>
+    <!-- SVG Haftungsschema -->
+    <div style="display:flex;gap:20px;align-items:center;justify-content:center;margin-top:6px">
+      <svg width="340" height="70" viewBox="0 0 340 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="10" width="100" height="50" rx="8" fill="#1a3272" stroke="#5b8dee" stroke-width="1.5"/>
+        <text x="55" y="32" text-anchor="middle" font-size="10" fill="#f0c040" font-weight="bold">Gesellschafter</text>
+        <text x="55" y="47" text-anchor="middle" font-size="9" fill="#bdc3c7">Privatvermögen</text>
+        <text x="55" y="59" text-anchor="middle" font-size="9" fill="#27ae60">GESCHÜTZT ✓</text>
+
+        <line x1="105" y1="35" x2="135" y2="35" stroke="#2563EB" stroke-width="2" stroke-dasharray="4"/>
+        <text x="120" y="28" text-anchor="middle" font-size="8" fill="#2563EB">Einlage</text>
+
+        <rect x="135" y="10" width="100" height="50" rx="8" fill="#2563EB" fill-opacity=".25" stroke="#2563EB" stroke-width="1.5"/>
+        <text x="185" y="32" text-anchor="middle" font-size="10" fill="#f0c040" font-weight="bold">GmbH</text>
+        <text x="185" y="47" text-anchor="middle" font-size="9" fill="#bdc3c7">Gesellschaftsvermögen</text>
+        <text x="185" y="59" text-anchor="middle" font-size="9" fill="#e74c3c">haftet unbeschränkt</text>
+
+        <line x1="235" y1="35" x2="265" y2="35" stroke="#bdc3c7" stroke-width="2"/>
+        <polygon points="265,31 273,35 265,39" fill="#bdc3c7"/>
+
+        <rect x="273" y="10" width="62" height="50" rx="8" fill="#0d1b3e" stroke="#bdc3c7" stroke-width="1.5"/>
+        <text x="304" y="32" text-anchor="middle" font-size="9" fill="#bdc3c7">Gläubiger</text>
+        <text x="304" y="47" text-anchor="middle" font-size="8" fill="#bdc3c7">Forderungen</text>
+      </svg>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 5 – GmbH ORGANE
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="27" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">GmbH</text>
+      </svg>
+    </div>
+    <h1>GmbH – Organe der Gesellschaft</h1>
+    <div class="chapter">Folie 5 · S. 151–152</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Organe der GmbH</div>
+
+    <!-- SVG Organigramm -->
+    <div style="display:flex;justify-content:center;margin-bottom:10px">
+      <svg width="600" height="110" viewBox="0 0 600 110" xmlns="http://www.w3.org/2000/svg">
+        <!-- GV oben -->
+        <rect x="200" y="5" width="200" height="45" rx="8" fill="#1a3272" stroke="#f0c040" stroke-width="2"/>
+        <text x="300" y="24" text-anchor="middle" font-size="11" font-weight="bold" fill="#f0c040">Gesellschafterversammlung</text>
+        <text x="300" y="40" text-anchor="middle" font-size="9" fill="#bdc3c7">(oberstes Organ)</text>
+        <!-- Pfeile runter -->
+        <line x1="220" y1="50" x2="100" y2="70" stroke="#bdc3c7" stroke-width="1.5"/>
+        <line x1="300" y1="50" x2="300" y2="70" stroke="#bdc3c7" stroke-width="1.5"/>
+        <line x1="380" y1="50" x2="500" y2="70" stroke="#bdc3c7" stroke-width="1.5"/>
+        <!-- GF -->
+        <rect x="20" y="70" width="160" height="34" rx="6" fill="#2563EB" fill-opacity=".25" stroke="#2563EB" stroke-width="1.5"/>
+        <text x="100" y="88" text-anchor="middle" font-size="10" font-weight="bold" fill="#f0c040">Geschäftsführer (GF)</text>
+        <text x="100" y="100" text-anchor="middle" font-size="8" fill="#bdc3c7">Pflichtorgan · Vertretung</text>
+        <!-- AR optional -->
+        <rect x="220" y="70" width="160" height="34" rx="6" fill="#0d3b1a" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4"/>
+        <text x="300" y="88" text-anchor="middle" font-size="10" font-weight="bold" fill="#4cd98a">Aufsichtsrat (AR)</text>
+        <text x="300" y="100" text-anchor="middle" font-size="8" fill="#bdc3c7">fakultativ · ab 500 AN Pflicht</text>
+        <!-- Prokurist -->
+        <rect x="420" y="70" width="160" height="34" rx="6" fill="#1a3272" stroke="#5b8dee" stroke-width="1.5"/>
+        <text x="500" y="88" text-anchor="middle" font-size="10" font-weight="bold" fill="#7eaaff">Prokuristen / Beauftr.</text>
+        <text x="500" y="100" text-anchor="middle" font-size="8" fill="#bdc3c7">Handlungsvollmacht</text>
+      </svg>
+    </div>
+
+    <div class="cards cols-3">
+      <div class="card">
+        <h3>&#127381; Gesellschafterversammlung (GV)</h3>
+        <ul>
+          <li>Oberstes Organ der GmbH</li>
+          <li>Fasst Beschlüsse (einfache/qualifizierte Mehrheit)</li>
+          <li>Bestellt &amp; abberuft Geschäftsführer</li>
+          <li>Genehmigt Jahresabschluss</li>
+        </ul>
+      </div>
+      <div class="card blue-top">
+        <h3>&#128188; Geschäftsführer (GF)</h3>
+        <ul>
+          <li><strong>Pflichtorgan</strong> – mind. 1 GF notwendig</li>
+          <li>Leitet das Tagesgeschäft</li>
+          <li>Vertritt GmbH nach außen</li>
+          <li>Kann Gesellschafter oder Fremdgeschäftsführer sein</li>
+        </ul>
+      </div>
+      <div class="card green-top">
+        <h3>&#128269; Aufsichtsrat (AR)</h3>
+        <ul>
+          <li><strong>Fakultativ</strong> (freiwillig möglich)</li>
+          <li><strong>Pflicht ab 500 Arbeitnehmern</strong></li>
+          <li>Überwacht den Geschäftsführer</li>
+          <li>Keine Geschäftsführungsaufgaben</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 6 – GmbH VOR- & NACHTEILE
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="27" text-anchor="middle" font-size="14" font-weight="bold" fill="#2563EB">GmbH</text>
+      </svg>
+    </div>
+    <h1>GmbH – Vor- und Nachteile</h1>
+    <div class="chapter">Folie 6 · S. 152</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Bewertung der GmbH</div>
+    <div class="two-col">
+      <div>
+        <div style="color:var(--accent);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">&#10003; Vorteile</div>
+        <ul class="body-list">
+          <li><strong>Beschränkte Haftung</strong> – Privatvermögen sicher</li>
+          <li><strong>Flexibler Gesellschaftsvertrag</strong> – individuell gestaltbar</li>
+          <li>Nur <strong>1 Gesellschafter</strong> erforderlich (Einpersonen-GmbH)</li>
+          <li><strong>Freie Namenswahl</strong> der Firma</li>
+          <li>Gutes <strong>Ansehen</strong> im Geschäftsverkehr</li>
+          <li>Gesellschafter können <strong>Geschäftsführer</strong> werden</li>
+        </ul>
+      </div>
+      <div>
+        <div style="color:var(--accent2);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">&#10007; Nachteile</div>
+        <ul class="body-list">
+          <li><strong>Mindestkapital 25.000 €</strong> erforderlich</li>
+          <li>Notarkosten bei Gründung &amp; Satzungsänderung</li>
+          <li><strong>Veröffentlichungspflichten</strong> (Jahresabschluss im Bundesanzeiger)</li>
+          <li>Komplexere <strong>Buchführungspflichten</strong></li>
+          <li>Geschäftsanteile <strong>nicht frei handelbar</strong></li>
+          <li>Körperschaftsteuer + Gewerbesteuer auf Gewinne</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight"><strong>Praxis:</strong> Die GmbH ist in Deutschland die mit Abstand beliebteste Rechtsform für mittelständische Unternehmen. Ca. 1,2 Millionen GmbHs sind im Handelsregister eingetragen.</div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 7 – AG ÜBERBLICK
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="29" text-anchor="middle" font-size="16" font-weight="bold" fill="#f0c040">AG</text>
+      </svg>
+    </div>
+    <h1>AG – Aktiengesellschaft</h1>
+    <div class="chapter">Folie 7 · S. 153–155</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Überblick &amp; Grundkapital</div>
+    <div class="two-col">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card">
+          <h3>Rechtsnatur</h3>
+          <ul>
+            <li><strong>Juristische Person</strong> des Privatrechts</li>
+            <li>Geregelt im <strong>Aktiengesetz (AktG)</strong></li>
+            <li>Börsennotierung möglich (nicht zwingend)</li>
+            <li>Typisch für Großunternehmen</li>
+          </ul>
+        </div>
+        <div class="card blue-top">
+          <h3>Gründung</h3>
+          <ul>
+            <li>Mind. <strong>1 Gründer</strong> (natürl. oder jur. Person)</li>
+            <li>Notarielle Satzung erforderlich</li>
+            <li>Eintragung ins <strong>Handelsregister</strong> (HR Abt. B)</li>
+            <li>Gründungsbericht &amp; -prüfung notwendig</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card gold-top" style="text-align:center;flex:1;justify-content:center;align-items:center">
+          <h3>Grundkapital</h3>
+          <div class="big-num">50.000 €<span style="display:block;font-size:.75rem;margin-top:4px">Mindest-Grundkapital (§ 7 AktG)</span></div>
+        </div>
+        <div class="card">
+          <h3>Aktien</h3>
+          <ul>
+            <li>Grundkapital → aufgeteilt in <strong>Aktien</strong></li>
+            <li>Nenn- oder Stückaktien möglich</li>
+            <li><strong>Frei handelbar</strong> (Börse, OTC)</li>
+            <li>Inhaber- oder Namensaktien</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 8 – AG ORGANE
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="29" text-anchor="middle" font-size="16" font-weight="bold" fill="#f0c040">AG</text>
+      </svg>
+    </div>
+    <h1>AG – Organe der Aktiengesellschaft</h1>
+    <div class="chapter">Folie 8 · S. 154–155</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Dreistufige Organstruktur (§§ 76–179 AktG)</div>
+
+    <!-- SVG Organigramm AG -->
+    <div style="display:flex;justify-content:center;margin-bottom:8px">
+      <svg width="620" height="115" viewBox="0 0 620 115" xmlns="http://www.w3.org/2000/svg">
+        <!-- HV oben -->
+        <rect x="195" y="4" width="230" height="46" rx="8" fill="#1a3272" stroke="#f0c040" stroke-width="2"/>
+        <text x="310" y="24" text-anchor="middle" font-size="11" font-weight="bold" fill="#f0c040">Hauptversammlung (HV)</text>
+        <text x="310" y="39" text-anchor="middle" font-size="9" fill="#bdc3c7">alle Aktionäre · oberstes Willensorgan</text>
+        <!-- Pfeile -->
+        <line x1="280" y1="50" x2="160" y2="72" stroke="#bdc3c7" stroke-width="1.5"/>
+        <line x1="340" y1="50" x2="460" y2="72" stroke="#bdc3c7" stroke-width="1.5"/>
+        <line x1="310" y1="50" x2="310" y2="72" stroke="#bdc3c7" stroke-width="1.5" stroke-dasharray="3"/>
+        <!-- AR -->
+        <rect x="20" y="72" width="180" height="36" rx="6" fill="#27ae60" fill-opacity=".2" stroke="#27ae60" stroke-width="1.5"/>
+        <text x="110" y="90" text-anchor="middle" font-size="10" font-weight="bold" fill="#4cd98a">Aufsichtsrat (AR)</text>
+        <text x="110" y="103" text-anchor="middle" font-size="8" fill="#bdc3c7">Pflichtorgan · mind. 3 Mitglieder</text>
+        <!-- Vorstand -->
+        <rect x="420" y="72" width="180" height="36" rx="6" fill="#2563EB" fill-opacity=".2" stroke="#2563EB" stroke-width="1.5"/>
+        <text x="510" y="90" text-anchor="middle" font-size="10" font-weight="bold" fill="#e74c3c">Vorstand</text>
+        <text x="510" y="103" text-anchor="middle" font-size="8" fill="#bdc3c7">Pflichtorgan · Geschäftsführung</text>
+        <!-- Bestellungspfeil AR→Vorstand -->
+        <line x1="200" y1="90" x2="420" y2="90" stroke="#f0c040" stroke-width="1.5" stroke-dasharray="5"/>
+        <polygon points="420,87 427,90 420,93" fill="#f0c040"/>
+        <text x="310" y="84" text-anchor="middle" font-size="8" fill="#f0c040">bestellt &amp; überwacht</text>
+      </svg>
+    </div>
+
+    <div class="cards cols-3">
+      <div class="card gold-top">
+        <h3>&#127381; Hauptversammlung (HV)</h3>
+        <ul>
+          <li>Versammlung aller <strong>Aktionäre</strong></li>
+          <li>Wählt Aufsichtsrat, beschließt Gewinnverwendung</li>
+          <li>Mind. <strong>einmal jährlich</strong></li>
+          <li>Stimmrecht nach Aktienanteil</li>
+        </ul>
+      </div>
+      <div class="card green-top">
+        <h3>&#128269; Aufsichtsrat (AR)</h3>
+        <ul>
+          <li><strong>Pflichtorgan</strong> der AG</li>
+          <li>Mind. 3 Mitglieder</li>
+          <li>Bestellt &amp; überwacht den Vorstand</li>
+          <li>Mitbestimmung ab 500 AN</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>&#128188; Vorstand</h3>
+        <ul>
+          <li><strong>Pflichtorgan</strong> – mind. 1 Mitglied</li>
+          <li>Leitet die Gesellschaft eigenverantwortlich</li>
+          <li>Vertritt AG nach außen</li>
+          <li>Rechenschaftspflicht ggü. AR</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 9 – AG AKTIEN & BESONDERHEITEN
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="29" text-anchor="middle" font-size="16" font-weight="bold" fill="#f0c040">AG</text>
+      </svg>
+    </div>
+    <h1>AG – Aktienarten &amp; Besonderheiten</h1>
+    <div class="chapter">Folie 9 · S. 153–155</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Aktienarten &amp; Haftung</div>
+    <div class="two-col">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card blue-top">
+          <h3>&#128196; Aktienarten</h3>
+          <ul>
+            <li><strong>Nennwertaktie:</strong> fester Nennwert (mind. 1 €)</li>
+            <li><strong>Stückaktie (nennwertlos):</strong> gleicher Anteil am GK</li>
+            <li><strong>Inhaberaktie:</strong> anonym übertragbar</li>
+            <li><strong>Namensaktie:</strong> auf bestimmte Person eingetragen</li>
+            <li><strong>Vorzugsaktie:</strong> kein Stimmrecht, dafür höhere Dividende</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128737; Haftung</h3>
+          <ul>
+            <li>Nur AG haftet mit <strong>Gesellschaftsvermögen</strong></li>
+            <li>Aktionäre haften <strong>nicht persönlich</strong></li>
+            <li>Verlustrisiko = Kursverlust der Aktie</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <!-- SVG Aktie -->
+        <div style="display:flex;justify-content:center">
+          <svg width="220" height="130" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="5" width="210" height="120" rx="10" fill="#1a3272" stroke="#f0c040" stroke-width="2"/>
+            <rect x="15" y="15" width="190" height="20" rx="4" fill="#2563EB" fill-opacity=".3"/>
+            <text x="110" y="29" text-anchor="middle" font-size="10" font-weight="bold" fill="#f0c040">AKTIE · Muster AG</text>
+            <line x1="15" y1="42" x2="205" y2="42" stroke="rgba(0,0,0,.2)" stroke-width="1"/>
+            <text x="110" y="60" text-anchor="middle" font-size="22" font-weight="bold" fill="#ffffff">§</text>
+            <text x="110" y="80" text-anchor="middle" font-size="9" fill="#bdc3c7">Nennwert: 1,00 Euro</text>
+            <text x="110" y="95" text-anchor="middle" font-size="8" fill="#bdc3c7">ISIN: DE000MUSTER01</text>
+            <text x="110" y="114" text-anchor="middle" font-size="8" fill="#f0c040">Inhaberaktie · Stimmrecht</text>
+          </svg>
+        </div>
+        <div class="card gold-top">
+          <h3>&#128200; Dividende</h3>
+          <ul>
+            <li>Gewinnbeteiligung der Aktionäre</li>
+            <li>Beschluss der <strong>Hauptversammlung</strong></li>
+            <li>Vorschlag durch Vorstand &amp; AR</li>
+            <li>Vorzugsaktionäre: höhere Dividende</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 10 – UG (haftungsbeschränkt)
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="25" text-anchor="middle" font-size="10" font-weight="bold" fill="#27ae60">UG</text>
+        <text x="22" y="36" text-anchor="middle" font-size="6" fill="#bdc3c7">(haftungs-</text>
+      </svg>
+    </div>
+    <h1>UG (haftungsbeschränkt) – Mini-GmbH</h1>
+    <div class="chapter">Folie 10 · S. 152–153</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Unternehmergesellschaft (haftungsbeschränkt)</div>
+    <div class="section-sub">Seit 2008 · Vereinfachter Zugang zur Kapitalgesellschaft · § 5a GmbHG</div>
+
+    <div class="cards cols-2" style="flex:unset;height:auto">
+      <div class="card green-top">
+        <h3>&#128176; Kapital &amp; Gründung</h3>
+        <ul>
+          <li>Stammkapital ab <strong>1 Euro</strong> möglich</li>
+          <li>Kein Mindeststammkapital wie bei GmbH</li>
+          <li>Mustergründungsprotokoll verfügbar (kostengünstig)</li>
+          <li>Mind. 1 Gesellschafter</li>
+          <li>Notarielle Beurkundung notwendig</li>
+        </ul>
+      </div>
+      <div class="card gold-top">
+        <h3>&#128200; Anspargebot (Rücklage)</h3>
+        <ul>
+          <li><strong>25 % des Jahresüberschusses</strong> müssen in gesetzliche Rücklage</li>
+          <li>Ziel: schrittweise Ansammlung von 25.000 € Stammkapital</li>
+          <li>Bei Erreichen: Umwandlung in reguläre <strong>GmbH möglich</strong></li>
+          <li>Keine freie Ausschüttung bis dahin möglich</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cards cols-2" style="flex:unset;height:auto;margin-top:0">
+      <div class="card">
+        <h3>&#128737; Haftung</h3>
+        <ul>
+          <li>Haftung beschränkt auf <strong>Gesellschaftsvermögen</strong></li>
+          <li>Gesellschafter haften nicht persönlich</li>
+          <li>Gleiche Haftungsstruktur wie GmbH</li>
+        </ul>
+      </div>
+      <div class="card blue-top">
+        <h3>&#9888; Besonderheiten</h3>
+        <ul>
+          <li>Firma muss <strong>„UG (haftungsbeschränkt)"</strong> enthalten</li>
+          <li>Abkürzung „UG" allein <strong>nicht</strong> zulässig</li>
+          <li>Geeignet für Startups &amp; Kleinstgründungen</li>
+          <li>Gleiche Organe wie GmbH (GV, GF, ggf. AR)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Upgrade-Pfeil -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:4px">
+      <div class="pill green">UG (haftungsbeschränkt)</div>
+      <svg width="80" height="20" viewBox="0 0 80 20" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="10" x2="60" y2="10" stroke="#f0c040" stroke-width="2"/>
+        <polygon points="60,6 72,10 60,14" fill="#f0c040"/>
+        <text x="30" y="8" text-anchor="middle" font-size="7" fill="#f0c040">25.000 €</text>
+      </svg>
+      <div class="pill gold">GmbH</div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 11 – GENOSSENSCHAFT
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s11">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="29" text-anchor="middle" font-size="11" font-weight="bold" fill="#27ae60">eG</text>
+      </svg>
+    </div>
+    <h1>Genossenschaft (eG)</h1>
+    <div class="chapter">Folie 11 · S. 156–157</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Eingetragene Genossenschaft (eG)</div>
+    <div class="section-sub">Geregelt im Genossenschaftsgesetz (GenG) · Sonderrechtsform</div>
+
+    <div class="two-col">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card green-top">
+          <h3>&#129309; Grundprinzip</h3>
+          <ul>
+            <li>Förderung des <strong>Erwerbs oder der Wirtschaft</strong> der Mitglieder</li>
+            <li>Selbsthilfe, Selbstverwaltung, Selbstverantwortung</li>
+            <li>Mind. <strong>3 Mitglieder</strong> zur Gründung</li>
+            <li><strong>Juristische Person</strong> des Privatrechts</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128181; Kapital &amp; Haftung</h3>
+          <ul>
+            <li>Kapital durch <strong>Genossenschaftsanteile</strong> (Mitglieder)</li>
+            <li>Variables Kapital – Mitglieder können ein/austreten</li>
+            <li>Haftung grds. auf <strong>Geschäftsguthaben</strong> beschränkt</li>
+            <li>Keine Mindestkapitalvorgabe</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card blue-top">
+          <h3>&#127963; Organe der eG</h3>
+          <ul>
+            <li><strong>Generalversammlung</strong> – alle Mitglieder (Gleichheitsprinzip: 1 Mitglied = 1 Stimme)</li>
+            <li><strong>Aufsichtsrat</strong> – ab 20 Mitgliedern Pflicht</li>
+            <li><strong>Vorstand</strong> – mind. 2 Mitglieder, leitet die eG</li>
+          </ul>
+        </div>
+        <div class="card gold-top">
+          <h3>&#127974; Praxisbeispiele</h3>
+          <ul>
+            <li>Volksbanken &amp; Raiffeisenbanken</li>
+            <li>Wohnungsgenossenschaften (z.B. SAGA)</li>
+            <li>Energie-Genossenschaften</li>
+            <li>Kaufland, REWE Group (teilweise genossenschaftlich)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight"><strong>Unterschied zu Kapitalgesellschaften:</strong> Im Vordergrund steht die <strong>Mitgliederförderung</strong>, nicht die Gewinnmaximierung. Gewinne werden als Dividende nach Geschäftsanteilen verteilt.</div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 12 – VERGLEICH PERSONEN- VS KAPITALGESELLSCHAFTEN (Teil 1)
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s12">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="14" y="29" text-anchor="middle" font-size="14" font-weight="bold" fill="#5b8dee">P</text>
+        <text x="31" y="29" text-anchor="middle" font-size="14" font-weight="bold" fill="#f0c040">K</text>
+        <line x1="22" y1="12" x2="22" y2="36" stroke="rgba(0,0,0,.4)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <h1>Vergleich: Personen- vs. Kapitalgesellschaften (1/2)</h1>
+    <div class="chapter">Folie 12 · S. 150–157</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Struktureller Vergleich</div>
+    <table class="comp-table" style="flex:1">
+      <thead>
+        <tr>
+          <th>Merkmal</th>
+          <th style="color:#7eaaff">Personengesellschaft<br><small style="font-weight:400">(OHG, KG, GbR)</small></th>
+          <th style="color:#f0c040">Kapitalgesellschaft<br><small style="font-weight:400">(GmbH, AG, UG)</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Rechtspersönlichkeit</td>
+          <td>Keine juristische Person (außer OHG/KG: teilrechtsfähig)</td>
+          <td><strong>Juristische Person</strong> – eigenes Rechtssubjekt</td>
+        </tr>
+        <tr>
+          <td>Haftung</td>
+          <td><strong>Persönliche, unbeschränkte</strong> Haftung mind. eines Gesellschafters</td>
+          <td><strong>Beschränkte Haftung</strong> – nur Gesellschaftsvermögen</td>
+        </tr>
+        <tr>
+          <td>Mindestkapital</td>
+          <td>Keines erforderlich</td>
+          <td>GmbH: 25.000 € / AG: 50.000 € / UG: ab 1 €</td>
+        </tr>
+        <tr>
+          <td>Gründungsaufwand</td>
+          <td>Gering (GbR formlos möglich)</td>
+          <td>Hoch (Notar, HR-Eintragung, Gesellschaftsvertrag)</td>
+        </tr>
+        <tr>
+          <td>Geschäftsführung</td>
+          <td>Gesellschafter selbst (persönlich)</td>
+          <td>Bestellte Organe (GF, Vorstand) – auch Nicht-Gesellschafter</td>
+        </tr>
+        <tr>
+          <td>Gewinnbesteuerung</td>
+          <td>Einkommensteuer der Gesellschafter</td>
+          <td>Körperschaftsteuer (15 %) + Gewerbesteuer der Gesellschaft</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 13 – VERGLEICH (Teil 2) – KAPITALGESELLSCHAFTEN UNTEREINANDER
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s13">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="14" y="29" text-anchor="middle" font-size="14" font-weight="bold" fill="#5b8dee">P</text>
+        <text x="31" y="29" text-anchor="middle" font-size="14" font-weight="bold" fill="#f0c040">K</text>
+        <line x1="22" y1="12" x2="22" y2="36" stroke="rgba(0,0,0,.4)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <h1>Vergleich: Kapitalgesellschaften (2/2)</h1>
+    <div class="chapter">Folie 13 · S. 150–157</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">GmbH vs. AG vs. UG – Direktvergleich</div>
+    <table class="comp-table" style="flex:1">
+      <thead>
+        <tr>
+          <th>Merkmal</th>
+          <th style="color:#e74c3c">GmbH</th>
+          <th style="color:#f0c040">AG</th>
+          <th style="color:#4cd98a">UG (haftungsbeschränkt)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mindestkapital</td>
+          <td>25.000 €</td>
+          <td>50.000 €</td>
+          <td>ab 1 €</td>
+        </tr>
+        <tr>
+          <td>Gesetz</td>
+          <td>GmbHG</td>
+          <td>AktG</td>
+          <td>§ 5a GmbHG</td>
+        </tr>
+        <tr>
+          <td>Kapitalanteile</td>
+          <td>Geschäftsanteile (nicht frei handelbar)</td>
+          <td>Aktien (frei handelbar, Börse möglich)</td>
+          <td>Geschäftsanteile (wie GmbH)</td>
+        </tr>
+        <tr>
+          <td>Pflichtorgane</td>
+          <td>GV + GF</td>
+          <td>HV + AR + Vorstand</td>
+          <td>GV + GF</td>
+        </tr>
+        <tr>
+          <td>Rücklagenpflicht</td>
+          <td>Keine Sonderregel</td>
+          <td>Gesetzliche Rücklage (10 % GK)</td>
+          <td>25 % Jahresüberschuss (bis 25.000 €)</td>
+        </tr>
+        <tr>
+          <td>Typische Größe</td>
+          <td>Mittelstand</td>
+          <td>Großunternehmen</td>
+          <td>Kleinunternehmen / Startups</td>
+        </tr>
+        <tr>
+          <td>Publizitätspflicht</td>
+          <td>Jahresabschluss im Bundesanzeiger</td>
+          <td>Umfangreiche Offenlegungspflichten</td>
+          <td>Wie GmbH</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 14 – RECHTSFORMWAHL-KRITERIEN
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s14">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="28" text-anchor="middle" font-size="18" fill="#f0c040">&#9878;</text>
+      </svg>
+    </div>
+    <h1>Kriterien der Rechtsformwahl</h1>
+    <div class="chapter">Folie 14 · S. 157</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Entscheidungskriterien bei der Rechtsformwahl</div>
+    <div class="criteria">
+      <div class="crit-item">
+        <h4>&#128737; 1. Haftung</h4>
+        <p>Soll das <strong>Privatvermögen</strong> geschützt werden? &rarr; Kapitalgesellschaft (GmbH/AG/UG). Bei voller Haftungsbereitschaft: Personengesellschaft möglich.</p>
+      </div>
+      <div class="crit-item">
+        <h4>&#128176; 2. Kapital &amp; Finanzierung</h4>
+        <p>Wie viel Startkapital steht zur Verfügung? UG ab 1 €, GmbH ab 25.000 €, AG ab 50.000 €. Börsenzugang nur bei AG möglich.</p>
+      </div>
+      <div class="crit-item">
+        <h4>&#128101; 3. Anzahl der Gesellschafter</h4>
+        <p>Allein? &rarr; Einzelkaufmann, 1-Personen-GmbH. Mehrere Partner? &rarr; OHG, KG, GmbH. Viele Kapitalgeber? &rarr; AG.</p>
+      </div>
+      <div class="crit-item">
+        <h4>&#128200; 4. Steuerliche Aspekte</h4>
+        <p>Personengesellschaft: Einkommensteuer (progressiv). Kapitalgesellschaft: Körperschaftsteuer 15 % + Gewerbesteuer. Günstig bei hohen Gewinnen.</p>
+      </div>
+      <div class="crit-item">
+        <h4>&#128338; 5. Gründungsaufwand</h4>
+        <p>Einfach: GbR (formlos). Mittel: GmbH, UG (Notar). Komplex: AG (Gründungsbericht, -prüfung, Hauptversammlung).</p>
+      </div>
+      <div class="crit-item">
+        <h4>&#128065; 6. Publizität &amp; Image</h4>
+        <p>Offenlegungspflicht bei GmbH &amp; AG. Gutes Geschäftsimage: GmbH am vorteilhaftesten für Mittelstand. AG signalisiert Größe &amp; Kapitalmarktzugang.</p>
+      </div>
+    </div>
+    <div class="highlight"><strong>Fazit:</strong> Die Wahl der Rechtsform ist eine strategische Entscheidung mit langfristigen Konsequenzen. Eine Rechtsberatung ist empfehlenswert.</div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE ZQ15A – QUIZ: GmbH & AG
+══════════════════════════════════════════════════ -->
+<div class="slide" id="szq15a">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#2563EB"/>
+        <text x="22" y="29" text-anchor="middle" font-size="20" fill="#fff">🧠</text>
+      </svg>
+    </div>
+    <h1>🧠 Zwischenquiz: GmbH &amp; AG</h1>
+    <div class="chapter">Quiz · Folie ZQ-A</div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">1. Wie hoch ist das Mindest-Stammkapital der GmbH?</p>
+      <div id="q15a1opts">
+        <button onclick="chk15a1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) 1.000 €</button>
+        <button onclick="chk15a1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) 10.000 €</button>
+        <button onclick="chk15a1(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) 25.000 €</button>
+        <button onclick="chk15a1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) 50.000 €</button>
+      </div>
+      <p id="q15a1r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">2. Welches Organ ist bei der AG Pflicht, bei der GmbH aber nur fakultativ (freiwillig)?</p>
+      <div id="q15a2opts">
+        <button onclick="chk15a2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Hauptversammlung / Gesellschafterversammlung</button>
+        <button onclick="chk15a2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Geschäftsführer / Vorstand</button>
+        <button onclick="chk15a2(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Aufsichtsrat</button>
+        <button onclick="chk15a2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Prüfungsausschuss</button>
+      </div>
+      <p id="q15a2r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <div>
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">3. Was bedeutet „Trennungsprinzip" bei Kapitalgesellschaften?</p>
+      <div id="q15a3opts">
+        <button onclick="chk15a3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Kapital und Arbeit sind getrennt zu bewerten</button>
+        <button onclick="chk15a3(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Gesellschaft und Gesellschafter sind rechtlich getrennt – Privatvermögen haftet nicht</button>
+        <button onclick="chk15a3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Geschäftsführer und Eigentümer müssen verschiedene Personen sein</button>
+        <button onclick="chk15a3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Stammkapital und Betriebsvermögen werden separat gebucht</button>
+      </div>
+      <p id="q15a3r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <script>
+    function chk15a1(btn,correct){
+      document.getElementById('q15a1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15a1r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! GmbH: Mindest-Stammkapital 25.000 € (§ 5 GmbHG), davon mind. 12.500 € bei Gründung einzuzahlen.':'❌ Falsch! GmbH = 25.000 € Mindestkapital. AG = 50.000 €.';
+      if(!correct)document.getElementById('q15a1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    function chk15a2(btn,correct){
+      document.getElementById('q15a2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15a2r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Der Aufsichtsrat ist bei der AG Pflicht, bei der GmbH nur ab 500 Arbeitnehmern oder freiwillig.':'❌ Falsch! Der Aufsichtsrat ist bei der AG Pflicht, bei der GmbH fakultativ.';
+      if(!correct)document.getElementById('q15a2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    function chk15a3(btn,correct){
+      document.getElementById('q15a3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15a3r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Das Trennungsprinzip bedeutet: Die GmbH/AG ist als juristische Person vom Gesellschafter getrennt – sein Privatvermögen haftet NICHT.':'❌ Falsch! Trennungsprinzip = Gesellschaft ist eigenständige juristische Person, Privatvermögen der Gesellschafter ist geschützt.';
+      if(!correct)document.getElementById('q15a3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    </script>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · Quiz</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE MEGATABLE – GESAMTVERGLEICH ALLE RECHTSFORMEN
+══════════════════════════════════════════════════ -->
+<div class="slide" id="smegatable">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="28" font-size="16" text-anchor="middle" fill="#f0c040">≡</text>
+      </svg>
+    </div>
+    <h1>Mega-Tabelle: Alle Rechtsformen im Vergleich</h1>
+    <div class="chapter">Gesamtvergleich · Abschnitt 1.20</div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;">
+    <div class="section-title">Einzelunt. · GbR · OHG · KG · GmbH · AG</div>
+    <table class="comp-table" style="font-size:.68rem;">
+      <thead>
+        <tr>
+          <th>Merkmal</th>
+          <th>Einzelunt.</th>
+          <th>GbR</th>
+          <th>OHG</th>
+          <th>KG</th>
+          <th style="color:#e74c3c">GmbH</th>
+          <th style="color:#f0c040">AG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Rechtsgrundlage</td><td>HGB, GewO</td><td>§ 705 BGB</td><td>§ 105 HGB</td><td>§ 161 HGB</td><td>GmbHG</td><td>AktG</td></tr>
+        <tr><td>Mindestkapital</td><td>Keines</td><td>Keines</td><td>Keines</td><td>Keines</td><td>25.000 €</td><td>50.000 €</td></tr>
+        <tr><td>Haftung</td><td>Inhaber: privat, unbeschr.</td><td>Alle: gesamtschuldnerisch</td><td>Alle: solidarisch, privat</td><td>Kompl.: privat; KoKo: nur Einlage</td><td>Nur Gesellschaftsvermögen</td><td>Nur Gesellschaftsvermögen</td></tr>
+        <tr><td>Gründung</td><td>Formlos</td><td>Formlos</td><td>HR-Pflicht</td><td>HR-Pflicht</td><td>Notar + HR</td><td>Notar + HR (+Börse)</td></tr>
+        <tr><td>Leitung</td><td>Inhaber</td><td>Alle gemeinsam</td><td>Alle (einzeln)</td><td>Komplementär</td><td>Geschäftsführer</td><td>Vorstand</td></tr>
+        <tr><td>Kontrollorgan</td><td>–</td><td>–</td><td>–</td><td>–</td><td>(Aufsichtsrat)</td><td>Aufsichtsrat (Pflicht!)</td></tr>
+        <tr><td>Steuer</td><td>ESt</td><td>ESt</td><td>ESt</td><td>ESt</td><td>KSt + GewSt</td><td>KSt + GewSt</td></tr>
+        <tr><td>Jurist. Person?</td><td>Nein</td><td>Nein</td><td>Nein</td><td>Nein</td><td><strong style="color:#4cd98a">Ja</strong></td><td><strong style="color:#4cd98a">Ja</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="highlight" style="margin-top:8px;font-size:.74rem;"><strong>Faustregel:</strong> Mehr Haftungsschutz = mehr Kapital- und Formalaufwand. GmbH = der goldene Mittelweg für den deutschen Mittelstand.</div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · Mega-Vergleich</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE ZQ15B – QUIZ: UG & VERGLEICH
+══════════════════════════════════════════════════ -->
+<div class="slide" id="szq15b">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#2563EB"/>
+        <text x="22" y="29" text-anchor="middle" font-size="20" fill="#fff">🧠</text>
+      </svg>
+    </div>
+    <h1>🧠 Zwischenquiz: UG &amp; Gesamtvergleich</h1>
+    <div class="chapter">Quiz · Folie ZQ-B</div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">1. Warum muss eine UG 25 % ihres Jahresüberschusses als Rücklage einbehalten?</p>
+      <div id="q15b1opts">
+        <button onclick="chk15b1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Als Strafe für das niedrige Startkapital</button>
+        <button onclick="chk15b1(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Um schrittweise das GmbH-Mindestkapital von 25.000 € zu erreichen</button>
+        <button onclick="chk15b1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Für staatliche Sozialabgaben</button>
+        <button onclick="chk15b1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Für den obligatorischen Aufsichtsrat</button>
+      </div>
+      <p id="q15b1r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">2. Welche Rechtsform eignet sich am besten für einen Kleinunternehmer, der alleine einen Online-Shop betreibt und schnell und günstig starten möchte, dabei aber das Haftungsrisiko kennt?</p>
+      <div id="q15b2opts">
+        <button onclick="chk15b2(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Einzelunternehmen / Kleingewerbe</button>
+        <button onclick="chk15b2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) AG</button>
+        <button onclick="chk15b2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) eG</button>
+        <button onclick="chk15b2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) OHG</button>
+      </div>
+      <p id="q15b2r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <script>
+    function chk15b1(btn,correct){
+      document.getElementById('q15b1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15b1r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Die Thesaurierungspflicht (25 %) soll das Stammkapital schrittweise auf 25.000 € anwachsen lassen – dann kann die UG zur GmbH werden.':'❌ Falsch! Die 25 % dienen zur Ansparung des GmbH-Mindestkapitals.';
+      if(!correct)document.getElementById('q15b1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    function chk15b2(btn,correct){
+      document.getElementById('q15b2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15b2r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Das Einzelunternehmen ist die einfachste, schnellste und günstigste Form – mit vollem Haftungsrisiko.':'❌ Falsch! Für schnellen, günstigen Einstieg alleine: Einzelunternehmen/Kleingewerbe.';
+      if(!correct)document.getElementById('q15b2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    </script>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · Quiz</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE EXCLUSIVA – PRAXISBEISPIEL EXCLUSIVA GMBH
+══════════════════════════════════════════════════ -->
+<div class="slide" id="sexclusiva">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="29" text-anchor="middle" font-size="12" font-weight="bold" fill="#f0c040">EX</text>
+      </svg>
+    </div>
+    <h1>Praxisbeispiel: Exclusiva GmbH – Alle LF1-Themen</h1>
+    <div class="chapter">Modellunternehmen · Abschluss LF1</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Die Exclusiva GmbH verbindet alle Themen des Lernfelds 1</div>
+    <div class="cards cols-3">
+      <div class="card">
+        <h3>§ Rechtsform: GmbH</h3>
+        <ul>
+          <li>Beschränkte Haftung – Privatvermögen sicher</li>
+          <li>2 Geschäftsführer + Gesellschafterversammlung</li>
+          <li>Körperschaftsteuer + Gewerbesteuer</li>
+          <li>Stammkapital: 25.000 €</li>
+        </ul>
+      </div>
+      <div class="card blue-top">
+        <h3>🛒 E-Commerce</h3>
+        <ul>
+          <li>Eigener Webshop + Marktplätze (Omnichannel)</li>
+          <li>B2C und B2B Vertriebskanäle</li>
+          <li>Usability und Heuristiken nach Nielsen</li>
+          <li>Cross-Border-E-Commerce</li>
+        </ul>
+      </div>
+      <div class="card gold-top">
+        <h3>👥 Ausbildung & Recht</h3>
+        <ul>
+          <li>Bildet Kaufleute im E-Commerce aus (BBiG)</li>
+          <li>JASchG für junge Mitarbeiter</li>
+          <li>Tarifvertrag mit Günstigkeitsprinzip</li>
+          <li>Prokura für Filialleiter (§ 49 HGB)</li>
+        </ul>
+      </div>
+      <div class="card green-top">
+        <h3>🔄 Wirtschaftskreislauf</h3>
+        <ul>
+          <li>Teil des Wirtschaftskreislaufs (Tertiärsektor)</li>
+          <li>Zahlt Steuern an den Staat</li>
+          <li>Kreditfinanzierung über Banken</li>
+          <li>Import/Export (Ausland)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⚙️ Produktionsfaktoren</h3>
+        <ul>
+          <li>Mitarbeiter → Arbeit (Lohn)</li>
+          <li>Lagerhallen → Boden (Miete)</li>
+          <li>Server, Maschinen → Kapital (Zins)</li>
+          <li>Algorithmen, Daten → Wissen</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📊 Vollmachten</h3>
+        <ul>
+          <li>Geschäftsführer: Gesamtvertretung</li>
+          <li>Prokura: für Abteilungsleiter</li>
+          <li>Handlungsvollmacht: für Mitarbeiter</li>
+          <li>Geregelt in §§ 49–58 HGB</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · Praxisbeispiel</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE LEK – LEK-VORBEREITUNG
+══════════════════════════════════════════════════ -->
+<div class="slide" id="slek">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#2563EB"/>
+        <text x="22" y="29" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">LEK</text>
+      </svg>
+    </div>
+    <h1>LEK-Vorbereitung: Typische Prüfungsaufgaben</h1>
+    <div class="chapter">Gesamtwiederholung · Lernfeld 1</div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;">
+    <div class="section-title">10 häufige Prüfungsfragen – Lernfeld 1</div>
+    <div class="cards cols-2" style="flex:unset;height:auto;">
+      <div class="card">
+        <h3>📚 Ausbildungsrecht &amp; Vollmachten</h3>
+        <ul>
+          <li>Pflichten des Auszubildenden nach BBiG nennen</li>
+          <li>Unterschied Prokura vs. Handlungsvollmacht (§§ 49/54 HGB)</li>
+          <li>JASchG: Schutzvorschriften für Jugendliche</li>
+          <li>Günstigkeitsprinzip im Tarifrecht erklären</li>
+        </ul>
+      </div>
+      <div class="card blue-top">
+        <h3>🛒 E-Commerce &amp; Vertrieb</h3>
+        <ul>
+          <li>B2B vs. B2C mit Beispielen erklären</li>
+          <li>Omnichannel-Strategie: Vor- und Nachteile</li>
+          <li>5 Usability-Heuristiken nach Nielsen nennen</li>
+          <li>Cross-Border-E-Commerce: Chancen &amp; Risiken</li>
+        </ul>
+      </div>
+      <div class="card gold-top">
+        <h3>⚖️ Rechtsformen</h3>
+        <ul>
+          <li>Unterschied GmbH vs. AG: 3 Merkmale je</li>
+          <li>KG: Komplementär vs. Kommanditist erklären</li>
+          <li>Warum ist Rechtsformwahl wichtig? 4 Kriterien</li>
+          <li>Fallbeispiel: Welche Rechtsform passt?</li>
+        </ul>
+      </div>
+      <div class="card green-top">
+        <h3>📊 VWL &amp; Kreislauf</h3>
+        <ul>
+          <li>Einfachen Wirtschaftskreislauf skizzieren</li>
+          <li>4 Produktionsfaktoren + E-Commerce-Beispiele</li>
+          <li>Magisches Viereck: 4 Ziele + Zielkonflikte</li>
+          <li>Maslow-Pyramide: 5 Stufen von unten nach oben</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:8px;font-size:.76rem;">
+      <strong>Tipp:</strong> <strong>L</strong>erne Begriffe – <strong>E</strong>rkläre mit eigenen Worten – <strong>K</strong>enne die Beispiele! Nutze Karteikarten: Begriff vorne, Definition hinten.
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · LEK-Vorbereitung</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE ZQ15C – QUIZ: GESAMTWIEDERHOLUNG LF1
+══════════════════════════════════════════════════ -->
+<div class="slide" id="szq15c">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#2563EB"/>
+        <text x="22" y="29" text-anchor="middle" font-size="20" fill="#fff">🧠</text>
+      </svg>
+    </div>
+    <h1>🧠 Zwischenquiz: Gesamtwiederholung Lernfeld 1</h1>
+    <div class="chapter">Quiz · Folie ZQ-C</div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">1. Was regelt das BBiG?</p>
+      <div id="q15c1opts">
+        <button onclick="chk15c1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Das Bürgerliche Gesetzbuch für Unternehmen</button>
+        <button onclick="chk15c1(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Das Berufsbildungsgesetz: Rechte und Pflichten in der Ausbildung</button>
+        <button onclick="chk15c1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Das Bundesbank-Gesetz</button>
+        <button onclick="chk15c1(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Das Betriebsverfassungsgesetz</button>
+      </div>
+      <p id="q15c1r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">2. Was bedeutet „Prokura" (§ 49 HGB)?</p>
+      <div id="q15c2opts">
+        <button onclick="chk15c2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Eine Vollmacht nur für Einkäufe</button>
+        <button onclick="chk15c2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Eine Vollmacht nur für Verkäufe</button>
+        <button onclick="chk15c2(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Eine umfassende Handlungsvollmacht für alle kaufmännischen Rechtsgeschäfte</button>
+        <button onclick="chk15c2(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Die Erlaubnis, das Unternehmen umzubenennen</button>
+      </div>
+      <p id="q15c2r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <div>
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:.85rem;">3. Ein Betriebsvertrag gewährt 28 Urlaubstage, der Tarifvertrag nur 25. Welcher gilt?</p>
+      <div id="q15c3opts">
+        <button onclick="chk15c3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">A) Immer der Tarifvertrag – er hat Vorrang</button>
+        <button onclick="chk15c3(this,true)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">B) Der Betriebsvertrag (28 Tage) – Günstigkeitsprinzip gilt!</button>
+        <button onclick="chk15c3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">C) Keiner – beide müssen neu verhandelt werden</button>
+        <button onclick="chk15c3(this,false)" style="display:block;width:100%;text-align:left;padding:7px 12px;margin:3px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:5px;color:white;cursor:pointer;font-size:.8rem;">D) Der Gesetzgeber entscheidet im Einzelfall</button>
+      </div>
+      <p id="q15c3r" style="margin-top:4px;font-weight:bold;display:none;font-size:.8rem;"></p>
+    </div>
+    <script>
+    function chk15c1(btn,correct){
+      document.getElementById('q15c1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15c1r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! BBiG = Berufsbildungsgesetz: regelt Ausbildungsvertrag, Rechte und Pflichten von Azubis und Betrieben.':'❌ Falsch! BBiG = Berufsbildungsgesetz.';
+      if(!correct)document.getElementById('q15c1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    function chk15c2(btn,correct){
+      document.getElementById('q15c2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15c2r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Prokura (§ 49 HGB) = umfassende Handlungsvollmacht für alle kaufmännischen Rechtsgeschäfte – stärker als gewöhnliche Handlungsvollmacht.':'❌ Falsch! Prokura = umfassende Handlungsvollmacht für alle kaufmännischen Geschäfte.';
+      if(!correct)document.getElementById('q15c2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    function chk15c3(btn,correct){
+      document.getElementById('q15c3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+      btn.style.background=correct?'#27ae60':'#c0392b';
+      const r=document.getElementById('q15c3r');
+      r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+      r.textContent=correct?'✅ Richtig! Das Günstigkeitsprinzip gilt: Die für den Arbeitnehmer günstigere Regelung hat Vorrang – also 28 Tage Urlaub aus dem Betriebsvertrag.':'❌ Falsch! Günstigkeitsprinzip: Die günstigere Regelung für den Arbeitnehmer gilt – also der Betriebsvertrag mit 28 Tagen.';
+      if(!correct)document.getElementById('q15c3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+    }
+    </script>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · Quiz</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 15 – ZUSAMMENFASSUNG LF1
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s15">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="28" text-anchor="middle" font-size="18" fill="#f0c040">&#10003;</text>
+      </svg>
+    </div>
+    <h1>Zusammenfassung – Lernfeld 1</h1>
+    <div class="chapter">Folie 15 · Gesamtüberblick</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Das Wichtigste auf einen Blick</div>
+    <div class="summary-grid">
+      <div class="s-box">
+        <h4>&#127968; Personengesellschaften</h4>
+        <ul style="padding-left:14px;list-style:disc">
+          <li class="body-list li">GbR – formlose Gründung</li>
+          <li>OHG – alle haften unbeschränkt</li>
+          <li>KG – Komplementär + Kommanditist</li>
+          <li>Stille Gesellschaft – verborgen</li>
+          <li>Keine juristische Person</li>
+          <li>Einkommensteuer</li>
+        </ul>
+      </div>
+      <div class="s-box b">
+        <h4>&#127970; Kapitalgesellschaften</h4>
+        <ul style="padding-left:14px;list-style:disc">
+          <li>GmbH – 25.000 € · beschr. Haftung</li>
+          <li>AG – 50.000 € · Aktien · Börse</li>
+          <li>UG – ab 1 € · Anspargebot 25 %</li>
+          <li>Juristische Person</li>
+          <li>Körperschaftsteuer 15 %</li>
+          <li>Organe: GV/GF bzw. HV/AR/Vorstand</li>
+        </ul>
+      </div>
+      <div class="s-box g">
+        <h4>&#129309; Sonderformen</h4>
+        <ul style="padding-left:14px;list-style:disc">
+          <li>eG – Genossenschaft</li>
+          <li>1 Mitglied = 1 Stimme</li>
+          <li>Mitgliederförderung</li>
+          <li>Volksbanken, Wohnungsgenos.</li>
+          <li>Kein Mindestkapital</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+      <div class="highlight">
+        <strong>Haftung:</strong> Personen-GS = unbeschränkt persönlich | Kapital-GS = beschränkt auf Gesellschaftsvermögen
+      </div>
+      <div class="highlight">
+        <strong>Kapital:</strong> GmbH 25.000 € · AG 50.000 € · UG ab 1 € (25 % Rücklage bis 25.000 €)
+      </div>
+    </div>
+
+    <!-- SVG Übersichtsbaum -->
+    <div style="display:flex;justify-content:center;margin-top:4px">
+      <svg width="520" height="44" viewBox="0 0 520 44" xmlns="http://www.w3.org/2000/svg">
+        <rect x="180" y="2" width="160" height="18" rx="4" fill="#1a3272" stroke="#bdc3c7" stroke-width="1"/>
+        <text x="260" y="14" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">RECHTSFORMEN</text>
+        <line x1="200" y1="20" x2="80" y2="28" stroke="#5b8dee" stroke-width="1.5"/>
+        <line x1="320" y1="20" x2="440" y2="28" stroke="#f0c040" stroke-width="1.5"/>
+        <line x1="260" y1="20" x2="260" y2="28" stroke="#27ae60" stroke-width="1.5"/>
+        <rect x="20" y="28" width="120" height="14" rx="3" fill="#1a3272" stroke="#5b8dee" stroke-width="1"/>
+        <text x="80" y="38" text-anchor="middle" font-size="7.5" fill="#7eaaff">Personengesellschaften</text>
+        <rect x="195" y="28" width="130" height="14" rx="3" fill="#1a3272" stroke="#27ae60" stroke-width="1"/>
+        <text x="260" y="38" text-anchor="middle" font-size="7.5" fill="#4cd98a">Sonderformen (eG)</text>
+        <rect x="380" y="28" width="130" height="14" rx="3" fill="#1a3272" stroke="#f0c040" stroke-width="1"/>
+        <text x="445" y="38" text-anchor="middle" font-size="7.5" fill="#f0c040">Kapitalgesellschaften</text>
+      </svg>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FOLIE 16 – LITERATURVERZEICHNIS (APA 7)
+══════════════════════════════════════════════════ -->
+<div class="slide" id="s16">
+  <div class="slide-header">
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="22" fill="#1a3272"/>
+        <text x="22" y="28" text-anchor="middle" font-size="16" fill="#5b8dee">&#128218;</text>
+      </svg>
+    </div>
+    <h1>Literaturverzeichnis</h1>
+    <div class="chapter">Folie 16 · APA 7th Edition</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-title">Quellenangaben (APA 7)</div>
+    <ul class="lit-list">
+      <li>
+        <div class="apa-type">Schulbuch</div>
+        Drees, N., Pätzold, M., &amp; Thissen, A. (2022). <em>Kaufleute im Einzelhandel: Lernfeld 1 – Das Einzelhandelsunternehmen repräsentieren</em> (Aufl. 1). Westermann Verlag.
+      </li>
+      <li>
+        <div class="apa-type">Gesetz</div>
+        Bundesministerium der Justiz. (2024). <em>Gesetz betreffend die Gesellschaften mit beschränkter Haftung (GmbHG)</em> in der Fassung vom 1. Januar 2024. Bundesgesetzblatt. <a href="https://www.gesetze-im-internet.de/gmbhg/" style="color:#7eaaff">https://www.gesetze-im-internet.de/gmbhg/</a>
+      </li>
+      <li>
+        <div class="apa-type">Gesetz</div>
+        Bundesministerium der Justiz. (2024). <em>Aktiengesetz (AktG)</em> in der Fassung vom 1. Januar 2024. Bundesgesetzblatt. <a href="https://www.gesetze-im-internet.de/aktg/" style="color:#7eaaff">https://www.gesetze-im-internet.de/aktg/</a>
+      </li>
+      <li>
+        <div class="apa-type">Gesetz</div>
+        Bundesministerium der Justiz. (2024). <em>Genossenschaftsgesetz (GenG)</em> in der Fassung vom 1. Januar 2024. Bundesgesetzblatt. <a href="https://www.gesetze-im-internet.de/geng/" style="color:#7eaaff">https://www.gesetze-im-internet.de/geng/</a>
+      </li>
+      <li>
+        <div class="apa-type">Online-Quelle</div>
+        Bundesministerium für Wirtschaft und Klimaschutz. (2025). <em>Rechtsformen im Überblick</em>. BMWK. <a href="https://www.bmwk.de/Redaktion/DE/Artikel/Mittelstand/gruendungsratgeber-rechtsformen.html" style="color:#7eaaff">https://www.bmwk.de</a>
+      </li>
+      <li>
+        <div class="apa-type">Online-Quelle</div>
+        Industrie- und Handelskammer (IHK). (2025). <em>Rechtsformen: GmbH, AG und UG im Vergleich</em>. IHK Deutschland. <a href="https://www.ihk.de" style="color:#7eaaff">https://www.ihk.de</a>
+      </li>
+    </ul>
+    <div style="margin-top:8px;font-size:.7rem;color:var(--grey);text-align:center">
+      Zitierformat: APA 7th Edition &nbsp;&#183;&nbsp; Alle Links zuletzt abgerufen: März 2026 &nbsp;&#183;&nbsp; &#169; Can Siebert &amp; Hamzah Meyer
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="copy">&#169; Can Siebert &amp; Hamzah Meyer</span>
+    <span>Lernfeld 1 · Tag 15 · 1.20 Rechtsformen Teil 2</span>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 22</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Rechtsformen Teil 2: Kapitalgesellschaften &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

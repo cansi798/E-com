@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 15 – LF3: Die Allgemeinen Geschäftsbedingungen (AGB)</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 15: Die Allgemeinen Geschäftsbedingungen (AGB)</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was sind Allgemeine Geschäftsbedingungen (AGB)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Mündliche Vereinbarungen zwischen zwei Parteien</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Vorformulierte Vertragsbedingungen, die für eine Vielzahl von Verträgen gelten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Individuelle Absprachen, die Vorrang vor dem Gesetz haben</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Gesetzliche Regelungen, die automatisch gelten</div>
+    </div>
+    <div class="feedback ok">Richtig! AGB sind vorformulierte Vertragsbedingungen einer Vertragspartei, die für eine Vielzahl von Verträgen gelten. Sie werden Bestandteil eines Vertrages, wenn beim Vertragsschluss ausdrücklich auf sie hingewiesen wird.</div>
+    <div class="feedback err">Falsch. AGB sind vorformulierte Vertragsbedingungen, die für eine Vielzahl von Verträgen gelten – keine mündlichen Absprachen oder individuellen Vereinbarungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Welcher Paragraph des BGB regelt die Einbeziehung von AGB in den Vertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>§ 307 BGB</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>§ 309 BGB</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>§ 305 BGB</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>§ 312j BGB</div>
+    </div>
+    <div class="feedback ok">Richtig! § 305 BGB regelt die Einbeziehung der AGB. Der Verwender muss auf die AGB hinweisen, und der Vertragspartner muss die Möglichkeit haben, von ihnen Kenntnis zu nehmen.</div>
+    <div class="feedback err">Falsch. Die Einbeziehung von AGB regelt § 305 BGB. § 307 ist die Inhaltskontrolle, § 309 enthält Klauselverbote ohne Wertung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche drei Voraussetzungen müssen laut § 305 BGB erfüllt sein, damit AGB wirksam in einen Vertrag einbezogen werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Schriftform, Unterschrift, notarielle Beurkundung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Hinweis auf AGB, Möglichkeit der Kenntnisnahme, ausdrückliches Einverständnis</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Veröffentlichung im Bundesanzeiger, Registrierung beim Gericht, Kundenzustimmung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Mindestens 5 Klauseln, deutschsprachig, kostenlos zugänglich</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut § 305 BGB müssen (1) der Verwender ausdrücklich auf die AGB hinweisen, (2) die andere Partei muss in zumutbarer Weise Kenntnis nehmen können, und (3) der Kunde muss sein ausdrückliches Einverständnis abgeben.</div>
+    <div class="feedback err">Falsch. Die drei Voraussetzungen sind: Hinweis auf AGB, Möglichkeit zur Kenntnisnahme und ausdrückliches Einverständnis des Kunden – keine Schriftform oder notarielle Beurkundung erforderlich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was besagt § 305b BGB (Vorrang der Individualabrede)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>AGB haben immer Vorrang vor individuellen Absprachen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Gesetzliche Regelungen haben Vorrang vor AGB und individuellen Absprachen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Individuelle Vereinbarungen haben immer Vorrang vor AGB</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>AGB und individuelle Absprachen gelten gleichwertig nebeneinander</div>
+    </div>
+    <div class="feedback ok">Richtig! § 305b BGB stellt klar, dass individuelle Absprachen immer Vorrang vor AGB haben. Wenn z. B. AGB „Lieferung so schnell wie möglich" sagen, aber mündlich ein fester Termin vereinbart wurde, gilt der Termin.</div>
+    <div class="feedback err">Falsch. § 305b BGB besagt das Gegenteil: Individuelle Vereinbarungen haben immer Vorrang vor AGB – nicht umgekehrt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was sind „überraschende Klauseln" im Sinne von § 305c BGB?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Klauseln, die besonders günstig für den Käufer sind</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ungewöhnliche Bestimmungen, mit denen der Vertragspartner nicht rechnen musste</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Klauseln, die nur in einer Fußnote erwähnt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Klauseln, die nachträglich in den Vertrag eingefügt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Überraschende Klauseln nach § 305c BGB sind so ungewöhnlich, dass der Vertragspartner nicht mit ihnen rechnen braucht. Sie werden nicht Vertragsbestandteil. Beispiel: Beim Kauf einer Kaffeemaschine wird der Käufer zum ausschließlichen Kaffeekauf beim Verkäufer verpflichtet.</div>
+    <div class="feedback err">Falsch. Überraschende Klauseln sind Bestimmungen, die so ungewöhnlich sind, dass der Vertragspartner nicht mit ihnen rechnen muss – sie werden daher nicht Vertragsbestandteil.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was passiert laut § 306 BGB, wenn eine AGB-Klausel unwirksam ist?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der gesamte Vertrag wird nichtig</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Der Käufer kann vom Vertrag zurücktreten</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Die unwirksame Klausel entfällt; der Rest des Vertrags bleibt gültig</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die AGB müssen komplett neu formuliert werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut § 306 BGB bleibt der Vertrag im Übrigen wirksam, wenn eine Klausel unwirksam ist. An die Stelle der unwirksamen Klausel treten die gesetzlichen Vorschriften.</div>
+    <div class="feedback err">Falsch. § 306 BGB stellt klar: Ist eine Klausel unwirksam, entfällt nur diese – der Rest des Vertrags bleibt gültig. Es tritt dann das Gesetz an die Stelle der unwirksamen Klausel.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was prüft § 307 BGB (Inhaltskontrolle)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ob die AGB mindestens 10 Seiten umfassen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ob Klauseln den Vertragspartner entgegen Treu und Glauben unangemessen benachteiligen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ob die AGB vom Notar beurkundet wurden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ob die AGB dem Käufer rechtzeitig übergeben wurden</div>
+    </div>
+    <div class="feedback ok">Richtig! § 307 BGB bestimmt, dass AGB-Klauseln unwirksam sind, wenn sie den Vertragspartner entgegen den Geboten von Treu und Glauben unangemessen benachteiligen. Dies ist der zentrale Prüfmaßstab der Inhaltskontrolle.</div>
+    <div class="feedback err">Falsch. § 307 BGB (Inhaltskontrolle) prüft, ob Klauseln den Vertragspartner entgegen Treu und Glauben unangemessen benachteiligen – unabhängig vom Umfang der AGB.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was unterscheidet § 308 BGB (Klauselverbote mit Wertung) von § 309 BGB (Klauselverbote ohne Wertung)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>§ 308 gilt nur im B2B-Bereich, § 309 nur im B2C-Bereich</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Bei § 308 ist eine juristische Abwägung nötig; bei § 309 sind die 13 genannten Klauseln grundsätzlich unwirksam</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>§ 309 erlaubt Ausnahmen, § 308 nicht</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>§ 308 betrifft Preisklauseln, § 309 betrifft Haftungsausschlüsse</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei § 308 (Klauselverbote mit Wertungsmöglichkeit) müssen Klauseln erst geprüft werden, ob sie den Käufer unangemessen benachteiligen. Bei § 309 (Klauselverbote ohne Wertungsmöglichkeit) sind alle 13 genannten Klauseln grundsätzlich unwirksam – ohne Abwägung.</div>
+    <div class="feedback err">Falsch. § 308 erfordert eine juristische Abwägung, ob die Klausel unangemessen ist. § 309 enthält 13 Klauseln, die grundsätzlich ohne Abwägung unwirksam sind.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Besteht für Webshops eine gesetzliche Pflicht, AGB zu haben?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ja, alle Onlinehändler sind gesetzlich verpflichtet, AGB zu verwenden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Nein, es gibt keine rechtliche Pflicht zu AGB – aber sie bieten entscheidende Vorteile</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ja, aber nur für Shops mit mehr als 100 Bestellungen pro Monat</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Nein, AGB sind grundsätzlich unwirksam und sollten nicht verwendet werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Für Webshops gibt es keine rechtliche Pflicht zu AGB. Dennoch verwenden die meisten Onlinehändler AGB, weil sie Informationspflichten komfortabel erfüllen und rechtliche Abläufe zugunsten des Shops gestalten helfen.</div>
+    <div class="feedback err">Falsch. Es gibt keine gesetzliche Pflicht zu AGB für Webshops. Sie werden trotzdem verwendet, weil sie Vorteile bei der Vertragsgestaltung bieten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Wie muss ein Webshop sicherstellen, dass AGB rechtswirksam Vertragsbestandteil werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>AGB einfach auf der Startseite verstecken – der Kunde hat durch den Besuch zugestimmt</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>AGB nur per E-Mail nach dem Kauf zusenden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Auf AGB hinweisen, leicht auffindbare AGB bereitstellen und Zustimmung per Checkbox einholen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>AGB nur in englischer Sprache veröffentlichen</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Webshop muss den Käufer auf die AGB hinweisen, die AGB leicht und schnell auffindbar machen (z. B. Link auf jeder Seite) und die ausdrückliche Zustimmung des Kunden einholen – z. B. per Checkbox vor dem Kaufabschluss.</div>
+    <div class="feedback err">Falsch. Für wirksame AGB im Webshop müssen drei Dinge beachtet werden: Hinweis auf AGB, leichte Auffindbarkeit und ausdrückliche Zustimmung des Kunden (Checkbox).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was bedeutet die Button-Lösung im E-Commerce-Kontext (im Zusammenhang mit AGB)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>AGB können pauschal in den AGB-Klauseln abweichende Bedingungen regeln</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Abweichungen von objektiven Anforderungen im B2C müssen ausdrücklich und gesondert vom Verbraucher bestätigt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Bestellbutton muss immer grün sein</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Verbraucher dürfen nur per Mausklick AGB akzeptieren</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Button-Lösung bedeutet: Bei Vereinbarungen gegenüber Verbrauchern können von objektiven Anforderungen im B2C-Bereich nur abgewichen werden, wenn der Verbraucher ausdrücklich über das Fehlen informiert wird und die Abweichung ausdrücklich und gesondert vereinbart wurde. Eine pauschale AGB-Klausel reicht nicht aus.</div>
+    <div class="feedback err">Falsch. Die Button-Lösung bedeutet, dass Abweichungen von objektiven Anforderungen im B2C nur wirksam sind, wenn sie ausdrücklich und gesondert vereinbart werden – nicht durch versteckte AGB-Klauseln.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welche AGB-Klausel ist nach §§ 305–310 BGB unwirksam?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>„Zahlung innerhalb von 14 Tagen nach Rechnungserhalt"</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>„Der Verkäufer übernimmt grundsätzlich keine Gewähr"</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>„Standardversand erfolgt innerhalb von 1–3 Werktagen"</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>„Lieferung erfolgt an die angegebene Lieferadresse"</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Klausel „Der Verkäufer übernimmt grundsätzlich keine Gewähr" verstößt gegen Treu und Glauben (§ 307 BGB) und ist daher unwirksam. Gewährleistungsrechte des Käufers können nicht einfach per AGB ausgeschlossen werden.</div>
+    <div class="feedback err">Falsch. Die Klausel über den generellen Gewährleistungsausschluss ist unwirksam, weil sie den Käufer unangemessen benachteiligt und gegen § 307 BGB verstößt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Welcher Paragraph des BGB steuert die AGB-Kontrolle speziell im B2B-Bereich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>§ 305 BGB</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>§ 307 BGB</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>§ 310 BGB</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>§ 309 BGB</div>
+    </div>
+    <div class="feedback ok">Richtig! § 310 BGB enthält spezielle Regelungen für die AGB-Kontrolle zwischen Unternehmern (B2B). Im B2B-Bereich gibt es größere Gestaltungsspielräume, da der Gesetzgeber davon ausgeht, dass Unternehmen sich durch Rechtsberatung absichern können.</div>
+    <div class="feedback err">Falsch. § 310 BGB regelt speziell die AGB-Kontrolle im B2B-Bereich (Geschäfte zwischen Unternehmern). Die anderen Paragraphen betreffen primär den allgemeinen AGB-Schutz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Wie werden AGB im B2B-Bereich einfach in einen Vertrag einbezogen?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span>Durch einfache Erwähnung der existierenden AGB (keine Checkbox nötig)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Nur durch notarielle Beurkundung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Durch Zustimmung per Checkbox wie im B2C-Bereich</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>AGB gelten im B2B automatisch ohne Erwähnung</div>
+    </div>
+    <div class="feedback ok">Richtig! Im B2B-Bereich reicht die einfache Erwähnung der existierenden AGB, um sie zum Vertragsbestandteil zu machen. Eine Checkbox ist nicht erforderlich – dies nennt man die „einfache Einbeziehung".</div>
+    <div class="feedback err">Falsch. Im B2B-Bereich reicht die einfache Erwähnung der AGB für deren Einbeziehung. Im Gegensatz zum B2C ist keine Checkbox-Zustimmung oder notarielle Beurkundung erforderlich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was sind die drei Hauptzwecke von AGB für Unternehmen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Geheimhaltung, Gewinnmaximierung und Steueroptimierung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Vereinheitlichung von Vertragsinhalten, Rationalisierung (Zeitersparnis) und Informationspflichten erfüllen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Werbung, Kundenbindung und Markenbildung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Haftungsausschluss, Preiserhöhung und Lieferverweigerung</div>
+    </div>
+    <div class="feedback ok">Richtig! AGB dienen der Vereinheitlichung (Vertragsinhalte müssen nicht jedes Mal neu ausgehandelt werden), der Rationalisierung (Zeit- und Geldersparnis) und der Erfüllung von Informationspflichten.</div>
+    <div class="feedback err">Falsch. Die drei Hauptzwecke von AGB sind: Vereinheitlichung von Vertragsinhalten, Rationalisierung (Zeitersparnis) und Erfüllung von Informationspflichten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche Klausel der Exclusiva GmbH regelt, dass die Ware bis zur vollständigen Bezahlung Eigentum des Unternehmens bleibt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Widerrufsbelehrung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Geltungsbereich</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Eigentumsvorbehalt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Preisklausel</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Eigentumsvorbehalt bedeutet, dass die Ware bis zur vollständigen Bezahlung Eigentum der Exclusiva GmbH bleibt. Dies ist eine häufige und wichtige AGB-Klausel im Handel.</div>
+    <div class="feedback err">Falsch. Der Eigentumsvorbehalt ist die Klausel, die bestimmt, dass die Ware bis zur vollständigen Bezahlung im Eigentum des Verkäufers bleibt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche Bedingung muss ein Sachmangel-Begriff nach der neuen Systematik erfüllen, damit keine Mängelrechte entstehen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur die subjektiven Voraussetzungen müssen erfüllt sein</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Nur die objektiven Voraussetzungen müssen erfüllt sein</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Sowohl subjektive als auch objektive Voraussetzungen müssen erfüllt sein</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Weder subjektive noch objektive Voraussetzungen sind relevant</div>
+    </div>
+    <div class="feedback ok">Richtig! Mangelfreie Ware muss sowohl subjektive (vereinbarte Beschaffenheit, vereinbarter Verwendungszweck) als auch objektive Voraussetzungen (Eignung zur gewöhnlichen Verwendung, übliche Beschaffenheit) erfüllen. Nur wenn beide erfüllt sind, liegt kein Sachmangel vor.</div>
+    <div class="feedback err">Falsch. Für mangelfreie Ware müssen BEIDE Bedingungen erfüllt sein – sowohl die subjektiven als auch die objektiven Voraussetzungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Was schützen die §§ 305–310 BGB in erster Linie?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Den Verkäufer vor unberechtigten Rückgaben</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Das Finanzamt vor Steuerhinterziehung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Den schwächeren Vertragspartner (in der Regel den Verbraucher) vor unseriösen AGB</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Den Staat vor wirtschaftlichen Schäden</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Zweck der §§ 305–310 BGB ist der Schutz des schwächeren Vertragspartners – in der Regel des Verbrauchers – vor unseriösen oder unangemessenen AGB. Der Verbraucher kennt seine Rechte oft nicht und ist daher besonders schutzwürdig.</div>
+    <div class="feedback err">Falsch. Die §§ 305–310 BGB schützen den schwächeren Vertragspartner (Verbraucher) vor unseriösen AGB. Individuelle Absprachen haben Vorrang, überraschende Klauseln sind unwirksam.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was ist der „Verwender" im Kontext von AGB?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der Kunde, der die AGB akzeptiert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Vertragspartei, die die AGB formuliert hat und sie verwendet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Rechtsanwalt, der die AGB geprüft hat</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Gericht, das AGB-Streitigkeiten entscheidet</div>
+    </div>
+    <div class="feedback ok">Richtig! Der „Verwender" ist die Vertragspartei, die die AGB formuliert hat und sie bei Vertragsschlüssen verwendet. Der Verwender kann durch AGB von gesetzlichen Bestimmungen abweichen – allerdings innerhalb der gesetzlichen Grenzen.</div>
+    <div class="feedback err">Falsch. Der „Verwender" ist derjenige, der die AGB formuliert hat und sie gegenüber anderen Vertragspartnern einsetzt – also in der Regel der Unternehmer/Händler.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche der folgenden Klauseln ist nach § 309 BGB grundsätzlich unwirksam (ohne Wertungsmöglichkeit)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>„Lieferung erfolgt innerhalb von 3–5 Werktagen"</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>„Zahlung ist sofort nach Rechnungsstellung fällig"</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>„Wir haften nicht für Ansprüche nach dem Produkthaftungsgesetz"</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>„Die Ware bleibt bis zur vollständigen Bezahlung unser Eigentum"</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Ausschluss von Haftungsansprüchen nach dem Produkthaftungsgesetz ist nach § 309 BGB grundsätzlich unwirksam. Das Produkthaftungsgesetz schützt Verbraucher vor Schäden durch fehlerhafte Produkte und kann nicht vertraglich ausgeschlossen werden.</div>
+    <div class="feedback err">Falsch. Der Haftungsausschluss für das Produkthaftungsgesetz ist nach § 309 BGB grundsätzlich unwirksam – ohne Abwägungsmöglichkeit. Das Produkthaftungsgesetz kann nicht durch AGB ausgeschlossen werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 15</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

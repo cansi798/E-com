@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 1: Das Modellunternehmen – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #b41e1e;
+    --blue: #1e3c78;
+    --dark: #1a1a2e;
+    --green: #2d8a4e;
+    --orange: #d97706;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+  }
+  header h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  header p { color: #aaa; font-size: 0.85rem; }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: #666; margin-top: 3px; }
+
+  .score-box { display: flex; gap: 16px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 70px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--blue); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border: 1px solid var(--border);
+    border-radius: 16px; background: white; cursor: pointer; font-size: 0.8rem;
+  }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 1rem; line-height: 1.5; margin-bottom: 14px; font-weight: 500; }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.92rem; line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: #eef1f9; }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: #d4f0df; }
+  .choice-btn.wrong-selected { border-color: var(--red); background: #fde8e8; }
+  .choice-btn.missed { border-color: var(--orange); background: #fef3e2; }
+  .choice-btn:disabled { cursor: default; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #d4f0df; color: #1a5c30; }
+  .q-feedback.partial { background: #fef3e2; color: #8a5c00; }
+  .q-feedback.fail { background: #fde8e8; color: #8a0000; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--blue);
+    color: white; border: none; border-radius: 7px; cursor: pointer; font-size: 0.88rem;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: white; border-radius: 12px; padding: 24px;
+    text-align: center; margin-bottom: 20px; display: none;
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 8px 0; }
+  .final-banner .sub { color: #ccc; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#127891; Quiz – Tag 1: Das Modellunternehmen</h1>
+  <p>Kaufmann im E-Commerce &middot; Lernfeld 1 &middot; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 1: Das Modellunternehmen</div>
+      <div class="quiz-meta">61 Fragen &middot; Bei jeder Frage sind 1 oder 2 Antworten korrekt</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">61</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div>Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    num: 1,
+    text: `In welchem Jahr wurde die Exclusiva GmbH als Einzelunternehmen gegründet?`,
+    choices: [
+    {"label": "A", "text": "1978"},
+    {"label": "B", "text": "1969"},
+    {"label": "C", "text": "1985"},
+    {"label": "D", "text": "1993 enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 2,
+    text: `Was war das ursprüngliche Sortiment der Exclusiva GmbH bei Gründung?`,
+    choices: [
+    {"label": "A", "text": "Büroausstattung und Möbel"},
+    {"label": "B", "text": "Elektronikartikel und Computer"},
+    {"label": "C", "text": "Luxus-Schreibwaren"},
+    {"label": "D", "text": "Sportartikel und Freizeitbedarf enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 3,
+    text: `Wo hat die Exclusiva GmbH ihren Hauptsitz?`,
+    choices: [
+    {"label": "A", "text": "Hannover"},
+    {"label": "B", "text": "Hamburg"},
+    {"label": "C", "text": "Hildesheim"},
+    {"label": "D", "text": "Braunschweig enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 4,
+    text: `In welchem Jahr wurde die Exclusiva GmbH in eine GmbH umgewandelt?`,
+    choices: [
+    {"label": "A", "text": "1969"},
+    {"label": "B", "text": "1993"},
+    {"label": "C", "text": "1978"},
+    {"label": "D", "text": "1985 enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 5,
+    text: `Wann startete die Exclusiva GmbH ihren ersten Onlineshop?`,
+    choices: [
+    {"label": "A", "text": "2010"},
+    {"label": "B", "text": "1997"},
+    {"label": "C", "text": "2001"},
+    {"label": "D", "text": "2005 enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 6,
+    text: `Wie viele Mitarbeiter beschäftigt die Exclusiva GmbH ungefähr?`,
+    choices: [
+    {"label": "A", "text": "ca. 100"},
+    {"label": "B", "text": "ca. 500"},
+    {"label": "C", "text": "ca. 300"},
+    {"label": "D", "text": "ca. 50 enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 7,
+    text: `Wie hoch ist der Jahresumsatz der Exclusiva GmbH circa?`,
+    choices: [
+    {"label": "A", "text": "ca. 50 Mio. EUR"},
+    {"label": "B", "text": "ca. 110 Mio. EUR"},
+    {"label": "C", "text": "ca. 200 Mio. EUR"},
+    {"label": "D", "text": "ca. 500 Mio. EUR enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 8,
+    text: `In welchem Marktsegment ist die Exclusiva GmbH tätig?`,
+    choices: [
+    {"label": "A", "text": "Discounter / Billigsegment"},
+    {"label": "B", "text": "Mittelpreissegment"},
+    {"label": "C", "text": "Premium / Luxus"},
+    {"label": "D", "text": "Großhandel enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 9,
+    text: `In welchem Jahr feierte die Exclusiva GmbH ihr 50-jähriges Jubiläum?`,
+    choices: [
+    {"label": "A", "text": "2015"},
+    {"label": "B", "text": "2001"},
+    {"label": "C", "text": "2010"},
+    {"label": "D", "text": "2019 enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 10,
+    text: `Was bedeutet die Abkürzung GmbH?`,
+    choices: [
+    {"label": "A", "text": "Gesellschaft mit beschränkter Haftung"},
+    {"label": "B", "text": "Gemeinschaft mit beschränktem Handel"},
+    {"label": "C", "text": "Gesellschaft mit besonderer Haftung"},
+    {"label": "D", "text": "Gemeinsamer mit Buchhaltungs-Handel enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 11,
+    text: `Wie hoch ist das gesetzlich vorgeschriebene Mindestkapital (Stammkapital) einer GmbH?`,
+    choices: [
+    {"label": "A", "text": "10.000 EUR"},
+    {"label": "B", "text": "50.000 EUR"},
+    {"label": "C", "text": "1.000 EUR"},
+    {"label": "D", "text": "25.000 EUR enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 12,
+    text: `Wie haften die Gesellschafter einer GmbH?`,
+    choices: [
+    {"label": "A", "text": "Mit ihrem gesamten Privatvermögen"},
+    {"label": "B", "text": "Gar nicht -- die Haftung entfällt vollständig"},
+    {"label": "C", "text": "Nur mit ihrer Einlage (Stammeinlage)"},
+    {"label": "D", "text": "Solidarisch mit allen anderen Gesellschaftern unbegrenzt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 13,
+    text: `Was bedeutet es, dass die GmbH eine juristische Person ist?`,
+    choices: [
+    {"label": "A", "text": "Sie darf keine Verträge abschließen"},
+    {"label": "B", "text": "Sie kann klagen und verklagt werden"},
+    {"label": "C", "text": "Nur natürliche Personen dürfen Gesellschafter sein"},
+    {"label": "D", "text": "Sie muss keine Steuern zahlen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 14,
+    text: `Wo muss eine GmbH eingetragen sein?`,
+    choices: [
+    {"label": "A", "text": "Im Grundbuch"},
+    {"label": "B", "text": "Im Steuerregister"},
+    {"label": "C", "text": "Im Handelsregister"},
+    {"label": "D", "text": "Im Melderegister enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 15,
+    text: `Welche Organe hat eine GmbH? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Vorstand"},
+    {"label": "B", "text": "Geschäftsführung"},
+    {"label": "C", "text": "Gesellschafterversammlung"},
+    {"label": "D", "text": "Aufsichtskommission enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "C"]
+  },
+  {
+    num: 16,
+    text: `Was ist die Aufgabe des Bereichs Einkauf in der Exclusiva GmbH?`,
+    choices: [
+    {"label": "A", "text": "Kundenkommunikation und -beratung"},
+    {"label": "B", "text": "Buchführung und Jahresabschluss"},
+    {"label": "C", "text": "Beschaffung von Waren, Verhandlung mit Lieferanten, Preisvergleiche"},
+    {"label": "D", "text": "Versand und Retourenmanagement enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 17,
+    text: `Welche Aufgaben hat der Bereich Lager & Logistik? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Jahresabschluss erstellen"},
+    {"label": "B", "text": "Warenannahme und Einlagerung"},
+    {"label": "C", "text": "Lieferantenverhandlungen führen"},
+    {"label": "D", "text": "Kommissionierung und Versand enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 18,
+    text: `Was gehört zu den Aufgaben des Rechnungswesens?`,
+    choices: [
+    {"label": "A", "text": "Pflege des Onlineshops"},
+    {"label": "B", "text": "Buchführung, Controlling, Jahresabschluss, Lohnabrechnung"},
+    {"label": "C", "text": "Warenannahme und -prüfung"},
+    {"label": "D", "text": "Kundenberatung im stationären Handel enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 19,
+    text: `Welcher Bereich ist für die Pflege des Onlineshops und Online-Marketing zuständig?`,
+    choices: [
+    {"label": "A", "text": "Einkauf"},
+    {"label": "B", "text": "Verwaltung"},
+    {"label": "C", "text": "Rechnungswesen"},
+    {"label": "D", "text": "Onlinevertrieb enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 20,
+    text: `Was ist der Betriebsrat?`,
+    choices: [
+    {"label": "A", "text": "Ein freiwilliges Beratungsgremium der Geschäftsleitung"},
+    {"label": "B", "text": "Das gewählte Gremium der Arbeitnehmer zur Interessenvertretung"},
+    {"label": "C", "text": "Eine staatliche Aufsichtsbehörde"},
+    {"label": "D", "text": "Ein Zusammenschluss von Lieferanten enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 21,
+    text: `Ab wie vielen wahlberechtigten Arbeitnehmern kann ein Betriebsrat gewählt werden?`,
+    choices: [
+    {"label": "A", "text": "Ab 10 Arbeitnehmern"},
+    {"label": "B", "text": "Ab 20 Arbeitnehmern"},
+    {"label": "C", "text": "Ab 5 Arbeitnehmern"},
+    {"label": "D", "text": "Ab 50 Arbeitnehmern enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 22,
+    text: `Auf welchem Gesetz basiert die Rechtsgrundlage des Betriebsrats?`,
+    choices: [
+    {"label": "A", "text": "Bürgerliches Gesetzbuch (BGB)"},
+    {"label": "B", "text": "Handelsgesetzbuch (HGB)"},
+    {"label": "C", "text": "Betriebsverfassungsgesetz (BetrVG)"},
+    {"label": "D", "text": "Arbeitsschutzgesetz (ArbSchG) enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 23,
+    text: `Wen vertritt die Jugend- und Auszubildendenvertretung (JAV)?`,
+    choices: [
+    {"label": "A", "text": "Alle Mitarbeiter über 50 Jahre"},
+    {"label": "B", "text": "Nur Auszubildende im ersten Lehrjahr"},
+    {"label": "C", "text": "Jugendliche unter 18 Jahren und alle Auszubildenden"},
+    {"label": "D", "text": "Teilzeitkräfte und Minijobber enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 24,
+    text: `Was bedeutet B2B?`,
+    choices: [
+    {"label": "A", "text": "Business to Buyer"},
+    {"label": "B", "text": "Business to Business"},
+    {"label": "C", "text": "Bargain to Business"},
+    {"label": "D", "text": "Brand to Brand enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 25,
+    text: `Was ist ein Beispiel für eine B2B-Geschäftsbeziehung der Exclusiva GmbH?`,
+    choices: [
+    {"label": "A", "text": "Ein Privatkunde kauft ein Produkt im Onlineshop"},
+    {"label": "B", "text": "Die Exclusiva GmbH kauft Waren bei einem Großhändler ein"},
+    {"label": "C", "text": "Ein Schüler bestellt Schreibwaren für den Schulunterricht"},
+    {"label": "D", "text": "Eine Privatperson gibt eine Bewertung im Onlineshop ab enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 26,
+    text: `Was bedeutet B2C?`,
+    choices: [
+    {"label": "A", "text": "Business to Competitor"},
+    {"label": "B", "text": "Business to Commerce"},
+    {"label": "C", "text": "Business to Consumer"},
+    {"label": "D", "text": "Bargain to Customer enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 27,
+    text: `Wofür steht das "C" in B2C?`,
+    choices: [
+    {"label": "A", "text": "Company"},
+    {"label": "B", "text": "Channel"},
+    {"label": "C", "text": "Consumer (Verbraucher)"},
+    {"label": "D", "text": "Contract enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 28,
+    text: `Was ist ein Warenwirtschaftssystem (WWS)?`,
+    choices: [
+    {"label": "A", "text": "Ein System zur Verwaltung von Mitarbeiterdaten"},
+    {"label": "B", "text": "Eine Software zur Verwaltung aller warenbezogenen Daten und Prozesse"},
+    {"label": "C", "text": "Ein Programm zur Erstellung von Werbekampagnen"},
+    {"label": "D", "text": "Eine Plattform für Kundenbewertungen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 29,
+    text: `Welche der folgenden Systeme sind bekannte Warenwirtschaftssysteme? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "SAP"},
+    {"label": "B", "text": "Adobe Photoshop"},
+    {"label": "C", "text": "Microsoft Dynamics"},
+    {"label": "D", "text": "Google Analytics enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 30,
+    text: `Welche Funktionen umfasst ein Warenwirtschaftssystem? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Personalverwaltung"},
+    {"label": "B", "text": "Bestandsverwaltung (Lager)"},
+    {"label": "C", "text": "Buchführung und Steuererklärung"},
+    {"label": "D", "text": "Bestellwesen (Einkauf) enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 31,
+    text: `Was ist ein Unternehmensleitbild (Mission Statement)?`,
+    choices: [
+    {"label": "A", "text": "Ein internes Dokument nur für die Geschäftsführung"},
+    {"label": "B", "text": "Eine Beschreibung der grundlegenden Werte, Ziele und des Sinns eines Unternehmens"},
+    {"label": "C", "text": "Ein rechtlich verbindlicher Vertrag mit Lieferanten"},
+    {"label": "D", "text": "Eine Liste der aktuellen Produktangebote enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 32,
+    text: `Welche drei Fragen beantwortet ein Unternehmensleitbild? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Wer sind wir? (Identität)"},
+    {"label": "B", "text": "Wie hoch ist unser Gewinn?"},
+    {"label": "C", "text": "Was wollen wir? (Vision und Ziele)"},
+    {"label": "D", "text": "Wer sind unsere Mitbewerber? enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 33,
+    text: `Welche drei Bestandteile hat ein Unternehmensleitbild?`,
+    choices: [
+    {"label": "A", "text": "Strategie, Taktik, Operation"},
+    {"label": "B", "text": "Mission, Vision, Werte"},
+    {"label": "C", "text": "Produkt, Preis, Promotion"},
+    {"label": "D", "text": "Einkauf, Lager, Verkauf enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 34,
+    text: `Welches Grundprinzip der Unternehmensphilosophie steht bei der Exclusiva GmbH an erster Stelle?`,
+    choices: [
+    {"label": "A", "text": "Quantität vor Qualität"},
+    {"label": "B", "text": "Gewinnmaximierung"},
+    {"label": "C", "text": "Qualität vor Quantität"},
+    {"label": "D", "text": "Kostenreduzierung enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 35,
+    text: `In welchem Gesetz sind die Handlungsvollmachten geregelt?`,
+    choices: [
+    {"label": "A", "text": "Bürgerliches Gesetzbuch (BGB)"},
+    {"label": "B", "text": "Handelsgesetzbuch (HGB), § 54"},
+    {"label": "C", "text": "Betriebsverfassungsgesetz (BetrVG)"},
+    {"label": "D", "text": "Steuergesetzbuch (StGB) enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 36,
+    text: `Was ist die weiteste Form der Handlungsvollmacht?`,
+    choices: [
+    {"label": "A", "text": "Einzelvollmacht"},
+    {"label": "B", "text": "Artvollmacht"},
+    {"label": "C", "text": "Prokura"},
+    {"label": "D", "text": "Allgemeine Handlungsvollmacht enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 37,
+    text: `Was darf ein Mitarbeiter mit einer allgemeinen Handlungsvollmacht tun?`,
+    choices: [
+    {"label": "A", "text": "Nur einen einzigen Vertrag abschließen"},
+    {"label": "B", "text": "Nur Verträge einer bestimmten Art abschließen"},
+    {"label": "C", "text": "Alle Geschäfte, die der Betrieb eines Handelsgewerbes gewöhnlich mit sich bringt"},
+    {"label": "D", "text": "Grundstücke kaufen und verkaufen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 38,
+    text: `Welches Praxisbeispiel beschreibt eine allgemeine Handlungsvollmacht?`,
+    choices: [
+    {"label": "A", "text": "Ein Mitarbeiter unterzeichnet genau einen bestimmten Liefervertrag"},
+    {"label": "B", "text": "Ein Einkäufer darf nur Einkaufsverträge abschließen"},
+    {"label": "C", "text": "Ein Filialleiter kann alle alltäglichen Geschäfte selbstständig abschließen"},
+    {"label": "D", "text": "Ein Auszubildender darf kleine Bestellungen bis 50 EUR aufgeben enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 39,
+    text: `Was ist eine Artvollmacht (Arthandlungsvollmacht)?`,
+    choices: [
+    {"label": "A", "text": "Ermächtigung zu einem einzigen, bestimmten Geschäft"},
+    {"label": "B", "text": "Ermächtigung zu allen Geschäften ohne Einschränkung"},
+    {"label": "C", "text": "Ermächtigung zu einer bestimmten Art von Geschäften"},
+    {"label": "D", "text": "Ermächtigung zur Unternehmensführung enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 40,
+    text: `Welches Praxisbeispiel beschreibt eine Artvollmacht?`,
+    choices: [
+    {"label": "A", "text": "Ein Filialleiter kann alle Alltagsgeschäfte abschließen"},
+    {"label": "B", "text": "Ein Mitarbeiter im Einkauf darf nur Einkaufsverträge abschließen"},
+    {"label": "C", "text": "Ein Mitarbeiter wird beauftragt, genau einen Mietvertrag zu unterzeichnen"},
+    {"label": "D", "text": "Die Geschäftsführung darf Grundstücke kaufen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 41,
+    text: `Was ist die engste Form der Handlungsvollmacht?`,
+    choices: [
+    {"label": "A", "text": "Allgemeine Handlungsvollmacht"},
+    {"label": "B", "text": "Prokura"},
+    {"label": "C", "text": "Artvollmacht"},
+    {"label": "D", "text": "Einzelvollmacht (Spezialvollmacht) enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 42,
+    text: `Was beschreibt die Einzelvollmacht?`,
+    choices: [
+    {"label": "A", "text": "Ermächtigung zu einem einzelnen, bestimmten Geschäft"},
+    {"label": "B", "text": "Ermächtigung zu allen gewöhnlichen Handelsgeschäften"},
+    {"label": "C", "text": "Ermächtigung zu einer Kategorie von Geschäften"},
+    {"label": "D", "text": "Ermächtigung zur Prokura enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 43,
+    text: `Welche der folgenden Geschäfte sind von der Handlungsvollmacht grundsätzlich ausgeschlossen? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Einkauf von Büromaterial"},
+    {"label": "B", "text": "Aufnahme von Darlehen"},
+    {"label": "C", "text": "Erteilung von Rabatten an Kunden"},
+    {"label": "D", "text": "Eingehen von Wechselverbindlichkeiten enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 44,
+    text: `Was ist die erste betriebliche Grundfunktion im Betriebsprozess?`,
+    choices: [
+    {"label": "A", "text": "Verkauf"},
+    {"label": "B", "text": "Rechnungswesen"},
+    {"label": "C", "text": "Beschaffung (Einkauf)"},
+    {"label": "D", "text": "Lager enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 45,
+    text: `Welche vier betrieblichen Grundfunktionen gibt es? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Marketing"},
+    {"label": "B", "text": "Beschaffung"},
+    {"label": "C", "text": "Personalwesen"},
+    {"label": "D", "text": "Lager enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 46,
+    text: `Was gehört zur Grundfunktion Beschaffung?`,
+    choices: [
+    {"label": "A", "text": "Jahresabschluss und Lohnabrechnung"},
+    {"label": "B", "text": "Planung und Durchführung des Einkaufs, Lieferantenauswahl und -verhandlung"},
+    {"label": "C", "text": "Kommissionierung und Versand"},
+    {"label": "D", "text": "Kundenkommunikation und Auftragsbearbeitung enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 47,
+    text: `Was umfasst die Grundfunktion Lager?`,
+    choices: [
+    {"label": "A", "text": "Buchführung und Kostenrechnung"},
+    {"label": "B", "text": "Warenannahme, -prüfung, Einlagerung, Bestandsführung, Kommissionierung"},
+    {"label": "C", "text": "Lieferantenauswahl und Preisverhandlungen"},
+    {"label": "D", "text": "Online-Marketing und SEO enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 48,
+    text: `Was gehört zur Grundfunktion Verkauf?`,
+    choices: [
+    {"label": "A", "text": "Beschaffung neuer Waren bei Lieferanten"},
+    {"label": "B", "text": "Warenannahme und Einlagerung"},
+    {"label": "C", "text": "Kundenakquise, Auftragsbearbeitung, Versand, Kundendienst"},
+    {"label": "D", "text": "Buchführung und Jahresabschluss enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 49,
+    text: `In welchem Jahr wurde der Beruf Kaufmann/Kauffrau im E-Commerce als eigenständiger Ausbildungsberuf anerkannt?`,
+    choices: [
+    {"label": "A", "text": "2015"},
+    {"label": "B", "text": "2010"},
+    {"label": "C", "text": "2020"},
+    {"label": "D", "text": "2018 enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 50,
+    text: `Was kombiniert der Beruf Kaufmann/Kauffrau im E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Handwerkliche Fähigkeiten mit technischem Wissen"},
+    {"label": "B", "text": "Kaufmännische Kenntnisse mit digitalen Kompetenzen"},
+    {"label": "C", "text": "Sprachkenntnisse mit naturwissenschaftlichem Wissen"},
+    {"label": "D", "text": "Soziale Arbeit mit Betriebswirtschaft enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 51,
+    text: `Welche der folgenden Aufgaben gehören zum Berufsbild des E-Commerce-Kaufmanns? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Analyse von Kennzahlen (KPIs, Conversion Rate)"},
+    {"label": "B", "text": "Reparatur von Computerhardware"},
+    {"label": "C", "text": "Auftragsbearbeitung und Retourenmanagement"},
+    {"label": "D", "text": "Architektur und Raumgestaltung enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 52,
+    text: `Was ist Online-Marketing im Kontext des E-Commerce-Kaufmanns?`,
+    choices: [
+    {"label": "A", "text": "Werbung nur in gedruckten Zeitungen"},
+    {"label": "B", "text": "SEO, SEA, Social Media, Newsletter"},
+    {"label": "C", "text": "Telefonverkauf und Haustürwerbung"},
+    {"label": "D", "text": "Veranstaltungsmanagement enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 53,
+    text: `Welche fachlichen Kompetenzen benötigt ein E-Commerce-Kaufmann? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Kenntnisse im Online-Marketing"},
+    {"label": "B", "text": "Tischlerkenntnisse"},
+    {"label": "C", "text": "Rechtliche Grundkenntnisse (Datenschutz, Vertragsrecht)"},
+    {"label": "D", "text": "Kochkenntnisse enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 54,
+    text: `Welche persönlichen Kompetenzen werden vom E-Commerce-Kaufmann erwartet? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Affinität zu digitalen Medien"},
+    {"label": "B", "text": "Körperliche Ausdauer für Schichtarbeit"},
+    {"label": "C", "text": "Analytisches Denken"},
+    {"label": "D", "text": "Kenntnisse in der Metallverarbeitung enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 55,
+    text: `Wie hoch war laut bevh (2023) der Gesamtumsatz des interaktiven Handels in Deutschland im Jahr 2022?`,
+    choices: [
+    {"label": "A", "text": "Über 10 Milliarden Euro"},
+    {"label": "B", "text": "Über 50 Milliarden Euro"},
+    {"label": "C", "text": "Über 100 Milliarden Euro"},
+    {"label": "D", "text": "Über 500 Milliarden Euro enumerate"}
+    ],
+    multi: false,
+    correct: ["A", "C"]
+  },
+  {
+    num: 56,
+    text: `Welche Rechtsform ist die Exclusiva GmbH?`,
+    choices: [
+    {"label": "A", "text": "Einzelunternehmen"},
+    {"label": "B", "text": "Aktiengesellschaft (AG)"},
+    {"label": "C", "text": "Gesellschaft mit beschränkter Haftung (GmbH)"},
+    {"label": "D", "text": "Offene Handelsgesellschaft (OHG) enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 57,
+    text: `Welche Vertriebskanäle nutzt die Exclusiva GmbH? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Stationären Handel"},
+    {"label": "B", "text": "Direktvertrieb an der Haustür"},
+    {"label": "C", "text": "Onlinevertrieb"},
+    {"label": "D", "text": "Telefonvertrieb enumerate"}
+    ],
+    multi: true,
+    correct: ["C"]
+  },
+  {
+    num: 58,
+    text: `Wann wurde der Onlinevertrieb der Exclusiva GmbH als eigenständiger Unternehmensbereich vollständig integriert?`,
+    choices: [
+    {"label": "A", "text": "2001"},
+    {"label": "B", "text": "2015"},
+    {"label": "C", "text": "2010"},
+    {"label": "D", "text": "2019 enumerate"}
+    ],
+    multi: false,
+    correct: ["A", "C"]
+  },
+  {
+    num: 59,
+    text: `Welche Eselsbrücke gilt für die drei Handlungsvollmachten?`,
+    choices: [
+    {"label": "A", "text": "E -- A -- A (Einzel -- Art -- Allgemein)"},
+    {"label": "B", "text": "A -- A -- E (Alles -- Art -- Einzel)"},
+    {"label": "C", "text": "A -- E -- A (Allgemein -- Einzel -- Art)"},
+    {"label": "D", "text": "E -- E -- A (Einzel -- Einzel -- Allgemein) enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 60,
+    text: `Was bezeichnet der Begriff Kapitalgesellschaft, zu der die GmbH gehört?`,
+    choices: [
+    {"label": "A", "text": "Eine Gesellschaft, bei der das persönliche Vertrauen der Gesellschafter im Vordergrund steht"},
+    {"label": "B", "text": "Eine Gesellschaft, die ihr Kapital durch Staatsgelder erhält"},
+    {"label": "C", "text": "Eine Gesellschaft, bei der die Haftung auf das eingezahlte Kapital beschränkt ist"},
+    {"label": "D", "text": "Eine Gesellschaft mit unbeschränkter Haftung der Gesellschafter enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 61,
+    text: `Welcher Bereich der Exclusiva GmbH ist laut Organigramm direkt unter der Geschäftsleitung angesiedelt und hat beratende Funktion (kein Linienbereich)?`,
+    choices: [
+    {"label": "A", "text": "Einkauf"},
+    {"label": "B", "text": "Betriebsrat & JAV"},
+    {"label": "C", "text": "Rechnungswesen"},
+    {"label": "D", "text": "Onlinevertrieb enumerate"}
+    ],
+    multi: false,
+    correct: []
+  },
+];
+
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">ℹ Mehrfachauswahl: 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '✓ Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '◑ Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '✗ Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% · Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

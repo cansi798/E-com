@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 1 – LF2: Sortimentsaufbau im Onlinehandel</title>
+<style>
+:root {
+  --primary: #2980B9; --primary-light: #D6EAF8; --primary-dark: #1A5276;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box {
+  background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center;
+}
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+
+/* Progress */
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+
+/* Main */
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+
+/* Question card */
+.q-card {
+  background:var(--bg-card); border-radius:16px; border:1px solid var(--border);
+  box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px;
+  display:none;
+}
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.q-hint { font-size:.82rem; color:var(--text-muted); font-style:italic; margin-bottom:16px; }
+
+/* Options */
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt {
+  background:var(--bg); border:2px solid var(--border); border-radius:12px;
+  padding:14px 18px; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4;
+}
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary-light);
+  color:var(--primary); font-weight:700; font-size:.82rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+
+/* Feedback */
+.feedback {
+  margin-top:16px; padding:14px 18px; border-radius:10px;
+  font-size:.88rem; line-height:1.6; display:none;
+}
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+
+/* Nav buttons */
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn {
+  padding:10px 24px; border-radius:30px; border:none; cursor:pointer;
+  font-size:.88rem; font-weight:700; transition:all .2s;
+}
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+.btn-skip { background:var(--bg); color:var(--text-muted); border:1px solid var(--border); }
+.btn-skip:hover { background:var(--bg);}
+.btn:disabled { opacity:.4; cursor:default; }
+
+/* Results */
+#result-card {
+  display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border);
+  box-shadow:var(--shadow); padding:40px 32px; text-align:center;
+}
+#result-card.show { display:block; }
+.result-circle {
+  width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.4rem; font-weight:800;
+}
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+
+/* Question overview dots */
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot {
+  width:12px; height:12px; border-radius:50%; background:var(--border);
+  cursor:pointer; transition:all .2s;
+}
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+
+footer {
+  text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px;
+  border-top:1px solid var(--border); margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 1: Sortimentsaufbau im Onlinehandel</h1>
+    <div class="meta">Lernfeld 2 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+
+<main>
+  <div id="q-dots"></div>
+
+  <!-- ===== FRAGEN ===== -->
+
+  <div class="q-card active" data-q="1">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist ein <strong>Sortiment</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Preisliste eines Handelsbetriebs</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Das Lagerkonzept eines Onlineshops</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die Gesamtheit aller Waren und Dienstleistungen, die ein Handelsbetrieb anbietet</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur die Hauptprodukte eines Unternehmens</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Das Sortiment umfasst alle Waren und Dienstleistungen eines Handelsbetriebs – nicht nur die Hauptprodukte.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Richtig: Das Sortiment ist die <em>Gesamtheit aller Waren und Dienstleistungen</em>, die ein Handelsbetrieb anbietet (Antwort C).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="2">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was ist die <strong>kleinste Einheit</strong> des Sortiments?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Warengruppe</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Warenart</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Artikel</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> Sorte</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Die Sorte ist die kleinste Einheit. Sorten unterscheiden sich nur nach Menge, Größe, Farbe und Musterung.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Richtig: Die <em>Sorte</em> ist die kleinste Einheit. Merke: Sorte &lt; Artikel &lt; Warenart &lt; Warengruppe (von klein nach groß).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="3">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche Reihenfolge der Sortimentshierarchie ist <strong>korrekt</strong> (von groß nach klein)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sorte → Artikel → Warenart → Warengruppe</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Warengruppe → Warenart → Artikel → Sorte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Artikel → Warengruppe → Warenart → Sorte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Warenart → Artikel → Warengruppe → Sorte</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Eselsbrücke: <strong>WWAS</strong> = Warengruppe → Warenart → Artikel → Sorte.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Korrekte Reihenfolge (groß → klein): <em>Warengruppe → Warenart → Artikel → Sorte</em>. Merke: WWAS.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="4">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was bestimmt die <strong>Sortimentsbreite</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Die Anzahl der Warenarten und Warengruppen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Anzahl der Artikel und Sorten je Warenart</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Anzahl der Mitarbeiter im Lager</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Jahresumsatz des Sortiments</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Breite = Anzahl der Warengruppen und Warenarten. Je mehr Warengruppen, desto breiter das Sortiment.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die <em>Sortimentsbreite</em> wird durch die Anzahl der <em>Warenarten und Warengruppen</em> bestimmt (Antwort A). Tiefe = Sorten je Artikel.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="5">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was charakterisiert das <strong>Kernsortiment</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Es ergänzt das Randsortiment und hat einen geringen Umsatzanteil</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Es umfasst ausschließlich neue Produkte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Es besteht aus Artikeln, die nicht dauerhaft im Sortiment bleiben</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> Es ist der Sortimentsteil, auf den sich die Haupttätigkeit erstreckt und der überwiegend den Umsatz erbringt</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Das Kernsortiment ist der Kern des Unternehmens – es erbringt den Hauptumsatz.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das <em>Kernsortiment</em> erstreckt sich auf die Haupttätigkeit und erbringt überwiegend den Umsatz (Antwort D). Das Randsortiment hat den geringeren Umsatzanteil.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="6">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Wofür steht die Abkürzung <strong>NOS</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> New Online Shop</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Non-Official Sales</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Never out of stock</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> New Order System</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> NOS = „never out of stock" – diese Artikel sind immer auf Lager und sollen nie ausverkauft sein.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> NOS steht für <em>„never out of stock"</em> – Standardartikel, die immer vorrätig sein sollen (Antwort C).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="7">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Warum sind <strong>Nischenprodukte</strong> im Onlinehandel profitabler als im stationären Handel?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Weil Onlinekunden grundsätzlich mehr bezahlen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Weil der Onlineshop nicht durch begrenzte Lagerflächen oder Verkaufsflächen eingeschränkt ist</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Weil Nischenprodukte online günstiger produziert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Weil Onlineshops keine Umsatzsteuer zahlen müssen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Der Long-Tail-Effekt: Im Onlinehandel können selbst Nischenprodukte mit kleiner Nachfrage rentabel sein, da keine Flächenbeschränkung besteht.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Der Grund ist die fehlende Flächenbeschränkung (Antwort B). Ein Onlineshop ist nur durch Webserver-Kapazität und Versandmöglichkeiten begrenzt – nicht durch Lager- oder Verkaufsfläche.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="8">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was beschreibt einen <strong>Fehlverkauf</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Ware wird zu einem falschen Preis verkauft</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Eine Ware, die im Sortiment geführt wird, war zum Zeitpunkt der Nachfrage nicht auf Lager</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Kunde gibt eine fehlerhafte Bestellung auf</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Ware wird dauerhaft aus dem Sortiment genommen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Fehlverkauf = die Ware ist im Sortiment vorhanden, aber gerade nicht vorrätig. Fehler im Lager!</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Fehlverkauf</em> = Ware ist im Sortiment, war aber nicht auf Lager (Antwort B). Merke: Fehlverkauf = Fehler im <strong>Lager</strong>.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="9">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was beschreibt einen <strong>Nichtverkauf</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Ware wurde verkauft, aber nicht bezahlt</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Ein Angebot wurde abgelehnt</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Ein Kunde fragt eine Ware nach, die im Sortiment nicht geführt wird</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Ware wurde beschädigt zurückgegeben</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Nichtverkauf = Ware wird von Kunden gewünscht, aber gar nicht im Sortiment geführt. Hinweis auf eine Sortimentslücke!</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Nichtverkauf</em> = Kunde fragt eine Ware nach, die nicht im Sortiment ist (Antwort C). Merke: Nichtverkauf = <strong>Nicht</strong> im Sortiment.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="10">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was enthält die <strong>Pennerliste</strong> aus einem KER-Bericht?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Alle Artikel mit dem besten Rohertrag</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Alle Artikel, die wenig verkauft wurden – Kandidaten für die Sortimentsbereinigung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Alle NOS-Artikel des Sortiments</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Alle gut verkauften Artikel</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Pennerliste = schwach drehende Artikel. Diese sind Kandidaten für die Sortimentsbereinigung. Die Rennerliste zeigt die gut verkauften Artikel.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die <em>Pennerliste</em> enthält Artikel mit wenig Verkäufen – Kandidaten für die Sortimentsbereinigung (Antwort B). Die <em>Rennerliste</em> zeigt die gut verkauften Artikel.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="11">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was geschieht bei einer <strong>Sortimentsbereinigung</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Bestimmte Artikel und Sorten werden aus dem Sortiment gestrichen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Neue Artikel werden in das Sortiment aufgenommen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Sortiment wird auf neue Märkte ausgerichtet</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Preise aller Artikel werden reduziert</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Bereinigung = Artikel rausnehmen (Produktelimination). Gründe: veraltet, kaum Absatz, Kosten nicht gedeckt.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Bei der <em>Sortimentsbereinigung</em> werden Artikel <strong>gestrichen</strong> (Produktelimination), nicht aufgenommen (Antwort A).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="12">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Was versteht man unter <strong>Diversifikation</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Streichung von Artikeln aus dem Sortiment</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Erweiterung um weitere Sorten innerhalb einer Warenart</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Nutzung sozialer Medien für den Verkauf</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> Aufnahme von Waren, die in keinem direkten Zusammenhang mit dem bisherigen Betätigungsfeld stehen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Diversifikation bedeutet Abwechslung/Vielfalt – Aufnahme von Produkten ohne direkten Bezug zum bisherigen Sortiment.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Diversifikation</em> = Aufnahme von Waren ohne direkten Zusammenhang mit dem bisherigen Betätigungsfeld (Antwort D).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="13">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Welches ist ein Beispiel für <strong>horizontale Diversifikation</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Textilgroßhandlung kauft eine Wäschefabrik (vor­gelagert)</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Lebensmittelhändler nimmt Blumen ins Sortiment auf</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Textilgroßhandlung kauft ein Softwareunternehmen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Webshop streicht alle Nischenprodukte aus dem Sortiment</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Horizontal = gleiche Wirtschaftsstufe (beide sind Händler). Der Lebensmittelhändler bleibt auf seiner Handelsstufe, erweitert aber das Sortiment seitwärts.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Horizontal</em> = gleiche Wirtschaftsstufe. Beispiel: Lebensmittelhändler nimmt Blumen auf (Antwort B). Textilgroßhandlung kauft Wäschefabrik wäre vertikal.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="14">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Auf wen gehen die <strong>Marktfeldstrategien</strong> zurück?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Peter Drucker</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Philip Kotler</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Harry Igor Ansoff</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Michael Porter</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Harry Igor Ansoff veröffentlichte die Marktfeldstrategien 1957 im Harvard Business Review.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die Marktfeldstrategien gehen auf <em>Harry Igor Ansoff</em> zurück (Antwort C), der sie 1957 entwickelte. Die „Ansoff-Matrix" trägt seinen Namen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="15">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welche Marktfeldstrategie beschreibt „<strong>bewährtes Produkt auf bestehendem Markt</strong>"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Produktentwicklung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Marktdurchdringung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Marktentwicklung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Diversifikation</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Marktdurchdringung = altes Produkt + alter Markt → Marktanteile durch bessere Vermarktung, Zusatzleistungen oder Preispolitik gewinnen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Marktdurchdringung</em> = bewährtes Produkt auf bestehendem Markt (Antwort B). Ziel: Marktpotenzial ausschöpfen, Marktanteile erhöhen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="16">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche Marktfeldstrategie bietet das höchste Wachstumspotenzial, aber auch das <strong>größte Risiko</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Marktdurchdringung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Marktentwicklung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Produktentwicklung</div>
+      <div class="opt" data-correct="true"><span class="letter">D</span> Diversifikation</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Diversifikation = neues Produkt auf neuem Markt. Doppelt unbekannt = doppeltes Risiko, aber auch die größten Wachstumschancen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Diversifikation</em> birgt das größte Risiko (neues Produkt + neuer Markt), bietet aber auch die höchsten Wachstumschancen (Antwort D).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="17">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was versteht man unter <strong>Targeting</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Eine klare Zielgruppenbestimmung, an der sich alle produkt- und marktpolitischen Entscheidungen orientieren</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Eine Methode zur Berechnung des Sortimentsumfangs</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Hinzufügen neuer Produkte zum Kernsortiment</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Steuerung von Lieferantenbeziehungen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Targeting = Zielgruppenbestimmung. Ohne definierte Zielgruppe können Marketingmaßnahmen im Sande verlaufen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> <em>Targeting</em> = klare Zielgruppenbestimmung als Basis für alle Produkt- und Marktentscheidungen (Antwort A).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="18">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Warum ist <strong>Kundenbindung</strong> im Onlinehandel besonders bedeutsam?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Weil Online-Kunden immer mehr ausgeben als stationäre Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Weil der Gesetzgeber dies vorschreibt</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Weil ein Konkurrent nur einen Klick entfernt ist</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Weil Onlineshops keine Werbung schalten dürfen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Im Onlinehandel ist die Wechselbarriere extrem niedrig. Der Konkurrent ist buchstäblich nur einen Klick entfernt – deshalb ist Kundenbindung existenziell.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Im Onlinehandel ist der Konkurrent <em>nur einen Klick entfernt</em> – daher ist Kundenbindung besonders wichtig (Antwort C).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="19">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was verpflichtet das <strong>Elektrogesetz (ElektroG)</strong> Onlineshops zu tun?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Elektrogeräte bei einer Behörde registrieren lassen und Hinweisschaltfläche zur Entsorgung einbinden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Alle Elektrogeräte kostenlos reparieren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Auf alle Lieferanten verzichten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur noch Energiesparproduke verkaufen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Registrierungspflicht + Hinweisschaltfläche im Webshop zur Elektroaltgeräte-Entsorgung. Ab 400 qm Lagerfläche besteht auch eine Rücknahmepflicht.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das ElektroG verlangt: Registrierung bei Behörde + Hinweisschaltfläche zur Entsorgung im Webshop (Antwort A).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="20">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was regelt das <strong>Jugendschutzgesetz</strong> für Webshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Webshops dürfen keine Werbung für Jugendliche schalten</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Webshops müssen einen Jugendbeauftragten benennen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Bestimmte Waren dürfen nicht an Jugendliche verkauft werden; Altersverifikation ist notwendig</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Alle Preise müssen für Jugendliche reduziert werden</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Alkohol, Tabak, E-Zigaretten, bestimmte Filme und Computerspiele dürfen nicht ohne Altersverifikation verkauft werden.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das Jugendschutzgesetz verbietet den Verkauf bestimmter Waren an Jugendliche und verlangt eine Altersverifikation (Antwort C).</div>
+    <div class="q-nav"><button class="btn btn-next" id="last-btn">Ergebnis anzeigen &#127942;</button></div>
+  </div>
+
+  <!-- ===== ERGEBNIS ===== -->
+  <div id="result-card">
+    <div class="result-circle" id="result-circle">0%</div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Quiz wiederholen</button>
+  </div>
+
+</main>
+
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Lernfeld 2 – Tag 1</footer>
+
+<script>
+const TOTAL = 20;
+let correct = 0;
+let answered = 0;
+let results = new Array(TOTAL).fill(null); // null=unanswered, true=correct, false=wrong
+let currentQ = 0;
+
+// Build dots
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextQuestion() {
+  // Find next unanswered
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) {
+    if (results[i] === null) { next = i; break; }
+  }
+  if (next === -1) {
+    for (let i = 0; i < currentQ; i++) {
+      if (results[i] === null) { next = i; break; }
+    }
+  }
+  if (next === -1) showResult();
+  else jumpTo(next);
+}
+
+// Attach option click handlers
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return; // already answered
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+
+      // Mark options
+      opts.forEach(o => {
+        if (o.dataset.correct === 'true') o.classList.add('correct');
+        else o.classList.add('disabled');
+      });
+      if (!isCorrect) opt.classList.add('wrong');
+
+      // Show feedback
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+
+      updateDots();
+      updateProgress();
+    });
+  });
+
+  // Next button
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => {
+    if (qi === TOTAL - 1) showResult();
+    else nextQuestion();
+  });
+});
+
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  correct = 0; answered = 0;
+  results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => {
+    o.className = 'opt';
+    if (o.dataset.correct) o.className = 'opt';
+  });
+  document.querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('correct','wrong','disabled');
+  });
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0);
+  updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+
+updateDots();
+updateProgress();
+</script>
+</body>
+</html>

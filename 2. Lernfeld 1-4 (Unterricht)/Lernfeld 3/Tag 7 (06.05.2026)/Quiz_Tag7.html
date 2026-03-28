@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 7 – LF3: Zahlungen mit der Kreditkarte</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128179; Quiz – Tag 7: Zahlungen mit der Kreditkarte</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was unterscheidet eine Kundenkarte von Einzelhandelsunternehmen von einer Organisationskarte (z. B. Visa, MasterCard)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kundenkarten sind kostenlos, Organisationskarten haben immer hohe Gebühren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Kundenkarten können nur im ausstellenden Betrieb genutzt werden; Organisationskarten sind weltweit bei allen Vertragsunternehmen einsetzbar</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Organisationskarten sind nur für Geschäftskunden, Kundenkarten für Privatkunden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kundenkarten haben einen höheren Kreditrahmen als Organisationskarten</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Kundenkarten (z. B. von Kaufhäusern) berechtigen nur zum Kauf auf Kredit im ausstellenden Betrieb. Organisationskarten (Visa, MasterCard, AmEx, Diners) sind weltweit bei allen in- und ausländischen Vertragsunternehmen nutzbar.</div>
+    <div class="feedback err">&#10008; Falsch. Der wichtigste Unterschied: Kundenkarten gelten nur im ausstellenden Betrieb, Organisationskarten werden weltweit akzeptiert. Organisationskarten verlangen in der Regel eine Jahresgebühr (oft 20–100 €).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Welche vier Parteien sind im Vier-Parteien-Modell des Kreditkartensystems beteiligt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kunde, Bank, Bundesbank, Polizei</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Käufer, Verkäufer, Notar, Finanzamt</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Karteninhaber, Vertragsunternehmen (Händler), Issuer (Kartenausgeber), Acquirer (Händlerbank)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Karteninhaber, MasterCard-Zentrale, SEPA-Clearinghaus, Acquirer</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das Vier-Parteien-Modell umfasst: 1. Karteninhaber (Kunde), 2. Vertragsunternehmen (Händler), 3. Issuer (kartenausgebende Bank des Kunden), 4. Acquirer (Bank des Händlers, die die Zahlung abwickelt).</div>
+    <div class="feedback err">&#10008; Falsch. Die vier Parteien sind: Karteninhaber (zahlt), Vertragsunternehmen (Händler, akzeptiert Karte), Issuer (Kartenausgeber, Bank des Kunden), Acquirer (Händlerbank, wickelt Zahlung ab).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was ist eine „Charge Card"?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Alle Umsätze werden gesammelt und einmal monatlich in Rechnung gestellt – kein revolvierender Kredit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Eine Kreditkarte mit unbegrenzt revolvierendem Kredit und flexibler Teilzahlung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Prepaid-Karte, die vorab aufgeladen werden muss</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Karte, bei der jede Transaktion sofort vom Konto abgebucht wird</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Charge Card sammelt alle Umsätze und stellt sie einmal monatlich in Rechnung (Gesamtbetrag). Sie bietet zinsfreien Kredit bis zum Abrechnungstag, aber keine flexible Teilzahlung. In Deutschland ist sie der Standard.</div>
+    <div class="feedback err">&#10008; Falsch. Eine Charge Card sammelt alle Umsätze für eine monatliche Abrechnung. Im Gegensatz zur Credit Card gibt es keine Teilzahlungsoption – der Gesamtbetrag wird am Monatsende eingezogen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Welcher Kreditkartentyp belastet das Konto sofort bei jeder Transaktion und gewährt keinen Kredit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Charge Card</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Credit Card</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Debit Card</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Prepaid Card</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Debit Card belastet das Konto sofort bei jeder Transaktion. Es gibt keinen Kreditrahmen – nur die vorhandene Kontodeckung bestimmt die Verfügbarkeit der Mittel.</div>
+    <div class="feedback err">&#10008; Falsch. Die Debit Card bucht sofort vom Konto ab und gewährt keinen Kredit. Die Prepaid Card funktioniert ähnlich, aber über vorab aufgeladenes Guthaben. Credit Card = Teilzahlung möglich, Charge Card = monatliche Gesamtabrechnung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welche Daten muss der Käufer beim Bezahlen mit Kreditkarte im Internet angeben?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kreditkartennummer, PIN, Ablaufdatum, Name</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Kreditkartennummer, Ablaufdatum, CVC (dreistellige Prüfnummer), Name des Karteninhabers</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kreditkartennummer, IBAN, BIC, Name</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur Kreditkartennummer und Ablaufdatum</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Im Internet werden folgende Kreditkartendaten benötigt: Kreditkartennummer, Ablaufdatum, dreistellige Prüfnummer (CVC oder KPN auf der Kartenrückseite) und Name des Karteninhabers. Eine PIN darf im Internet grundsätzlich NICHT eingegeben werden.</div>
+    <div class="feedback err">&#10008; Falsch. Die PIN darf im Internet grundsätzlich nicht angegeben werden! Benötigt werden: Kreditkartennummer, Ablaufdatum, CVC (dreistellige Prüfnummer) und Name des Karteninhabers.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was ist das 3-D-Secure-Verfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Standard für die verschlüsselte Datenübertragung zwischen Browser und Server</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein zusätzlicher Prüfmechanismus, bei dem der Kunde ein selbst definiertes Passwort beim Kreditkartenunternehmen eingeben muss</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Versicherung gegen Kreditkartenbetrug</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Verfahren zum Rückbuchen von Kreditkartenzahlungen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! 3-D-Secure ist ein Sicherheitsverfahren, bei dem der Kunde ein selbst definiertes Passwort eingeben muss, das nur ihm und seinem Kreditkartenunternehmen bekannt ist. Visa nennt es „Verified by Visa", MasterCard „MasterCard SecureCode".</div>
+    <div class="feedback err">&#10008; Falsch. 3-D-Secure ist eine zusätzliche Passwort-Abfrage beim Kreditkartenunternehmen (separater, sicherer Kanal). Visa nennt es „Verified by Visa", MasterCard „MasterCard SecureCode". Es verhindert Missbrauch bei gestohlenen Kartendaten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Wie lautet der Name des 3-D-Secure-Verfahrens bei MasterCard?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Verified by MasterCard</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> MasterCard Safe</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> MasterCard SecureCode</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> MasterCard Shield</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das 3-D-Secure-Verfahren heißt bei MasterCard „MasterCard SecureCode". Bei Visa heißt es „Verified by Visa". Beide Verfahren funktionieren nach demselben Prinzip: Eingabe eines separaten Passworts beim Kartenunternehmen.</div>
+    <div class="feedback err">&#10008; Falsch. Bei MasterCard heißt das 3-D-Secure-Verfahren „MasterCard SecureCode". Bei Visa heißt es „Verified by Visa". Das Verfahren erfordert ein separates Passwort und läuft über einen eigenen, sicheren Kanal der kartenausgebenden Bank.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Auf welchen Maximalwert hat die EU-Verordnung (2015) das Interbankenentgelt für Kreditkartenzahlungen begrenzt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 1,0 % der Zahlungssumme</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 0,5 % der Zahlungssumme</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 0,3 % der Zahlungssumme</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 2,5 % der Zahlungssumme</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die EU-Verordnung (2015) begrenzt die Interbankenentgelte für Kreditkartenzahlungen auf maximal 0,3 % der Zahlungssumme (ausgenommen: Firmenkreditkarten und American Express). Das macht Kreditkartenzahlungen für Händler deutlich günstiger.</div>
+    <div class="feedback err">&#10008; Falsch. Die EU-Verordnung von 2015 begrenzt das Interbankenentgelt auf maximal 0,3 % der Zahlungssumme. Ausgenommen sind Firmenkreditkarten und American Express.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welcher Anteil der Online-Käufer bezahlt laut Präsentation mittlerweile mit der Kreditkarte?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Jeder zehnte Käufer</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Jeder fünfte Käufer</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Jeder dritte Käufer</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Jeder zweite Käufer</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Einkauf in Onlineshops bezahlt mittlerweile jeder fünfte Käufer mit seiner Kreditkarte. Im internationalen E-Commerce ist sie das meistgenutzte Zahlungsmittel (vgl. Heinemann, 2023).</div>
+    <div class="feedback err">&#10008; Falsch. Laut Präsentation bezahlt jeder fünfte Online-Käufer mit der Kreditkarte. Im internationalen E-Commerce ist sie sogar das meistgenutzte Zahlungsmittel insgesamt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was ist PCI DSS?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein gesetzlich vorgeschriebenes Kreditkartenverfahren der EU</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Regelwerk für die sichere Verarbeitung, Speicherung und Übertragung von Kreditkartendaten, das alle Händler einhalten müssen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Zahlungsdienstleister wie PayPal</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Versicherung für Kreditkartenunternehmen gegen Ausfälle</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! PCI DSS (Payment Card Industry Data Security Standard) ist ein Regelwerk für die sichere Verarbeitung, Speicherung und Übertragung von Kreditkartendaten. Jeder Online-Händler, der Kreditkarten akzeptiert, muss PCI DSS-konform sein.</div>
+    <div class="feedback err">&#10008; Falsch. PCI DSS steht für „Payment Card Industry Data Security Standard" – ein Sicherheitsregelwerk, das von Visa, MasterCard, AmEx, Discover und JCB gemeinsam entwickelt wurde. Pflicht für alle Unternehmen, die Kartendaten verarbeiten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Wer ist der „Issuer" im Vier-Parteien-Modell des Kreditkartensystems?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Bank des Händlers, die die Kartenzahlung abwickelt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die Bank des Karteninhabers, die die Kreditkarte ausgibt und das Kreditrisiko trägt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Der Händler selbst, der die Kreditkarte akzeptiert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Kreditkartenorganisation (z. B. Visa)</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der Issuer ist die kartenausgebende Bank des Karteninhabers. Er gibt die Kreditkarte aus, trägt das Kreditrisiko und stellt dem Karteninhaber die monatliche Abrechnung zu.</div>
+    <div class="feedback err">&#10008; Falsch. Der Issuer ist die Bank des Karteninhabers (Kartenausgeber). Die Bank des Händlers nennt sich Acquirer – sie wickelt die Kartenzahlung ab und schreibt dem Händler den Betrag gut.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welchen Nachteil hat die Kreditkarte für den Karteninhaber?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie kann nicht im Ausland eingesetzt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Abrechnung erfolgt täglich</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Gefahr, mehr auszugeben als mit Bargeld; Missbrauchsgefahr im Internet; Jahresgebühr</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Keine Akzeptanz bei Organisationskarten im Einzelhandel</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Zu den Nachteilen für den Karteninhaber zählen: Gefahr mehr auszugeben als mit Bargeld, Missbrauchsgefahr im Internet, Offenlegen persönlicher Daten bei der Beantragung sowie die Jahresgebühr. Außerdem ist der Einkauf nur bei Vertragsunternehmen möglich.</div>
+    <div class="feedback err">&#10008; Falsch. Nachteile für den Karteninhaber sind: Jahresgebühr, Missbrauchsgefahr im Internet, Tendenz zur Überschuldung und Einschränkung auf Vertragsunternehmen. Vorteile sind u. a. weltweite Akzeptanz und zinsfreier Kredit bis zur Abrechnung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was sind „Chargebacks" im Kreditkartenbereich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Zusätzliche Gebühren des Kreditkartenunternehmens</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Rückbuchungen, bei denen Kunden eine Kreditkartenzahlung relativ leicht widerrufen können</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Jahresgebühr für die Kreditkarte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bonuspunkte, die bei Kreditkartenzahlungen gesammelt werden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Chargebacks sind Rückbuchungen, bei denen der Kunde eine Kreditkartenzahlung anfechten und rückgängig machen lassen kann. Das ist ein Nachteil für den Händler, da er die Ware bereits geliefert haben kann.</div>
+    <div class="feedback err">&#10008; Falsch. Chargebacks sind Rückbuchungen – der Kunde kann eine Zahlung relativ leicht anfechten. Das stellt für Händler ein Risiko dar, da Ware bereits geliefert sein kann, aber die Zahlung storniert wird.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Wie viele Schritte umfasst die stationäre Abwicklung einer Kreditkartenzahlung laut Präsentation?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 5 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 7 Schritte</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 9 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 12 Schritte</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die stationäre Kreditkartenzahlung läuft in 9 Schritten ab: von der Kartenvorlage über Online-Prüfung, Belegausstellung und Unterschrift des Kunden bis hin zur Rechnungsbegleichung durch den Kartenherausgeber (abzüglich Provision).</div>
+    <div class="feedback err">&#10008; Falsch. Die stationäre Kreditkartenzahlung hat 9 Schritte – beginnend mit der Kartenvorlage durch den Kunden bis zum Ausgleich der Rechnung durch den Kreditkartenherausgeber abzüglich Provision.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Bei welchem Anteil der Kunden führt die fehlende Kreditkarten-Akzeptanz in einem Onlineshop zum Kaufabbruch?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 23 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 38 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 53 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 72 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Fehlende Kreditkarten-Akzeptanz führt bei 53 % der Kunden zum Kaufabbruch. Das zeigt, wie wichtig die Kreditkarte als Zahlungsoption für den Conversion-Rate eines Online-Shops ist.</div>
+    <div class="feedback err">&#10008; Falsch. Laut Präsentation führt fehlende Kreditkarten-Akzeptanz bei 53 % der Kunden zum Kaufabbruch. Kreditkarten sind damit für die Conversion-Rate im E-Commerce unverzichtbar.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Was ist die „Credit Card" mit revolvierendem Kredit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Karte, die am Monatsende den Gesamtbetrag abrechnet</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Eine Prepaid-Karte mit aufgeladenem Guthaben</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Eine Kreditkarte mit echter Kreditfunktion und flexibler Teilzahlungsoption – man zahlt nur eine Mindestsumme</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Karte, die sofort das Konto belastet</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Credit Card bietet eine echte revolvierende Kreditlinie: Der Inhaber muss nur eine Mindestzahlung leisten und kann den Restbetrag zu einem späteren Zeitpunkt tilgen. Für den ungenutzten Kredit fallen Zinsen an.</div>
+    <div class="feedback err">&#10008; Falsch. Die Credit Card (revolvierende Kreditkarte) erlaubt Teilzahlungen mit Mindestsumme. Die Charge Card hingegen rechnet den Gesamtbetrag monatlich ab. Debit = sofortige Kontobelastung, Prepaid = vorab aufgeladenes Guthaben.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welchen Vorteil hat der Händler durch die Kreditkarte im Vergleich zu Kauf auf Rechnung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Händler muss keine Mehrwertsteuer abführen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Nach erfolgreicher Autorisierung erhält der Händler eine Zahlungsgarantie – der Versand kann sofort erfolgen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Transaktionsgebühren entfallen vollständig</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Händler muss keine PCI-DSS-Anforderungen erfüllen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Nach erfolgreicher Autorisierung besteht für den Händler kein Kreditrisiko mehr – das Ausfallrisiko ist nahe null. Der Versand kann sofort erfolgen, ohne auf den Zahlungseingang warten zu müssen (Vorteil gegenüber Kauf auf Rechnung).</div>
+    <div class="feedback err">&#10008; Falsch. Der große Vorteil der Kreditkarte für Händler ist die Zahlungsgarantie nach Autorisierung – kein Kreditrisiko, sofortiger Versand möglich. Beim Kauf auf Rechnung besteht hingegen ein erhebliches Ausfallrisiko.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Wie viele Schritte hat der 3-D-Secure-Ablauf laut Präsentation?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 3 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 4 Schritte</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 6 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 9 Schritte</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der 3-D-Secure-Ablauf umfasst 6 Schritte: 1. Kartendaten eingeben, 2. Webshop stellt Anfrage an Bank, 3. Bank öffnet eigenen sicheren Kanal, 4. 3-D-Secure-Code eingeben und prüfen, 5. Bank bestätigt Identität, 6. Einkauf abschließen.</div>
+    <div class="feedback err">&#10008; Falsch. Der 3-D-Secure-Ablauf hat 6 Schritte: Dateneingabe, Autorisierungsanfrage des Shops, eigener Bankkanal, Passwort-Prüfung, Identitätsbestätigung durch die Bank, Kaufabschluss.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welches Kreditkartennetzwerk heißt das 3-D-Secure-Verfahren „Verified by Visa"?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Visa</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> MasterCard</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> American Express</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Diners Club</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Visa nennt das 3-D-Secure-Verfahren „Verified by Visa". MasterCard nennt es „MasterCard SecureCode". Beide Verfahren funktionieren nach demselben Prinzip der separaten Passwort-Abfrage.</div>
+    <div class="feedback err">&#10008; Falsch. „Verified by Visa" ist der Name des 3-D-Secure-Verfahrens bei Visa. Bei MasterCard heißt es „MasterCard SecureCode". American Express und Diners Club haben eigene Sicherheitsverfahren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Warum ist die Kreditkarte im Vergleich zu PayPal kostengünstiger für den Händler?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kreditkarten sind immer kostenlos für den Händler</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Das Interbankenentgelt bei Kreditkarten beträgt max. 0,3 % (EU-Verordnung), während PayPal ca. 2,49 % + Fixgebühr kostet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> PayPal zahlt dem Händler keine Zahlungsgarantie</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kreditkarten werden in Deutschland nicht versteuert, PayPal schon</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Dank der EU-Verordnung (2015) liegt das Interbankenentgelt bei Kreditkarten bei maximal 0,3 % der Zahlungssumme. PayPal kostet den Händler ca. 2,49 % plus eine Fixgebühr – also deutlich mehr.</div>
+    <div class="feedback err">&#10008; Falsch. Die EU-Verordnung begrenzt das Kreditkarten-Interbankenentgelt auf 0,3 %. PayPal verlangt ca. 2,49 % plus Fixgebühr. Trotzdem bietet PayPal andere Vorteile wie sehr hohe Kundentreue und einfache Nutzung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div id="result-card">
+    <div class="result-circle" id="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#8635; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>Tag 7 &nbsp;|&nbsp; Lernfeld 3: 3.7 Zahlungen mit der Kreditkarte &nbsp;|&nbsp; &copy; Can Siebert &amp; Hamzah Meyer</footer>
+<script>
+const cards = document.querySelectorAll('.q-card');
+const dotsContainer = document.getElementById('q-dots');
+const progressFill = document.getElementById('progress-fill');
+const scoreDisplay = document.getElementById('score-display');
+let current = 0, correct = 0, answered = 0;
+const state = Array(cards.length).fill(null);
+
+cards.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.addEventListener('click', () => jumpTo(i));
+  dotsContainer.appendChild(d);
+});
+
+function getDots() { return dotsContainer.querySelectorAll('.dot'); }
+
+function jumpTo(n) {
+  cards[current].classList.remove('active');
+  getDots()[current].classList.remove('current');
+  current = n;
+  cards[current].classList.add('active');
+  getDots()[current].classList.add('current');
+}
+
+cards.forEach((card, idx) => {
+  card.querySelectorAll('.opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (state[idx] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      state[idx] = isCorrect;
+      if (isCorrect) { correct++; answered++; } else { answered++; }
+      card.querySelectorAll('.opt').forEach(o => {
+        if (o.dataset.correct === 'true') o.classList.add('correct');
+        else o.classList.add(o === opt ? 'wrong' : 'disabled');
+      });
+      card.querySelector('.feedback.ok').classList.toggle('show', isCorrect);
+      card.querySelector('.feedback.err').classList.toggle('show', !isCorrect);
+      const dot = getDots()[idx];
+      dot.classList.remove('current');
+      dot.classList.add(isCorrect ? 'answered-ok' : 'answered-err');
+      progressFill.style.width = (answered / cards.length * 100) + '%';
+      scoreDisplay.textContent = correct + ' / ' + answered;
+    });
+  });
+  card.querySelector('.btn-next').addEventListener('click', () => {
+    if (idx + 1 < cards.length) jumpTo(idx + 1);
+    else showResult();
+  });
+});
+
+function showResult() {
+  cards.forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round(correct / cards.length * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  let grade, msg;
+  if (pct >= 85) { grade = 'excellent'; msg = 'Hervorragend! Du kennst die Kreditkartensysteme sehr gut.'; }
+  else if (pct >= 70) { grade = 'good'; msg = 'Gut gemacht! Einige Details kannst du noch festigen.'; }
+  else if (pct >= 50) { grade = 'ok'; msg = 'Nicht schlecht – wiederhole die Inhalte zur Kreditkarte.'; }
+  else { grade = 'low'; msg = 'Noch Übungsbedarf – schau dir die Präsentation nochmals an.'; }
+  circle.className = 'result-circle ' + grade;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-sub').textContent = correct + ' von ' + cards.length + ' Fragen richtig beantwortet.';
+}
+
+function restartQuiz() {
+  correct = 0; answered = 0;
+  state.fill(null);
+  progressFill.style.width = '0%';
+  scoreDisplay.textContent = '0 / 0';
+  document.getElementById('result-card').classList.remove('show');
+  cards.forEach((card, i) => {
+    card.querySelectorAll('.opt').forEach(o => o.className = 'opt');
+    card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+    card.classList.remove('active');
+  });
+  getDots().forEach((d, i) => { d.className = 'dot' + (i === 0 ? ' current' : ''); });
+  current = 0;
+  cards[0].classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 15: Rechtsformen Teil 2 &amp; Abschluss – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 15: Rechtsformen Teil 2 &amp; Abschluss</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 15: Rechtsformen Teil 2 &amp; Abschluss</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 15</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "kapital",
+    text: "Was ist eine juristische Person?",
+    choices: [
+      {label: "A", text: "Eine natürliche Person mit juristischer Ausbildung"},
+      {label: "B", text: "Ein rechtlich eigenständiges Subjekt, das vom Privatvermögen der Gesellschafter getrennt ist"},
+      {label: "C", text: "Ein Unternehmen, das ausschließlich von Juristen gegründet werden darf"},
+      {label: "D", text: "Eine Person, die vor Gericht vertreten wird"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "kapital",
+    text: "Was beschreibt das Trennungsprinzip bei Kapitalgesellschaften?",
+    choices: [
+      {label: "A", text: "Gesellschafter und Gesellschaft sind rechtlich identisch"},
+      {label: "B", text: "Das Privatvermögen der Gesellschafter ist vollständig vom Gesellschaftsvermögen getrennt"},
+      {label: "C", text: "Gewinne werden getrennt nach Steuerrecht berechnet"},
+      {label: "D", text: "Die Gesellschaft muss ihr Vermögen auf mehrere Konten aufteilen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "kapital",
+    text: "Welche sind die wichtigsten Kapitalgesellschaften in Deutschland? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "GmbH"},
+      {label: "B", text: "OHG"},
+      {label: "C", text: "AG"},
+      {label: "D", text: "KG"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 4, cat: "kapital",
+    text: "Wie lautet das Mindestkapital der GmbH?",
+    choices: [
+      {label: "A", text: "10.000 EUR"},
+      {label: "B", text: "50.000 EUR"},
+      {label: "C", text: "25.000 EUR"},
+      {label: "D", text: "1 EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 5, cat: "kapital",
+    text: "Wie viel muss beim Gründen einer GmbH mindestens sofort eingezahlt werden?",
+    choices: [
+      {label: "A", text: "Der gesamte Betrag von 25.000 EUR"},
+      {label: "B", text: "Mindestens 12.500 EUR"},
+      {label: "C", text: "1 EUR"},
+      {label: "D", text: "50 % der Stammeinlage jedes Gesellschafters"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 6, cat: "kapital",
+    text: "Welche formalen Schritte sind zur Gründung einer GmbH notwendig? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Notarielle Beurkundung des Gesellschaftsvertrags"},
+      {label: "B", text: "Eintrag ins Handelsregister"},
+      {label: "C", text: "Zustimmung aller Gewerkschaften"},
+      {label: "D", text: "Genehmigung durch die Bundesanstalt für Finanzdienstleistungsaufsicht (BaFin)"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 7, cat: "kapital",
+    text: "Wie haftet die GmbH gegenüber Gläubigern?",
+    choices: [
+      {label: "A", text: "Die Gesellschafter haften unbeschränkt mit ihrem Privatvermögen"},
+      {label: "B", text: "Nur das Gesellschaftsvermögen haftet; das Privatvermögen der Gesellschafter ist geschützt"},
+      {label: "C", text: "Die Geschäftsführer haften persönlich für alle Verbindlichkeiten"},
+      {label: "D", text: "Haftung ist gleichmäßig unter allen Gesellschaftern verteilt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 8, cat: "kapital",
+    text: "Welche Steuerarten zahlt eine GmbH? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Einkommensteuer"},
+      {label: "B", text: "Körperschaftsteuer (15 %)"},
+      {label: "C", text: "Gewerbesteuer"},
+      {label: "D", text: "Kirchensteuer"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 9, cat: "kapital",
+    text: "Wie wird der Gewinn in der GmbH verteilt?",
+    choices: [
+      {label: "A", text: "Gleichmäßig nach Köpfen"},
+      {label: "B", text: "Nach §121 HGB (4 % auf Kapital, Rest nach Köpfen)"},
+      {label: "C", text: "Nach Gesellschaftsanteilen (Stammeinlagen)"},
+      {label: "D", text: "Der Geschäftsführer erhält den gesamten Gewinn"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 10, cat: "kapital",
+    text: "Was ist das oberste Organ der GmbH?",
+    choices: [
+      {label: "A", text: "Der Aufsichtsrat"},
+      {label: "B", text: "Der Geschäftsführer"},
+      {label: "C", text: "Die Gesellschafterversammlung"},
+      {label: "D", text: "Der Vorstand"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 11, cat: "kapital",
+    text: "Wann ist ein Aufsichtsrat bei der GmbH Pflicht?",
+    choices: [
+      {label: "A", text: "Immer – er ist bei jeder GmbH Pflichtorgan"},
+      {label: "B", text: "Ab 500 Mitarbeitern (Mitbestimmungsgesetz)"},
+      {label: "C", text: "Nur wenn die GmbH börsennotiert ist"},
+      {label: "D", text: "Ab einem Jahresumsatz von 1 Mio. EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "kapital",
+    text: "Was ist die UG (haftungsbeschränkt)?",
+    choices: [
+      {label: "A", text: "Eine eigenständige Rechtsform ohne Bezug zur GmbH"},
+      {label: "B", text: "Eine Sonderform der GmbH nach §5a GmbHG – die „Mini-GmbH“"},
+      {label: "C", text: "Eine Variante der OHG mit beschränkter Haftung"},
+      {label: "D", text: "Eine staatlich subventionierte Gründungsform"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 13, cat: "kapital",
+    text: "Wie hoch ist das Mindestkapital der UG?",
+    choices: [
+      {label: "A", text: "25.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "5.000 EUR"},
+      {label: "D", text: "1 EUR (theoretisch)"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 14, cat: "kapital",
+    text: "Was bedeutet die Thesaurierungspflicht bei der UG?",
+    choices: [
+      {label: "A", text: "Der gesamte Gewinn muss an den Staat abgeführt werden"},
+      {label: "B", text: "25 % des Jahresgewinns müssen in die Rücklage eingestellt werden, bis 25.000 EUR erreicht sind"},
+      {label: "C", text: "Die UG darf keine Gewinne ausschütten, solange sie existiert"},
+      {label: "D", text: "50 % des Gewinns müssen für Investitionen zurückgelegt werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "kapital",
+    text: "Wie muss die UG zwingend bezeichnet werden?",
+    choices: [
+      {label: "A", text: "Als „GmbH (klein)“"},
+      {label: "B", text: "Als „Mini-GmbH“"},
+      {label: "C", text: "Als „UG (haftungsbeschränkt)“"},
+      {label: "D", text: "Als „UG e. K.“"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 16, cat: "kapital",
+    text: "Was ist das Mindestkapital der AG?",
+    choices: [
+      {label: "A", text: "25.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "100.000 EUR"},
+      {label: "D", text: "50.000 EUR"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 17, cat: "kapital",
+    text: "Wie wird das Grundkapital einer AG aufgeteilt?",
+    choices: [
+      {label: "A", text: "In Gesellschaftsanteile (Stammeinlagen)"},
+      {label: "B", text: "In Aktien"},
+      {label: "C", text: "In Kommanditanteile"},
+      {label: "D", text: "In Genossenschaftsanteile"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 18, cat: "kapital",
+    text: "Welche drei Pflichtorgane hat eine AG? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Hauptversammlung"},
+      {label: "B", text: "Aufsichtsrat"},
+      {label: "C", text: "Gesellschafterversammlung"},
+      {label: "D", text: "Gesellschafterausschuss"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 19, cat: "kapital",
+    text: "Was ist das Leitungsorgan der AG?",
+    choices: [
+      {label: "A", text: "Hauptversammlung"},
+      {label: "B", text: "Aufsichtsrat"},
+      {label: "C", text: "Vorstand"},
+      {label: "D", text: "Geschäftsführer"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 20, cat: "kapital",
+    text: "Was ist die Aufgabe des Aufsichtsrats in der AG?",
+    choices: [
+      {label: "A", text: "Leitung des operativen Tagesgeschäfts"},
+      {label: "B", text: "Kontrolle und Bestellung des Vorstands"},
+      {label: "C", text: "Ausgabe neuer Aktien"},
+      {label: "D", text: "Beschluss der Dividende für Aktionäre"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "kapital",
+    text: "Wer ist das oberste Organ der AG?",
+    choices: [
+      {label: "A", text: "Der Vorstand"},
+      {label: "B", text: "Der Aufsichtsrat"},
+      {label: "C", text: "Die Hauptversammlung (alle Aktionäre)"},
+      {label: "D", text: "Der Vorstandsvorsitzende"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 22, cat: "kapital",
+    text: "Was ist eine Nennwertaktie?",
+    choices: [
+      {label: "A", text: "Eine Aktie ohne aufgedruckten Wert; repräsentiert nur den Anteil am Grundkapital"},
+      {label: "B", text: "Eine Aktie mit einem fest aufgedruckten Wert (z. B. 1 EUR); Summe aller = Grundkapital"},
+      {label: "C", text: "Eine Aktie mit Stimmrecht in der Hauptversammlung"},
+      {label: "D", text: "Eine Aktie mit höherer Dividende, aber ohne Stimmrecht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "kapital",
+    text: "Was ist eine Vorzugsaktie?",
+    choices: [
+      {label: "A", text: "Eine Aktie mit normalem Stimmrecht und normaler Dividende"},
+      {label: "B", text: "Eine Aktie ohne Stimmrecht, aber mit höherer Dividende"},
+      {label: "C", text: "Eine Aktie mit festem aufgedrucktem Nennwert"},
+      {label: "D", text: "Eine Aktie, die nur vom Vorstand gehalten werden darf"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 24, cat: "kapital",
+    text: "Was ist eine Stammaktie?",
+    choices: [
+      {label: "A", text: "Eine Aktie ohne Stimmrecht, aber mit Dividendenvorzug"},
+      {label: "B", text: "Eine Aktie, die nur am Gründungstag ausgegeben wird"},
+      {label: "C", text: "Eine Aktie mit Stimmrecht in der Hauptversammlung und normaler Dividende"},
+      {label: "D", text: "Die älteste Aktie im Umlauf des Unternehmens"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 25, cat: "kapital",
+    text: "Was ist der größte Vorteil der AG gegenüber GmbH und Personengesellschaften?",
+    choices: [
+      {label: "A", text: "Kein Mindestkapital erforderlich"},
+      {label: "B", text: "Eigenkapital kann durch Ausgabe von Aktien an der Börse beschafft werden (IPO)"},
+      {label: "C", text: "Gesellschafter haften mit Privatvermögen"},
+      {label: "D", text: "Kein Handelsregistereintrag erforderlich"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "kapital",
+    text: "Was bedeutet IPO?",
+    choices: [
+      {label: "A", text: "International Private Organisation"},
+      {label: "B", text: "Initial Public Offering – der Börsengang eines Unternehmens"},
+      {label: "C", text: "Internes Prüfungsorgan"},
+      {label: "D", text: "Investitionsplan für Österreich"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "kapital",
+    text: "Welche Steuerarten zahlt eine AG? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Einkommensteuer"},
+      {label: "B", text: "Körperschaftsteuer"},
+      {label: "C", text: "Gewerbesteuer"},
+      {label: "D", text: "Kirchensteuer"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 28, cat: "kapital",
+    text: "Was ist die Rechtsgrundlage der AG?",
+    choices: [
+      {label: "A", text: "GmbHG"},
+      {label: "B", text: "HGB"},
+      {label: "C", text: "AktG"},
+      {label: "D", text: "BGB"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 29, cat: "kapital",
+    text: "Welcher wesentliche Unterschied besteht zwischen Personengesellschaften und Kapitalgesellschaften?",
+    choices: [
+      {label: "A", text: "Personengesellschaften haben ein Mindestkapital; Kapitalgesellschaften nicht"},
+      {label: "B", text: "Kapitalgesellschaften sind juristische Personen mit Trennungsprinzip; Personengesellschaften sind es nicht"},
+      {label: "C", text: "Personengesellschaften zahlen Körperschaftsteuer; Kapitalgesellschaften Einkommensteuer"},
+      {label: "D", text: "Kapitalgesellschaften haften unbeschränkt; Personengesellschaften beschränkt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 30, cat: "kapital",
+    text: "Welche Rechtsform empfiehlt die Eselsbrücke „GmbH = Grenzen haben = Gut für Gründer“?",
+    choices: [
+      {label: "A", text: "Die GmbH, weil die Haftung auf das Gesellschaftsvermögen begrenzt ist"},
+      {label: "B", text: "Die GbR, weil sie leicht zu gründen ist"},
+      {label: "C", text: "Die KG, weil der Kommanditist nur bis zur Einlage haftet"},
+      {label: "D", text: "Die OHG, weil alle Gesellschafter gleich gestellt sind"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 31, cat: "abschluss",
+    text: "Was beschreibt die Eselsbrücke „AG = Alles Groß“? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Großes Mindestkapital (50.000 EUR)"},
+      {label: "B", text: "Großes Unternehmen und großer Kapitalmarkt"},
+      {label: "C", text: "Geringe Gründungskosten"},
+      {label: "D", text: "Kein Handelsregistereintrag nötig"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 32, cat: "abschluss",
+    text: "Welche Rechtsform wählt man laut Gesamtvergleich bei gewünschter beschränkter Haftung und mittlerer Unternehmensgröße?",
+    choices: [
+      {label: "A", text: "OHG"},
+      {label: "B", text: "GbR"},
+      {label: "C", text: "GmbH"},
+      {label: "D", text: "Einzelunternehmen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 33, cat: "abschluss",
+    text: "Welche Rechtsform ist laut Handout keine juristische Person? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "GmbH"},
+      {label: "B", text: "OHG"},
+      {label: "C", text: "KG"},
+      {label: "D", text: "AG"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 34, cat: "abschluss",
+    text: "Was versteht man unter B2B im Glossar des Handouts?",
+    choices: [
+      {label: "A", text: "Business-to-Consumer: Handel zwischen Unternehmen und Endkunden"},
+      {label: "B", text: "Business-to-Business: Handel zwischen Unternehmen"},
+      {label: "C", text: "Bank-to-Business: Kreditvergabe an Unternehmen"},
+      {label: "D", text: "Broadcast-to-Business: Werbekommunikation an Unternehmen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 35, cat: "abschluss",
+    text: "Was bedeutet Omnichannel laut Glossar?",
+    choices: [
+      {label: "A", text: "Ausschließlicher Verkauf über einen einzigen Online-Kanal"},
+      {label: "B", text: "Strategie der nahtlosen Verzahnung aller Vertriebskanäle (online + offline)"},
+      {label: "C", text: "Mehrere Lieferanten für dasselbe Produkt nutzen"},
+      {label: "D", text: "Internationaler Handel über verschiedene Länder"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 36, cat: "abschluss",
+    text: "Was ist Usability laut Glossar des Handouts?",
+    choices: [
+      {label: "A", text: "Die technische Verfügbarkeit eines Webshops"},
+      {label: "B", text: "Die Gebrauchstauglichkeit / Benutzerfreundlichkeit einer Website oder App"},
+      {label: "C", text: "Die Ladegeschwindigkeit einer Webseite"},
+      {label: "D", text: "Der Umsatz eines Online-Shops"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 37, cat: "abschluss",
+    text: "Was regelt das BBiG laut Glossar?",
+    choices: [
+      {label: "A", text: "Das Handelsrecht zwischen Unternehmen"},
+      {label: "B", text: "Das Ausbildungsrecht in Deutschland"},
+      {label: "C", text: "Das Steuerrecht für Berufsschüler"},
+      {label: "D", text: "Das Arbeitszeit-Gesetz"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "abschluss",
+    text: "Was schützt das JASchG laut Glossar?",
+    choices: [
+      {label: "A", text: "Mindesturlaubsansprüche aller Arbeitnehmer"},
+      {label: "B", text: "Minderjährige im Arbeitsverhältnis"},
+      {label: "C", text: "Jugendliche vor Werbung im Internet"},
+      {label: "D", text: "Azubis vor unangemessenen Ausbildungsverträgen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 39, cat: "abschluss",
+    text: "Was ist Prokura laut Glossar?",
+    choices: [
+      {label: "A", text: "Eine beschränkte Vollmacht nur für Einkauf"},
+      {label: "B", text: "Eine umfassende Handlungsvollmacht für alle kaufmännischen Rechtsgeschäfte nach §49 HGB"},
+      {label: "C", text: "Eine Vollmacht, die nur vom Betriebsrat erteilt werden darf"},
+      {label: "D", text: "Ein Recht, das nur Gesellschafter ausüben dürfen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 40, cat: "abschluss",
+    text: "Was ist ein Tarifvertrag laut Glossar?",
+    choices: [
+      {label: "A", text: "Ein Vertrag zwischen zwei Unternehmen über Lieferbedingungen"},
+      {label: "B", text: "Ein Vertrag zwischen Arbeitgeberverband und Gewerkschaft zur Regelung von Arbeitsbedingungen"},
+      {label: "C", text: "Ein staatliches Gesetz über Mindestlöhne"},
+      {label: "D", text: "Ein Vertrag über Exportkonditionen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "abschluss",
+    text: "Welchen Produktionsfaktor setzt die Exclusiva GmbH laut Praxisbeispiel mit Algorithmen ein?",
+    choices: [
+      {label: "A", text: "Boden"},
+      {label: "B", text: "Kapital"},
+      {label: "C", text: "Arbeit"},
+      {label: "D", text: "Wissen"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 42, cat: "abschluss",
+    text: "Welche Rechtsform hat die Exclusiva GmbH laut Handout?",
+    choices: [
+      {label: "A", text: "AG"},
+      {label: "B", text: "OHG"},
+      {label: "C", text: "GmbH"},
+      {label: "D", text: "KG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 43, cat: "abschluss",
+    text: "Was beschreibt E-Commerce laut Glossar?",
+    choices: [
+      {label: "A", text: "Ausschließlich der Verkauf physischer Waren"},
+      {label: "B", text: "Elektronischer Handel; Kauf und Verkauf über digitale Kanäle"},
+      {label: "C", text: "Nur Werbung im Internet"},
+      {label: "D", text: "Den Betrieb von Ladengeschäften mit digitalen Kassensystemen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "abschluss",
+    text: "Lena und Tom wollen eine GmbH gründen. Sie haben 20.000 EUR gespart. Was trifft zu?",
+    choices: [
+      {label: "A", text: "Sie können sofort gründen, da 20.000 EUR ausreichen"},
+      {label: "B", text: "Sie können gründen, da mind. 12.500 EUR (50 % des Stammkapitals) einzuzahlen sind, aber das Stammkapital beträgt 25.000 EUR – sie müssen die restlichen 12.500 EUR noch aufbringen"},
+      {label: "C", text: "Sie brauchen kein Kapital für eine GmbH-Gründung"},
+      {label: "D", text: "Sie müssen zuerst eine UG gründen und können dann umwandeln"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "abschluss",
+    text: "Was ist ein Webshop laut Glossar?",
+    choices: [
+      {label: "A", text: "Ein stationäres Ladengeschäft mit Webkameras"},
+      {label: "B", text: "Eine digitale Verkaufsplattform des Unternehmens (Online-Shop)"},
+      {label: "C", text: "Ein System zur Lagerverwaltung"},
+      {label: "D", text: "Eine Bewertungsplattform für Produkte"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "abschluss",
+    text: "Welche Steuerpflicht unterscheidet Kapitalgesellschaften von Personengesellschaften?",
+    choices: [
+      {label: "A", text: "Personengesellschaften zahlen Körperschaftsteuer, Kapitalgesellschaften Einkommensteuer"},
+      {label: "B", text: "Kapitalgesellschaften zahlen Körperschaftsteuer; Gesellschafter von Personengesellschaften zahlen Einkommensteuer"},
+      {label: "C", text: "Beide zahlen dieselbe Steuerart"},
+      {label: "D", text: "Kapitalgesellschaften sind von der Steuer befreit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "abschluss",
+    text: "Was bedeutet Handlungsvollmacht laut Glossar?",
+    choices: [
+      {label: "A", text: "Eine umfassende Vollmacht für alle kaufmännischen Geschäfte"},
+      {label: "B", text: "Eine Bevollmächtigung für bestimmte Geschäfte nach §54 HGB; schwächer als Prokura"},
+      {label: "C", text: "Das Recht, einen Gesellschaftsvertrag zu unterzeichnen"},
+      {label: "D", text: "Eine gerichtlich erteilte Vollmacht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "abschluss",
+    text: "Was versteht man unter dem Betriebsrat laut Glossar?",
+    choices: [
+      {label: "A", text: "Die Leitungsebene eines Unternehmens"},
+      {label: "B", text: "Die Interessenvertretung der Arbeitnehmer im Betrieb (BetrVG)"},
+      {label: "C", text: "Eine staatliche Behörde zur Unternehmenskontrolle"},
+      {label: "D", text: "Der Vorstand der AG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "abschluss",
+    text: "Welche Themen aus Lernfeld 1 wurden laut Mindmap behandelt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Vollmachten und Vertretung (Prokura, Handlungsvollmacht)"},
+      {label: "B", text: "Internationales Handelsrecht"},
+      {label: "C", text: "E-Commerce und Web (B2B/B2C, Usability)"},
+      {label: "D", text: "Steuerrecht für Konzerne"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 50, cat: "abschluss",
+    text: "Welches sind laut Gesamtvergleichstabelle die Leitungsorgane von GmbH und AG?",
+    choices: [
+      {label: "A", text: "GmbH: Vorstand; AG: Geschäftsführer"},
+      {label: "B", text: "GmbH: Geschäftsführer; AG: Vorstand"},
+      {label: "C", text: "GmbH: Aufsichtsrat; AG: Hauptversammlung"},
+      {label: "D", text: "GmbH: Gesellschafterversammlung; AG: Aufsichtsrat"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 51, cat: "abschluss",
+    text: "Was ist laut Gesamtvergleich das Mindestkapital der OHG?",
+    choices: [
+      {label: "A", text: "25.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "1.000 EUR"},
+      {label: "D", text: "Keines"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 52, cat: "abschluss",
+    text: "Welche Aussage zur Stückaktie ist korrekt?",
+    choices: [
+      {label: "A", text: "Sie hat einen fest aufgedruckten Nennwert"},
+      {label: "B", text: "Sie hat keinen Nennwert, repräsentiert aber einen Anteil am Grundkapital (moderner Standard)"},
+      {label: "C", text: "Sie berechtigt zu einer festen Dividende"},
+      {label: "D", text: "Sie darf nicht an der Börse gehandelt werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 53, cat: "abschluss",
+    text: "Warum ist bei der AG ein Aktionärswechsel kein Problem für das Unternehmen?",
+    choices: [
+      {label: "A", text: "Weil alle Aktionäre unbeschränkt haften"},
+      {label: "B", text: "Weil Aktionäre wechseln können, ohne das Unternehmen selbst zu gefährden"},
+      {label: "C", text: "Weil das Mindestkapital durch den Aktionärswechsel sinkt"},
+      {label: "D", text: "Weil der Vorstand die Aktionäre ersetzen kann"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "abschluss",
+    text: "Wie lautet laut Glossar die Definition von Kapitalgesellschaft?",
+    choices: [
+      {label: "A", text: "Gesellschaft aus natürlichen Personen mit unbeschränkter Haftung"},
+      {label: "B", text: "Juristische Person; Trennungsprinzip; beschränkte Haftung (GmbH, AG, UG)"},
+      {label: "C", text: "Gesellschaft, die ausschließlich Kapital verwaltet"},
+      {label: "D", text: "Gesellschaft ohne Handelsregisterpflicht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "abschluss",
+    text: "Was ist laut Glossar ein Komplementär?",
+    choices: [
+      {label: "A", text: "Ein stiller Gesellschafter ohne Leitungsbefugnis"},
+      {label: "B", text: "Der vollhaftende Gesellschafter in der KG, der die Gesellschaft führt"},
+      {label: "C", text: "Ein Gesellschafter, der nur bis zur Einlage haftet"},
+      {label: "D", text: "Ein externer Geschäftsführer der GmbH"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 56, cat: "abschluss",
+    text: "Was ist laut Glossar eine Personengesellschaft?",
+    choices: [
+      {label: "A", text: "Eine juristische Person mit beschränkter Haftung"},
+      {label: "B", text: "Eine Gesellschaft aus natürlichen Personen mit unbeschränkter Haftung (GbR, OHG, KG)"},
+      {label: "C", text: "Eine Gesellschaft, die nur von einer Person gegründet werden darf"},
+      {label: "D", text: "Eine Gesellschaft mit Mindestkapital von 25.000 EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 57, cat: "abschluss",
+    text: "Wann kann die UG laut Handout in eine GmbH umgewandelt werden?",
+    choices: [
+      {label: "A", text: "Sofort nach der Gründung"},
+      {label: "B", text: "Wenn durch die Thesaurierung 25.000 EUR Rücklage erreicht sind"},
+      {label: "C", text: "Nach 5 Jahren Betrieb"},
+      {label: "D", text: "Wenn der Jahresumsatz 100.000 EUR übersteigt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "abschluss",
+    text: "Welches der folgenden Themen gehört laut Abschlussübersicht zum Lernfeld 1? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Tarifverträge und Betriebsrat"},
+      {label: "B", text: "Buchhaltung und Jahresabschluss (Lernfeld 3)"},
+      {label: "C", text: "Vollmachten (Prokura, Handlungsvollmacht)"},
+      {label: "D", text: "Exportfinanzierung (Lernfeld 4)"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 59, cat: "abschluss",
+    text: "Welche Steuerart zahlt eine GmbH nicht?",
+    choices: [
+      {label: "A", text: "Körperschaftsteuer"},
+      {label: "B", text: "Einkommensteuer"},
+      {label: "C", text: "Gewerbesteuer"},
+      {label: "D", text: "Solidaritätszuschlag"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "abschluss",
+    text: "Was ist der Unterschied zwischen Geschäftsführer (GmbH) und Vorstand (AG)?",
+    choices: [
+      {label: "A", text: "Es gibt keinen Unterschied – beide werden von der Hauptversammlung bestellt"},
+      {label: "B", text: "Der Geschäftsführer wird von der Gesellschafterversammlung bestellt, der Vorstand vom Aufsichtsrat"},
+      {label: "C", text: "Der Vorstand haftet persönlich, der Geschäftsführer nicht"},
+      {label: "D", text: "Der Geschäftsführer leitet nur eine AG, der Vorstand nur eine GmbH"}
+    ],
+    multi: false, correct: ["B"]
+  }
+];
+const catLabels={
+  kapital: {label: "Kapitalgesellschaften", cls: "cat-definition"},
+  abschluss: {label: "Abschluss LF1", cls: "cat-shopsystem"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

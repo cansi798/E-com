@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 7: Webshop Name &amp; Adresse Teil 1 – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 7: Webshop Name &amp; Adresse Teil 1</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 7: Webshop Name &amp; Adresse Teil 1</div><div class="quiz-meta">62 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">62</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 7</footer>
+<script>
+const TOTAL=62;
+const questions=[
+  {
+    num: 1, cat: "domain",
+    text: "Was ist eine Domain?",
+    choices: [
+      {label: "A", text: "Eine numerische IP-Adresse wie 142.250.185.14"},
+      {label: "B", text: "Eine eindeutige, menschenlesbare Adresse einer Website im Internet"},
+      {label: "C", text: "Ein Protokoll zur Datenverschlüsselung"},
+      {label: "D", text: "Ein Speichermedium auf dem Webserver"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "domain",
+    text: "Wofür steht die Abkürzung DNS?",
+    choices: [
+      {label: "A", text: "Digital Network Security"},
+      {label: "B", text: "Domain Name System"},
+      {label: "C", text: "Data Network Standard"},
+      {label: "D", text: "Dynamic Name Server"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "domain",
+    text: "Welche Aufgabe hat das DNS?",
+    choices: [
+      {label: "A", text: "Es verschlüsselt den Datenverkehr zwischen Browser und Server"},
+      {label: "B", text: "Es übersetzt IP-Adressen in menschenlesbare Domain-Namen"},
+      {label: "C", text: "Es speichert die Webshop-Datenbank"},
+      {label: "D", text: "Es vergibt SSL-Zertifikate"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 4, cat: "domain",
+    text: "Welche Bestandteile enthält eine vollständige URL? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Protokoll und Subdomain"},
+      {label: "B", text: "IP-Adresse und Portnummer"},
+      {label: "C", text: "Top-Level-Domain und Pfad"},
+      {label: "D", text: "MAC-Adresse und Gateway"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 5, cat: "domain",
+    text: "Was ist in der URL https://www.exclusiva-gmbh.de/shop die Second-Level-Domain?",
+    choices: [
+      {label: "A", text: "https"},
+      {label: "B", text: "www"},
+      {label: "C", text: "exclusiva-gmbh"},
+      {label: "D", text: ".de"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 6, cat: "domain",
+    text: "Welche TLD ist für einen deutschen Online-Shop die erste Wahl?",
+    choices: [
+      {label: "A", text: ".com"},
+      {label: "B", text: ".shop"},
+      {label: "C", text: ".de"},
+      {label: "D", text: ".net"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 7, cat: "domain",
+    text: "Welche Organisation ist die zentrale Vergabestelle für .de-Domains?",
+    choices: [
+      {label: "A", text: "VeriSign"},
+      {label: "B", text: "EURid"},
+      {label: "C", text: "DENIC eG"},
+      {label: "D", text: "DPMA"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 8, cat: "domain",
+    text: "Wofür steht die Abkürzung DENIC?",
+    choices: [
+      {label: "A", text: "Deutsches Elektronisches Netz- und Informationscenter"},
+      {label: "B", text: "Digitales Einheitliches Netzwerk für Internet-Commerce"},
+      {label: "C", text: "Deutsches Network Information Center"},
+      {label: "D", text: "Domain und E-Commerce Normierungsinstanz Center"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 9, cat: "domain",
+    text: "Welche Schritte gehören zur Domain-Registrierung? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Verfügbarkeit per WHOIS-Abfrage prüfen"},
+      {label: "B", text: "SSL-Zertifikat beim DPMA beantragen"},
+      {label: "C", text: "Markenrecht im DPMA-Register prüfen"},
+      {label: "D", text: "Webhosting direkt bei DENIC buchen"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 10, cat: "domain",
+    text: "Was kostet eine .de-Domain ungefähr pro Jahr?",
+    choices: [
+      {label: "A", text: "1–5 EUR"},
+      {label: "B", text: "10–15 EUR"},
+      {label: "C", text: "50–100 EUR"},
+      {label: "D", text: "200–300 EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "domain",
+    text: "Was ist das DPMA?",
+    choices: [
+      {label: "A", text: "Deutsches Protokoll und Marketing Amt"},
+      {label: "B", text: "Deutsches Patent- und Markenamt"},
+      {label: "C", text: "Digitale Plattform für Marken-Abmahnung"},
+      {label: "D", text: "Deutsches Postfach- und Mediaamt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "domain",
+    text: "Welche Risiken drohen bei der Registrierung einer Domain, die einer eingetragenen Marke ähnelt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Abmahnung durch den Markeninhaber"},
+      {label: "B", text: "Automatische Löschung durch DENIC nach 7 Tagen"},
+      {label: "C", text: "Zwangsübertragung der Domain"},
+      {label: "D", text: "Sperrung des gesamten Webshops durch den Staat"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 13, cat: "domain",
+    text: "Was ist der Pfad in einer URL?",
+    choices: [
+      {label: "A", text: "Der Name des Servers, auf dem die Website liegt"},
+      {label: "B", text: "Das Protokoll (z. B. https)"},
+      {label: "C", text: "Der Teil der URL nach der Domain, der die genaue Ressource beschreibt"},
+      {label: "D", text: "Die Endung der Domain wie .de oder .com"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 14, cat: "domain",
+    text: "Welche TLD vergibt die Organisation EURid?",
+    choices: [
+      {label: "A", text: ".de"},
+      {label: "B", text: ".eu"},
+      {label: "C", text: ".shop"},
+      {label: "D", text: ".com"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "domain",
+    text: "Warum bevorzugen deutsche Kunden .de-Domains?",
+    choices: [
+      {label: "A", text: "Weil sie günstiger sind als andere TLDs"},
+      {label: "B", text: "Weil sie von DENIC vergeben werden und damit amtlich sind"},
+      {label: "C", text: "Weil sie mehr Vertrauen wecken und bei deutschen Suchanfragen positiv von Google bewertet werden"},
+      {label: "D", text: "Weil sie unbegrenzt gültig sind ohne jährliche Verlängerung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 16, cat: "domain",
+    text: "Was beschreibt der Begriff Webhosting?",
+    choices: [
+      {label: "A", text: "Die Vergabe von Domain-Namen durch DENIC"},
+      {label: "B", text: "Die Bereitstellung von Speicherplatz und Rechenleistung auf einem Server"},
+      {label: "C", text: "Das Verschlüsseln von Daten mit SSL"},
+      {label: "D", text: "Das Eintragen einer Website in Google"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 17, cat: "domain",
+    text: "Welche Hosting-Art ist am günstigsten, hat aber die geringste Skalierbarkeit?",
+    choices: [
+      {label: "A", text: "VPS"},
+      {label: "B", text: "Dedicated Server"},
+      {label: "C", text: "Cloud Hosting"},
+      {label: "D", text: "Shared Hosting"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 18, cat: "domain",
+    text: "Was bedeutet das Pay-per-Use-Prinzip beim Cloud Hosting?",
+    choices: [
+      {label: "A", text: "Man zahlt einmal jährlich einen Festbetrag"},
+      {label: "B", text: "Man zahlt nur für die tatsächlich genutzten Ressourcen"},
+      {label: "C", text: "Man zahlt pro Seitenaufruf des Webshops"},
+      {label: "D", text: "Man zahlt für jeden neuen Nutzer des Shops"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "domain",
+    text: "Welches Hosting wird für einen kleinen Webshop bei der Gründung empfohlen?",
+    choices: [
+      {label: "A", text: "Dedicated Server wegen der vollen Kontrolle"},
+      {label: "B", text: "Cloud Hosting wegen der automatischen Skalierung"},
+      {label: "C", text: "Shared Hosting, da es ausreicht und günstig ist"},
+      {label: "D", text: "VPS, da er die beste Balance bietet"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 20, cat: "domain",
+    text: "Welches Hosting eignet sich am besten für einen Shop mit stark schwankendem Traffic (z. B. Black Friday)?",
+    choices: [
+      {label: "A", text: "Shared Hosting"},
+      {label: "B", text: "Cloud Hosting (z. B. AWS, Azure) – wegen automatischer Skalierung"},
+      {label: "C", text: "VPS"},
+      {label: "D", text: "Dedicated Server"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "hosting",
+    text: "Was ist SSL bzw. TLS?",
+    choices: [
+      {label: "A", text: "Ein Webhosting-Anbieter"},
+      {label: "B", text: "Ein Protokoll zur Verschlüsselung der Datenübertragung zwischen Browser und Server"},
+      {label: "C", text: "Ein System zur Domain-Registrierung"},
+      {label: "D", text: "Eine Methode zur Datenbankoptimierung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 22, cat: "hosting",
+    text: "Was bedeutet es, wenn eine Website mit https:// beginnt?",
+    choices: [
+      {label: "A", text: "Die Website ist nur für registrierte Nutzer zugänglich"},
+      {label: "B", text: "Die Datenübertragung ist durch SSL/TLS verschlüsselt"},
+      {label: "C", text: "Die Website wurde von Google überprüft"},
+      {label: "D", text: "Die Website ist kostenlos nutzbar"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "hosting",
+    text: "Welche Konsequenzen hat ein fehlendes SSL-Zertifikat? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Browser zeigen „Nicht sicher“ – Kunden vertrauen dem Shop nicht"},
+      {label: "B", text: "Die Domain wird von DENIC entzogen"},
+      {label: "C", text: "Zahlungen sind nicht möglich (PCI-DSS-Anforderung)"},
+      {label: "D", text: "Der Shop kann nicht mehr indexiert werden"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 24, cat: "hosting",
+    text: "Wie heißt die kostenlose SSL-Lösung, die von fast allen Hostern unterstützt wird?",
+    choices: [
+      {label: "A", text: "OpenSSL Pro"},
+      {label: "B", text: "Let's Encrypt"},
+      {label: "C", text: "FreeSSL by DENIC"},
+      {label: "D", text: "CloudFlare Basic"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "hosting",
+    text: "Welches Gesetz regelt die Impressumspflicht in Deutschland?",
+    choices: [
+      {label: "A", text: "DSGVO"},
+      {label: "B", text: "BGB"},
+      {label: "C", text: "Telemediengesetz (TMG)"},
+      {label: "D", text: "Handelsgesetzbuch (HGB)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 26, cat: "hosting",
+    text: "In welchem Paragraphen des TMG ist die Impressumspflicht geregelt?",
+    choices: [
+      {label: "A", text: "3 TMG"},
+      {label: "B", text: "5 TMG"},
+      {label: "C", text: "12 TMG"},
+      {label: "D", text: "16 TMG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "hosting",
+    text: "Für wen gilt die Impressumspflicht?",
+    choices: [
+      {label: "A", text: "Nur für GmbHs und AGs"},
+      {label: "B", text: "Nur für Webshops mit mehr als 10.000 EUR Umsatz pro Jahr"},
+      {label: "C", text: "Für alle kommerziellen Websites in Deutschland, auch Instagram-Shops"},
+      {label: "D", text: "Nur für Unternehmen mit mehr als 5 Mitarbeitern"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 28, cat: "hosting",
+    text: "Wie schnell muss das Impressum von der Startseite aus erreichbar sein?",
+    choices: [
+      {label: "A", text: "Mit maximal 1 Klick"},
+      {label: "B", text: "Mit maximal 2 Klicks"},
+      {label: "C", text: "Mit maximal 5 Klicks"},
+      {label: "D", text: "Es gibt keine gesetzliche Vorgabe zur Klicktiefe"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "hosting",
+    text: "Welche Angaben müssen im Impressum stehen? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Vollständige Postadresse (kein Postfach)"},
+      {label: "B", text: "Jahresumsatz des Unternehmens"},
+      {label: "C", text: "Umsatzsteuer-Identifikationsnummer"},
+      {label: "D", text: "Anzahl der Mitarbeiter"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 30, cat: "hosting",
+    text: "Wie hoch ist das maximale Bußgeld bei fehlendem Impressum nach 16 TMG?",
+    choices: [
+      {label: "A", text: "5.000 EUR"},
+      {label: "B", text: "20.000 EUR"},
+      {label: "C", text: "50.000 EUR"},
+      {label: "D", text: "500.000 EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "hosting",
+    text: "Was regelt die DSGVO?",
+    choices: [
+      {label: "A", text: "Den Aufbau von Webshops in der EU"},
+      {label: "B", text: "Den Umgang mit personenbezogenen Daten"},
+      {label: "C", text: "Die Pflichtangaben im Impressum"},
+      {label: "D", text: "Das Widerrufsrecht beim Online-Kauf"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 32, cat: "hosting",
+    text: "Nach welchen Artikeln der DSGVO müssen Pflichtinhalte in der Datenschutzerklärung enthalten sein?",
+    choices: [
+      {label: "A", text: "Art. 5 und 6 DSGVO"},
+      {label: "B", text: "Art. 13 und 14 DSGVO"},
+      {label: "C", text: "Art. 20 und 21 DSGVO"},
+      {label: "D", text: "Art. 83 und 84 DSGVO"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "hosting",
+    text: "Welche Inhalte gehören in die Datenschutzerklärung? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Zweck und Rechtsgrundlage der Datenverarbeitung"},
+      {label: "B", text: "Jahresabschluss des Unternehmens"},
+      {label: "C", text: "Betroffenenrechte wie Auskunft, Berichtigung und Löschung"},
+      {label: "D", text: "Anzahl der Mitarbeiter des Datenschutzbeauftragten"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 34, cat: "hosting",
+    text: "Wie hoch können DSGVO-Bußgelder maximal sein?",
+    choices: [
+      {label: "A", text: "500.000 EUR oder 1 % des Jahresumsatzes"},
+      {label: "B", text: "5 Millionen EUR oder 2 % des Jahresumsatzes"},
+      {label: "C", text: "20 Millionen EUR oder 4 % des weltweiten Jahresumsatzes"},
+      {label: "D", text: "50 Millionen EUR oder 10 % des Jahresumsatzes"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 35, cat: "hosting",
+    text: "Welches Bußgeld erhielt Amazon Luxemburg 2021 wegen DSGVO-Verstoßes?",
+    choices: [
+      {label: "A", text: "50 Millionen EUR"},
+      {label: "B", text: "150 Millionen EUR"},
+      {label: "C", text: "746 Millionen EUR"},
+      {label: "D", text: "1,2 Milliarden EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 36, cat: "hosting",
+    text: "Welches Gesetz regelt das Widerrufsrecht beim Online-Kauf?",
+    choices: [
+      {label: "A", text: "Telemediengesetz (TMG)"},
+      {label: "B", text: "312g BGB (Fernabsatzrecht)"},
+      {label: "C", text: "Handelsgesetzbuch (HGB)"},
+      {label: "D", text: "DSGVO"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 37, cat: "hosting",
+    text: "Wie lange dauert die Widerrufsfrist beim Online-Kauf standardmäßig?",
+    choices: [
+      {label: "A", text: "7 Tage"},
+      {label: "B", text: "10 Tage"},
+      {label: "C", text: "14 Tage"},
+      {label: "D", text: "30 Tage"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 38, cat: "hosting",
+    text: "Ab wann beginnt die 14-tägige Widerrufsfrist beim Online-Kauf?",
+    choices: [
+      {label: "A", text: "Ab dem Tag der Bestellung"},
+      {label: "B", text: "Ab dem Tag der Bezahlung"},
+      {label: "C", text: "Ab dem Erhalt der Ware"},
+      {label: "D", text: "Ab dem Versanddatum"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 39, cat: "hosting",
+    text: "Auf wie lange verlängert sich die Widerrufsfrist, wenn die Widerrufsbelehrung fehlt oder falsch ist?",
+    choices: [
+      {label: "A", text: "30 Tage"},
+      {label: "B", text: "3 Monate"},
+      {label: "C", text: "12 Monate + 14 Tage"},
+      {label: "D", text: "Unbegrenzt"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 40, cat: "hosting",
+    text: "Bei welchen Waren besteht kein Widerrufsrecht? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Kleidung in Standardgrößen"},
+      {label: "B", text: "Maßgefertigte Produkte (z. B. gravierte Ringe)"},
+      {label: "C", text: "Elektronikgeräte"},
+      {label: "D", text: "Digitale Inhalte, wenn der Download bereits begonnen hat"}
+    ],
+    multi: true, correct: ["B", "D"]
+  },
+  {
+    num: 41, cat: "recht",
+    text: "Was bedeutet die Eselsbrücke „I-D-W-A-P“ für rechtliche Pflichtangaben?",
+    choices: [
+      {label: "A", text: "Impressum – Datenschutz – Widerruf – AGB – Preisangaben"},
+      {label: "B", text: "Internet – Datei – Webshop – Angebot – Produkt"},
+      {label: "C", text: "Identität – Daten – Ware – Auftrag – Preis"},
+      {label: "D", text: "Inhalt – Darstellung – Website – Auftritt – Präsentation"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 42, cat: "recht",
+    text: "In welcher Reihenfolge lassen sich die vier Hosting-Arten von günstig bis flexibel sortieren?",
+    choices: [
+      {label: "A", text: "Cloud – VPS – Dedicated – Shared"},
+      {label: "B", text: "Dedicated – VPS – Shared – Cloud"},
+      {label: "C", text: "Shared – VPS – Dedicated – Cloud"},
+      {label: "D", text: "VPS – Shared – Cloud – Dedicated"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 43, cat: "recht",
+    text: "Was ist eine Subdomain?",
+    choices: [
+      {label: "A", text: "Die Endung einer Domain wie .de oder .com"},
+      {label: "B", text: "Ein Teil der URL vor der Second-Level-Domain, z. B. www oder shop"},
+      {label: "C", text: "Der Pfad innerhalb des Webshops"},
+      {label: "D", text: "Eine zweite registrierte Domain desselben Unternehmens"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "recht",
+    text: "Was versteht man unter einem VPS?",
+    choices: [
+      {label: "A", text: "Virtueller Privater Server – dedizierte Ressourcen durch Virtualisierung"},
+      {label: "B", text: "Sehr Preiswerter Server ohne Einschränkungen"},
+      {label: "C", text: "Vollständig Physischer Speicher im Rechenzentrum"},
+      {label: "D", text: "Verschlüsseltes Protokoll-System"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 45, cat: "recht",
+    text: "Was sind akkreditierte Registrare?",
+    choices: [
+      {label: "A", text: "Unternehmen, die Webshops mit SSL-Zertifikaten ausstatten"},
+      {label: "B", text: "Unternehmen wie IONOS oder Strato, die Domains direkt bei DENIC registrieren können"},
+      {label: "C", text: "Behörden, die das Impressum von Webshops prüfen"},
+      {label: "D", text: "Firmen, die die DSGVO-Konformität von Webshops zertifizieren"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "recht",
+    text: "Warum sollte ein Webshop unbedingt ein SSL-Zertifikat haben?",
+    choices: [
+      {label: "A", text: "Weil es die Domain dauerhaft bei DENIC registriert"},
+      {label: "B", text: "Weil es das Google-Ranking verbessert und DSGVO-konformes Betreiben ermöglicht"},
+      {label: "C", text: "Weil es den Webshop automatisch in Suchmaschinen einträgt"},
+      {label: "D", text: "Weil es das Impressum automatisch erstellt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "recht",
+    text: "Was sind personenbezogene Daten im Sinne der DSGVO? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Name und E-Mail-Adresse eines Kunden"},
+      {label: "B", text: "Produktbilder im Webshop"},
+      {label: "C", text: "IP-Adresse eines Website-Besuchers"},
+      {label: "D", text: "Preise im Online-Sortiment"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 48, cat: "recht",
+    text: "Was muss die Datenschutzerklärung bezüglich Cookies enthalten?",
+    choices: [
+      {label: "A", text: "Die technische Funktionsweise aller Cookies im Detail"},
+      {label: "B", text: "Hinweise auf den Einsatz von Cookies und Tracking-Tools (z. B. Google Analytics)"},
+      {label: "C", text: "Eine Liste aller Cookies des gesamten Internets"},
+      {label: "D", text: "Nichts – Cookies müssen nicht erwähnt werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "recht",
+    text: "Was ist PCI-DSS?",
+    choices: [
+      {label: "A", text: "Eine EU-Datenschutzverordnung für Onlineshops"},
+      {label: "B", text: "Ein Sicherheitsstandard, der SSL für Zahlungen vorschreibt"},
+      {label: "C", text: "Eine Zertifizierung für Webhosting-Anbieter"},
+      {label: "D", text: "Ein Verfahren zur Domain-Registrierung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "recht",
+    text: "Was sind Betroffenenrechte nach der DSGVO? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Recht auf Auskunft über gespeicherte Daten"},
+      {label: "B", text: "Recht auf einen kostenlosen Webshop"},
+      {label: "C", text: "Recht auf Löschung („Recht auf Vergessenwerden“)"},
+      {label: "D", text: "Recht auf kostenlose Rücksendung"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 51, cat: "recht",
+    text: "Welche Angabe gehört nicht zu den Pflichtangaben im Impressum?",
+    choices: [
+      {label: "A", text: "Handelsregisternummer (HRB) und zuständiges Amtsgericht"},
+      {label: "B", text: "Umsatzsteuer-Identifikationsnummer"},
+      {label: "C", text: "Anzahl der Mitarbeiter"},
+      {label: "D", text: "Vollständige Postadresse"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 52, cat: "recht",
+    text: "Was ist der Unterschied zwischen HTTP und HTTPS?",
+    choices: [
+      {label: "A", text: "HTTP ist schneller, HTTPS ist sicherer durch SSL/TLS-Verschlüsselung"},
+      {label: "B", text: "HTTP kann mehr Daten übertragen als HTTPS"},
+      {label: "C", text: "HTTPS ist nur für mobile Websites gedacht"},
+      {label: "D", text: "Es gibt keinen wesentlichen Unterschied"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 53, cat: "recht",
+    text: "Was bedeutet Auto-Renewal bei der Domain-Registrierung?",
+    choices: [
+      {label: "A", text: "Die Domain erneuert sich automatisch jährlich, ohne dass man kündigen muss"},
+      {label: "B", text: "Die Domain wird automatisch auf eine neue TLD umgestellt"},
+      {label: "C", text: "Der Webserver wird jährlich automatisch neu gestartet"},
+      {label: "D", text: "Das SSL-Zertifikat erneuert sich täglich"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 54, cat: "recht",
+    text: "Was ist der Unterschied zwischen einer TLD und einer Second-Level-Domain?",
+    choices: [
+      {label: "A", text: "TLD ist der individuelle Name (z. B. exclusiva-gmbh), SLD ist die Endung (z. B. .de)"},
+      {label: "B", text: "TLD ist die Endung der Domain (z. B. .de), SLD ist der frei gewählte Name davor"},
+      {label: "C", text: "TLD und SLD sind identisch"},
+      {label: "D", text: "SLD ist der Pfad, TLD ist das Protokoll"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "recht",
+    text: "Welche .shop-Domain-Kosten sind ungefähr zu erwarten?",
+    choices: [
+      {label: "A", text: "1–5 EUR/Jahr"},
+      {label: "B", text: "10–15 EUR/Jahr"},
+      {label: "C", text: "25–40 EUR/Jahr"},
+      {label: "D", text: "100–200 EUR/Jahr"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 56, cat: "recht",
+    text: "Welche Rechtsgrundlage regelt die Fernabsatz-Widerrufsbelehrung?",
+    choices: [
+      {label: "A", text: "5 TMG"},
+      {label: "B", text: "Art. 13 DSGVO"},
+      {label: "C", text: "312g BGB"},
+      {label: "D", text: "17 BBiG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 57, cat: "recht",
+    text: "Was muss bei der Ausnahme „Verderbliche Waren“ für das Widerrufsrecht beachtet werden?",
+    choices: [
+      {label: "A", text: "Verderbliche Waren können immer innerhalb von 14 Tagen zurückgegeben werden"},
+      {label: "B", text: "Bei verderblichen Waren wie Lebensmitteln besteht kein Widerrufsrecht"},
+      {label: "C", text: "Das Widerrufsrecht gilt nur für verderbliche Waren"},
+      {label: "D", text: "Bei verderblichen Waren verlängert sich die Frist auf 30 Tage"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "recht",
+    text: "Welcher Dedicated-Server-Kostenvorteil spricht für Cloud Hosting bei Saisongeschäft? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Cloud skaliert automatisch in Stoßzeiten"},
+      {label: "B", text: "Dedicated ist immer günstiger als Cloud"},
+      {label: "C", text: "Nach der Stoßzeit sinkt der Cloud-Verbrauch und damit die Kosten"},
+      {label: "D", text: "Dedicated Server ist flexibler als Cloud"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 59, cat: "recht",
+    text: "Was ist TLS im Verhältnis zu SSL?",
+    choices: [
+      {label: "A", text: "TLS ist der Vorgänger von SSL"},
+      {label: "B", text: "TLS ist das modernere Nachfolgeprotokoll von SSL"},
+      {label: "C", text: "TLS und SSL sind identisch und unterscheiden sich nur im Namen"},
+      {label: "D", text: "TLS ist eine kostenpflichtige Version von SSL"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "recht",
+    text: "Welche Angaben sind laut Handout die 5 Pflichtangaben im deutschen Online-Handel (I-D-W-A-P)?",
+    choices: [
+      {label: "A", text: "Impressum, Datenschutz, Widerruf, AGB, Preisangaben"},
+      {label: "B", text: "Impressum, Datei, Warenkorb, Abrechnung, Produkt"},
+      {label: "C", text: "Inhalt, Datenschutz, Website, AGBs, Preisvergleich"},
+      {label: "D", text: "Identität, Daten, Werbung, Auftrag, Preiskalkulation"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 61, cat: "recht",
+    text: "Welche drei Hosting-Arten existieren neben Shared Hosting?",
+    choices: [
+      {label: "A", text: "Dedicated, Cloud und VPS"},
+      {label: "B", text: "Dedicated, Mini und Maxi"},
+      {label: "C", text: "VPS, Cloud und Flex"},
+      {label: "D", text: "Managed, Basic und Premium"}
+    ],
+    multi: false, correct: []
+  },
+  {
+    num: 62, cat: "recht",
+    text: "Was bedeutet die WHOIS-Abfrage im Kontext der Domain-Registrierung?",
+    choices: [
+      {label: "A", text: "Sie prüft, ob eine Domain markenrechtlich geschützt ist"},
+      {label: "B", text: "Sie zeigt, wer Inhaber einer bestehenden Domain ist, und prüft die Verfügbarkeit"},
+      {label: "C", text: "Sie verschlüsselt die Verbindung zur Domain"},
+      {label: "D", text: "Sie überträgt die Domain automatisch an einen neuen Inhaber"}
+    ],
+    multi: false, correct: []
+  }
+];
+const catLabels={
+  domain: {label: "Domains & URLs", cls: "cat-definition"},
+  hosting: {label: "Hosting & SSL", cls: "cat-technik"},
+  recht: {label: "Recht", cls: "cat-recht"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

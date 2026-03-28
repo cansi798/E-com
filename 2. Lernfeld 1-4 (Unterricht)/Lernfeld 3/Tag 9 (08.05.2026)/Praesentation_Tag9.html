@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.9 Kreditzahlungen im Webshop – Tag 9</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; user-select:none; }
+#progress-bar { position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--primary),#60A5FA); transition:width .4s ease; z-index:100; }
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:60px 80px 50px; opacity:0; transform:translateX(60px); transition:opacity .5s ease,transform .5s ease; pointer-events:none; background:var(--bg); }
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header { display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start; }
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag { font-size:.72rem; background:var(--bg-alt); color:var(--text-muted); padding:4px 12px; border-radius:20px; white-space:nowrap; }
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; position:relative; overflow:hidden; box-shadow:var(--shadow); }
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p,.card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight { background:var(--primary-light); border-radius:12px; padding:16px 24px; width:100%; border-left:4px solid var(--primary); margin:12px 0; font-size:.88rem; line-height:1.6; }
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge { display:inline-block; background:var(--primary); color:#fff; font-size:.7rem; font-weight:700; padding:2px 10px; border-radius:20px; margin-right:4px; }
+.badge.gold { background:var(--accent); } .badge.green { background:var(--success); } .badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box { flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px; text-align:center; position:relative; font-size:.8rem; border:1px solid var(--border); box-shadow:var(--shadow); }
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item { display:flex; align-items:flex-start; gap:14px; padding:10px 14px; background:var(--success-light); border-radius:10px; border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5; }
+.lz-check { min-width:24px; height:24px; border-radius:50%; background:var(--success); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.7rem; }
+.info-box { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin:8px 0; font-size:.85rem; line-height:1.6; box-shadow:var(--shadow); }
+#nav { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); border:1px solid var(--border); border-radius:40px; padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg); }
+#nav button { background:none; border:none; color:var(--text); font-size:1.1rem; cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s; }
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer { position:fixed; bottom:0; left:0; right:0; padding:6px 40px; display:flex; justify-content:space-between; align-items:center; font-size:.68rem; color:var(--text-muted); border-top:1px solid var(--border); background:rgba(255,255,255,.9); backdrop-filter:blur(6px); }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,.97); backdrop-filter:blur(8px); z-index:200; overflow-y:auto; padding:20px; }
+#grid-overlay.visible { display:block; }
+#grid-header { display:flex; justify-content:space-between; align-items:center; padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; padding:0 20px; }
+.grid-thumb { background:var(--bg-card); border:2px solid var(--border); border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center; }
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1 -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 9</div>
+    <h1>3.9 Kreditzahlungen<br>im Webshop</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 470 – 476</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      8. Mai 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2 -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 18</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Kreditarten unterscheiden</strong> – kurz-, mittel- und langfristige Kredite sowie Kreditarten nach Verf&uuml;gbarkeit und Sicherheit einordnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Darlehensformen erkl&auml;ren</strong> – F&auml;lligkeits-, Abzahlungs- und Annuit&auml;tendarlehen unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Ratenkauf im E-Commerce verstehen</strong> – Finanzierungsm&ouml;glichkeiten f&uuml;r Webshop-Kunden beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>BNPL-Dienste einordnen</strong> – Klarna, Afterpay und PayPal Ratenzahlung erkl&auml;ren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Bonit&auml;tspr&uuml;fung verstehen</strong> – SCHUFA und Kreditw&uuml;rdigkeitspr&uuml;fung im E-Commerce einordnen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Wie k&ouml;nnen Webshops ihren Kunden Finanzierungsm&ouml;glichkeiten anbieten und welche Risiken entstehen dabei?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3 -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Was ist ein Kredit?</h2>
+      <span class="tag">Folie 3 / 18</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Bei einem <strong>Kredit</strong> werden Geldbetr&auml;ge von einer Person auf Zeit gegen <strong>Zinszahlungen</strong> im Vertrauen auf eine R&uuml;ckzahlung &uuml;berlassen. Dies geschieht durch Abschluss eines <strong>Kreditvertrags</strong> zwischen Kreditgeber (Gl&auml;ubiger/Kreditor) und Kreditnehmer (Schuldner/Debitor).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128221; Inhalte des Kreditvertrags</h3>
+          <ul>
+            <li>Laufzeit und H&ouml;he des Kredits</li>
+            <li>R&uuml;ckzahlung (getrennt/gemeinsam, Zeitpunkt)</li>
+            <li>Zinsen (Festzinsen oder Zinsgleitklausel)</li>
+            <li>Auszahlung (komplett oder mit Disagio)</li>
+            <li>Geb&uuml;hren (Provisionen, Bearbeitungsgeb&uuml;hr)</li>
+            <li>Stellung von Sicherheiten</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#127970; Bedeutung f&uuml;r den Webshop</h3>
+          <ul>
+            <li>Kunden k&ouml;nnen gr&ouml;&szlig;ere Anschaffungen t&auml;tigen</li>
+            <li>H&ouml;here Ums&auml;tze durch Finanzierungsoptionen</li>
+            <li>Webshop selbst ben&ouml;tigt ggf. Kredite f&uuml;r Investitionen</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:12px">
+          <strong>Praxisrelevanz:</strong> Ratenzahlungen machen ca. 8 % der Online-Zahlungen aus und steigen kontinuierlich, besonders bei hochpreisigen Produkten (vgl. Heinemann, 2023).
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4 -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Kreditarten nach Laufzeit</h2>
+      <span class="tag">Folie 4 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#9200; Kurzfristige Kredite</h3>
+          <p>Laufzeit: <strong>bis 6 Monate</strong></p>
+          <p>Kreditnehmer muss das &uuml;berlassene Fremdkapital innerhalb von sechs Monaten zur&uuml;ckzahlen.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128197; Mittelfristige Kredite</h3>
+          <p>Laufzeit: <strong>6 Monate bis 4 Jahre</strong></p>
+          <p>&Auml;hnlich wie kurzfristige Kredite, h&auml;ufig zur Finanzierung von Umlaufverm&ouml;gen.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128198; Langfristige Kredite</h3>
+          <p>Laufzeit: <strong>&uuml;ber 4 Jahre</strong></p>
+          <p>Oft aufgenommen zur Finanzierung von Anlageverm&ouml;gen (z. B. Kauf oder Bau von Immobilien).</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Merke:</strong> Je l&auml;nger die Laufzeit eines Kredits, desto h&ouml;her sind in der Regel die Gesamtkosten durch Zinsen.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5 -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>Kreditarten nach Verf&uuml;gbarkeit</h2>
+      <span class="tag">Folie 5 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#127974; Kontokorrentkredit</h3>
+          <ul>
+            <li>Kreditlinie bis zu einem H&ouml;chstbetrag</li>
+            <li>Konto darf &uuml;berzogen werden</li>
+            <li>Jederzeit kurzfristig in Anspruch nehmbar</li>
+            <li>Nur tats&auml;chlich beanspruchte Zinsen berechnet</li>
+            <li>Sehr komfortabel f&uuml;r Unternehmen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Darlehen</h3>
+          <ul>
+            <li>Langfristiger Kredit</li>
+            <li>Auszahlung in einer Summe oder Teilbetr&auml;gen</li>
+            <li>H&auml;ufig f&uuml;r Investitionen im Anlageverm&ouml;gen</li>
+            <li>Drei Tilgungsarten: F&auml;lligkeits-, Abzahlungs- und Annuit&auml;tendarlehen</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#128666; Lieferantenkredit</h3>
+          <ul>
+            <li>Kurzfristige Finanzierung beim Warenkauf</li>
+            <li>Zahlungsziel: 30, 60 oder 90 Tage</li>
+            <li>K&auml;ufer darf Ware sofort nutzen</li>
+            <li>Skonto bei fr&uuml;hzeitiger Zahlung m&ouml;glich</li>
+            <li>Oft teuerste Finanzierungsm&ouml;glichkeit</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6 -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Darlehensarten im Vergleich</h2>
+      <span class="tag">Folie 6 / 18</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Darlehensart</th><th>Tilgung</th><th>Zinsen</th><th>Besonderheit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>F&auml;lligkeitsdarlehen</strong></td><td>Gesamte Summe am Ende der Laufzeit</td><td>Gleichbleibend hoch (auf volle Summe)</td><td>Auch &bdquo;Festdarlehen&ldquo; genannt</td></tr>
+          <tr><td><strong>Abzahlungsdarlehen</strong></td><td>Gleiche Tilgungsbetr&auml;ge in Raten</td><td>Sinkend (weil Restschuld sinkt)</td><td>Finanzielle Belastung sinkt j&auml;hrlich</td></tr>
+          <tr><td><strong>Annuit&auml;tendarlehen</strong></td><td>Steigende Tilgung</td><td>Sinkend</td><td>Gleichbleibende Gesamtrate (Annuit&auml;t)</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box" style="margin-top:14px">
+        <strong>Beispiel:</strong> Die Exclusiva GmbH nimmt ein Darlehen &uuml;ber 200.000 &euro; auf, Laufzeit 4 Jahre, Zinssatz 10 %. Beim <strong>Abzahlungsdarlehen</strong> betr&auml;gt die Tilgung 50.000 &euro;/Jahr, die Zinsen sinken von 20.000 &euro; (1. Jahr) auf 5.000 &euro; (4. Jahr).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7 -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Lieferantenkredit &amp; Skonto-Berechnung</h2>
+      <span class="tag">Folie 7 / 18</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Beim <strong>Lieferantenkredit</strong> vereinbart der K&auml;ufer mit dem Lieferanten ein <strong>Zahlungsziel</strong>. Der K&auml;ufer darf die Ware sofort nutzen, zahlt aber erst sp&auml;ter. Bei fr&uuml;hzeitiger Zahlung wird oft <strong>Skonto</strong> gew&auml;hrt.
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128221; Rechenbeispiel</h3>
+          <p>Rechnung: <strong>6.000 &euro;</strong>, Zahlungsbedingung: &bdquo;30 Tage Ziel, 2 % Skonto bei Zahlung innerhalb 10 Tagen&ldquo;</p>
+          <p style="margin-top:8px">6.000 &euro; &minus; 120 &euro; (2 % Skonto) = <strong>5.880 &euro;</strong></p>
+          <p>Bankkredit f&uuml;r 20 Tage bei 10 %: Z = (5.880 &times; 20 &times; 10) / (100 &times; 360) = <strong>32,67 &euro;</strong></p>
+          <p style="margin-top:8px"><strong>Einsparung:</strong> 120 &euro; &minus; 32,67 &euro; = <strong>87,33 &euro;</strong></p>
+        </div>
+      </div>
+      <div>
+        <div class="highlight green">
+          <strong>Formel Zinsberechnung:</strong><br>
+          Z = (Kapital &times; Laufzeit in Tagen &times; Zinssatz) / (100 &times; 360)
+        </div>
+        <div class="highlight gold" style="margin-top:12px">
+          <strong>Fazit:</strong> Es lohnt sich h&auml;ufig, einen kurzfristigen Bankkredit aufzunehmen, um den Skontoertrag mitzunehmen. Der Lieferantenkredit ist zwar bequem, aber oft die <strong>teuerste Finanzierungsm&ouml;glichkeit</strong>.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8 -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128722;</div>
+      <h2>Finanzierungsm&ouml;glichkeiten f&uuml;r Webshop-Kunden</h2>
+      <span class="tag">Folie 8 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128179; Ratenkauf im Webshop</h3>
+          <ul>
+            <li>Kredit &uuml;ber den Webshop selbst</li>
+            <li>Bonit&auml;tspr&uuml;fung einfach und schnell</li>
+            <li>Zinsen h&ouml;her als bei Verbraucherkrediten</li>
+            <li>Auch <strong>Ratenfinanzierung</strong> genannt</li>
+            <li>Teils 0 %-Finanzierungen mit Zusatzkosten</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#127974; Verbraucherkredit (Bank)</h3>
+          <ul>
+            <li>Direkt bei der Bank oder Vermittlungsplattform</li>
+            <li>Bessere Bonit&auml;tspr&uuml;fung = g&uuml;nstigere Zinsen</li>
+            <li>Auszahlung in einer Summe, Tilgung in Raten</li>
+            <li>Auch <strong>Ratenkredit</strong> genannt</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Vorteil f&uuml;r den Webshop:</strong> Durch Ratenkauf-Optionen steigt der <strong>durchschnittliche Bestellwert</strong> deutlich. 10–15 % aller Onlinebestellungen nutzen mittlerweile eine Finanzierung per Ratenkauf (vgl. Kollmann, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9 -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128736;</div>
+      <h2>Ratenkauf in Onlineshops – Drei Wege</h2>
+      <span class="tag">Folie 9 / 18</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Variante</th><th>Beschreibung</th><th>Besonderheit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Webshop vergibt selbst</strong></td><td>Der Betreiber l&auml;sst den Kunden seine Rechnung in Raten abbezahlen.</td><td>Hoher Organisationsaufwand, hohe Kosten, eigenes Ausfallrisiko</td></tr>
+          <tr><td><strong>Externer Dienstleister (komplett online)</strong></td><td>Antragseingabe, Risikopr&uuml;fung und Kreditzusage &uuml;ber das Internet.</td><td>Webshop kann sofort ausliefern, schnelle Abwicklung</td></tr>
+          <tr><td><strong>Externer Dienstleister (teilweise online)</strong></td><td>Antrag online, Identit&auml;tspr&uuml;fung per Postident-Verfahren.</td><td>Kreditzusage dauert l&auml;nger, Auslieferung verz&ouml;gert</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>Praxis:</strong> Die meisten Webshops nutzen externe Dienstleister wie Banken oder BNPL-Anbieter, da der eigene Aufwand und das Risiko zu hoch w&auml;ren.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10 -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>BNPL – Buy Now, Pay Later</h2>
+      <span class="tag">Folie 10 / 18</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          <strong>BNPL</strong> (Buy Now, Pay Later) = &bdquo;Sofort kaufen, sp&auml;ter zahlen&ldquo;. Viele Webshops bieten Kunden Finanzierungen beim Checkout &uuml;ber BNPL-Dienste an. Zahlungsdienste wie <strong>Klarna, Affirm, Afterpay</strong> oder <strong>PayPal Ratenzahlung</strong> erf&uuml;llen diesen Wunsch.
+        </div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Kunden kaufen Artikel im Webshop und zahlen per Ratenzahlung</li>
+          <li>Statt sofort per Lastschrift/PayPal/Kreditkarte zu zahlen</li>
+          <li>F&uuml;r Kunden oft <strong>kostenlos (zinslos)</strong></li>
+          <li>Webshop zahlt Geb&uuml;hr pro Transaktion an BNPL-Dienst</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Vorteile</h3>
+          <ul>
+            <li>Kunden bestellen mehr, wenn Ratenzahlung verf&uuml;gbar</li>
+            <li>KI-basierte Bonit&auml;tspr&uuml;fung in Echtzeit</li>
+            <li>Einfache Integration im Checkout</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Risiken f&uuml;r Kunden</h3>
+          <ul>
+            <li>Ausbleibende Zahlungen beeintr&auml;chtigen <strong>Kreditw&uuml;rdigkeit</strong></li>
+            <li>Gefahr der &Uuml;berschuldung</li>
+            <li>Im Gegensatz zur normalen Kreditvergabe: keine umfassende Finanzauskunft n&ouml;tig</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11 -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128270;</div>
+      <h2>Bonit&auml;tspr&uuml;fung &amp; Kreditw&uuml;rdigkeit</h2>
+      <span class="tag">Folie 11 / 18</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Vor der Kreditvergabe wird die <strong>Kreditw&uuml;rdigkeit</strong> (Bonit&auml;t) des Kunden gepr&uuml;ft. Informationsquellen sind vielf&auml;ltig und sch&uuml;tzen den Kreditgeber vor Zahlungsausf&auml;llen.
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128218; Informationsquellen</h3>
+          <ul>
+            <li><strong>SCHUFA</strong> und Creditreform (gewerbsm&auml;&szlig;ige Auskunfteien)</li>
+            <li>Gesch&auml;ftsb&uuml;cher und Kontenunterlagen</li>
+            <li>&Ouml;ffentliche Register (Handelsregister, Grundbuch)</li>
+            <li>Steuerbescheide und Jahresabschl&uuml;sse</li>
+            <li>Gesch&auml;ftsfreunde und Referenzen</li>
+            <li>Handelskammern und Konsulate</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128202; Kontenunterlagen pr&uuml;fen</h3>
+          <ul>
+            <li>Umsatzentwicklung</li>
+            <li>Abwicklung fr&uuml;herer Kredite</li>
+            <li>Bilanzen und GuV</li>
+          </ul>
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>BNPL-Besonderheit:</strong> Bei BNPL-Diensten wird mehr auf <strong>k&uuml;nstliche Intelligenz</strong> gesetzt. Algorithmen berechnen aus Daten wie Alter, Uhrzeit, Betrag und fr&uuml;heren Transaktionen einen Wert, anhand dessen die Kreditvergabe erfolgt oder abgelehnt wird.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12 -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Kreditarten nach Sicherheit</h2>
+      <span class="tag">Folie 12 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128100; Personalkredite</h3>
+          <p>Grundlage ist nur die &Uuml;berpr&uuml;fung der <strong>Kreditw&uuml;rdigkeit</strong> des Kreditnehmers. Keine dinglichen Sicherheiten.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128274; Verst&auml;rkte Personalkredite</h3>
+          <ul>
+            <li><strong>B&uuml;rgschaft</strong></li>
+            <li><strong>Zession</strong> (Abtretung von Forderungen)</li>
+            <li><strong>Wechselkredit</strong></li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#127968; Realkredite</h3>
+          <ul>
+            <li><strong>Lombardkredit</strong> (Verpf&auml;ndung)</li>
+            <li><strong>Sicherungs&uuml;bereignung</strong></li>
+            <li><strong>Hypothek</strong></li>
+            <li><strong>Grundschuld</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Im E-Commerce:</strong> Die meisten Webshop-Ratenkredite und BNPL-Dienste basieren auf <strong>Personalkrediten</strong> – die Bonit&auml;tspr&uuml;fung erfolgt automatisiert und ohne dingliche Sicherheiten (vgl. Wirtz, 2021).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13 -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Zusammenfassung: Kreditarten</h2>
+      <span class="tag">Folie 13 / 18</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Unterscheidungsmerkmal</th><th>Kategorien</th><th>Beispiele</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Laufzeit</strong></td><td>Kurzfristig, mittelfristig, langfristig</td><td>Kontokorrentkredit, Darlehen</td></tr>
+          <tr><td><strong>Verf&uuml;gbarkeit</strong></td><td>Darlehen, Kontokorrentkredit, Lieferantenkredit</td><td>F&auml;lligkeits-/Abzahlungs-/Annuit&auml;tendarlehen</td></tr>
+          <tr><td><strong>Sicherheit</strong></td><td>Personalkredit, verst&auml;rkt, Realkredit</td><td>B&uuml;rgschaft, Grundschuld, Hypothek</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight green" style="margin-top:14px">
+        <strong>Praxisbezug E-Commerce:</strong> F&uuml;r den Webshop-Kunden ist der <strong>Ratenkauf</strong> (kurzfristiger Personalkredit) die relevanteste Form. F&uuml;r den Webshop-Betreiber selbst k&ouml;nnen <strong>Kontokorrentkredite</strong> und <strong>Darlehen</strong> f&uuml;r Investitionen relevant sein.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14 -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128161;</div>
+      <h2>Praxisbeispiel: Ratenkauf im Musikhaus</h2>
+      <span class="tag">Folie 14 / 18</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="info-box">
+          <strong>Interview:</strong> Denis Korn, Inhaber eines Musikhauses mit Onlineshop und Ladengesch&auml;ften, bietet seit drei Jahren Ratenkauf an. <strong>10–15 % aller Onlinebestellungen</strong> nutzen diese Option.
+        </div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Hochpreisige Produkte (Musikinstrumente, DJ-Equipment) werden gerne auf Raten bezahlt</li>
+          <li>Ratenkauf wird aktiv &uuml;ber Banner auf Startseite und Produktseiten beworben</li>
+          <li>Feedback der Kunden durchweg positiv</li>
+          <li>Viele Kunden f&uuml;hren nach Abschluss eine weitere Finanzierung durch</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Ergebnisse</h3>
+          <ul>
+            <li>Kaufabschlussquote steigt durch Beratung zur Ratenkauf-Option</li>
+            <li>Auch im station&auml;ren Handel als Entscheidungs-Beschleuniger eingesetzt</li>
+            <li>Erwartung: Anteil wird weiter steigen</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:12px">
+          <strong>Fazit:</strong> Der Ratenkauf ist im E-Commerce ein <strong>Umsatztreiber</strong> und wird von Kunden als zus&auml;tzliche Zahlungsart positiv wahrgenommen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15 -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>&Uuml;bungsaufgaben</h2>
+      <span class="tag">Folie 15 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Was ist ein Kredit? Definieren Sie den Begriff und nennen Sie drei wesentliche Inhalte eines Kreditvertrags.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Erkl&auml;ren Sie den Unterschied zwischen einem <strong>Darlehen</strong> und einem <strong>Kontokorrentkredit</strong>.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>&bdquo;Der Kredit wird in konstanten Raten zur&uuml;ckgezahlt. Dabei verringert sich der Zinsanteil der Rate zugunsten des Tilgungsanteils.&ldquo; Welche Art von Darlehen liegt vor?</p>
+        </div>
+        <div class="card red">
+          <h3>&#128209; Aufgabe 4</h3>
+          <p>Die Exclusiva GmbH erh&auml;lt Waren im Wert von 150.000 &euro;. Zahlungsbedingung: &bdquo;30 Tage netto Kasse oder 2 % Skonto bei Zahlung innerhalb 10 Tagen.&ldquo; Kontokorrentkredit: 15 % p.a. Lohnt sich die Aufnahme des Kredits?</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Diskussion:</strong> Warum kann eine Ratenzahlung f&uuml;r Kunden problematisch sein? Nennen Sie m&ouml;gliche Gefahren.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16 -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Was wir heute gelernt haben</h2>
+      <span class="tag">Folie 16 / 18</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green"><h3>&#9989; Kreditarten</h3><p>Unterscheidung nach Laufzeit (kurz/mittel/lang), Verf&uuml;gbarkeit (Darlehen, Kontokorrent, Lieferantenkredit) und Sicherheit (Personal/Real).</p></div>
+        <div class="card green"><h3>&#9989; Darlehensformen</h3><p>F&auml;lligkeits-, Abzahlungs- und Annuit&auml;tendarlehen mit unterschiedlichen Tilgungs- und Zinsverl&auml;ufen.</p></div>
+        <div class="card green"><h3>&#9989; Ratenkauf</h3><p>Finanzierungsoption im Webshop, die den Bestellwert erh&ouml;ht. Drei Varianten: Eigenregie, komplett online, teilweise online.</p></div>
+        <div class="card green"><h3>&#9989; BNPL</h3><p>Buy Now, Pay Later (Klarna, Afterpay) – schnelle Kreditvergabe im Checkout mit KI-basierter Bonit&auml;tspr&uuml;fung.</p></div>
+        <div class="card green"><h3>&#9989; Bonit&auml;tspr&uuml;fung</h3><p>SCHUFA, Creditreform und weitere Quellen zur &Uuml;berpr&uuml;fung der Kreditw&uuml;rdigkeit.</p></div>
+        <div class="card green"><h3>&#9989; Skonto vs. Kredit</h3><p>Oft lohnt sich ein Bankkredit, um Skonto mitzunehmen – Lieferantenkredit ist teuer.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17 -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 17 / 18</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Blank, A., Hagel, H., Hahn, H., Krause, K. &amp; Schmidthausen, M. (2024). <em>Kaufmann/Kauffrau im E-Commerce: Lernfelder 1–4</em>. Westermann.</div>
+      <div class="ref-entry">Br&auml;utigam, P. (2020). <em>E-Commerce: Rechtshandbuch f&uuml;r den elektronischen Gesch&auml;ftsverkehr</em> (2. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Gesch&auml;ftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">K&ouml;hler, H. &amp; Bornkamm, J. (2023). <em>Gesetz gegen den unlauteren Wettbewerb: UWG</em> (41. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18 -->
+  <section class="slide cover" data-index="18">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 9</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.9 Kreditzahlungen im Webshop</div>
+    <div class="cover-meta">
+      N&auml;chstes Thema: <strong>3.10 Versand mit Post-, Express- und Paketdiensten</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div>
+
+<div id="grid-overlay">
+  <div id="grid-header"><span>Folien&uuml;bersicht</span><button onclick="toggleGrid()" title="Schlie&szlig;en">&times;</button></div>
+  <div id="grid-container"></div>
+</div>
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie">&#8592;</button>
+  <span id="slide-counter">1 / 18</span>
+  <button id="btn-next" title="N&auml;chste Folie">&#8594;</button>
+  <button id="btn-grid" title="Folien&uuml;bersicht (G)">&#8862;</button>
+</div>
+<div id="footer">
+  <span>Tag 9 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;
+function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%';}
+document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));
+document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return;}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid();});
+let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1);}});
+function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible');}
+function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid();};c.appendChild(d);});}
+document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

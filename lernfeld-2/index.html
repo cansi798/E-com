@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lernfeld 2 – Online-Auftritte gestalten</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#2980B9;--primary-light:#EBF5FB;--primary-dark:#1F618D;--bg:#f8fafc;--text:#1e293b;--muted:#64748b;--border:#e2e8f0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0f172a,#1e293b);padding:0 32px;display:flex;align-items:center;height:60px;gap:16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.back-btn{color:#94a3b8;text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s}
+.back-btn:hover{color:#f1f5f9}
+.sep{color:#334155}
+.topbar-title{color:#f1f5f9;font-weight:700;font-size:.95rem}
+.header{background:linear-gradient(135deg,#0f172a 0%,#1a2640 100%);padding:40px 32px 36px;border-bottom:3px solid var(--primary)}
+.lf-badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.header h1{color:#f1f5f9;font-size:2rem;font-weight:800;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.9rem}
+.content{max-width:1100px;margin:0 auto;padding:36px 24px}
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;transition:box-shadow .2s,transform .2s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary)}
+.card.done:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);transform:translateY(-2px)}
+.card.wip{opacity:.65}
+.card.wip::before{background:#94a3b8}
+.tag-num{font-size:.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.card.wip .tag-num{color:#94a3b8}
+.tag-topic{font-size:.97rem;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.4}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s;border:none}
+.btn-praes{background:var(--primary);color:#fff}
+.btn-praes:hover{background:var(--primary-dark)}
+.btn-quiz{background:var(--primary-light);color:var(--primary-dark);border:1px solid #AED6F1}
+.btn-quiz:hover{background:#D6EAF8}
+.badge-wip{font-size:.72rem;background:#f1f5f9;color:var(--muted);border:1px solid var(--border);padding:5px 10px;border-radius:20px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back-btn" href="../index.html">← Dashboard</a>
+  <span class="sep">|</span>
+  <span class="topbar-title">Lernfeld 2 – Online-Auftritte gestalten</span>
+</div>
+<div class="header">
+  <div class="lf-badge">Lernfeld 2</div>
+  <h1>Online-Auftritte gestalten</h1>
+  <p>16 Unterrichtstage &nbsp;·&nbsp; Webshop-Design, Sortiment, Beschaffung, Lagerlogistik</p>
+</div>
+<div class="content">
+  <div class="section-label">Unterrichtstage</div>
+  <div class="grid">
+
+    <div class="card done">
+      <div class="tag-num">Tag 1 · 31.03.2026</div>
+      <div class="tag-topic">2.1 Der Aufbau eines Sortiments im Onlinehandel</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 2/Tag 1 (31.03.2026)/Praesentation_Tag1.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 2/Tag 1 (31.03.2026)/Quiz_Tag1.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card done">
+      <div class="tag-num">Tag 2 · 01.04.2026</div>
+      <div class="tag-topic">2.2 Layout der Internetseiten + 2.3 Darstellung des Sortiments</div>
+      <div class="btns">
+        <a class="btn btn-praes" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 2/Tag 2 (01.04.2026)/Praesentation_Tag2.html" target="_blank">▶ Präsentation</a>
+        <a class="btn btn-quiz" href="../2. Lernfeld 1-4 (Unterricht)/Lernfeld 2/Tag 2 (01.04.2026)/Quiz_Tag2.html" target="_blank">✎ Quiz</a>
+      </div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 3 · 02.04.2026</div>
+      <div class="tag-topic">2.4 Das Impressum + 2.5 Haftung für die Inhalte</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 4 · 07.04.2026</div>
+      <div class="tag-topic">2.6 Produktdetailseite – Informationsmöglichkeiten über Waren</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 5 · 08.04.2026</div>
+      <div class="tag-topic">2.7 Informationen für Kunden + 2.8 Produktbeschreibung</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 6 · 09.04.2026</div>
+      <div class="tag-topic">2.9 Auswahl des Artikels + 2.10 Visualisierungen</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 7 · 10.04.2026</div>
+      <div class="tag-topic">2.11 Einbeziehung des Kunden + 2.12 Preisgestaltung</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 8 · 13.04.2026</div>
+      <div class="tag-topic">2.13 Die Erstellung von Internetseiten</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 9 · 14.04.2026</div>
+      <div class="tag-topic">2.14 Gesetzliche Regelungen des Wettbewerbs</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 10 · 15.04.2026</div>
+      <div class="tag-topic">2.15 Markenrechtliche Einflüsse + 2.16 ERP- und Warenwirtschaftssysteme</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 11 · 16.04.2026</div>
+      <div class="tag-topic">2.17 Beschaffungsplanung + 2.18 Bezugsquellenermittlung</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 12 · 17.04.2026</div>
+      <div class="tag-topic">2.19 Die Anfrage + 2.20 Angebotsvergleiche</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 13 · 20.04.2026</div>
+      <div class="tag-topic">2.21 Die Bestellung + 2.22 Die Warenannahme</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 14 · 21.04.2026</div>
+      <div class="tag-topic">2.23 Arten und Aufgaben eines Lagers + 2.24 Anforderungen an ein Lager</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 15 · 22.04.2026</div>
+      <div class="tag-topic">2.25 Optimaler Lagerbestand + 2.26 Bestandskontrolle + 2.27 Lagerkennziffern</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+    <div class="card wip">
+      <div class="tag-num">Tag 16 · 23.04.2026</div>
+      <div class="tag-topic">2.28 Dropshipping + 2.29 Rechnungsprüfung</div>
+      <div class="btns"><span class="badge-wip">In Bearbeitung</span></div>
+    </div>
+
+  </div>
+</div>
+<script>
+if(sessionStorage.getItem('ecom-auth')!=='ok') window.location='../index.html';
+</script>
+</body>
+</html>

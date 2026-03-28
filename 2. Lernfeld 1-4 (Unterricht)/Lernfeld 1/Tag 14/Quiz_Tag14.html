@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 14: Rechtsformen Teil 1 – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 14: Rechtsformen Teil 1</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 14: Rechtsformen Teil 1</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 14</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "rechtsform",
+    text: "Warum ist die Rechtsformwahl eine der wichtigsten Entscheidungen bei der Unternehmensgründung?",
+    choices: [
+      {label: "A", text: "Weil sie nur die Steuer beeinflusst"},
+      {label: "B", text: "Weil sie u. a. Haftung, Leitungsbefugnis, Gewinnverteilung und Finanzierung bestimmt"},
+      {label: "C", text: "Weil sie das Gehalt der Mitarbeiter festlegt"},
+      {label: "D", text: "Weil sie den Firmensitz vorschreibt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "rechtsform",
+    text: "Welche Rechtsform ist die einfachste und häufigste in Deutschland?",
+    choices: [
+      {label: "A", text: "OHG"},
+      {label: "B", text: "GmbH"},
+      {label: "C", text: "Einzelunternehmen"},
+      {label: "D", text: "KG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 3, cat: "rechtsform",
+    text: "Wie haftet der Inhaber eines Einzelunternehmens?",
+    choices: [
+      {label: "A", text: "Nur mit dem Geschäftsvermögen"},
+      {label: "B", text: "Unbeschränkt mit dem gesamten Privat- und Geschäftsvermögen"},
+      {label: "C", text: "Nur bis zur Höhe seiner Einlage"},
+      {label: "D", text: "Gar nicht – es gibt eine Haftungsbeschränkung per Gesetz"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 4, cat: "rechtsform",
+    text: "Welches Mindestkapital ist beim Einzelunternehmen gesetzlich vorgeschrieben?",
+    choices: [
+      {label: "A", text: "25.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "5.000 EUR"},
+      {label: "D", text: "Keines"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 5, cat: "rechtsform",
+    text: "Welche Steuerart zahlt ein Einzelunternehmer auf seinen Gewinn?",
+    choices: [
+      {label: "A", text: "Körperschaftsteuer"},
+      {label: "B", text: "Einkommensteuer"},
+      {label: "C", text: "Gewerbesteuer allein"},
+      {label: "D", text: "Mehrwertsteuer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 6, cat: "rechtsform",
+    text: "Was unterscheidet das Kleingewerbe vom eingetragenen Kaufmann (e. K.)? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Das Kleingewerbe ist nicht ins Handelsregister eingetragen"},
+      {label: "B", text: "Der e. K. führt doppelte Buchführung nach HGB"},
+      {label: "C", text: "Das Kleingewerbe unterliegt dem HGB"},
+      {label: "D", text: "Der e. K. ist nach Gewerbeordnung geregelt"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 7, cat: "rechtsform",
+    text: "Welchen Firmennamen darf ein Einzelunternehmer ohne HR-Eintrag verwenden?",
+    choices: [
+      {label: "A", text: "Jeden beliebigen Fantasienamen"},
+      {label: "B", text: "Den bürgerlichen Namen des Inhabers"},
+      {label: "C", text: "Einen Namen mit dem Zusatz „GmbH“"},
+      {label: "D", text: "Einen anonymen Handelsnamen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 8, cat: "rechtsform",
+    text: "Was ermöglicht der Zusatz „e. K.“ bei einem Einzelunternehmen?",
+    choices: [
+      {label: "A", text: "Beschränkte Haftung wie bei der GmbH"},
+      {label: "B", text: "Die Verwendung eines Fantansienamens im Firmennamen"},
+      {label: "C", text: "Befreiung von der Buchführungspflicht"},
+      {label: "D", text: "Gründung ohne Gewerbeanmeldung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 9, cat: "rechtsform",
+    text: "Welchem Paragrafen ist die GbR zugeordnet?",
+    choices: [
+      {label: "A", text: "§105 HGB"},
+      {label: "B", text: "§161 HGB"},
+      {label: "C", text: "§705 BGB"},
+      {label: "D", text: "§230 HGB"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 10, cat: "rechtsform",
+    text: "Wie entsteht eine GbR?",
+    choices: [
+      {label: "A", text: "Nur durch notariell beurkundeten Gesellschaftsvertrag"},
+      {label: "B", text: "Automatisch durch Vereinbarung – auch ohne schriftlichen Vertrag"},
+      {label: "C", text: "Ausschließlich durch Eintrag ins Handelsregister"},
+      {label: "D", text: "Durch Genehmigung der Industrie- und Handelskammer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "rechtsform",
+    text: "Wie haften die Gesellschafter einer GbR?",
+    choices: [
+      {label: "A", text: "Nur mit ihrer Einlage"},
+      {label: "B", text: "Nur das Gesellschaftsvermögen haftet"},
+      {label: "C", text: "Alle Gesellschafter haften gesamtschuldnerisch, unbeschränkt und persönlich"},
+      {label: "D", text: "Jeder Gesellschafter haftet nur für seinen Anteil"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 12, cat: "rechtsform",
+    text: "Was bedeutet gesamtschuldnerische Haftung bei der GbR?",
+    choices: [
+      {label: "A", text: "Jeder Gesellschafter haftet nur für seinen eigenen Anteil"},
+      {label: "B", text: "Jeder Gesellschafter haftet für alle Schulden der Gesellschaft – auch für die anderer"},
+      {label: "C", text: "Nur der geschäftsführende Gesellschafter haftet"},
+      {label: "D", text: "Die Haftung ist auf 10.000 EUR begrenzt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 13, cat: "rechtsform",
+    text: "Wie wird der Gewinn in einer GbR verteilt, wenn kein anderer Vertrag besteht?",
+    choices: [
+      {label: "A", text: "Nach Köpfen – jeder erhält zunächst 4 % auf seinen Kapitalanteil"},
+      {label: "B", text: "Gleichmäßig auf alle Gesellschafter"},
+      {label: "C", text: "Nur der Mehrheitsgesellschafter erhält den Gewinn"},
+      {label: "D", text: "Nach Betriebszugehörigkeit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 14, cat: "rechtsform",
+    text: "Wie werden Entscheidungen in einer GbR nach §709 BGB getroffen?",
+    choices: [
+      {label: "A", text: "Per Mehrheitsentscheid"},
+      {label: "B", text: "Einstimmig – alle Gesellschafter gemeinsam"},
+      {label: "C", text: "Nur durch den ältesten Gesellschafter"},
+      {label: "D", text: "Durch einen gewählten Geschäftsführer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "rechtsform",
+    text: "Welchem Gesetzbuch ist die OHG zugeordnet?",
+    choices: [
+      {label: "A", text: "BGB"},
+      {label: "B", text: "GmbHG"},
+      {label: "C", text: "HGB"},
+      {label: "D", text: "AktG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 16, cat: "rechtsform",
+    text: "Was unterscheidet die OHG von der GbR bezüglich des Handelsregisters?",
+    choices: [
+      {label: "A", text: "Die GbR muss zwingend eingetragen werden, die OHG nicht"},
+      {label: "B", text: "Die OHG muss ins Handelsregister eingetragen werden, die GbR nicht (freiwillig)"},
+      {label: "C", text: "Beide müssen ins Handelsregister"},
+      {label: "D", text: "Beide sind vom Handelsregister befreit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 17, cat: "rechtsform",
+    text: "Wie haftet jeder Gesellschafter in der OHG?",
+    choices: [
+      {label: "A", text: "Nur mit seiner Einlage"},
+      {label: "B", text: "Nur das Gesellschaftsvermögen haftet"},
+      {label: "C", text: "Unbeschränkt, solidarisch und persönlich"},
+      {label: "D", text: "Nur bis zur Hälfte der Schulden"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 18, cat: "rechtsform",
+    text: "Nach welcher Regel wird der Gewinn in der OHG nach §121 HGB verteilt?",
+    choices: [
+      {label: "A", text: "Gleichmäßig auf alle Gesellschafter"},
+      {label: "B", text: "Zunächst 4 % auf den Kapitalanteil jedes Gesellschafters, Rest nach Köpfen"},
+      {label: "C", text: "Ausschließlich nach geleisteter Arbeitsstunden"},
+      {label: "D", text: "Nach dem Dienstalter der Gesellschafter"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "rechtsform",
+    text: "Welche Buchführungspflicht gilt für die OHG?",
+    choices: [
+      {label: "A", text: "Einfache Einnahmen-Überschuss-Rechnung (EÜR)"},
+      {label: "B", text: "Keine Buchführungspflicht"},
+      {label: "C", text: "Doppelte Buchführung nach HGB"},
+      {label: "D", text: "Steuerliche Einnahmen-Ausgaben-Rechnung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 20, cat: "rechtsform",
+    text: "Was versteht man unter dem Komplementär in einer KG?",
+    choices: [
+      {label: "A", text: "Ein stiller Gesellschafter ohne Leitungsbefugnis"},
+      {label: "B", text: "Der vollhaftende Gesellschafter, der das Unternehmen leitet"},
+      {label: "C", text: "Ein Gesellschafter, der nur bis zur Höhe seiner Einlage haftet"},
+      {label: "D", text: "Ein externer Berater der Kommanditgesellschaft"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "rechtsform",
+    text: "Was ist ein Kommanditist in der KG?",
+    choices: [
+      {label: "A", text: "Der vollhaftende Leiter der Gesellschaft"},
+      {label: "B", text: "Ein Gesellschafter, der nur bis zur Höhe seiner Einlage haftet und keine Leitungsbefugnis hat"},
+      {label: "C", text: "Ein stiller Gesellschafter, der nach außen unsichtbar ist"},
+      {label: "D", text: "Der gesetzliche Vertreter der KG im Handelsregister"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 22, cat: "rechtsform",
+    text: "Welchem Paragrafen im HGB ist die KG zugeordnet?",
+    choices: [
+      {label: "A", text: "§705 HGB"},
+      {label: "B", text: "§105 HGB"},
+      {label: "C", text: "§161 HGB"},
+      {label: "D", text: "§230 HGB"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 23, cat: "rechtsform",
+    text: "Warum gilt die KG als Kompromiss? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Ein Gesellschafter (Komplementär) haftet voll und führt das Unternehmen"},
+      {label: "B", text: "Kommanditisten können Kapital einbringen, ohne persönlich zu haften"},
+      {label: "C", text: "Alle Gesellschafter haften gleichermaßen unbeschränkt"},
+      {label: "D", text: "Kommanditisten führen das Unternehmen gemeinsam mit dem Komplementär"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 24, cat: "rechtsform",
+    text: "Wer hat in der KG die Leitungsbefugnis?",
+    choices: [
+      {label: "A", text: "Alle Gesellschafter gemeinsam"},
+      {label: "B", text: "Nur die Kommanditisten"},
+      {label: "C", text: "Der Komplementär"},
+      {label: "D", text: "Der stille Gesellschafter"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 25, cat: "rechtsform",
+    text: "Nach welchem Paragrafen HGB ist die Haftung des Kommanditisten auf seine Einlage beschränkt?",
+    choices: [
+      {label: "A", text: "§421 BGB"},
+      {label: "B", text: "§171 HGB"},
+      {label: "C", text: "§105 HGB"},
+      {label: "D", text: "§709 BGB"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "rechtsform",
+    text: "Was ist eine stille Gesellschaft nach §230 HGB?",
+    choices: [
+      {label: "A", text: "Eine GmbH mit geringem Stammkapital"},
+      {label: "B", text: "Eine Gesellschaft, bei der sich ein Gesellschafter finanziell beteiligt, aber nach außen nicht in Erscheinung tritt"},
+      {label: "C", text: "Eine OHG ohne Handelsregistereintrag"},
+      {label: "D", text: "Eine KG ohne Komplementär"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "rechtsform",
+    text: "Was ist der Unterschied zwischen echter und unechter stiller Gesellschaft?",
+    choices: [
+      {label: "A", text: "Die echte stille Gesellschaft ist im Handelsregister eingetragen, die unechte nicht"},
+      {label: "B", text: "Bei der unechten stillen Gesellschaft ist der stille Gesellschafter zusätzlich an stillen Reserven und Firmenwert beteiligt"},
+      {label: "C", text: "Bei der echten stillen Gesellschaft haftet der stille Gesellschafter unbeschränkt"},
+      {label: "D", text: "Die unechte stille Gesellschaft existiert nicht im deutschen Recht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "rechtsform",
+    text: "Wie ist die Haftung bei der stillen Gesellschaft geregelt?",
+    choices: [
+      {label: "A", text: "Unbeschränkt persönlich"},
+      {label: "B", text: "Nur mit der geleisteten Einlage; nach außen nicht sichtbar"},
+      {label: "C", text: "Solidarisch mit allen anderen Gesellschaftern"},
+      {label: "D", text: "Vollständig durch das Gesellschaftsvermögen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "rechtsform",
+    text: "Welches Mindestkapital gilt für alle Personengesellschaften (Einzelunt., GbR, OHG, KG)?",
+    choices: [
+      {label: "A", text: "25.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "1.000 EUR"},
+      {label: "D", text: "Keines"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 30, cat: "rechtsform",
+    text: "Welche Rechtsform entsteht, wenn drei Freunde einen Online-Shop ohne schriftlichen Vertrag eröffnen?",
+    choices: [
+      {label: "A", text: "OHG"},
+      {label: "B", text: "Einzelunternehmen"},
+      {label: "C", text: "GbR"},
+      {label: "D", text: "KG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "person",
+    text: "Welche Rechtsform empfiehlt sich, wenn eine Person nur Kapital einbringen, aber nicht persönlich haften möchte?",
+    choices: [
+      {label: "A", text: "GbR"},
+      {label: "B", text: "OHG"},
+      {label: "C", text: "Einzelunternehmen"},
+      {label: "D", text: "KG (als Kommanditist)"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 32, cat: "person",
+    text: "Was versteht man unter unbeschränkter Haftung?",
+    choices: [
+      {label: "A", text: "Haftung nur bis zur Höhe der Einlage"},
+      {label: "B", text: "Haftung mit dem gesamten Privatvermögen – ohne Obergrenze"},
+      {label: "C", text: "Haftung nur des Gesellschaftsvermögens"},
+      {label: "D", text: "Haftung nur für betriebliche Schulden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "person",
+    text: "Wann muss ein Einzelunternehmen ins Handelsregister eingetragen werden?",
+    choices: [
+      {label: "A", text: "Immer, bei jeder Gründung"},
+      {label: "B", text: "Nur wenn es als e. K. geführt wird (kaufmännischer Geschäftsbetrieb nach §1 HGB)"},
+      {label: "C", text: "Nie – Einzelunternehmen werden nicht eingetragen"},
+      {label: "D", text: "Nur wenn der Umsatz 100.000 EUR übersteigt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 34, cat: "person",
+    text: "Welcher Paragraph regelt die gesamtschuldnerische Haftung?",
+    choices: [
+      {label: "A", text: "§161 HGB"},
+      {label: "B", text: "§421 BGB"},
+      {label: "C", text: "§705 BGB"},
+      {label: "D", text: "§121 HGB"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 35, cat: "person",
+    text: "Was bedeutet solidarische Haftung bei der OHG?",
+    choices: [
+      {label: "A", text: "Jeder Gesellschafter haftet nur für seinen Anteil"},
+      {label: "B", text: "Ein Gläubiger kann sich an jeden einzelnen Gesellschafter wenden und die gesamte Schuld einfordern"},
+      {label: "C", text: "Alle Gesellschafter haften gemeinsam, aber nur bis zur Einlage"},
+      {label: "D", text: "Nur der Geschäftsführer haftet persönlich"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 36, cat: "person",
+    text: "Welche Steuerart fällt bei Gesellschaftern einer OHG auf ihren Gewinnanteil an?",
+    choices: [
+      {label: "A", text: "Körperschaftsteuer"},
+      {label: "B", text: "Einkommensteuer (anteilig bei jedem Gesellschafter)"},
+      {label: "C", text: "Gewerbesteuer allein"},
+      {label: "D", text: "Solidaritätszuschlag allein"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 37, cat: "person",
+    text: "Was ist laut Handout ein typisches E-Commerce-Beispiel für eine GbR?",
+    choices: [
+      {label: "A", text: "Ein professioneller Online-Shop als GmbH"},
+      {label: "B", text: "Zwei Freunde gründen gemeinsam einen Dropshipping-Shop"},
+      {label: "C", text: "Ein erfahrener Händler und ein Investor als KG"},
+      {label: "D", text: "Ein Einzelhändler auf eBay als e. K."}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "person",
+    text: "Welche Rechtsform eignet sich laut Handout für kleine Online-Shops auf eBay oder Etsy als Einstieg?",
+    choices: [
+      {label: "A", text: "GmbH"},
+      {label: "B", text: "Kleingewerbe / Einzelunternehmen"},
+      {label: "C", text: "AG"},
+      {label: "D", text: "OHG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 39, cat: "person",
+    text: "Welche Kriterien beeinflusst die Rechtsformwahl? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Haftung des Unternehmers"},
+      {label: "B", text: "Veröffentlichungspflichten (z. B. Handelsregistereintrag)"},
+      {label: "C", text: "Farbe des Firmenlogos"},
+      {label: "D", text: "Anzahl der Produkte im Sortiment"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 40, cat: "person",
+    text: "Wie lautet die Eselsbrücke für die KG?",
+    choices: [
+      {label: "A", text: "„Komplementär = Komplett haftet er; Kommanditist = Kapital ist alles, was er gibt“"},
+      {label: "B", text: "„Komplementär = Kein Risiko; Kommanditist = Komplett haftet er“"},
+      {label: "C", text: "„KG = Kleine Gesellschaft mit beschränkter Haftung“"},
+      {label: "D", text: "„Komplementär = Kapital einbringen; Kommanditist = Kontrolle ausüben“"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 41, cat: "person",
+    text: "Was bedeutet die Eselsbrücke „GbR = Gemeinsam bürgt die Rechtsgemeinschaft“?",
+    choices: [
+      {label: "A", text: "Nur der Mehrheitsgesellschafter haftet für alle"},
+      {label: "B", text: "Alle GbR-Gesellschafter bürgen füreinander – einer kann die gesamte Schuld zahlen müssen"},
+      {label: "C", text: "Die GbR haftet nur mit dem Gesellschaftsvermögen"},
+      {label: "D", text: "Die GbR ist eine beschränkt haftende Gesellschaft"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 42, cat: "person",
+    text: "Welcher Paragraph regelt die OHG?",
+    choices: [
+      {label: "A", text: "§705 BGB"},
+      {label: "B", text: "§230 HGB"},
+      {label: "C", text: "§105 HGB"},
+      {label: "D", text: "§161 HGB"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 43, cat: "person",
+    text: "Was besagt die Eselsbrücke „OHG = Offen Haftende Gesellschaft“?",
+    choices: [
+      {label: "A", text: "Die OHG ist eine offene Gesellschaft ohne Haftung"},
+      {label: "B", text: "Alle Gesellschafter stehen offen für die Schulden – ohne Limit"},
+      {label: "C", text: "Die OHG ist öffentlich bekannt und im Handelsregister sichtbar"},
+      {label: "D", text: "Die OHG haftet nur mit dem Gesellschaftsvermögen, das offen ausgewiesen wird"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "person",
+    text: "Was ist keine Voraussetzung für die Gründung einer GbR?",
+    choices: [
+      {label: "A", text: "Mindestens zwei Personen"},
+      {label: "B", text: "Gemeinsamer Zweck"},
+      {label: "C", text: "Eintragung ins Handelsregister"},
+      {label: "D", text: "Eine (auch mündliche) Vereinbarung zwischen den Gesellschaftern"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 45, cat: "person",
+    text: "Welches Rechtsgebiet regelt die GbR?",
+    choices: [
+      {label: "A", text: "Handelsrecht (HGB)"},
+      {label: "B", text: "Bürgerliches Recht (BGB)"},
+      {label: "C", text: "Gesellschaftsrecht (AktG)"},
+      {label: "D", text: "Steuerrecht (AO)"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "person",
+    text: "Was ist ein Kaufmann im Sinne des HGB?",
+    choices: [
+      {label: "A", text: "Jede Person, die Waren kauft"},
+      {label: "B", text: "Wer ein Handelsgewerbe betreibt, das einen kaufmännischen Geschäftsbetrieb erfordert"},
+      {label: "C", text: "Jeder, der ins Handelsregister eingetragen ist, egal welcher Tätigkeit"},
+      {label: "D", text: "Nur Inhaber großer Konzerne"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "person",
+    text: "Was ist die Rechtsgrundlage des Einzelunternehmens (eingetragener Kaufmann)?",
+    choices: [
+      {label: "A", text: "§705 BGB"},
+      {label: "B", text: "§161 HGB"},
+      {label: "C", text: "§1 HGB und Gewerbeordnung"},
+      {label: "D", text: "§105 HGB"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 48, cat: "person",
+    text: "Welche Aussagen zu den Personengesellschaften sind korrekt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Alle Personengesellschaften haben kein gesetzliches Mindestkapital"},
+      {label: "B", text: "Personengesellschaften zahlen Körperschaftsteuer"},
+      {label: "C", text: "Bei Personengesellschaften zahlt jeder Gesellschafter anteilig Einkommensteuer"},
+      {label: "D", text: "Personengesellschaften sind stets juristische Personen"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 49, cat: "person",
+    text: "Für welche Situation eignet sich laut Entscheidungsbaum im Handout die GbR oder OHG?",
+    choices: [
+      {label: "A", text: "Wenn eine Person allein gründet und kleines Gewerbe betreibt"},
+      {label: "B", text: "Wenn mehrere Gründer keine beschränkte Haftung wünschen und alle gleichgestellt sein wollen"},
+      {label: "C", text: "Wenn ein Investor Kapital gibt, aber nicht haften will"},
+      {label: "D", text: "Wenn ein Gesellschafter unsichtbar bleiben soll"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "person",
+    text: "Was gilt für einen Kommanditisten bezüglich der Leitungsbefugnis?",
+    choices: [
+      {label: "A", text: "Er leitet das Unternehmen gemeinsam mit dem Komplementär"},
+      {label: "B", text: "Er hat keine Leitungsbefugnis"},
+      {label: "C", text: "Er leitet das Unternehmen allein"},
+      {label: "D", text: "Er kann durch Mehrheitsbeschluss zum Leiter werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 51, cat: "person",
+    text: "Welche Rechtsform steht laut Handout als Ausblick auf Tag 15 als häufigste Form professioneller Online-Shops?",
+    choices: [
+      {label: "A", text: "OHG"},
+      {label: "B", text: "KG"},
+      {label: "C", text: "GmbH"},
+      {label: "D", text: "AG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 52, cat: "person",
+    text: "Was beschreibt die Eselsbrücke „Allein = Alles selbst = Alles haftet“ für das Einzelunternehmen?",
+    choices: [
+      {label: "A", text: "Der Einzelunternehmer hat Vorteile gegenüber Personengesellschaften"},
+      {label: "B", text: "Wer allein gründet, entscheidet allein und haftet allein mit allem"},
+      {label: "C", text: "Der Einzelunternehmer braucht kein Eigenkapital"},
+      {label: "D", text: "Das Einzelunternehmen hat keine Steuerpflicht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 53, cat: "person",
+    text: "Kann bei der OHG ein einzelner Gesellschafter das Unternehmen allein vertreten?",
+    choices: [
+      {label: "A", text: "Nein – immer Einstimmigkeit erforderlich wie bei der GbR"},
+      {label: "B", text: "Ja – Einzelvertretung ist möglich, wenn vereinbart"},
+      {label: "C", text: "Nur der älteste Gesellschafter darf vertreten"},
+      {label: "D", text: "Nur ein externer Geschäftsführer darf vertreten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "person",
+    text: "Was tritt bei der stillen Gesellschaft nach außen nicht in Erscheinung?",
+    choices: [
+      {label: "A", text: "Der Komplementär"},
+      {label: "B", text: "Das Handelsregister der Gesellschaft"},
+      {label: "C", text: "Der stille Gesellschafter selbst"},
+      {label: "D", text: "Die Gewinnverteilung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 55, cat: "person",
+    text: "Wer kennt laut Handout die Beteiligung bei der stillen Gesellschaft?",
+    choices: [
+      {label: "A", text: "Alle Geschäftspartner und Kunden"},
+      {label: "B", text: "Nur der Inhaber des Unternehmens und der stille Gesellschafter selbst"},
+      {label: "C", text: "Das Finanzamt und die IHK"},
+      {label: "D", text: "Alle Gesellschafter und das Handelsregister"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 56, cat: "person",
+    text: "Wie werden in der KG Gewinne verteilt?",
+    choices: [
+      {label: "A", text: "Immer gleichmäßig nach Köpfen"},
+      {label: "B", text: "Vertraglich geregelt; Kommanditist erhält i. d. R. Kapitalverzinsung"},
+      {label: "C", text: "Ausschließlich nach §121 HGB wie bei der OHG"},
+      {label: "D", text: "Der Komplementär erhält den gesamten Gewinn"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 57, cat: "person",
+    text: "Welche Rechtsform hat laut Vergleichstabelle teilweise Rechtsfähigkeit?",
+    choices: [
+      {label: "A", text: "Einzelunternehmen"},
+      {label: "B", text: "GbR"},
+      {label: "C", text: "OHG"},
+      {label: "D", text: "KG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "person",
+    text: "Welche Rechtsformen sind laut Vergleichstabelle rechtsfähig nach Handelsrecht? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "GbR"},
+      {label: "B", text: "OHG"},
+      {label: "C", text: "KG"},
+      {label: "D", text: "Einzelunternehmen"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 59, cat: "person",
+    text: "Welches ist das größte Risiko beim Einzelunternehmen?",
+    choices: [
+      {label: "A", text: "Kein Mindestkapital erforderlich"},
+      {label: "B", text: "Der Inhaber haftet mit seinem gesamten Privatvermögen (Haus, Auto, Ersparnisse)"},
+      {label: "C", text: "Die Eintragungspflicht ins Handelsregister"},
+      {label: "D", text: "Die doppelte Buchführungspflicht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "person",
+    text: "Wer leitet ein Einzelunternehmen?",
+    choices: [
+      {label: "A", text: "Alle Gesellschafter gemeinsam"},
+      {label: "B", text: "Ein gewählter Geschäftsführer"},
+      {label: "C", text: "Allein der Inhaber"},
+      {label: "D", text: "Ein Aufsichtsrat"}
+    ],
+    multi: false, correct: ["C"]
+  }
+];
+const catLabels={
+  rechtsform: {label: "Rechtsformen", cls: "cat-recht"},
+  person: {label: "Personengesellschaften", cls: "cat-checkout"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

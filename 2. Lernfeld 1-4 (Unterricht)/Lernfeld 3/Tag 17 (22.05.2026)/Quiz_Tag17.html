@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 17 – LF3: Datensicherheit</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 17: Datensicherheit</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist der Unterschied zwischen Datensicherheit und Datensicherung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Es gibt keinen Unterschied – die Begriffe sind identisch</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Datensicherheit ist das übergeordnete Ziel; Datensicherung ist eine konkrete Maßnahme dafür</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Datensicherung ist das übergeordnete Ziel; Datensicherheit ist eine Maßnahme</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Datensicherheit bezieht sich nur auf Passwörter; Datensicherung auf Backups</div>
+    </div>
+    <div class="feedback ok">Richtig! Datensicherheit ist das übergeordnete Ziel (alle Daten eines Unternehmens gegen Bedrohungen absichern). Datensicherung ist eine konkrete Maßnahme zur Herstellung von Datensicherheit (z. B. regelmäßige Backups). Beide Begriffe werden in der Praxis oft synonym verwendet, unterscheiden sich aber im Umfang.</div>
+    <div class="feedback err">Falsch. Datensicherheit ist das übergeordnete Ziel, Datensicherung ist eine konkrete Maßnahme. Datensicherung = Backups; Datensicherheit = umfassender Schutz aller Daten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Welche Bedrohung ist typisch für die Komponente „Menschen" im Gefährdungspotenzial?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Beschädigung und Zerstörung durch Feuer</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Störung durch Stromausfall</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Versagen, Ausfall oder Veruntreuung durch Überforderung, Gleichgültigkeit oder Böswilligkeit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Verlust durch Diebstahl von Hardware</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei der Komponente „Menschen" sind typische Bedrohungen: Versagen, Ausfall oder Veruntreuung – verursacht durch Überforderung, Gleichgültigkeit oder Böswilligkeit der Mitarbeiter.</div>
+    <div class="feedback err">Falsch. Bei der Komponente „Menschen" sind die Hauptbedrohungen: Versagen, Ausfall oder Veruntreuung durch Überforderung, Gleichgültigkeit oder Böswilligkeit.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was ist das „Herzstück" eines Webshops, dessen Verlust existenzbedrohend wäre?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Design-Template</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Datenbank (mit Kundendaten, Bestellungen, Produktdaten)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Firmenwebsite</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das E-Mail-Postfach</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Datenbank ist das Herzstück des Webshops. Wenn sie verloren geht, sind alle Kundendaten, Bestellungen und Einstellungen unwiderruflich weg – mit möglicherweise existenzbedrohenden Folgen für das Unternehmen.</div>
+    <div class="feedback err">Falsch. Die Datenbank ist das Herzstück des Webshops, da sie alle Kundendaten, Bestelldaten und Produktdaten enthält. Deren Verlust wäre existenzbedrohend.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was ist ein „Notstromaggregat" im Kontext technischer Datensicherungsverfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ein spezielles Programm zur Datenverschlüsselung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Eine Anlage, die bei Stromausfall die notwendige Energie erzeugt, um den Betrieb aufrechtzuerhalten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Backup-System für Datenbanken</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ein Antivirenprogramm für den Server</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Notstromaggregat ist ein technisches Verfahren der Datensicherung. Es erzeugt bei Stromausfall die notwendige Energie, um den Datenverarbeitungsbetrieb aufrechtzuerhalten und Datenverluste durch plötzliche Unterbrechungen zu verhindern.</div>
+    <div class="feedback err">Falsch. Ein Notstromaggregat ist ein technisches Sicherungsverfahren, das bei Stromausfall die Energieversorgung für den Datenverarbeitungsbetrieb sicherstellt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was versteht man unter dem „Vier-Augen-Prinzip" als personellem Datensicherungsverfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Vier Mitarbeiter müssen jede Datei freigeben</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Kritische Vorgänge werden durch eine zweite Person geprüft und bestätigt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur Mitarbeiter mit Brille dürfen auf sensible Daten zugreifen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Jede Datei wird automatisch viermal gesichert</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Vier-Augen-Prinzip ist ein personelles Sicherungsverfahren: Kritische Vorgänge werden durch eine zweite Person geprüft und bestätigt. So werden Fehler und Manipulationen minimiert.</div>
+    <div class="feedback err">Falsch. Das Vier-Augen-Prinzip bedeutet, dass kritische Vorgänge durch eine zweite Person geprüft und bestätigt werden – es sind immer zwei Personen beteiligt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was prüfen „Plausibilitätskontrollen" als programmtechnisches Verfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ob ein Passwort sicher genug ist</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ob eingegebene Daten in der Wirklichkeit vorkommen können (z. B. ob ein Datum wie der 32. existiert)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ob eine Datei mit einem Virus infiziert ist</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ob die Internetverbindung schnell genug ist</div>
+    </div>
+    <div class="feedback ok">Richtig! Plausibilitätskontrollen prüfen, ob eingegebene Daten in der Wirklichkeit vorkommen können. Beispiel: Eine Eingabe wie „32. Oktober" wäre unplausibel, da dieser Tag nicht existiert, und würde abgefangen.</div>
+    <div class="feedback err">Falsch. Plausibilitätskontrollen prüfen, ob eingegebene Daten realistisch sind (z. B. ob ein Datum wie der „32." existiert). Sie sind ein programmtechnisches Sicherungsverfahren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was beschreibt das „Großvater-Vater-Sohn-Prinzip" in der Datensicherung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Drei Personen müssen gleichzeitig Datensicherungen bestätigen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Drei Generationen von Datensicherungen werden aufbewahrt, sodass bei täglicher Verarbeitung die Daten der letzten zwei Tage verfügbar sind</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Backup wird dreimal auf verschiedenen Servern gespeichert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Drei verschiedene Dateiformate werden für Backups verwendet</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Großvater-Vater-Sohn-Prinzip ist ein organisatorisches Verfahren: Drei Generationen von Datenträgern werden aufbewahrt. Bei täglicher Verarbeitung stehen so die Daten der beiden vorhergehenden Tage als Sicherheit zur Verfügung.</div>
+    <div class="feedback err">Falsch. Das Großvater-Vater-Sohn-Prinzip bedeutet, drei Generationen von Datensicherungen aufzubewahren, sodass bei täglicher Verarbeitung die Daten der letzten zwei Tage verfügbar sind.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was ist der Vorteil der vollständigen Datensicherung gegenüber der inkrementellen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Sie spart mehr Speicherplatz und ist schneller</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Alle Daten liegen komplett vor, was eine schnelle Wiederherstellung ermöglicht</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Sie sichert nur die veränderten Daten seit dem letzten Backup</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Sie ist kostengünstiger als die inkrementelle Sicherung</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Vorteil der vollständigen Datensicherung ist, dass alle Daten komplett vorliegen und somit eine schnelle Wiederherstellung möglich ist. Der Nachteil: sie ist zeitaufwendig und benötigt viel Speicherplatz.</div>
+    <div class="feedback err">Falsch. Der Vorteil der vollständigen Datensicherung ist die schnelle Wiederherstellung, da alle Daten komplett vorliegen. Nachteil: mehr Speicherplatz und Zeitaufwand.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was ist der Nachteil der inkrementellen Datensicherung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Sie sichert alle Daten und benötigt daher viel Speicherplatz</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Wiederherstellung erfordert erheblich größeren Zeitaufwand, da mehrere Sicherungen zusammengeführt werden müssen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Sie kann keine Datenbanken sichern</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Sie ist teurer als die vollständige Datensicherung</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Nachteil der inkrementellen Datensicherung ist, dass die Wiederherstellung erheblich mehr Zeit erfordert, da mehrere Sicherungsstände zusammengeführt werden müssen. Der Vorteil ist Speicherplatzersparnis und schnellere Sicherung.</div>
+    <div class="feedback err">Falsch. Der Nachteil der inkrementellen Sicherung liegt bei der Wiederherstellung: Sie erfordert erheblich mehr Zeitaufwand, da alle inkrementellen Sicherungen zusammengeführt werden müssen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Welcher Datenträger hat theoretisch eine unbegrenzte Lebensdauer, birgt aber das Risiko des Zugriffs durch Dritte?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Blu-ray (50–100 Jahre Lebensdauer)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>USB-Stick (30 Jahre Lebensdauer)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Cloud-Speicher (theoretisch unbegrenzt, aber Zugriff durch Dritte möglich)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>SSD-Festplatte (10–30 Jahre Lebensdauer)</div>
+    </div>
+    <div class="feedback ok">Richtig! Cloud-Speicher hat theoretisch eine unbegrenzte Lebensdauer, birgt aber zwei Risiken: den Zugriff durch Dritte und die mögliche Insolvenz des Anbieters. Eine Blu-Ray hält dagegen 50–100 Jahre bei korrekter Lagerung.</div>
+    <div class="feedback err">Falsch. Cloud-Speicher hat zwar eine theoretisch unbegrenzte Lebensdauer, birgt aber das Risiko des Zugriffs durch Dritte sowie das Risiko der Insolvenz des Anbieters.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was bedeutet HTTPS im Kontext der Webshop-Sicherheit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Eine Art von Datenbank für Online-Shops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Hypertext Transfer Protocol Secure – signalisiert verschlüsselten und sicheren Datenaustausch über ein SSL-Zertifikat</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Programm zur automatischen Datensicherung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ein Passwort-Manager für E-Commerce-Systeme</div>
+    </div>
+    <div class="feedback ok">Richtig! HTTPS (Hypertext Transfer Protocol Secure) signalisiert beim Aufruf eines Webshops einen verschlüsselten und sicheren Datenaustausch. Es liegt ein digitales SSL-Zertifikat vor. Ein Webshop ohne HTTPS wirkt unseriös und wird von Suchmaschinen abgestraft.</div>
+    <div class="feedback err">Falsch. HTTPS steht für Hypertext Transfer Protocol Secure und signalisiert durch ein SSL-Zertifikat einen verschlüsselten, sicheren Datenaustausch im Webshop.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Was ist TLS im Vergleich zu SSL?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>TLS ist eine ältere, unsicherere Version von SSL</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>TLS ist die Weiterentwicklung von SSL mit verbesserten Verschlüsselungsalgorithmen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>TLS und SSL sind identisch und können nicht unterschieden werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>TLS ist nur für mobile Geräte, SSL für Desktop-PCs</div>
+    </div>
+    <div class="feedback ok">Richtig! TLS (Transport Layer Security) ist die Weiterentwicklung des SSL-Zertifikats. Es bietet verbesserte Verschlüsselungsalgorithmen und ist der aktuelle Standard für sichere Datenübertragung im Internet.</div>
+    <div class="feedback err">Falsch. TLS ist die modernere Weiterentwicklung von SSL mit besseren Verschlüsselungsalgorithmen. TLS ist der aktuelle Standard, SSL ist die ältere Vorläufertechnologie.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Wie lang muss ein sicheres Passwort mindestens sein?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Mindestens 6 Zeichen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Mindestens 8 Zeichen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Mindestens 12 Zeichen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Mindestens 20 Zeichen</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein sicheres Passwort sollte mindestens 12 Zeichen lang sein und einen Mix aus Großbuchstaben, Kleinbuchstaben, Sonderzeichen und Ziffern enthalten. Keine persönlichen Daten (Geburtstag, Name) verwenden.</div>
+    <div class="feedback err">Falsch. Sichere Passwörter müssen mindestens 12 Zeichen lang sein – mit Groß- und Kleinbuchstaben, Sonderzeichen und Ziffern. Außerdem sollte für jeden Dienst ein eigenes Passwort verwendet werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was ist eine Firewall und welche Aufgabe hat sie?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ein Programm zum automatischen Erstellen von Datensicherungen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ein System, das ungewollten ein- und ausgehenden Datenverkehr verhindert</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Programm, das Passwörter verwaltet</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ein System zur Verschlüsselung von E-Mails</div>
+    </div>
+    <div class="feedback ok">Richtig! Eine Firewall ist ein System, das ungewollten ein- und ausgehenden Datenverkehr im Netzwerk verhindert. Sie ist eine wichtige technische Sicherheitsmaßnahme für jeden professionellen Webshop.</div>
+    <div class="feedback err">Falsch. Eine Firewall verhindert ungewollten ein- und ausgehenden Datenverkehr im Netzwerk. Sie ist ein zentrales technisches Sicherheitselement.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was ist Identitätsmanagement im Kontext eines Webshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Verwaltung von Kundenbewertungen und Produktidentitäten</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Erkennung und Verwaltung von Benutzern sowie die Regelung ihrer Online-Nutzungsspielräume</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Gestaltung des Unternehmensimages nach außen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Der Prozess der Kundenregistrierung im Webshop</div>
+    </div>
+    <div class="feedback ok">Richtig! Identitätsmanagement dient der Erkennung von Personen in einem Computersystem. Es umfasst die Erstellung und Verwaltung von Benutzern sowie die Regeln für deren Online-Nutzungsspielraum – sowohl für Mitarbeiter im Backend als auch Kunden im Frontend.</div>
+    <div class="feedback err">Falsch. Identitätsmanagement dient der Erkennung von Personen und der Verwaltung ihrer Zugriffsrechte in einem System – wer darf was mit welchen Geräten unter welchen Umständen tun.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Was ist ein „Streamer" als technisches Datensicherungsverfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ein Live-Streaming-System für Webshops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Eine spezielle Magnetbandeinheit zur schnellen Sicherung großer Datenmengen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Programm zum Überwachen des Netzwerkverkehrs</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine Art von Cloud-Speicher für Datensicherungen</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Streamer ist eine spezielle Magnetbandeinheit zur schnellen Sicherung großer Datenmengen auf Magnetbändern. Es ist ein klassisches technisches Verfahren der Datensicherung für größere Datenmengen.</div>
+    <div class="feedback err">Falsch. Ein Streamer ist eine spezielle Magnetbandeinheit – kein Netzwerkmonitor oder Streaming-System. Er dient der schnellen Sicherung großer Datenmengen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Wann sollte laut Praxistipp unbedingt eine vollständige Datensicherung erstellt werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur einmal im Jahr zu Silvester</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Nur wenn der Server ausgetauscht wird</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Vor jedem Softwareupdate und vor größeren Datenimporten (z. B. CSV-Import neuer Artikel)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Nur nach einem Angriff oder Datenverlust</div>
+    </div>
+    <div class="feedback ok">Richtig! Als Praxistipp gilt: Vor jedem Softwareupdate und vor größeren Datenimporten (z. B. CSV-Import neuer Artikel) sollte immer ein vollständiges Backup erstellt werden. So kann im Fehlerfall auf den Stand vor der Änderung zurückgegriffen werden.</div>
+    <div class="feedback err">Falsch. Vollständige Backups sollten vor jedem Softwareupdate und vor größeren Datenimporten erstellt werden – nicht nur einmal jährlich oder nach einem Schaden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche Empfehlung gilt für die Häufigkeit der Datensicherung in Netzwerken mit mehreren Benutzern?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Einmal im Monat ist ausreichend</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Mindestens wöchentlich, besser täglich</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur bei Bedarf, wenn Daten geändert wurden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Zweimal täglich ist die Mindestanforderung</div>
+    </div>
+    <div class="feedback ok">Richtig! In Netzwerken mit mehreren Benutzern ist mindestens eine wöchentliche, besser eine tägliche Datensicherung erforderlich. Je mehr Nutzer und Transaktionen, desto häufiger sollten Backups erstellt werden.</div>
+    <div class="feedback err">Falsch. In Mehrbenutzer-Netzwerken ist mindestens wöchentlich, besser täglich eine Datensicherung erforderlich – monatliche Backups sind nicht ausreichend.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welche Kategorien von Daten gehören zu den zu sichernden Daten eines Onlineshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur die Produktfotos und Texte</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Nur die Buchhaltungsdaten</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Datenbank, Shopsystem, E-Mails, Lieferantendaten, Warenwirtschaft und Zugangsdaten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Nur die Kundendaten</div>
+    </div>
+    <div class="feedback ok">Richtig! Zu den zu sichernden Daten im Onlineshop gehören: Datenbank (Kundendaten, Bestelldaten), Shopsystem (Texte, Bilder, Templates), E-Mails (Geschäftskorrespondenz), Lieferantendaten, Warenwirtschaft (Lagerbestände) und Zugangsdaten (Passwörter, API-Keys).</div>
+    <div class="feedback err">Falsch. Alle Datenbereiche des Webshops müssen gesichert werden: Datenbank, Shopsystem, E-Mails, Lieferantendaten, Warenwirtschaft und Zugangsdaten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welches Datensicherungsverfahren wird welcher Kategorie zugeordnet: „Schulungen der Mitarbeiter für ordnungsgemäße EDV-Bedienung"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Technisches Verfahren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Personelles Verfahren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Programmtechnisches Verfahren</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Organisatorisches Verfahren</div>
+    </div>
+    <div class="feedback ok">Richtig! Schulungen der Mitarbeiter für fehlerfreie und ordnungsgemäße EDV-Bedienung sind ein personelles Verfahren der Datensicherung. Zu den personellen Verfahren gehören auch Doppelbesetzungen, das Vier-Augen-Prinzip und Führungszeugnisse.</div>
+    <div class="feedback err">Falsch. Schulungen der Mitarbeiter gehören zu den personellen Verfahren der Datensicherung – nicht zu den technischen oder programmtechnischen.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 17</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

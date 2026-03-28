@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>E-Commerce Unterricht 2025/26</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;
+  --card-bg:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.12);
+  --text:#f1f5f9;
+  --muted:#94a3b8;
+  --lf1:#f97316;
+  --lf2:#2980B9;
+  --lf3:#2563EB;
+  --lf4:#DC2626;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;padding:20px}
+
+/* ───── LOGIN ───── */
+#login-view{width:100%;max-width:420px;text-align:center;animation:fadeIn .5s ease}
+.login-logo{font-size:2.8rem;font-weight:900;letter-spacing:-1px;margin-bottom:4px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-logo span{font-weight:300}
+.login-sub{color:var(--muted);font-size:.9rem;margin-bottom:40px}
+.login-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:36px 32px;backdrop-filter:blur(12px)}
+.login-card label{display:block;text-align:left;font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.pw-wrap{position:relative}
+.pw-wrap input{width:100%;padding:14px 44px 14px 16px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;transition:border-color .2s;outline:none}
+.pw-wrap input:focus{border-color:#60a5fa}
+.pw-wrap button.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:4px}
+.btn-login{width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;border-radius:10px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:.5px}
+.btn-login:hover{opacity:.92;transform:translateY(-1px)}
+.btn-login:active{transform:translateY(0)}
+.err{display:none;color:#f87171;font-size:.85rem;margin-top:12px;padding:10px;background:rgba(239,68,68,.1);border-radius:8px;border:1px solid rgba(239,68,68,.3)}
+
+/* ───── DASHBOARD ───── */
+#dashboard-view{width:100%;max-width:880px;animation:fadeIn .4s ease}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px}
+.dash-title{font-size:1.6rem;font-weight:800}
+.dash-title span{color:var(--muted);font-weight:400;font-size:1rem;margin-left:10px}
+.btn-logout{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-size:.82rem;padding:8px 16px;transition:all .2s}
+.btn-logout:hover{border-color:#94a3b8;color:var(--text)}
+.lf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media(max-width:580px){.lf-grid{grid-template-columns:1fr}}
+.lf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:28px;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;text-decoration:none;display:block;position:relative;overflow:hidden}
+.lf-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.lf-card[data-lf="1"]::before{background:var(--lf1)}
+.lf-card[data-lf="2"]::before{background:var(--lf2)}
+.lf-card[data-lf="3"]::before{background:var(--lf3)}
+.lf-card[data-lf="4"]::before{background:var(--lf4)}
+.lf-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.lf-card[data-lf="1"]:hover{border-color:var(--lf1);box-shadow:0 12px 40px rgba(249,115,22,.2)}
+.lf-card[data-lf="2"]:hover{border-color:var(--lf2);box-shadow:0 12px 40px rgba(41,128,185,.2)}
+.lf-card[data-lf="3"]:hover{border-color:var(--lf3);box-shadow:0 12px 40px rgba(37,99,235,.2)}
+.lf-card[data-lf="4"]:hover{border-color:var(--lf4);box-shadow:0 12px 40px rgba(220,38,38,.2)}
+.lf-num{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.lf-card[data-lf="1"] .lf-num{color:var(--lf1)}
+.lf-card[data-lf="2"] .lf-num{color:var(--lf2)}
+.lf-card[data-lf="3"] .lf-num{color:var(--lf3)}
+.lf-card[data-lf="4"] .lf-num{color:var(--lf4)}
+.lf-name{font-size:1.25rem;font-weight:800;margin-bottom:8px;line-height:1.3}
+.lf-desc{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:18px}
+.lf-meta{display:flex;align-items:center;justify-content:space-between}
+.lf-tags{font-size:.78rem;color:var(--muted);background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.lf-arrow{font-size:1.2rem;color:var(--muted);transition:transform .2s}
+.lf-card:hover .lf-arrow{transform:translateX(4px)}
+.lf-badge-soon{font-size:.72rem;background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);padding:3px 10px;border-radius:20px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN ─── -->
+<div id="login-view">
+  <div class="login-logo">E&#8209;COM<span>  Unterricht</span></div>
+  <div class="login-sub">Schuljahr 2025/26 &nbsp;·&nbsp; E-Commerce Kaufleute</div>
+  <div class="login-card">
+    <label for="pw">Zugangscode</label>
+    <div class="pw-wrap">
+      <input type="password" id="pw" placeholder="Zugangscode eingeben…" onkeydown="if(event.key==='Enter')login()">
+      <button class="eye" onclick="toggleEye()" title="Anzeigen">&#128065;</button>
+    </div>
+    <button class="btn-login" onclick="login()">Anmelden</button>
+    <div class="err" id="err">Falscher Zugangscode. Bitte erneut versuchen.</div>
+  </div>
+</div>
+
+<!-- ─── DASHBOARD ─── -->
+<div id="dashboard-view" hidden>
+  <div class="dash-header">
+    <div class="dash-title">Lernfelder <span>– Wähle ein Lernfeld</span></div>
+    <button class="btn-logout" onclick="logout()">Abmelden</button>
+  </div>
+  <div class="lf-grid">
+
+    <a class="lf-card" data-lf="1" href="lernfeld-1/index.html">
+      <div class="lf-num">Lernfeld 1</div>
+      <div class="lf-name">Das Unternehmen</div>
+      <div class="lf-desc">Modellunternehmen, E-Commerce-Grundlagen, Vertriebskanäle, Usability, Rechtsformen &amp; Entgeltabrechnung</div>
+      <div class="lf-meta">
+        <span class="lf-tags">15 Unterrichtstage</span>
+        <span class="lf-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lf-card" data-lf="2" href="lernfeld-2/index.html">
+      <div class="lf-num">Lernfeld 2</div>
+      <div class="lf-name">Online-Auftritte gestalten</div>
+      <div class="lf-desc">Webshop-Design, Sortiment, Produktseiten, Beschaffung, Angebotsvergleich, Lagerlogistik &amp; Dropshipping</div>
+      <div class="lf-meta">
+        <span class="lf-tags">16 Unterrichtstage</span>
+        <span class="lf-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lf-card" data-lf="3" href="lernfeld-3/index.html">
+      <div class="lf-num">Lernfeld 3</div>
+      <div class="lf-name">Kaufabwicklung &amp; Recht</div>
+      <div class="lf-desc">Checkout, Zahlungsmethoden, Versand, Vertragsrecht, AGB, Widerrufsrecht, Datensicherheit &amp; Datenschutz</div>
+      <div class="lf-meta">
+        <span class="lf-tags">21 Unterrichtstage</span>
+        <span class="lf-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lf-card" data-lf="4" href="lernfeld-4/index.html">
+      <div class="lf-num">Lernfeld 4</div>
+      <div class="lf-name">Werteströme erfassen</div>
+      <div class="lf-desc">Buchführung, Belege, Inventur, Bilanz, Kontenrahmen, Warenbuchungen &amp; Umsatzsteuer</div>
+      <div class="lf-meta">
+        <span class="lf-tags">13 Unterrichtstage</span>
+        <span class="lf-badge-soon">In Vorbereitung</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<script>
+if(sessionStorage.getItem('ecom-auth')==='ok') showDash();
+
+function login(){
+  const v=document.getElementById('pw').value;
+  if(v==='E-Com2026!'){
+    sessionStorage.setItem('ecom-auth','ok');
+    showDash();
+  } else {
+    const e=document.getElementById('err');
+    e.style.display='block';
+    document.getElementById('pw').style.borderColor='#f87171';
+    setTimeout(()=>{ document.getElementById('pw').style.borderColor=''; },2000);
+  }
+}
+function showDash(){
+  document.getElementById('login-view').hidden=true;
+  document.getElementById('dashboard-view').hidden=false;
+}
+function logout(){
+  sessionStorage.removeItem('ecom-auth');
+  document.getElementById('login-view').hidden=false;
+  document.getElementById('dashboard-view').hidden=true;
+  document.getElementById('pw').value='';
+  document.getElementById('err').style.display='none';
+}
+function toggleEye(){
+  const i=document.getElementById('pw');
+  i.type=i.type==='password'?'text':'password';
+}
+</script>
+</body>
+</html>

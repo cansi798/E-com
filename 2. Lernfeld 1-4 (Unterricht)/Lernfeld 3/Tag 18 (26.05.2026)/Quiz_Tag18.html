@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 18 – LF3: Datenschutz</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 18: Datenschutz</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was versteht man unter dem Begriff „informationelle Selbstbestimmung"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Recht, anonym im Internet surfen zu dürfen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Recht jedes Bürgers, selbst über die Erhebung, Speicherung, Übermittlung und Verarbeitung seiner Daten zu entscheiden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Pflicht von Unternehmen, Kundendaten zu löschen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Recht, keine Werbemails zu erhalten</div>
+    </div>
+    <div class="feedback ok">Richtig! Die informationelle Selbstbestimmung ist ein vom Bundesverfassungsgericht anerkanntes Grundrecht: Jeder Bürger darf selbst über die Erhebung, Speicherung, Übermittlung und Verarbeitung seiner Daten entscheiden, soweit dies gesetzlich nicht anders geregelt ist.</div>
+    <div class="feedback err">Falsch. Informationelle Selbstbestimmung bedeutet, dass jeder Bürger selbst entscheiden darf, wer seine Daten erhebt, speichert, übermittelt und verarbeitet. Es ist ein verfassungsrechtlich geschütztes Grundrecht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was sind personenbezogene Daten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur biometrische Daten wie Fingerabdrücke</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Alle Einzelangaben über persönliche oder sachliche Verhältnisse natürlicher Personen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur Finanzdaten wie Kontonummern und Gehaltshöhe</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Daten von Unternehmen und juristischen Personen</div>
+    </div>
+    <div class="feedback ok">Richtig! Personenbezogene Daten sind alle Einzelangaben über persönliche oder sachliche Verhältnisse natürlicher Personen. Dazu gehören Name, Anschrift, Beruf, Finanzlage, Gesundheitszustand und vieles mehr.</div>
+    <div class="feedback err">Falsch. Personenbezogene Daten umfassen alle Einzelangaben über natürliche Personen – Name, Adresse, Geburtsdatum, Gesundheitszustand, politische Überzeugungen usw. Daten von Unternehmen sind ausgenommen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche drei Bedingungen erlauben Unternehmen die Speicherung personenbezogener Daten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Wenn der Datenschutzbeauftragte, der Betriebsrat und das Gericht zustimmen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Im Rahmen eines Vertragsverhältnisses, bei berechtigten Interessen oder bei ausdrücklicher Einwilligung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Wenn die Daten anonymisiert, pseudonymisiert und gesichert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Wenn der Betrieb mehr als 50 Mitarbeiter hat</div>
+    </div>
+    <div class="feedback ok">Richtig! Speicherung personenbezogener Daten ist für Unternehmen zulässig: (1) im Rahmen eines Vertragsverhältnisses, (2) bei berechtigten Interessen (z. B. Werbung an mögliche Kunden) oder (3) bei ausdrücklicher Einwilligung des Betroffenen. Pauschale AGB-Klauseln oder versehentliche Klicks reichen nicht als Einwilligung aus.</div>
+    <div class="feedback err">Falsch. Personenbezogene Daten dürfen gespeichert werden bei: (1) Vertragsverhältnis, (2) berechtigten Interessen oder (3) ausdrücklicher Einwilligung des Betroffenen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Welche vier Rechte haben Betroffene gegenüber Stellen, die ihre Daten speichern?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Schadenersatz, Strafanzeige, Abmahnung und Klage</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Auskunftsrecht, Berichtigungsrecht, Sperrungsrecht und Löschungsrecht</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Widerspruchsrecht, Widerrufsrecht, Rückgaberecht und Umtauschrecht</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Einsichtsrecht, Kopierrecht, Veröffentlichungsrecht und Verbreitungsrecht</div>
+    </div>
+    <div class="feedback ok">Richtig! Die vier zentralen Betroffenenrechte sind: (1) Auskunftsrecht (Fragen, welche Daten gespeichert sind), (2) Berichtigungsrecht (unrichtige Daten korrigieren), (3) Sperrungsrecht (Daten sperren, wenn Richtigkeit unklar) und (4) Löschungsrecht (unzulässig gespeicherte Daten entfernen lassen).</div>
+    <div class="feedback err">Falsch. Die vier Rechte der Betroffenen sind: Auskunftsrecht, Berichtigungsrecht, Sperrungsrecht und Löschungsrecht – keine Schadenersatz- oder Widerrufsrechte in diesem Kontext.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Seit wann gilt die DSGVO (EU-Datenschutzgrundverordnung) in der gesamten EU?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Seit dem 1. Januar 2018</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Seit dem 25. Mai 2018</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Seit dem 1. Juli 2020</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Seit dem 15. März 2016</div>
+    </div>
+    <div class="feedback ok">Richtig! Die DSGVO (EU-Datenschutz-Grundverordnung, engl. GDPR) ist seit dem 25. Mai 2018 in der gesamten EU anwendbar. Sie gilt auch für Unternehmen außerhalb der EU, wenn sie Daten von EU-Bürgern verarbeiten.</div>
+    <div class="feedback err">Falsch. Die DSGVO gilt seit dem 25. Mai 2018 in der gesamten EU. Sie gilt auch für nicht-europäische Unternehmen, die Daten von EU-Bürgern verarbeiten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Wie hoch kann das maximale Bußgeld bei DSGVO-Verstößen betragen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Maximal 300.000 Euro (wie früher)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Maximal 1 Million Euro</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Bis zu 4 % des Jahresumsatzes, maximal 20 Millionen Euro</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Maximal 500.000 Euro pro Verstoß</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei DSGVO-Verstößen dürfen Behörden ein Bußgeld von bis zu 4 % des Jahresumsatzes verhängen. Der Höchstbetrag liegt bei 20 Millionen Euro – erheblich mehr als die frühere Höchstgrenze von 300.000 Euro.</div>
+    <div class="feedback err">Falsch. DSGVO-Bußgelder können bis zu 4 % des Jahresumsatzes betragen, maximal 20 Millionen Euro. Das ist erheblich mehr als die frühere Höchstgrenze von 300.000 Euro.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was ist die DSGVO-Meldepflicht bei Datenpannen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Datenpannen müssen innerhalb von 7 Tagen der Presse gemeldet werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Aufsichtsbehörde muss innerhalb von 72 Stunden informiert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Datenpannen müssen nur intern dokumentiert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine Meldepflicht besteht nur, wenn mehr als 1.000 Personen betroffen sind</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut DSGVO muss die zuständige Aufsichtsbehörde innerhalb von 72 Stunden nach Bekanntwerden einer Datenpanne informiert werden. In bestimmten Fällen müssen auch die betroffenen Personen selbst informiert werden.</div>
+    <div class="feedback err">Falsch. Die DSGVO schreibt vor, dass die Aufsichtsbehörde innerhalb von 72 Stunden nach einer Datenpanne informiert werden muss – unabhängig von der Anzahl der Betroffenen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was ist „Datenportabilität" laut DSGVO?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Recht, Daten auf einem USB-Stick zu speichern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Recht, vom Unternehmen zu verlangen, die eigenen Daten in üblichem Format an einen anderen Verantwortlichen weiterzugeben</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Pflicht, Daten verschlüsselt zu übertragen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Recht, anonym zu surfen</div>
+    </div>
+    <div class="feedback ok">Richtig! Datenportabilität bedeutet: Man darf vom datenverarbeitenden Unternehmen verlangen, die eigenen Daten in einem üblichen, maschinenlesbaren Format an einen anderen Verantwortlichen weiterzugeben. Das ermöglicht z. B. den Wechsel des Dienstleisters.</div>
+    <div class="feedback err">Falsch. Datenportabilität ist das Recht, die eigenen Daten in einem standardisierten Format von einem Unternehmen zu erhalten und an einen anderen Anbieter übertragen zu lassen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welche der folgenden Handlungen ist NICHT ausreichend als Einwilligung für die Datenspeicherung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Aktives Anklicken einer Checkbox mit dem Text „Ich stimme der Datenspeicherung zu"</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Eine vorangekreuzte Checkbox im Bestellformular</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Eine schriftliche Einwilligungserklärung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine aktive, dokumentierte Zustimmung des Kunden</div>
+    </div>
+    <div class="feedback ok">Richtig! Eine vorangekreuzte Checkbox gilt NICHT als ausreichende Einwilligung. Der Kunde muss aktiv zustimmen. Ebenfalls nicht ausreichend: pauschale AGB-Klauseln und ein versehentlicher Mausklick.</div>
+    <div class="feedback err">Falsch. Eine vorangekreuzte Checkbox ist keine ausreichende Einwilligung – der Kunde muss aktiv zustimmen. Auch pauschale AGB-Klauseln oder versehentliche Mausklicks reichen nicht aus.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was sind Cookies und wozu werden sie hauptsächlich eingesetzt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Cookies sind Schadsoftware, die Computer infizieren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Cookies sind kleine Textdateien, die der Webserver im Browser speichert – für Session-Management, individuelle Einstellungen und Tracking</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Cookies sind verschlüsselte Zahlungsdaten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Cookies sind Backup-Dateien des Webshops</div>
+    </div>
+    <div class="feedback ok">Richtig! Cookies sind kleine Textdateien, die der Webserver im Browser des Nutzers speichert. Sie werden verwendet für: Session-Management (Warenkorb, Login), Speicherung individueller Einstellungen und Aufzeichnung des Surfverhaltens (Drittanbieter-Cookies für Werbung).</div>
+    <div class="feedback err">Falsch. Cookies sind kleine Textdateien für Session-Management, individuelle Einstellungen und Verhaltens-Tracking. Sie sind keine Schadsoftware, aber datenschutzrechtlich kritisch.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was besagt das Cookie-Consent-Prinzip gemäß DSGVO?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Alle Cookies müssen nach 24 Stunden automatisch gelöscht werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Nutzer müssen aktiv einwilligen (Opt-in), bevor nicht-essentielle Cookies gesetzt werden dürfen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Cookies dürfen nur noch für Session-Management verwendet werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Webseiten müssen komplett auf Cookies verzichten</div>
+    </div>
+    <div class="feedback ok">Richtig! Gemäß DSGVO müssen Nutzer über den Einsatz von Cookies informiert werden und aktiv einwilligen (Opt-in), bevor nicht-essentielle Cookies gesetzt werden dürfen. Das ist der Grund für die allgegenwärtigen Cookie-Banner.</div>
+    <div class="feedback err">Falsch. Das Cookie-Consent-Prinzip erfordert aktive Einwilligung (Opt-in) durch den Nutzer, bevor nicht-essentielle Cookies gesetzt werden. Cookies dürfen nicht einfach gesetzt werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welche der acht Datenschutzgebote beschreibt, dass berechtigte Mitarbeiter nur auf die Daten zugreifen dürfen, für die sie Berechtigung besitzen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Zutrittskontrolle</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Zugangskontrolle</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Zugriffskontrolle</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Weitergabekontrolle</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Zugriffskontrolle (3. Gebot) besagt, dass berechtigte Mitarbeiter nur auf die Daten zugreifen dürfen, für die sie tatsächlich eine Berechtigung besitzen. Zutrittskontrolle betrifft den physischen Zugang zu EDV-Anlagen; Zugangskontrolle die Nutzung der Systeme.</div>
+    <div class="feedback err">Falsch. Die Zugriffskontrolle regelt, dass Mitarbeiter nur auf die Daten zugreifen dürfen, für die sie berechtigt sind. Zutrittskontrolle = physischer Zutritt; Zugangskontrolle = Nutzung der Systeme.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was versteht man unter dem „Trennungsgebot" als eines der acht Datenschutzgebote?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Privatdaten und Geschäftsdaten müssen auf verschiedenen Festplatten gespeichert werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Zu unterschiedlichen Zwecken erhobene Daten müssen getrennt verarbeitet werden können</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Kundendaten und Mitarbeiterdaten müssen in verschiedenen Gebäuden gespeichert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>IT-Systeme für Produktion und Verwaltung müssen physisch getrennt sein</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Trennungsgebot (8. Gebot) verlangt, dass Daten, die zu unterschiedlichen Zwecken erhoben wurden, auch getrennt verarbeitet werden können. So dürfen z. B. Kundendaten aus einem Vertrag nicht mit Marketingdaten vermischt werden.</div>
+    <div class="feedback err">Falsch. Das Trennungsgebot bedeutet, dass zu unterschiedlichen Zwecken erhobene Daten getrennt verarbeitet werden müssen – nicht unbedingt physisch, aber zweckgebunden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Wie muss eine Datenschutzerklärung in einem Webshop erreichbar sein?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur im Impressum verlinkt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Gut auffindbar, nach herrschender Meinung mit maximal zwei Mausklicks erreichbar</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur per E-Mail auf Anfrage erhältlich</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Sie muss auf jeder Seite vollständig angezeigt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Datenschutzerklärung muss gut auffindbar sein und nach herrschender Meinung mit maximal zwei Mausklicks erreichbar sein. Sie stellt dar, wie das Unternehmen die Daten der Käufer schützt.</div>
+    <div class="feedback err">Falsch. Die Datenschutzerklärung muss gut auffindbar und mit maximal zwei Mausklicks erreichbar sein – nicht nur im Impressum versteckt oder nur per E-Mail verfügbar.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Ab wie vielen Personen in der automatisierten Datenverarbeitung muss ein Unternehmen laut älterem BDSG einen Datenschutzbeauftragten ernennen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ab 5 Personen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ab 10 Personen (dauerhaft beschäftigt in automatisierter Verarbeitung)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ab 50 Personen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Jedes Unternehmen muss einen Datenschutzbeauftragten ernennen</div>
+    </div>
+    <div class="feedback ok">Richtig! Nicht-öffentliche Stellen (z. B. Unternehmen) müssen einen Datenschutzbeauftragten ernennen, wenn zehn Personen und mehr in der automatisierten Verarbeitung dauerhaft beschäftigt sind. Behörden müssen ihn fast immer ernennen.</div>
+    <div class="feedback err">Falsch. Nicht-öffentliche Stellen müssen einen Datenschutzbeauftragten ernennen, wenn mindestens zehn Personen dauerhaft in der automatisierten Datenverarbeitung beschäftigt sind.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche besondere rechtliche Stellung hat der betriebliche Datenschutzbeauftragte?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Er ist dem Betriebsrat direkt unterstellt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Er ist direkt der Geschäftsleitung unterstellt, weisungsfrei, hat besonderen Kündigungsschutz und ein Zeugnisverweigerungsrecht</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Er kann jederzeit ohne Grund gekündigt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Er hat keine besondere Rechtsstellung</div>
+    </div>
+    <div class="feedback ok">Richtig! Der betriebliche Datenschutzbeauftragte ist direkt der Geschäftsleitung unterstellt, ist weisungsfrei (unabhängiges Kontrollorgan), hat besonderen Kündigungsschutz, unterliegt der Verschwiegenheitspflicht und hat ein Zeugnisverweigerungsrecht.</div>
+    <div class="feedback err">Falsch. Der Datenschutzbeauftragte ist der Geschäftsleitung direkt unterstellt, ist weisungsfrei, hat besonderen Kündigungsschutz und ein Zeugnisverweigerungsrecht – eine sehr starke rechtliche Stellung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche Daten dürfen OHNE ausdrückliche Genehmigung NIEMALS gespeichert werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Name und Anschrift eines Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Bestellhistorie eines Kunden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Krankheitsdaten, private Gewohnheiten, politische/religiöse Überzeugungen und Straftaten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>E-Mail-Adresse und Telefonnummer</div>
+    </div>
+    <div class="feedback ok">Richtig! Ohne ausdrückliche Genehmigung dürfen niemals gespeichert werden: Krankheitsdaten, Daten über private Gewohnheiten, Daten über politische und religiöse Überzeugungen sowie Daten über Straftaten. Diese besonders sensiblen Kategorien genießen höchsten Schutz.</div>
+    <div class="feedback err">Falsch. Besonders geschützte Daten (niemals ohne ausdrückliche Genehmigung): Krankheitsdaten, private Gewohnheiten, politische und religiöse Überzeugungen und Straftaten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Gilt die DSGVO auch für Unternehmen außerhalb der EU?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nein, die DSGVO gilt ausschließlich für Unternehmen mit Sitz in der EU</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ja, sie gilt auch für Unternehmen außerhalb der EU, sobald sie Daten von EU-Bürgern verarbeiten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nein, außer-europäische Unternehmen sind von der DSGVO befreit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ja, aber nur für US-amerikanische Unternehmen</div>
+    </div>
+    <div class="feedback ok">Richtig! Die DSGVO gilt auch für Unternehmen außerhalb der EU, sobald sie Daten von EU-Bürgern verarbeiten. Dieses sogenannte Marktortprinzip macht die DSGVO zu einer der wichtigsten Datenschutzregelungen weltweit.</div>
+    <div class="feedback err">Falsch. Die DSGVO gilt auch für Unternehmen außerhalb der EU, wenn sie Daten von EU-Bürgern verarbeiten – egal ob in den USA, Asien oder anderswo.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was regelt der Beschäftigtendatenschutz (Arbeitnehmerdatenschutz)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Den Schutz von Kundendaten im E-Commerce</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Spezielle Vorschriften für die Datenerhebung und -verarbeitung im Verhältnis zwischen Arbeitgeber und Beschäftigten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Datenspeicherung für Bewerbungsunterlagen von Dritten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Recht der Mitarbeiter auf Home-Office</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Arbeitnehmerdatenschutz regelt spezielle Vorschriften im Verhältnis zwischen Arbeitgeber und Beschäftigten: Daten dürfen nur im begrenzten Umfang gespeichert werden, Gesundheitsdaten nicht ohne Weiteres in Personalakten und besondere Daten benötigen ausdrückliche Einwilligung.</div>
+    <div class="feedback err">Falsch. Der Beschäftigtendatenschutz regelt die Datenerhebung und -verarbeitung zwischen Arbeitgeber und Mitarbeitern – nicht den Kundendatenschutz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was bedeutet das „Prinzip der Datensparsamkeit" laut DSGVO?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Daten müssen auf besonders sparsamen Speichermedien abgelegt werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Es dürfen nur so viele Daten erhoben werden, wie für den jeweiligen Zweck tatsächlich notwendig sind</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Unternehmen müssen möglichst viele Kundendaten sammeln, um Kosten zu sparen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Backups dürfen nicht zu häufig erstellt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Prinzip der Datensparsamkeit bedeutet, dass nur so viele Daten erhoben und gespeichert werden dürfen, wie für den jeweiligen Zweck tatsächlich erforderlich sind. Es ist eines der Grundprinzipien der DSGVO und steht im Konflikt mit dem Wunsch nach möglichst vielen Kundendaten für personalisiertes Marketing.</div>
+    <div class="feedback err">Falsch. Datensparsamkeit bedeutet: Nur so viele Daten erheben, wie für den konkreten Zweck notwendig sind. Es ist ein zentrales DSGVO-Prinzip.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 18</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

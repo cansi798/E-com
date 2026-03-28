@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.10 Versand mit Post-, Express- und Paketdiensten – Tag 10</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100;}
+#viewport{width:100vw;height:100vh;position:relative;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg);}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all;}.slide.exit-left{opacity:0;transform:translateX(-60px);}.slide.cover{justify-content:center;text-align:center;}
+.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px;}
+.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px;}
+.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px;}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px;}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8;}
+.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start;}.slide-header .icon{font-size:1.6rem;}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1;}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.content{width:100%;flex:1;overflow:hidden;}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px;}
+.cards{display:grid;gap:14px;width:100%;}.cols2{grid-template-columns:1fr 1fr;}.cols3{grid-template-columns:1fr 1fr 1fr;}.cols4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px;}.card.gold::before{background:var(--accent);}.card.green::before{background:var(--success);}.card.red::before{background:var(--danger);}
+.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px;}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6;}.card ul{padding-left:16px;}.card li{margin-bottom:3px;}
+.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px;}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55;}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px;}
+.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6;}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent);}.highlight.green{background:var(--success-light);border-left-color:var(--success);}.highlight.red{background:var(--danger-light);border-left-color:var(--danger);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;}
+.badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:4px;}.badge.gold{background:var(--accent);}.badge.green{background:var(--success);}.badge.red{background:var(--danger);}
+table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem;}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700;}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border);}.sum-table tr:nth-child(even) td{background:var(--bg-alt);}.sum-table tr:hover td{background:var(--primary-light);}
+.step-flow{display:flex;align-items:stretch;gap:0;width:100%;margin-top:8px;}.step-box{flex:1;background:var(--bg-card);border-radius:10px;padding:14px 12px;text-align:center;font-size:.8rem;border:1px solid var(--border);box-shadow:var(--shadow);}.step-box h4{color:var(--primary);font-size:.82rem;margin-bottom:4px;}.step-box p{color:var(--text-muted);font-size:.72rem;line-height:1.4;}.step-arrow{display:flex;align-items:center;color:var(--primary);font-size:1.2rem;padding:0 4px;}
+.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px;}
+.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5;}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
+.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow);}
+#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg);}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s;}#nav button:hover{background:var(--primary-light);}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center;}
+#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both;}.slide.active .slide-header{animation-delay:.05s;}.slide.active .content{animation-delay:.15s;}
+#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px;}#grid-overlay.visible{display:block;}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px;}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary);}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px;}#grid-header button:hover{background:var(--bg-alt);}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px;}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px);}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light);}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px;}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 10</div>
+    <h1>3.10 Versand mit Post-, Express-<br>und Paketdiensten</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 477 – 490</div>
+    <div class="cover-meta">Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>11. Mai 2026<br><br><strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong></div>
+  </section>
+
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 20</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Sendungsarten kennen</strong> – DHL-Paket, P&auml;ckchen, Brief, B&uuml;cher-/Warensendung unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Frankierarten erkl&auml;ren</strong> – Briefmarken, Frankiermaschinen, STAMP IT, EDV-Freimachung beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>KEP-Dienste einordnen</strong> – Kurier-, Express- und Paketdienste voneinander abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Sendungsverfolgung verstehen</strong> – Tracking &amp; Tracing und Laufzeit&uuml;berwachung erkl&auml;ren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Versand im B2B vs. B2C</strong> – Paketlogistik und Speditionsversand unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Haftungsregeln kennen</strong> – Haftung der Post bei Verlust/Besch&auml;digung von Sendungen benennen.</div></div>
+      <div class="highlight" style="margin-top:12px"><strong>Leitfrage:</strong> Wie w&auml;hlt ein E-Commerce-Unternehmen den optimalen Versanddienstleister und die passende Sendungsart?</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#128230;</div><h2>Sendungsarten der Deutschen Post / DHL</h2><span class="tag">Folie 3 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Sendungsart</th><th>H&ouml;chstgewicht</th><th>Besondere Versendungsformen</th><th>Haftung</th></tr></thead>
+        <tbody>
+          <tr><td><strong>DHL-Paket</strong></td><td>31,5 kg</td><td>Transportversicherung, Nachnahme, Eigenh&auml;ndig, R&uuml;ckschein, Express</td><td>Ohne Versicherung: bis 500 &euro;; mit: bis 25.000 &euro;</td></tr>
+          <tr><td><strong>P&auml;ckchen</strong></td><td>2 kg</td><td>Keine besonderen Formen</td><td>Keine Haftung</td></tr>
+          <tr><td><strong>Brief</strong></td><td>1.000 g</td><td>Einschreiben, Eigenh&auml;ndig, R&uuml;ckschein, Nachnahme</td><td>Einschreiben: 25 &euro;; Einwurf: 20 &euro;</td></tr>
+          <tr><td><strong>B&uuml;cher-/Warensendung</strong></td><td>1.000 g</td><td>Keine</td><td>Keine</td></tr>
+          <tr><td><strong>Dialogpost</strong></td><td>1.000 g</td><td>Keine (adressierte Werbesendungen)</td><td>Keine</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px"><strong>Praxis:</strong> F&uuml;r den E-Commerce ist das <strong>DHL-Paket</strong> die mit Abstand wichtigste Sendungsart, da die meisten Webshop-Produkte &uuml;ber den Paketversand zugestellt werden.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#128179;</div><h2>Frankierarten</h2><span class="tag">Folie 4 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128233; Briefmarken</h3><p>Klassisch: Aufkleben von Briefmarken aus B&ouml;gen. Einfach, aber nur f&uuml;r geringes Sendungsvolumen geeignet.</p></div>
+        <div class="card gold"><h3>&#128203; Plusbrief / STAMP IT</h3><ul><li>Plusbrief: versandfertiger Briefumschlag mit Marke</li><li>STAMP IT: Porto online kaufen, mit Drucker frankieren, Teil des Portos gespart</li></ul></div>
+        <div class="card green"><h3>&#128736; Frankiermaschinen (Frankit)</h3><ul><li>Portoguthaben online aufgeladen</li><li>Automatische Tarifanpassungen</li><li>Kostenstellen-Zuordnung m&ouml;glich</li><li>Professionelles Erscheinungsbild</li><li>Werbebotschaften im Frankierabdruck</li></ul></div>
+        <div class="card"><h3>&#128187; EDV-Freimachung</h3><ul><li>F&uuml;r gro&szlig;e Mengen an Briefsendungen</li><li>Software ermittelt Versandart, Gewicht, Entgelt</li><li>Sortiert, nummeriert, frankiert automatisch</li><li>Gr&ouml;&szlig;tm&ouml;gliche Entgeltermäßigungen</li></ul></div>
+      </div>
+      <div class="highlight gold" style="margin-top:10px"><strong>Internetmarken:</strong> Kostenloser Onlineservice der Deutschen Post. Porto f&uuml;r alle Sendungsarten sofort druckbar, 3 Jahre g&uuml;ltig.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#128666;</div><h2>Besondere Versendungsformen</h2><span class="tag">Folie 5 / 20</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card"><h3>&#128221; Einschreiben</h3><ul><li>Absender erh&auml;lt Einlieferungsbeleg</li><li>&Uuml;bergabe nur gegen Empfangsbest&auml;tigung</li><li>Variante: Einschreiben Einwurf</li></ul></div>
+        <div class="card gold"><h3>&#128100; Eigenh&auml;ndig</h3><p>Sendung wird nur dem Empf&auml;nger pers&ouml;nlich oder einer bevollm&auml;chtigten Person ausgeh&auml;ndigt.</p></div>
+        <div class="card green"><h3>&#128179; Nachnahme</h3><ul><li>Geldbetrag wird bei Zustellung eingezogen</li><li>Briefe: max. 1.600 &euro;, Pakete: max. 3.500 &euro;</li><li>Absender erh&auml;lt Inkassobeleg</li></ul></div>
+        <div class="card"><h3>&#128230; R&uuml;ckschein</h3><p>Post schickt R&uuml;ckschein an Absender nach Best&auml;tigung des Empfangs. Nachweis, wann und an wen zugestellt.</p></div>
+        <div class="card gold"><h3>&#128274; Transportversicherung</h3><ul><li>Nur gegen Empf&auml;ngerbest&auml;tigung</li><li>Maximal 25.000 &euro; Versicherungssumme</li><li>Absender erh&auml;lt Einlieferungsbescheinigung</li></ul></div>
+        <div class="card green"><h3>&#9889; Express</h3><p>Zustellung am n&auml;chsten Tag. Gegen Aufpreis auch samstags und an Sonn-/Feiertagen m&ouml;glich.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#128274;</div><h2>Haftung der Post</h2><span class="tag">Folie 6 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Gew&ouml;hnliches Paket:</strong> Bei Verlust oder Besch&auml;digung ersetzt die Post den unmittelbaren Schaden bis zum H&ouml;chstbetrag von <strong>500 &euro;</strong> je Paket.</div>
+        <div class="card" style="margin-top:12px"><h3>&#128176; Transportversicherung</h3><p>Bei Verlust/Besch&auml;digung: Erstattung bis zur H&ouml;he der <strong>Transportversicherung (max. 25.000 &euro;)</strong>.</p></div>
+      </div>
+      <div>
+        <div class="card red"><h3>&#10060; Die Post haftet NICHT bei</h3><ul><li>Schaden durch nat&uuml;rliche Beschaffenheit der Sendung</li><li>Schaden durch unsachgem&auml;&szlig;e Verpackung des Absenders</li><li>Sch&auml;den, die nicht unmittelbar bei der Postfiliale angemeldet werden</li><li>Besch&auml;digung/Verlust von Briefen und P&auml;ckchen</li></ul></div>
+        <div class="highlight gold" style="margin-top:10px"><strong>Einschreiben:</strong> Bei Verlust haftet die Post mit 25 &euro; (Einschreiben) bzw. 20 &euro; (Einschreiben Einwurf).</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#128666;</div><h2>Warenzustellung: Firmen- vs. Fremdzustellung</h2><span class="tag">Folie 7 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#127970; Firmeneigene Zustellung</h3><ul><li>Mit eigenen Fahrzeugen (Werkverkehr)</li><li>Volle Kontrolle &uuml;ber Lieferqualit&auml;t</li><li>Hohe Fixkosten</li><li>Nur bei hohem Sendungsvolumen wirtschaftlich</li></ul></div>
+        <div class="card gold"><h3>&#128666; Firmenfremde Zustellung</h3><ul><li>Durch Frachtf&uuml;hrer (Eisenbahn, KEP-Dienste, Lkw)</li><li>Durch Spediteure (organisieren den Transport)</li><li>Kurier-, Express- und Paketdienste</li><li>Binnenschifffahrt, Seeschifffahrt, Luftfracht</li></ul></div>
+      </div>
+      <div class="highlight" style="margin-top:12px"><strong>Frachtf&uuml;hrer vs. Spediteur:</strong> Der Frachtf&uuml;hrer transportiert selbst, der Spediteur organisiert den Transport durch geeignete Frachtf&uuml;hrer. Spediteure kennen die g&uuml;nstigsten Verkehrsbedingungen und Frachts&auml;tze.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#128230;</div><h2>KEP-Dienste: Kurier, Express &amp; Paket</h2><span class="tag">Folie 8 / 20</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card"><h3>&#128100; Kurierdienste</h3><ul><li>Eilbed&uuml;rftige Bef&ouml;rderung von Dokumenten</li><li>Auch kleinere Paketsendungen</li><li>Sendung kann durch Kurier begleitet werden</li></ul></div>
+        <div class="card gold"><h3>&#9889; Expressdienste</h3><ul><li>Sammelladungen G&uuml;tersendungen</li><li>Ohne Ma&szlig;- und Gewichtsbegrenzungen</li><li>Transport von Haus zu Haus</li><li>Zeitvorgabe f&uuml;r Zustellung</li></ul></div>
+        <div class="card green"><h3>&#128230; Paketdienste</h3><ul><li>Konkurrenz zum Post-G&uuml;terverkehr</li><li>Pakete bis ca. 30 kg</li><li>Privatwirtschaftlich organisiert</li><li>Schnelle Anpassung an Marktver&auml;nderungen</li></ul></div>
+      </div>
+      <div class="highlight green" style="margin-top:12px"><strong>Vorteile von KEP-Diensten:</strong> Hoher Lieferservice, fl&auml;chendeckend, 365 Tage, Anpassung an Kundenbed&uuml;rfnisse, Just-in-time-Lieferung, Sendungsverfolgung (Tracking &amp; Tracing), Laufzeit&uuml;berwachung, P&uuml;nktlichkeit mit Geld-zur&uuml;ck-Garantie.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>Unterschiede zu herk&ouml;mmlichen Liefersystemen</h2><span class="tag">Folie 9 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">KEP-Dienste zeichnen sich gegen&uuml;ber traditionellen Liefersystemen durch besondere Qualit&auml;ten aus (vgl. Kollmann, 2022):</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li><strong>Schnelligkeit</strong> = kurze Lieferzeit als Verkaufsargument</li>
+          <li><strong>P&uuml;nktlichkeit</strong> = genaue Auslieferzeit erm&ouml;glicht Planung</li>
+          <li><strong>Sendungsverfolgung</strong> = EDV-gest&uuml;tzt, Barcodekontrolle, Echtzeit-Tracking</li>
+          <li><strong>Abholsystem</strong> = Regelm&auml;&szlig;ige oder sporadische Abholung beim Versender</li>
+          <li><strong>Gesamtdienstleistung</strong> = Von der Abholung bis zur Zustellung aus einer Hand</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128202; Integrierte Dienstleistungen</h3>
+          <table class="sum-table" style="font-size:.75rem">
+            <tr><td>Zustellung</td><td>Sortieren</td></tr>
+            <tr><td>Abholung</td><td>Verzollung</td></tr>
+            <tr><td>Transport</td><td>Sendungsverfolgung</td></tr>
+            <tr><td>Messen/Wiegen</td><td>Auslieferkontrolle</td></tr>
+            <tr><td>Versandabfertigung</td><td>Dokumentation</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#128187;</div><h2>Sendungsverfolgung (Tracking &amp; Tracing)</h2><span class="tag">Folie 10 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green"><strong>Tracking &amp; Tracing</strong> erm&ouml;glicht die detaillierte Beobachtung und Steuerung der Warenstr&ouml;me. Vom Moment der &Uuml;bernahme beim Versender werden Sendungen EDV-m&auml;&szlig;ig erfasst.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Jede physische Bewegung der Sendung wird erfasst</li>
+          <li>Kundenservice kann jederzeit Auskunft geben</li>
+          <li>Gro&szlig;kunden k&ouml;nnen sich &uuml;ber eigene Terminals informieren</li>
+          <li>Laufzeit&uuml;berschreitungen werden dokumentiert</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card"><h3>&#128202; Laufzeit&uuml;berwachung</h3><ul><li>Nicht nur Auslieferqualit&auml;t wird erfasst</li><li>Auch Laufzeit&uuml;berschreitungen nach Verursachern und Gr&uuml;nden</li><li>Entsprechende Ma&szlig;nahmen halten Qualit&auml;tsstandard</li></ul></div>
+        <div class="info-box" style="margin-top:12px"><strong>Beispiel:</strong> Ein Kurier- und Expressdienst unterh&auml;lt ein EDV-gest&uuml;tztes Sendungsverfolgungssystem. Scanning von Ma&szlig;en und Gewichten, Sendungsverfolgung im eigenen Netz bis zum Abliefernachweis sind technische Neuerungen der KEP-Dienste.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#127970;</div><h2>Versand im B2B-E-Commerce</h2><span class="tag">Folie 11 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">Im B2C ist das Paket/P&auml;ckchen Standard, im <strong>B2B</strong> kommt die <strong>Spedition</strong> deutlich h&auml;ufiger vor. Der Speditionsversand erfolgt auf Paletten (Palettenlogistik).</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Paketlogistik: hohe Frequenz, max. 31,5 kg, begrenzte Ma&szlig;e</li>
+          <li>Spedition: theoretisch alles transportierbar, Paletten, Kleinlaster, Sattelz&uuml;ge</li>
+          <li>Kommissionierung: Voll- und Mischpaletten</li>
+          <li>Palettentracking weniger verbreitet als Pakettracking</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128666; B2B-Besonderheiten</h3><ul><li>B&uuml;rom&ouml;bel, Baustoffe, Maschinen</li><li>Hubwagen, Gabelstapler, Wickelmaschinen n&ouml;tig</li><li>Transport kann mehrere Tage dauern</li><li>Energiekosten beeinflussen Preisfindung</li><li>Gr&ouml;&szlig;eres Zeitfenster f&uuml;r Lieferung</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#128736;</div><h2>Anforderungen an Expressdienste</h2><span class="tag">Folie 12 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">Expressdienste bef&ouml;rdern Warensendungen mit <strong>Zeitvorgabe</strong>, ohne Ma&szlig;- und Gewichtsbegrenzungen. Sie leisten einen Beitrag innerhalb eines logistischen Gesamtkonzepts.</div>
+        <div class="card green" style="margin-top:12px"><h3>&#9989; Anforderungen</h3><ul><li>Schnelligkeit = kurze Lieferzeit</li><li>Zuverl&auml;ssigkeit = p&uuml;nktliche Ab-/Zuholung</li><li>Sicherheit = schonende Behandlung</li><li>Kalkulierbarkeit = einfache Tarifgestaltung</li></ul></div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128202; Qualit&auml;tsanforderungen (Kriterien)</h3><ul><li>Branchen-Spezialisierung des Anbieters</li><li>B&uuml;ndelungsm&ouml;glichkeiten</li><li>Qualit&auml;ts- und Kosteneffekte</li><li>Partnerschaft (langfristig, Vertrauen)</li><li>Nachverfolgung der Sendungen</li><li>Internationales Netzwerk</li><li>R&uuml;ckf&uuml;hrung von Verpackungen</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Frachtf&uuml;hrer &amp; Spediteure</h2><span class="tag">Folie 13 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128666; Frachtf&uuml;hrer</h3><ul><li>Transportiert Waren mit eigenen Lkw</li><li>Gewerblicher G&uuml;terkraftverkehr (Erlaubnis n&ouml;tig)</li><li><strong>Pflichten:</strong> Bef&ouml;rderungs-, Ablieferungs-, Befolgungspflicht, Haftpflicht</li><li><strong>Rechte:</strong> Frachtbriefausstellung, Verg&uuml;tungsanspruch, Pfandrecht</li><li>Innerdeutsch: Frachtbrief; International: CMR-Frachtbrief</li></ul></div>
+        <div class="card gold"><h3>&#128203; Spediteur</h3><ul><li>Selbstst&auml;ndiger Kaufmann, der Versendung <strong>organisiert</strong></li><li>W&auml;hlt g&uuml;nstigstes Bef&ouml;rderungsmittel</li><li>Transportvermittlung, Verpackung, Versicherung, Verzollung</li><li><strong>Rechte:</strong> Verg&uuml;tung, Selbsteintrittsrecht, Pfandrecht</li><li>Besonders hilfreich im Auslandsgesch&auml;ft</li></ul></div>
+      </div>
+      <div class="highlight" style="margin-top:10px"><strong>Unterschied:</strong> W&auml;hrend der Frachtf&uuml;hrer den <strong>eigentlichen Transport</strong> durchf&uuml;hrt, organisiert der Spediteur den Transport durch Hinzuziehen geeigneter Frachtf&uuml;hrer (vgl. Heinemann, 2023).</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#128736;</div><h2>Versandarten in der Shopsoftware</h2><span class="tag">Folie 14 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">Mit der <strong>Shopsoftware</strong> kann genau eingestellt werden, welche Versandarten dem Kunden zur Verf&uuml;gung stehen. Die g&auml;ngigsten Paketdienste lassen sich als Module integrieren.</div>
+        <div class="card" style="margin-top:12px"><h3>&#128187; G&auml;ngige Versandmodule</h3><ul><li>Deutsche Post / DHL</li><li>DPD</li><li>UPS</li><li>Hermes</li><li>GLS</li><li>&Ouml;sterreichische Post</li><li>Selbstabholung (Pickup)</li></ul></div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128202; Auswahlkriterien</h3><ul><li>Preis-Leistungs-Verh&auml;ltnis</li><li>Liefergeschwindigkeit</li><li>Sendungsverfolgung</li><li>Kundenbewertungen des Dienstleisters</li><li>Integration in die Shopsoftware</li><li>Retourenabwicklung</li></ul></div>
+        <div class="highlight green" style="margin-top:12px"><strong>Praxis:</strong> Die meisten Webshops bieten 2–3 Versandoptionen an (Standard, Express, Abholung) und nutzen einen Hauptdienstleister mit automatisierter Labelerstellung.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128230;</div><h2>Das Problem der &bdquo;letzten Meile&ldquo;</h2><span class="tag">Folie 15 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">Die <strong>letzte Meile</strong> bezeichnet den letzten Abschnitt der Lieferung bis zur Haust&uuml;r des Kunden. Sie ist der teuerste und problematischste Teil der Logistikkette im E-Commerce.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Kunde ist oft nicht zu Hause</li>
+          <li>Paket wird beim Nachbarn oder in der Filiale abgegeben</li>
+          <li>Mehrfache Zustellversuche treiben Kosten</li>
+          <li>Ablagevertrag als Alternative (z. B. Garage, T&uuml;r)</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card"><h3>&#128161; Alternative Zustellkonzepte</h3><ul><li><strong>Packstationen</strong> (DHL) – 24/7 Abholung</li><li><strong>Paketboxen</strong> – private Box am Haus</li><li><strong>Kofferraumzustellung</strong> – direkt ins Auto</li><li><strong>Drohnen</strong> – Sicherheitsrisiko, noch nicht massentauglich</li><li><strong>Paketroboter</strong> – begrenzte Gel&auml;ndetauglichkeit</li></ul></div>
+        <div class="info-box" style="margin-top:10px"><strong>Trend:</strong> Viele Paketdienste bieten den Service, den Zeitpunkt der Zustellung selbst zu w&auml;hlen.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>Zustellprobleme: Rechte des Empf&auml;ngers</h2><span class="tag">Folie 16 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Situation</th><th>Regelung</th></tr></thead>
+        <tbody>
+          <tr><td>Zusteller l&auml;sst Paket beim Nachbarn</td><td>Nur erlaubt, wenn Empf&auml;nger ausdr&uuml;cklich zugestimmt hat. Karte muss in Briefkasten geworfen werden.</td></tr>
+          <tr><td>Paket vor der T&uuml;r abgestellt</td><td>Nur bei ausdr&uuml;cklichem Ablagevertrag (Garagen-/Ablagevertrag).</td></tr>
+          <tr><td>Paket direkt in Filiale gebracht</td><td>Erst nach dem ersten Zustellversuch erlaubt, egal wie weit entfernt.</td></tr>
+          <tr><td>Besch&auml;digte Sendung</td><td>Annahme verweigern! Absender muss Schadenersatz beim Transportunternehmen fordern.</td></tr>
+          <tr><td>Bis zur Ablieferung</td><td>Transportunternehmen haftet gegen&uuml;ber dem Absender.</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px"><strong>Tipp:</strong> Bei wiederkehrenden Problemen raten Verbraucherschutzorganisationen, sich per Anruf oder Brief beim Paketdienst zu beschweren (vgl. Br&auml;utigam, 2020).</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgaben</h2><span class="tag">Folie 17 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128209; Aufgabe 1</h3><p>Eine Uhr (15 kg, Wert 350 &euro;) soll von Bielefeld nach M&uuml;nster verschickt werden. Welche Sendungsart sollte der Absender w&auml;hlen? Begr&uuml;nden Sie.</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 2</h3><p>Ein Einschreibebrief (Wert 30 &euro;) geht verloren. Wie viel Euro Schadensersatz leistet die Post?</p></div>
+        <div class="card green"><h3>&#128209; Aufgabe 3</h3><p>Erl&auml;utern Sie die Vorteile der neuen KEP-Transportdienstleistungen gegen&uuml;ber herk&ouml;mmlichen Liefersystemen.</p></div>
+        <div class="card red"><h3>&#128209; Aufgabe 4</h3><p>Ein Kunde bestellt im Webshop eine Kaffeemaschine (3 kg, Wert 80 &euro;). Er will erst bei Erhalt bezahlen. Welche Versendungsform w&auml;hlt das Versandhaus?</p></div>
+      </div>
+      <div class="highlight" style="margin-top:10px"><strong>Gruppenarbeit:</strong> Recherchieren Sie auf www.ups.de, www.dpd.de und www.dhl.de die Kosten und Laufzeit f&uuml;r ein 30-kg-Paket von Hildesheim nach Darmstadt. Vergleichen Sie die Anbieter.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="18">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Was wir heute gelernt haben</h2><span class="tag">Folie 18 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green"><h3>&#9989; Sendungsarten</h3><p>DHL-Paket (31,5 kg), P&auml;ckchen (2 kg), Brief (1 kg), Warensendung mit unterschiedlichen Haftungsregeln.</p></div>
+        <div class="card green"><h3>&#9989; Frankierung</h3><p>Briefmarken, STAMP IT, Frankiermaschinen (Frankit), EDV-Freimachung je nach Sendungsvolumen.</p></div>
+        <div class="card green"><h3>&#9989; KEP-Dienste</h3><p>Kurier-, Express- und Paketdienste mit Tracking, P&uuml;nktlichkeit und Gesamtdienstleistung.</p></div>
+        <div class="card green"><h3>&#9989; Frachtf&uuml;hrer &amp; Spediteur</h3><p>Frachtf&uuml;hrer transportiert selbst, Spediteur organisiert den Transport.</p></div>
+        <div class="card green"><h3>&#9989; B2B-Versand</h3><p>Palettenlogistik, Spedition, gr&ouml;&szlig;ere Ma&szlig;e und Gewichte als im B2C.</p></div>
+        <div class="card green"><h3>&#9989; Letzte Meile</h3><p>Teuerster Teil der Logistik, alternative Zustellkonzepte (Packstation, Drohnen, Paketboxen).</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="19">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 19 / 20</span></div>
+    <div class="content">
+      <div class="ref-entry">Blank, A., Hagel, H., Hahn, H., Krause, K. &amp; Schmidthausen, M. (2024). <em>Kaufmann/Kauffrau im E-Commerce: Lernfelder 1–4</em>. Westermann.</div>
+      <div class="ref-entry">Br&auml;utigam, P. (2020). <em>E-Commerce: Rechtshandbuch f&uuml;r den elektronischen Gesch&auml;ftsverkehr</em> (2. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Gesch&auml;ftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">K&ouml;hler, H. &amp; Bornkamm, J. (2023). <em>Gesetz gegen den unlauteren Wettbewerb: UWG</em> (41. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 10</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.10 Versand mit Post-, Express- und Paketdiensten</div>
+    <div class="cover-meta">N&auml;chstes Thema: <strong>3.11 Abschluss von Rechtsgesch&auml;ften</strong><br><br>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten</div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folien&uuml;bersicht</span><button onclick="toggleGrid()">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev">&#8592;</button><span id="slide-counter">1 / 20</span><button id="btn-next">&#8594;</button><button id="btn-grid">&#8862;</button></div>
+<div id="footer"><span>Tag 10 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;
+function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%';}
+document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));
+document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return;}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid();});
+let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1);}});
+function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible');}
+function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid();};c.appendChild(d);});}
+document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

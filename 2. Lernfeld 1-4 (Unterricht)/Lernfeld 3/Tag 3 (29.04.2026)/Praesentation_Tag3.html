@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.3 Anmeldung bzw. Registrierung – Tag 3</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 3</div>
+    <h1>3.3 Anmeldung bzw.<br>Registrierung</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 429 – 433</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      29. April 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Zugangswege unterscheiden</strong> – Kundenkonto, Neuregistrierung und Gastzugang voneinander abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Adresseingabe erklären</strong> – die drei Wege der Adresseingabe je nach Zugangsweg beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Pflichtfelder begründen</strong> – Notwendigkeit und Gestaltung von Pflichtfeldern im Checkout kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Plausibilitätskontrolle anwenden</strong> – automatische Prüfung von Kundeneingaben verstehen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Lead-Begriff definieren</strong> – die Bedeutung eines Leads für das Unternehmen einordnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Datenschutz berücksichtigen</strong> – datenschutzrechtliche Anforderungen bei der Registrierung kennen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Wie kann ein Webshop den Anmelde- und Registrierungsprozess so gestalten, dass Kunden nicht abspringen und trotzdem alle nötigen Daten erfasst werden?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Zugangsweg zum Webshop -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128273;</div>
+      <h2>Der Zugangsweg zum Webshop</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        Hat der Kunde sich entschieden, die Artikel im Warenkorb zu kaufen, muss er sich mit seinem <strong>Kundenkonto anmelden</strong>. Existiert dieses noch nicht, erfolgt die <strong>Registrierung</strong>. Für Kunden, die kein Konto anlegen möchten, sollte ein <strong>Gastzugang</strong> möglich sein (vgl. Kollmann, 2022).
+      </div>
+      <div class="cards cols3" style="margin-top:16px">
+        <div class="card green">
+          <h3>&#128100; Bestandskunde</h3>
+          <ul>
+            <li>Kundenkonto ist vorhanden</li>
+            <li>Login mit E-Mail &amp; Passwort</li>
+            <li>Gespeicherte Daten werden geladen</li>
+            <li>Schnellster Zugangsweg</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128221; Neukunde</h3>
+          <ul>
+            <li>Registrierung als neuer Kunde</li>
+            <li>Adressdaten eingeben</li>
+            <li>Passwort für neues Konto festlegen</li>
+            <li>Datenschutzeinwilligung erforderlich</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128100; Gastzugang</h3>
+          <ul>
+            <li>Kein Kundenkonto nötig</li>
+            <li>Kein Passwort erforderlich</li>
+            <li>Daten werden nach Kauf gelöscht</li>
+            <li>Reduziert Kaufabbrüche</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>Wichtig:</strong> 39 % der Warenkorbabbrüche entstehen durch den Zwang zur Kontoerstellung. Der Gastzugang ist daher ein wichtiger Conversion-Faktor.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Das Kundenkonto -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128100;</div>
+      <h2>Das Kundenkonto (Benutzerkonto)</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          Bei einem <strong>Kundenkonto</strong> (auch Benutzerkonto) dürfen die vom Käufer eingegebenen Daten – unter Beachtung der datenschutzrechtlichen Voraussetzungen – auch über den Kaufvertrag hinaus <strong>gespeichert</strong> werden (vgl. Meier &amp; Stormer, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128100; Vorteile für den Kunden</h3>
+          <ul>
+            <li>Stammdaten müssen nicht erneut eingegeben werden</li>
+            <li>Bestellhistorie einsehbar</li>
+            <li>Vereinfachte Retouren-Abwicklung</li>
+            <li>Erhöhte <strong>Usability</strong> bei Folgebestellungen</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#127970; Vorteile für das Unternehmen</h3>
+          <ul>
+            <li>Kundendaten für Marketing nutzbar</li>
+            <li>Personalisierte Angebote möglich</li>
+            <li>Kaufverhalten analysierbar</li>
+            <li>Höhere Kundenbindung</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#9888; Nachteile</h3>
+          <ul>
+            <li>Manche Kunden scheuen die Registrierung</li>
+            <li>Datenschutzbedenken</li>
+            <li>Passwortverwaltung als Hürde</li>
+            <li>Kann zu Kaufabbrüchen führen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Gastzugang -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128101;</div>
+      <h2>Der Gastzugang</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Möchte ein Kunde <strong>ohne Registrierung</strong> bestellen, erfolgt der Zugang über ein <strong>Gastkonto</strong>. Hierbei ist kein Passwort erforderlich. Die Daten dürfen nur im Rahmen der handels- und steuerrechtlichen Pflichten aufbewahrt werden (vgl. Wirtz, 2021).
+        </div>
+        <div class="card green" style="margin-top:12px">
+          <h3>&#9989; Vorteile des Gastzugangs</h3>
+          <ul>
+            <li>Schnellerer Bestellprozess</li>
+            <li>Keine Passwortverwaltung nötig</li>
+            <li>Datenschutzfreundlich</li>
+            <li>Reduziert Warenkorbabbrüche um bis zu 39 %</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card red">
+          <h3>&#10060; Nachteile des Gastzugangs</h3>
+          <ul>
+            <li>Keine Kundenbindung</li>
+            <li>Daten müssen bei jeder Bestellung neu eingegeben werden</li>
+            <li>Kein personalisiertes Marketing möglich</li>
+            <li>Bestellhistorie nicht verfügbar</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Best Practice:</strong> Nach dem Kauf als Gast kann dem Kunden optional angeboten werden, aus dem Gastkonto ein vollwertiges Kundenkonto zu erstellen – so wird die Hürde der Registrierung umgangen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Die Adresseingabe -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128205;</div>
+      <h2>Die Adresseingabe</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">
+        Der Kunde kann – abhängig vom Zugangsweg – auf <strong>drei Arten</strong> seine Adressen eingeben:
+      </p>
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#128100; Bestandskunde</h3>
+          <p>Kundenkonto vorhanden: Gespeicherte Daten werden automatisch in die Adresseingabe <strong>geladen</strong>.</p>
+          <p style="margin-top:6px">Vorher muss der Kunde sein <strong>Passwort</strong> für das Kundenkonto eingeben.</p>
+        </div>
+        <div class="card">
+          <h3>&#128221; Neukunde</h3>
+          <p>Kein Kundenkonto vorhanden: Daten müssen in die <strong>Eingabefelder</strong> der Adresseingabe eingegeben werden.</p>
+          <p style="margin-top:6px">Zusätzlich muss ein <strong>Passwort</strong> für das neue Konto angegeben werden.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128101; Gastkunde</h3>
+          <p>Ohne Registrierung bestellen: Daten werden eingegeben, aber <strong>kein Passwort</strong> benötigt.</p>
+          <p style="margin-top:6px">Daten werden nach Erfüllung des Kaufvertrags <strong>gelöscht</strong>.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Passwort-Dilemma:</strong> Je komplizierter ein Passwort, desto sicherer ist es. Andererseits haben viele Kunden Schwierigkeiten, sich lange Passwörter zu merken. Der Webshop muss abwägen: Mindestlänge, Sonderzeichen, Ziffern?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Abgefragte Daten bei der Adresseingabe -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128220;</div>
+      <h2>Abgefragte Daten bei der Adresseingabe</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128100; Name</h3>
+          <ul>
+            <li>Vorname</li>
+            <li>Nachname</li>
+            <li>Titel</li>
+            <li>Anrede</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128205; Kundenadresse</h3>
+          <ul>
+            <li>Land / Bundesland</li>
+            <li>Postleitzahl / Ort</li>
+            <li>Straße / Hausnummer</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#128233; Kommunikation</h3>
+          <ul>
+            <li>E-Mail-Adresse</li>
+            <li>Telefon fest / mobil</li>
+            <li>Fax (optional)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128666; Abw. Lieferadresse</h3>
+          <ul>
+            <li>Land / Bundesland</li>
+            <li>Postleitzahl / Ort</li>
+            <li>Straße / Hausnummer</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128197; Weitere Daten</h3>
+          <ul>
+            <li>Geburtsdatum</li>
+            <li>USt-IdNr. (B2B)</li>
+            <li>Firma / Institution</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#9888; Interessen-Konflikt</h3>
+          <p>Käufer: möglichst <strong>wenig</strong> Angaben<br>
+          Unternehmen: möglichst <strong>viele</strong> Informationen</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Pflichtfelder -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#10071;</div>
+      <h2>Pflichtfelder im Registrierungsformular</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">
+          Die Informationen, die das Unternehmen zur reibungslosen Abwicklung <strong>unbedingt braucht</strong>, sollten als <strong>Pflichtfelder</strong> gekennzeichnet werden – typischerweise mit einem Sternchen (*) (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128209; Typische Pflichtfelder</h3>
+          <ul>
+            <li>Anrede</li>
+            <li>Vor- und Nachname</li>
+            <li>Straße und Hausnummer</li>
+            <li>Postleitzahl und Ort</li>
+            <li>E-Mail-Adresse</li>
+            <li>Passwort (bei Registrierung)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Grundsatz</h3>
+          <p>Nur Daten als Pflichtfeld markieren, die für die <strong>Geschäftsabwicklung</strong> unbedingt erforderlich sind.</p>
+          <p style="margin-top:6px"><strong>Beispiel:</strong> Möchte ein Webshop keine Faxe zusenden, macht es keinen Sinn, eine Faxnummer abzufragen.</p>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Konversion-Killer:</strong> Die Pflichtanmeldung im Checkout ist ein wesentlicher Einflussfaktor auf die Warenkorb-Abbruchrate. Jedes zusätzliche Pflichtfeld erhöht das Risiko eines Kaufabbruchs.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Plausibilitätskontrolle -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128269;</div>
+      <h2>Die Plausibilitätskontrolle</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die Eingaben der Kunden sollten schon <strong>während des Eingebens</strong> automatisch auf Plausibilität überprüft werden. Dies verhindert Fehler und erhöht die Datenqualität (vgl. Kollmann, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128269; Prüfungen bei Pflichtfeldern</h3>
+          <ul>
+            <li>Leere Pflichtfelder &#10140; roter Hintergrund / Ausrufezeichen</li>
+            <li>Korrekte Eingaben &#10140; grüner Haken / positives Feedback</li>
+            <li>Jedes Feld wird auf sinnvolle Eingabe geprüft</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128209; Beispiele der Plausibilitätsprüfung</h3>
+          <ul>
+            <li>E-Mail muss @-Zeichen enthalten</li>
+            <li>PLZ muss 5 Ziffern haben (DE)</li>
+            <li>Name darf keine Ziffern enthalten</li>
+            <li>Hausnummer: alphanumerisch möglich (z. B. „17 A")</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Negativbeispiel</h3>
+          <p>Kunde „Bauer" gibt im Feld Name versehentlich <strong>„6auer5"</strong> ein &#10140; Das Shopsystem muss eine <strong>Fehlermeldung</strong> anzeigen und den Kunden auf den Fehler hinweisen.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Eingabefeld-Hilfen -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128161;</div>
+      <h2>Hilfen bei der Eingabe</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          Werden für jedes Eingabefeld <strong>Hilfen</strong> angeboten, wird die Adresseingabe sowohl für Kunden als auch für das Unternehmen erheblich erleichtert (vgl. Meier &amp; Stormer, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128161; Arten von Eingabehilfen</h3>
+          <ul>
+            <li><strong>Platzhaltertext:</strong> Beispieldaten im Eingabefeld (z. B. „Musterweg 27")</li>
+            <li><strong>Tooltips:</strong> Info-Icons mit Erklärungen</li>
+            <li><strong>Auto-Vervollständigung:</strong> PLZ &#10140; Ort automatisch befüllen</li>
+            <li><strong>Dropdown-Menüs:</strong> für Anrede, Land, Bundesland</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128200; Hausnummer-Besonderheit</h3>
+          <p>Die Eingabemaske Hausnummer sollte sowohl <strong>numerische</strong> Eingaben (17, 23) als auch <strong>alphanumerische</strong> Eingaben (17 A, 23 B) erlauben.</p>
+          <p style="margin-top:6px">Viele Kunden haben Hausnummern mit Buchstaben – das Eingabefeld darf diese nicht blockieren.</p>
+        </div>
+        <div class="card green" style="margin-top:10px">
+          <h3>&#9989; Echtzeit-Validierung</h3>
+          <ul>
+            <li>Sofortiges Feedback bei der Eingabe</li>
+            <li>Grüner Haken bei korrekter Eingabe</li>
+            <li>Rotes Ausrufezeichen bei Fehler</li>
+            <li>Kein Warten auf „Absenden"-Klick</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Der Lead -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>Der Lead – vom Interessent zum Kunden</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Hat sich eine Person im Onlineshop als neuer Kunde registriert, wird er zu einem <strong>Lead</strong>. Darunter versteht man jeden potenziellen Kunden, der sein Interesse am Webshop zeigt und seine <strong>Kontaktdaten hinterlässt</strong> (vgl. Kreutzer, 2021).
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Lead = Datensatz</strong> eines potenziellen Kunden, der aus eigenem Antrieb seine Kontaktdaten hinterlegt hat.
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128200; Vom Lead zum Kunden</h3>
+          <ul>
+            <li><strong>Lead-Generierung:</strong> Registrierung im Shop</li>
+            <li><strong>Lead-Nurturing:</strong> Gezielte Ansprache (Newsletter, Angebote)</li>
+            <li><strong>Lead-Conversion:</strong> Umwandlung in zahlenden Kunden</li>
+            <li><strong>Customer Retention:</strong> Kundenbindung nach dem Kauf</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Praxis:</strong> Die Kontaktdaten eines Leads können genutzt werden, um potenzielle Interessenten durch gezielte Marketingmaßnahmen zu neuen Kunden zu machen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Datenschutz -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Datenschutz bei der Registrierung</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">
+          Der Datenschutz ist bei der Registrierung und Speicherung von Kundendaten ein <strong>zentrales Thema</strong>. Die Datenschutz-Grundverordnung (DSGVO) regelt den Umgang mit personenbezogenen Daten streng (vgl. Wirtz, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128274; DSGVO-Anforderungen</h3>
+          <ul>
+            <li>Einwilligung des Kunden erforderlich</li>
+            <li>Zweckbindung: Daten nur für angegebenen Zweck</li>
+            <li>Datenminimierung: nur notwendige Daten erheben</li>
+            <li>Recht auf Löschung muss gewährleistet sein</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128100; Kundenkonto vs. Gastzugang</h3>
+          <p><strong>Kundenkonto:</strong> Daten dürfen unter Beachtung der datenschutzrechtlichen Voraussetzungen auch über den Kaufvertrag hinaus gespeichert werden.</p>
+          <p style="margin-top:8px"><strong>Gastzugang:</strong> Daten dürfen zunächst nur im Rahmen der handels- und steuerrechtlichen Pflichten aufbewahrt werden. Ist der Kaufvertrag erfüllt, müssen die Daten <strong>gelöscht</strong> werden.</p>
+        </div>
+        <div class="highlight green" style="margin-top:10px">
+          <strong>Pflicht:</strong> Bei jeder Registrierung muss der Kunde der Verarbeitung seiner personenbezogenen Daten nach Maßgabe der Datenschutzkonventionen zustimmen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Passwort-Sicherheit -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128272;</div>
+      <h2>Passwort-Sicherheit im Webshop</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Bei den Anforderungen an die Passwörter muss abgewogen werden: Je <strong>komplizierter</strong> ein Passwort, desto <strong>sicherer</strong> ist es – aber viele Kunden favorisieren einfache Passwörter (vgl. Meier &amp; Stormer, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128272; Passwort-Richtlinien</h3>
+          <ul>
+            <li>Mindestlänge (z. B. 8 Zeichen)</li>
+            <li>Groß- und Kleinbuchstaben</li>
+            <li>Mindestens eine Ziffer</li>
+            <li>Sonderzeichen empfohlen</li>
+            <li>Passwort-Stärke-Anzeige</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; „Passwort vergessen?"-Funktion</h3>
+          <p>Da Kunden oft vergesslich sind, sollte der Webshop einen <strong>„Passwort vergessen?"</strong>-Button anbieten.</p>
+          <p style="margin-top:6px">Der Kunde bekommt per E-Mail ein neues Passwort oder einen Link zum Ändern des Passworts zugesandt.</p>
+        </div>
+        <div class="card gold" style="margin-top:10px">
+          <h3>&#128161; Alternativen</h3>
+          <ul>
+            <li>Social Login (Google, Facebook, Apple)</li>
+            <li>Single Sign-On (SSO)</li>
+            <li>Zwei-Faktor-Authentifizierung (2FA)</li>
+            <li>Biometrische Verfahren (Fingerabdruck)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Shopsoftware-Konfiguration -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#9881;</div>
+      <h2>Registrierung in der Shopsoftware</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Mithilfe der <strong>Shopsoftware</strong> wird festgelegt, welche Daten der Kunde bei der Registrierung eingeben soll. Der Administrator konfiguriert die Kundendetails im Backend (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#9881; Konfigurierbare Felder</h3>
+          <ul>
+            <li>Anrede (Pflicht / Optional)</li>
+            <li>Geburtsdatum (Pflicht / Optional)</li>
+            <li>Telefonnummer (Pflicht / Optional)</li>
+            <li>Firma / Institution (Optional)</li>
+            <li>Adresszusatz (Optional)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128187; Kundenverwaltung im Backend</h3>
+          <ul>
+            <li>Übersicht aller registrierten Kunden</li>
+            <li>Bearbeitung einzelner Kundendaten</li>
+            <li>Zuordnung zu Kundengruppen</li>
+            <li>Einsicht der Bestellhistorie</li>
+            <li>Export von Kundendaten</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Tipp:</strong> Weniger Pflichtfelder bei der Registrierung führen zu einer höheren Conversion Rate. Zusätzliche Daten können nach dem Kauf erfragt werden.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Problematik der Zwangsanmeldung -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128721;</div>
+      <h2>Problematik der Zwangsanmeldung</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">
+          Die <strong>Pflichtanmeldung</strong> im Checkout ist ein Thema, das bei Konversionsoptimierern negativ aufstößt. Sie ist ein wesentlicher <strong>Einflussfaktor auf die Warenkorb-Abbruchrate</strong>.
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#10060; Argumente gegen Zwangsanmeldung</h3>
+          <ul>
+            <li>39 % Kaufabbrüche durch Registrierungszwang</li>
+            <li>Kunden empfinden es als Barriere</li>
+            <li>Zeitaufwand schreckt ab</li>
+            <li>Datenschutzbedenken</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Argumente für Registrierung</h3>
+          <ul>
+            <li>Kundendaten für Marketing nutzbar</li>
+            <li>Personalisierung möglich</li>
+            <li>Betrugsschutz</li>
+            <li>Folgebestellungen vereinfacht</li>
+          </ul>
+        </div>
+        <div class="highlight green" style="margin-top:10px">
+          <strong>Lösung:</strong> Drei Optionen auf der Anmeldeseite anbieten: (1) „Ich bin bereits Kunde" – Login, (2) „Als neuer Kunde registrieren", (3) „Als Gast bestellen". So hat der Kunde die freie Wahl.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Technische Voraussetzungen -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128187;</div>
+      <h2>Technische Voraussetzungen für den Zugang</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        Der Zugang zum Webshop muss <strong>technisch einwandfrei</strong> gewährleistet sein. Probleme beim Login führen zu Frustration und Kaufabbrüchen. Die Exclusiva GmbH hat dafür eine Hilfeseite eingerichtet (vgl. Kollmann, 2022).
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128295; Häufige technische Probleme</h3>
+          <ul>
+            <li>Sicherheitseinstellungen des Browsers zu hoch</li>
+            <li>Cookies nicht aktiviert</li>
+            <li>Browser enthält fehlerhafte Einstellungen</li>
+            <li>Veraltete Browser-Version</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Lösungen</h3>
+          <ul>
+            <li>Sicherheitseinstellung auf „Mittel" setzen</li>
+            <li>Cookies im Browser aktivieren</li>
+            <li>Browser auf Werkseinstellungen zurücksetzen</li>
+            <li>Aktuelle Browser-Version installieren</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>Best Practice:</strong> Der Webshop sollte alle gängigen Browser unterstützen (Chrome, Firefox, Safari, Edge) und regelmäßig auf Kompatibilität getestet werden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Übungsaufgaben -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Beschreiben Sie, auf welchen <strong>drei Wegen</strong> ein Kunde seine Adresse im Webshop eingeben kann.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Nennen Sie mindestens <strong>10 mögliche Angaben</strong>, die von Kunden abgefragt werden können. Ordnen Sie sie den Überpunkten zu.</p>
+        </div>
+        <div class="card">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Wie kann ein Unternehmen sicherstellen, alle für die Geschäftsabwicklung erforderlichen Angaben vom Kunden zu erhalten?</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 4</h3>
+          <p>Erläutern Sie, was eine <strong>Plausibilitätskontrolle</strong> ist, und nennen Sie drei konkrete Beispiele.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 5</h3>
+          <p>Untersuchen Sie den Anmelde- und Registrierungsvorgang in Ihrem Ausbildungsbetrieb. Sind alle erwarteten Elemente vorhanden?</p>
+        </div>
+        <div class="card green">
+          <h3>&#128172; Diskussion</h3>
+          <p>Geben Sie an, was <strong>für und was gegen Pflichtanmeldungen</strong> im Checkout spricht. Wie würden Sie es in Ihrem Shop umsetzen?</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Zusammenfassung -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box" style="background:var(--primary-light)"><h4>Zugangswege zum Webshop</h4></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box" style="background:var(--success-light)"><h4>Passwort &amp; Daten</h4><p>vom Kundenkonto</p></div>
+        <div class="step-arrow">|</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>Registrierung</h4><p>und Eingabe der Daten</p></div>
+        <div class="step-arrow">|</div>
+        <div class="step-box" style="background:var(--danger-light)"><h4>Gastzugang</h4><p>und Eingabe der Daten</p></div>
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#9989; Kernpunkte</h3>
+          <ul>
+            <li>Drei Zugangswege: Bestandskunde, Neukunde, Gast</li>
+            <li>Pflichtfelder minimieren für bessere Conversion</li>
+            <li>Plausibilitätskontrolle schon bei der Eingabe</li>
+            <li>Lead-Generierung durch Registrierung</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128274; Datenschutz &amp; Sicherheit</h3>
+          <ul>
+            <li>DSGVO-konforme Datenerhebung</li>
+            <li>Unterschiedliche Speicherfristen (Konto vs. Gast)</li>
+            <li>Passwort-Sicherheit abwägen</li>
+            <li>Technische Voraussetzungen sicherstellen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Meier, A. &amp; Stormer, H. (2021). <em>eBusiness &amp; eCommerce: Management der digitalen Wertschöpfungskette</em> (4. Aufl.). Springer.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 3</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.3 Anmeldung bzw. Registrierung</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.4 Das traditionelle Verfahren der Barzahlung</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 3 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

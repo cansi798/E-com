@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 21 – LF3: Die Arbeit in Teams</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128101; Quiz – Tag 21: Die Arbeit in Teams</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was ist der wesentliche Unterschied zwischen einer Gruppe und einem Team?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Eine Gruppe hat einen festen Leiter, ein Team nicht</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>In einer Gruppe arbeitet jeder einzeln an der gleichen Aufgabe; im Team arbeiten alle gemeinsam auf ein Ziel hin mit koordinierter Rollenverteilung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ein Team hat maximal 5 Mitglieder, eine Gruppe mehr</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Gruppen existieren dauerhaft, Teams nur projektbezogen</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Kernunterschied: In einer Gruppe bearbeitet jede Person die gleiche Aufgabe einzeln. Im Team arbeiten mehrere Personen gemeinsam auf ein Ziel hin – mit koordinierter Rollenverteilung, gemeinsamer Verantwortung und Nutzung individueller Stärken.</div>
+    <div class="feedback err">Falsch. Der Unterschied laut Präsentation: In einer Gruppe arbeitet jeder die gleiche Aufgabe einzeln. Im Team arbeiten mehrere Personen gemeinsam auf ein Ziel hin, mit klarer Rollenverteilung und geteilter Verantwortung. Die Teamgröße oder Dauer ist kein Differenzierungskriterium.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Welches ist ein Vorteil von Teamarbeit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Entscheidungen werden schneller getroffen als bei Einzelpersonen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Stärken aller Mitglieder können genutzt und Schwächen einzelner aufgefangen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Konflikte entstehen seltener als bei Einzelarbeit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Jedes Teammitglied hat das gleiche Interesse am Ergebnis</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein zentraler Vorteil von Teamarbeit ist, dass die Stärken aller Mitglieder genutzt und Schwächen einzelner durch andere aufgefangen werden können. Weitere Vorteile: höhere Qualität, unterschiedliche Sichtweisen, frühzeitige Fehlererkennung.</div>
+    <div class="feedback err">Falsch. Zu den Vorteilen zählt, dass Stärken genutzt und Schwächen aufgefangen werden. Längere Entscheidungsprozesse sind hingegen ein Nachteil. Nicht alle Teammitglieder haben zwangsläufig das gleiche Interesse – das ist sogar ein bekanntes Risiko (TEAM = „Toll, ein anderer macht's").</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was beschreibt die Abkürzung „TEAM = Toll, ein anderer macht's"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Einen Vorteil von Teamarbeit: Aufgaben werden delegiert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Ein Risiko von Teamarbeit: Einzelne Mitglieder lehnen sich zurück und verlassen sich auf andere</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Eine Regel für erfolgreiche Teams: Aufgaben klar verteilen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Tuckman-Modell in vereinfachter Form</div>
+    </div>
+    <div class="feedback ok">Richtig! „TEAM = Toll, ein anderer macht's" beschreibt ein bekanntes Risiko der Teamarbeit: Einzelne Mitglieder lehnen sich zurück und verlassen sich darauf, dass andere die Arbeit erledigen. Als Gegenmaßnahme sollte das Ergebnis für alle wichtig sein oder Leistungsdruck ausgeübt werden.</div>
+    <div class="feedback err">Falsch. Diese ironische Formel beschreibt einen Nachteil/ein Risiko von Teamarbeit: Einzelne ziehen sich zurück und vertrauen darauf, dass andere die Arbeit übernehmen. Es ist kein Vorteil, keine Regel und hat nichts mit dem Tuckman-Modell zu tun.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Wer entwickelte das bekannte Modell der Teamentwicklungsphasen und in welchem Jahr?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Meredith Belbin, 2010</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Bruce Tuckman, 1965</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Frederick Taylor, 1911</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Abraham Maslow, 1943</div>
+    </div>
+    <div class="feedback ok">Richtig! Bruce Tuckman entwickelte das Modell der Teamentwicklungsphasen im Jahr 1965. Es beschreibt vier Phasen: Forming, Storming, Norming und Performing. Meredith Belbin hingegen entwickelte das Teamrollenmodell (2010).</div>
+    <div class="feedback err">Falsch. Das Teamentwicklungsmodell mit den vier Phasen (Forming, Storming, Norming, Performing) wurde 1965 von Bruce Tuckman entwickelt. Meredith Belbin ist für das Teamrollenmodell bekannt. Taylor und Maslow haben andere Theorien entwickelt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">In welcher richtigen Reihenfolge verlaufen die vier Phasen des Tuckman-Modells?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Storming → Forming → Performing → Norming</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Forming → Storming → Norming → Performing</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Forming → Norming → Storming → Performing</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Norming → Forming → Storming → Performing</div>
+    </div>
+    <div class="feedback ok">Richtig! Die vier Phasen nach Tuckman in der korrekten Reihenfolge: (1) Forming (Orientierungsphase), (2) Storming (Konfliktphase), (3) Norming (Normierungsphase), (4) Performing (Integrationsphase). Diese Reihenfolge ist für die Prüfung besonders wichtig.</div>
+    <div class="feedback err">Falsch. Die korrekte Reihenfolge laut Tuckman (1965) ist: Forming → Storming → Norming → Performing. Forming ist immer die erste Phase (Kennenlernen), Performing die letzte (höchste Produktivität).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was ist typisch für die Forming-Phase in einem neuen Team?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Offene Konflikte und Machtkämpfe zwischen den Mitgliedern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Höflicher und distanzierter Umgang, gegenseitiges Abtasten, hohe Motivation</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Klare Rollenverteilung und effiziente Zusammenarbeit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Vereinbarung gemeinsamer Spielregeln und Arbeitspakete</div>
+    </div>
+    <div class="feedback ok">Richtig! In der Forming-Phase lernen sich die Mitglieder kennen. Es herrscht höflicher, distanzierter Umgang, die Motivation ist hoch, aber es gibt noch keine echten Beziehungen. Typisch ist das gegenseitige „Abtasten" und eine abwartende Haltung. Stärken und Schwächen sind noch unbekannt.</div>
+    <div class="feedback err">Falsch. Die Forming-Phase ist geprägt von Höflichkeit, Distanz und hoher Motivation. Konflikte und Machtkämpfe entstehen erst in der Storming-Phase. Klare Rollen werden in der Norming-Phase vereinbart, effiziente Zusammenarbeit findet in der Performing-Phase statt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was kann in der Storming-Phase passieren, wenn die Konflikte zu stark werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Team springt direkt zur Performing-Phase</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das Team kann scheitern; ein Moderator kann helfen, Machtkämpfe einzugrenzen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Storming-Phase verlängert sich automatisch auf 6 Monate</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Der Teamleiter übernimmt alle Aufgaben alleine</div>
+    </div>
+    <div class="feedback ok">Richtig! In der Storming-Phase können Teams scheitern, wenn die Konflikte zu groß werden. Als Lösung empfiehlt die Präsentation, dass ein Teammitglied die Rolle des Moderators übernimmt, um Machtkämpfe einzugrenzen. Die Phase ist aber notwendig und muss durchlaufen werden.</div>
+    <div class="feedback err">Falsch. Zu starke Konflikte in der Storming-Phase können zum Scheitern des Teams führen. Ein Moderator kann helfen, die Machtkämpfe zu begrenzen. Die Phase kann nicht übersprungen werden – sie ist ein natürlicher und notwendiger Bestandteil der Teamentwicklung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was wird in der Norming-Phase hauptsächlich erarbeitet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Das Team erreicht seine maximale Produktivität</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Gemeinsame Spielregeln, Rollenverteilung und Arbeitspakete werden vereinbart; Konflikte werden beseitigt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Die Teammitglieder lernen sich zum ersten Mal kennen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Team löst sich auf und verteilt sich auf neue Projekte</div>
+    </div>
+    <div class="feedback ok">Richtig! In der Norming-Phase einigt sich das Team auf eine gemeinsame Vorgehensweise. Spielregeln werden festgelegt, Rollen und Arbeitspakete verteilt, Konflikte thematisiert und beseitigt. Feedback wird gegeben und angenommen. Das Ergebnis: Das Team widmet sich der gemeinsamen Aufgabe.</div>
+    <div class="feedback err">Falsch. In der Norming-Phase werden Spielregeln vereinbart, Rollen und Arbeitspakete verteilt und Konflikte beseitigt. Maximale Produktivität ist die Performing-Phase. Kennenlernen findet in der Forming-Phase statt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was kennzeichnet die Performing-Phase nach Tuckman?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Cliquenbildung und Machtkämpfe</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Höchste Produktivität und Effektivität; Stärken der Teammitglieder werden optimal genutzt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Erste Vorstellungen und Ziele werden gesammelt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Gemeinsame Spielregeln werden zum ersten Mal vereinbart</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Performing-Phase ist die Phase mit der höchsten Produktivität und Effektivität. Das Team kooperiert und harmoniert, arbeitet offen, flexibel, ideenreich und solidarisch. Jedes Mitglied arbeitet rollenkonform und zielstrebig auf ein gutes Ergebnis hin.</div>
+    <div class="feedback err">Falsch. Die Performing-Phase ist gekennzeichnet durch höchste Produktivität, Harmonie, Offenheit und effektive Zusammenarbeit. Cliquenbildung und Machtkämpfe gehören zur Storming-Phase, Spielregeln werden in der Norming-Phase vereinbart.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">In wie viele Hauptgruppen und Rollen teilt Meredith Belbin das Teamrollenmodell ein?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>2 Hauptgruppen mit je 4 Rollen (= 8 Rollen)</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>3 Hauptgruppen mit je 3 Rollen (= 9 Rollen)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>4 Hauptgruppen mit je 2 Rollen (= 8 Rollen)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>5 Hauptgruppen mit je 3 Rollen (= 15 Rollen)</div>
+    </div>
+    <div class="feedback ok">Richtig! Meredith Belbin unterscheidet 3 Hauptgruppen mit je 3 Rollen, also insgesamt 9 Teamrollen: Handlungsorientiert (Macher, Perfektionist, Umsetzer), Kommunikationsorientiert (Wegbereiter, Koordinator, Teamarbeiter), Wissensorientiert (Spezialist, Beobachter, Erfinder).</div>
+    <div class="feedback err">Falsch. Das Belbin-Modell umfasst 3 Hauptgruppen mit je 3 Rollen = 9 Teamrollen gesamt. Die drei Gruppen sind: handlungsorientiert, kommunikationsorientiert und wissensorientiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Welche drei Rollen gehören zur Gruppe der handlungsorientierten Personen nach Belbin?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Koordinator, Wegbereiter und Teamarbeiter</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Macher, Perfektionist und Umsetzer</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Spezialist, Beobachter und Erfinder</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Macher, Koordinator und Erfinder</div>
+    </div>
+    <div class="feedback ok">Richtig! Die handlungsorientierten Rollen nach Belbin sind: Macher (energisch, treibt das Team an), Perfektionist (gewissenhaft, detailorientiert) und Umsetzer (diszipliniert, setzt Pläne in die Tat um). Sie sind auf das konkrete Handeln und Tun ausgerichtet.</div>
+    <div class="feedback err">Falsch. Die handlungsorientierten Rollen sind Macher, Perfektionist und Umsetzer. Koordinator, Wegbereiter und Teamarbeiter sind kommunikationsorientiert. Spezialist, Beobachter und Erfinder sind wissensorientiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welche drei Rollen gehören zur Gruppe der kommunikationsorientierten Personen nach Belbin?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Macher, Umsetzer und Perfektionist</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Spezialist, Erfinder und Beobachter</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Wegbereiter, Koordinator und Teamarbeiter</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Koordinator, Beobachter und Macher</div>
+    </div>
+    <div class="feedback ok">Richtig! Die kommunikationsorientierten Rollen nach Belbin sind: Wegbereiter (extrovertiert, bringt Kontakte und Ideen von außen), Koordinator (reif, delegiert gut, natürlicher Teamleiter) und Teamarbeiter (kooperativ, diplomatisch, verbessert das Teamklima).</div>
+    <div class="feedback err">Falsch. Die kommunikationsorientierten Rollen sind Wegbereiter, Koordinator und Teamarbeiter. Macher, Umsetzer und Perfektionist sind handlungsorientiert. Spezialist, Erfinder und Beobachter sind wissensorientiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Welche drei Rollen gehören zur Gruppe der wissensorientierten Personen nach Belbin?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Wegbereiter, Koordinator und Teamarbeiter</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Spezialist, Beobachter und Erfinder</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Macher, Perfektionist und Erfinder</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Beobachter, Koordinator und Umsetzer</div>
+    </div>
+    <div class="feedback ok">Richtig! Die wissensorientierten Rollen nach Belbin sind: Spezialist (Fachexperte mit tiefem Wissen), Beobachter (analytisch, beurteilt Ideen objektiv) und Erfinder (kreativ, generiert neue Ideen für schwierige Probleme). Sie tragen durch Wissen und Analyse zum Teamerfolg bei.</div>
+    <div class="feedback err">Falsch. Die wissensorientierten Rollen sind Spezialist, Beobachter und Erfinder. Wegbereiter, Koordinator und Teamarbeiter sind kommunikationsorientiert. Macher, Perfektionist und Umsetzer sind handlungsorientiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Welche Eigenschaft kennzeichnet den Koordinator nach Belbin besonders?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Er ist kreativ und generiert neue Ideen für schwierige Probleme</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Er ist reif, selbstsicher, delegiert gut und ist ein natürlicher Teamleiter</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Er ist detailorientiert und achtet gewissenhaft auf Fehler</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Er bringt externes Fachwissen und neue Kontakte ins Team</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Koordinator nach Belbin ist reif, selbstsicher, delegiert gut und erkennt die Talente aller Teammitglieder. Er klärt Ziele und wird als natürlicher Teamleiter wahrgenommen. Er gehört zu den kommunikationsorientierten Rollen.</div>
+    <div class="feedback err">Falsch. Der Koordinator ist reif, selbstsicher und ein natürlicher Teamleiter. Kreativität und neue Ideen sind Merkmale des Erfinders. Detailorientierung und Fehlersuche sind Merkmale des Perfektionisten. Externe Kontakte bringt der Wegbereiter.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was ist laut Belbin-Prinzip die große Stärke eines Teams?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Wenn alle Teammitglieder dieselbe Persönlichkeit haben</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Verschiedenheit der Teammitglieder durch unterschiedliche Rollen und Charaktere</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Wenn das Team nur aus Spezialisten besteht</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Wenn alle Mitglieder die gleiche Ausbildung haben</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Belbin-Prinzip besagt: Teams arbeiten am effektivsten, wenn sie aus einer Vielzahl unterschiedlicher Charaktere bestehen. Die Verschiedenheit der Teammitglieder ist die große Stärke. Wenn alle Rollen vertreten sind, kann das Team optimal funktionieren.</div>
+    <div class="feedback err">Falsch. Laut Belbin ist die Verschiedenheit der Teammitglieder die große Stärke. Ein Team sollte aus unterschiedlichen Charakteren mit unterschiedlichen Rollen bestehen, nicht aus gleichartigen Personen oder nur Spezialisten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welcher Erfolgsfaktor beschreibt, dass persönliche und sachliche Probleme sofort angesprochen werden müssen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Zielstrebigkeit und Engagement</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Offene Kommunikation</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Verantwortung übernehmen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Regeln einhalten</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Erfolgsfaktor „Offene Kommunikation" besagt: Persönliche und sachliche Probleme müssen sofort angesprochen und diskutiert werden, um Konflikte zu vermeiden. Unausgesprochene Probleme eskalieren oft zu größeren Konflikten in der Storming-Phase.</div>
+    <div class="feedback err">Falsch. „Offene Kommunikation" ist der Erfolgsfaktor, der das sofortige Ansprechen von Problemen betont. Regeln einhalten bezieht sich auf Kommunikationsregeln; Zielstrebigkeit auf das gemeinsame Ziel; Verantwortung übernehmen auf eigene Aufgabengebiete.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was beschreibt der Erfolgsfaktor „Kritikfähigkeit" für Teams?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Berechtigte Kritik darf nur vom Teamleiter geäußert werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Berechtigte Kritik muss jederzeit erlaubt sein und professionell entgegengenommen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Kritik sollte schriftlich und anonym eingereicht werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Kritik ist zu vermeiden, da sie das Teamklima belastet</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Erfolgsfaktor „Kritikfähigkeit" bedeutet: Berechtigte Kritik muss jederzeit erlaubt sein und von allen Mitgliedern professionell entgegengenommen werden. Kritik fördert die Qualität, wenn sie konstruktiv geäußert und offen angenommen wird.</div>
+    <div class="feedback err">Falsch. Kritikfähigkeit bedeutet, dass Kritik jederzeit erlaubt und professionell entgegenzunehmen ist. Sie ist kein Vorrecht des Teamleiters, sollte nicht nur anonym oder schriftlich erfolgen, und Kritik zu vermeiden würde die Qualität des Arbeitsergebnisses verschlechtern.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welcher Belbin-Rolle wird die Eigenschaft zugeschrieben, das Teamklima aktiv zu verbessern und Konflikte zu vermeiden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Macher</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Beobachter</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Teamarbeiter</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Perfektionist</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Teamarbeiter ist kooperativ, diplomatisch und aufmerksam. Er verbessert aktiv das Teamklima und vermeidet Konflikte. Er gehört zur Gruppe der kommunikationsorientierten Rollen und ist besonders in Streitsituationen wertvoll.</div>
+    <div class="feedback err">Falsch. Der Teamarbeiter ist für die Verbesserung des Teamklimas und Konfliktvermeidung zuständig. Der Macher treibt das Team an; der Beobachter beurteilt Ideen analytisch; der Perfektionist achtet auf Fehler und Details.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was versteht man unter dem Erfolgsfaktor „Ideen aufnehmen" in einem Team?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur die Ideen des Teamleiters werden umgesetzt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Die Ideen aller Teammitglieder müssen gehört werden, um ein optimales Arbeitsergebnis zu erzielen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ideen werden anonym in eine Box eingeworfen und später ausgewertet</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ideen dürfen erst nach der Norming-Phase geäußert werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Erfolgsfaktor „Ideen aufnehmen" besagt, dass die Ideen aller Teammitglieder gehört werden müssen, um ein optimales Arbeitsergebnis zu erzielen. Gute Ideen können von jedem kommen – unabhängig von Hierarchie oder Rolle.</div>
+    <div class="feedback err">Falsch. „Ideen aufnehmen" bedeutet, dass alle Teammitglieder mit ihren Ideen gehört werden müssen. Nur Ideen des Teamleiters umzusetzen verschenkt das kreative Potenzial des gesamten Teams.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche Maßnahme kann laut Präsentation ineffiziente Teamarbeit (z. B. Zurücklehnen einzelner Mitglieder) verhindern?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Teamgröße auf maximal 3 Personen begrenzen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Das geforderte Ergebnis für alle von großer Bedeutung machen oder Leistungsdruck auf das Team ausüben</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Alle Aufgaben automatisch dem Teamleiter übertragen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Storming-Phase dauerhaft vermeiden</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Präsentation nennt als Gegenmaßnahme zu ineffizienter Teamarbeit (TEAM = „Toll, ein anderer macht's"): Das geforderte Ergebnis muss für alle Mitglieder von großer Bedeutung sein, oder es wird Leistungsdruck auf das Team ausgeübt. Beides erhöht die persönliche Verantwortung.</div>
+    <div class="feedback err">Falsch. Laut Präsentation kann ineffiziente Teamarbeit verhindert werden, indem das Ergebnis für alle wichtig gemacht wird oder Leistungsdruck ausgeübt wird. Die Teamgröße zu begrenzen oder alle Aufgaben dem Leiter zu geben sind keine empfohlenen Maßnahmen.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 21</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

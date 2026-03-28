@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 10 – Ausbildungsrecht, Jugendschutz & Tarifrecht | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* === Supplemental styles to match Tag 7 standard === */
+
+/* Progress bar container */
+#progress-bar-container { position:fixed; top:0; left:0; width:100%; height:4px; z-index:100; background:transparent; }
+
+/* Slide types */
+.slide-toc { justify-content:flex-start; padding-top:70px; }
+.slide-summary { justify-content:flex-start; padding-top:70px; }
+.slide-refs { justify-content:flex-start; padding-top:70px; overflow-y:auto; }
+
+/* Tag badge */
+.tag-badge {
+  position:absolute; top:20px; left:40px;
+  font-size:.72rem; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--primary); background:var(--primary-light);
+  padding:5px 14px; border-radius:20px;
+}
+
+/* Slide number & copyright */
+.slide-number {
+  position:absolute; bottom:30px; right:40px;
+  font-size:.7rem; color:var(--text-muted);
+}
+.copyright { display:none; }
+#copyright { display:none; }
+#nav-hint { display:none; }
+.slide-footer { position:fixed; bottom:0; left:0; right:0; padding:6px 40px; display:flex; justify-content:space-between; font-size:.68rem; color:var(--text-muted); border-top:1px solid var(--border); background:rgba(255,255,255,.95); z-index:10; }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+/* Cover subtitle */
+.subtitle {
+  font-size:1rem; color:var(--text-muted); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:12px;
+}
+
+/* Three column grid */
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+
+/* Lernziel badge */
+.lernziel-badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.75rem; font-weight:700; padding:4px 14px;
+  border-radius:20px; letter-spacing:.5px;
+}
+
+/* Definition box */
+.definition {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.92rem; line-height:1.7; color:var(--text);
+}
+
+/* Key term highlight */
+.key-term {
+  color:var(--primary); font-weight:700;
+}
+
+/* Info box (blue) */
+.info-box {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Warning box (orange/amber) */
+.warning-box {
+  background:var(--accent-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--accent); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Success box (green) */
+.success-box {
+  background:var(--success-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--success); margin:12px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+
+/* Citation */
+.citation {
+  font-size:.76rem; color:var(--text-muted); margin-top:8px;
+  font-style:italic; line-height:1.5;
+}
+
+/* Quiz slide styling */
+.quiz-slide {
+  justify-content:flex-start; padding-top:70px;
+}
+
+/* Slide h2 styling (used in Tag 10/11 instead of .slide-title) */
+.slide h2 {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:20px; position:relative; align-self:flex-start;
+}
+.slide-content h2::after, .slide-toc h2::after, .slide-summary h2::after, .slide-refs h2::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+
+/* Cover slide h1 */
+.slide-cover h1 {
+  font-size:2.6rem; font-weight:800; line-height:1.15;
+  color:var(--text); margin-bottom:16px;
+}
+
+/* Slide p (body text) */
+.slide > p { font-size:.92rem; color:var(--text-muted); line-height:1.7; margin-bottom:14px; width:100%; }
+
+/* h3 within slides (outside cards) */
+.slide > .two-col h3, .slide > .three-col h3, .slide > div > h3 {
+  font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px;
+}
+
+/* Lists within slides (outside cards) */
+.slide > ul, .slide > .two-col ul, .slide > .three-col ul, .slide > div > ul {
+  padding-left:18px; font-size:.88rem; color:var(--text-muted); line-height:1.7;
+}
+.slide > ul li, .slide > .two-col li, .slide > .three-col li, .slide > div > ul li {
+  margin-bottom:5px;
+}
+
+/* Section number (alternative to section-num) */
+.section-number {
+  font-size:6rem; font-weight:900; color:rgba(255,255,255,.15);
+  position:absolute; top:30px; right:60px; line-height:1;
+}
+
+/* Cover line */
+.cover-line {
+  width:80px; height:4px; background:var(--primary);
+  border-radius:2px; margin:16px auto;
+}
+
+/* Slide subtitle */
+.slide-subtitle {
+  font-size:.9rem; color:var(--text-muted); margin-bottom:20px;
+  align-self:flex-start;
+}
+
+/* Animations for new elements */
+.slide.active h2, .slide.active .definition, .slide.active .info-box,
+.slide.active .warning-box, .slide.active .success-box,
+.slide.active .three-col, .slide.active .two-col,
+.slide.active .lernziel-badge { animation:fadeUp .5s ease both; }
+.slide.active h2 { animation-delay:.05s; }
+.slide.active .definition { animation-delay:.1s; }
+.slide.active .two-col, .slide.active .three-col { animation-delay:.15s; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div class="slides-wrapper" id="slides">
+
+<!-- FOLIE 1: COVER -->
+<div class="slide slide-cover active">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <p class="subtitle">Lernfeld 1 · Kaufmann/Kauffrau im E-Commerce</p>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs><linearGradient id="lawGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+    <rect x="57" y="20" width="6" height="70" rx="3" fill="url(#lawGrad)" opacity="0.9"/>
+    <rect x="40" y="85" width="40" height="8" rx="4" fill="url(#lawGrad)" opacity="0.7"/>
+    <line x1="20" y1="40" x2="100" y2="40" stroke="url(#lawGrad)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="60" cy="25" r="8" fill="url(#lawGrad)"/>
+    <path d="M10 40 L20 70 L30 40" fill="none" stroke="#3a7bd5" stroke-width="3" opacity="0.8"/>
+    <ellipse cx="20" cy="70" rx="12" ry="4" fill="#3a7bd5" opacity="0.6"/>
+    <path d="M90 40 L100 65 L110 40" fill="none" stroke="#3a7bd5" stroke-width="3" opacity="0.8"/>
+    <ellipse cx="100" cy="65" rx="12" ry="4" fill="#3a7bd5" opacity="0.6"/>
+  </svg>
+  <h1>Tag 10: Ausbildungsrecht,<br>Jugendschutz &amp; Tarifrecht</h1>
+  <p style="color:#f39c12; font-size:1.15em;">Buchseiten 104–113 · Blöcke 1.11 / 1.12 / 1.13</p>
+  <p style="margin-top:20px;">Themen: Rechte &amp; Pflichten der Auszubildenden · Jugendarbeitsschutzgesetz · Tarifverträge</p>
+  <div class="slide-number">Folie 1 / 57</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 2: INHALTSVERZEICHNIS 1 -->
+<div class="slide slide-toc">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Inhaltsverzeichnis (1/2)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Block 1.11 – Rechte &amp; Pflichten (Folien 5–18)</h3>
+      <ul>
+        <li>Rechtsgrundlagen der Berufsausbildung</li>
+        <li>BBiG – Überblick</li>
+        <li>Pflichten des Auszubildenden</li>
+        <li>Pflichten des Ausbildenden</li>
+        <li>Ausbildungsvergütung &amp; Urlaub</li>
+        <li>Kündigung &amp; Probezeit</li>
+        <li>Berichtsheft &amp; Prüfungen</li>
+        <li>IHK-Schlichtungsausschuss</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.12 – Jugendarbeitsschutz (Folien 19–28)</h3>
+      <ul>
+        <li>JASchG – Warum &amp; für wen?</li>
+        <li>Arbeitszeiten für Jugendliche</li>
+        <li>Verbotene Arbeiten</li>
+        <li>Pausen &amp; Ruhezeiten</li>
+        <li>Nacht- und Schichtarbeit</li>
+        <li>Berufsschulfreistellung</li>
+        <li>Ärztliche Untersuchung</li>
+        <li>Verstöße &amp; Bußgelder</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 2 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 3: INHALTSVERZEICHNIS 2 -->
+<div class="slide slide-toc">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Inhaltsverzeichnis (2/2)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Block 1.13 – Tarifverträge (Folien 29–44)</h3>
+      <ul>
+        <li>Definition &amp; TVG</li>
+        <li>Tarifvertragsparteien</li>
+        <li>DGB &amp; Arbeitgeberverbände</li>
+        <li>Tarifvertragsarten</li>
+        <li>Allgemeinverbindlichkeit</li>
+        <li>Günstigkeitsprinzip</li>
+        <li>Streik &amp; Friedenspflicht</li>
+        <li>Mindestlohn vs. Tariflohn</li>
+        <li>Branchen-/Haustarifvertrag</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Abschluss (Folien 45–50)</h3>
+      <ul>
+        <li>Fallstudie: Ver.di-Tarifverhandlungen</li>
+        <li>Praxisaufgabe</li>
+        <li>Diskussionsfragen</li>
+        <li>Zusammenfassung</li>
+        <li>Ausblick Tag 11</li>
+        <li>Literaturverzeichnis</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 3 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 4: LERNZIELE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Lernziele des Tages</h2>
+  <p>Nach diesem Unterrichtstag können Sie …</p>
+  <div class="three-col">
+    <div>
+      <span class="lernziel-badge">Block 1.11</span>
+      <ul style="margin-top:10px;">
+        <li>Rechte und Pflichten aus dem BBiG nennen</li>
+        <li>Vergütungsansprüche berechnen</li>
+        <li>Kündigungsarten unterscheiden</li>
+      </ul>
+    </div>
+    <div>
+      <span class="lernziel-badge">Block 1.12</span>
+      <ul style="margin-top:10px;">
+        <li>Schutzvorschriften des JASchG erläutern</li>
+        <li>Zulässige Arbeitszeiten für Jugendliche benennen</li>
+        <li>Konsequenzen bei Verstößen beschreiben</li>
+      </ul>
+    </div>
+    <div>
+      <span class="lernziel-badge">Block 1.13</span>
+      <ul style="margin-top:10px;">
+        <li>Tarifvertragsarten erklären</li>
+        <li>Tarifvertragsparteien benennen</li>
+        <li>Günstigkeitsprinzip anwenden</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 4 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 5: RECHTSGRUNDLAGEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Rechtsgrundlagen der Berufsausbildung</h2>
+  <div class="definition">
+    <span class="key-term">§ 1 BBiG:</span> „Berufsbildung umfasst die Berufsausbildungsvorbereitung, die Berufsausbildung, die berufliche Fortbildung und die berufliche Umschulung."
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card">
+      <h3>Wichtige Gesetze</h3>
+      <ul>
+        <li><strong>BBiG</strong> – Berufsbildungsgesetz</li>
+        <li><strong>JASchG</strong> – Jugendarbeitsschutzgesetz</li>
+        <li><strong>TVG</strong> – Tarifvertragsgesetz</li>
+        <li><strong>BGB §§ 611 ff.</strong> – Dienstvertrag</li>
+        <li><strong>GG Art. 12</strong> – Berufsfreiheit</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Hierarchie der Rechtsnormen</h3>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <polygon points="130,10 250,150 10,150" fill="none" stroke="#e74c3c" stroke-width="2"/>
+        <text x="130" y="50" text-anchor="middle" fill="black" font-size="11">GG / EU-Recht</text>
+        <text x="130" y="85" text-anchor="middle" fill="blue" font-size="11">BBiG / JASchG / TVG</text>
+        <text x="130" y="115" text-anchor="middle" fill="green" font-size="11">Tarifvertrag</text>
+        <text x="130" y="143" text-anchor="middle" fill="grey" font-size="11">Betriebsvereinbarung / Arbeitsvertrag</text>
+      </svg>
+    </div>
+  </div>
+  <div class="slide-number">Folie 5 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 6: BBiG ÜBERBLICK -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Das Berufsbildungsgesetz (BBiG) – Überblick</h2>
+  <p>Das BBiG regelt die <span class="key-term">duale Berufsausbildung</span> in Deutschland umfassend.</p>
+  <div class="three-col">
+    <div class="card">
+      <h3>Teil 1: Allgemeines</h3>
+      <ul>
+        <li>Begriffsbestimmungen</li>
+        <li>Lernorte der Ausbildung</li>
+        <li>Geltungsbereich</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Teil 2: Berufsausbildung</h3>
+      <ul>
+        <li>Berufsausbildungsverhältnis</li>
+        <li>Pflichten der Parteien</li>
+        <li>Vergütung &amp; Urlaub</li>
+        <li>Kündigung</li>
+        <li>Prüfungen</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Teil 4: Berufsbildungsausschüsse</h3>
+      <ul>
+        <li>Zuständige Stellen (IHK)</li>
+        <li>Berufsbildungsausschuss</li>
+        <li>Schlichtung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box">
+    <strong>Hinweis:</strong> Das BBiG wurde zuletzt 2020 umfassend reformiert. Die Mindestausbildungsvergütung wurde neu eingeführt (§ 17 BBiG).
+  </div>
+  <div class="slide-number">Folie 6 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 7: PFLICHTEN DES AUSZUBILDENDEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Pflichten des Auszubildenden (§ 13 BBiG)</h2>
+  <svg width="900" height="160" viewBox="0 0 900 160" style="margin-bottom:10px;">
+    <rect x="10" y="40" width="150" height="80" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="85" y="75" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Lernpflicht</text>
+    <text x="85" y="95" text-anchor="middle" fill="#111" font-size="11">§ 13 Nr.1</text>
+    <rect x="180" y="40" width="150" height="80" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="255" y="75" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Schweigepflicht</text>
+    <text x="255" y="95" text-anchor="middle" fill="#111" font-size="11">§ 13 Nr.6</text>
+    <rect x="350" y="40" width="150" height="80" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="425" y="75" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Sorgfaltspflicht</text>
+    <text x="425" y="95" text-anchor="middle" fill="#111" font-size="11">§ 13 Nr.5</text>
+    <rect x="520" y="40" width="150" height="80" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="595" y="75" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Weisungsgehorsam</text>
+    <text x="595" y="95" text-anchor="middle" fill="#111" font-size="11">§ 13 Nr.3</text>
+    <rect x="690" y="40" width="150" height="80" rx="10" fill="rgba(231,76,60,0.3)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="765" y="75" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Berichtsheftpflicht</text>
+    <text x="765" y="95" text-anchor="middle" fill="#111" font-size="11">§ 13 Nr.7</text>
+  </svg>
+  <ul>
+    <li><strong>Lernpflicht:</strong> Sorgfältige Durchführung der aufgetragenen Aufgaben</li>
+    <li><strong>Teilnahmepflicht:</strong> Regelmäßige Teilnahme an der Berufsschule</li>
+    <li><strong>Geheimhaltungspflicht:</strong> Betriebs- und Geschäftsgeheimnisse wahren</li>
+    <li><strong>Meldepflicht:</strong> Fehlzeiten unverzüglich mitteilen</li>
+  </ul>
+  <div class="slide-number">Folie 7 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 8: LERN-, SCHWEIGE-, SORGFALTSPFLICHT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Lernpflicht, Schweigepflicht, Sorgfaltspflicht</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Lernpflicht</h3>
+      <p style="font-size:0.95em;">Der Azubi muss alle übertragenen Aufgaben gewissenhaft ausführen. Dazu gehört auch der Besuch der Berufsschule und das Führen des Ausbildungsnachweises.</p>
+      <div class="citation">§ 13 Abs. 1 BBiG</div>
+    </div>
+    <div class="card">
+      <h3>Schweigepflicht</h3>
+      <p style="font-size:0.95em;">Betriebs- und Geschäftsgeheimnisse dürfen nicht an Dritte weitergegeben werden. Dies gilt auch nach Ende des Ausbildungsverhältnisses.</p>
+      <div class="citation">§ 13 Abs. 6 BBiG i.V.m. § 17 UWG</div>
+    </div>
+    <div class="card">
+      <h3>Sorgfaltspflicht</h3>
+      <p style="font-size:0.95em;">Werkzeuge, Maschinen und sonstige Einrichtungen sind pfleglich zu behandeln. Bei schuldhafter Beschädigung haftet der Azubi (begrenzt).</p>
+      <div class="citation">§ 13 Abs. 5 BBiG</div>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>Praxishinweis:</strong> Verstöße gegen die Schweigepflicht können zur fristlosen Kündigung führen und zivilrechtliche Schadensersatzansprüche auslösen.
+  </div>
+  <div class="slide-number">Folie 8 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 9: PFLICHTEN DES AUSBILDENDEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Pflichten des Ausbildenden (§§ 14–16 BBiG)</h2>
+  <svg width="820" height="140" viewBox="0 0 820 140" style="margin-bottom:10px;">
+    <rect x="10" y="20" width="180" height="100" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="100" y="60" text-anchor="middle" fill="#2ecc71" font-size="13" font-weight="bold">Ausbildungspflicht</text>
+    <text x="100" y="80" text-anchor="middle" fill="#111" font-size="11">Berufsgemäße</text>
+    <text x="100" y="96" text-anchor="middle" fill="#111" font-size="11">Ausbildung sicherstellen</text>
+    <rect x="210" y="20" width="180" height="100" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="300" y="60" text-anchor="middle" fill="#2ecc71" font-size="13" font-weight="bold">Vergütungspflicht</text>
+    <text x="300" y="80" text-anchor="middle" fill="#111" font-size="11">Angemessene</text>
+    <text x="300" y="96" text-anchor="middle" fill="#111" font-size="11">Vergütung zahlen</text>
+    <rect x="410" y="20" width="180" height="100" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="500" y="60" text-anchor="middle" fill="#2ecc71" font-size="13" font-weight="bold">Freistellungspflicht</text>
+    <text x="500" y="80" text-anchor="middle" fill="#111" font-size="11">Berufsschule &amp;</text>
+    <text x="500" y="96" text-anchor="middle" fill="#111" font-size="11">Prüfungen</text>
+    <rect x="610" y="20" width="180" height="100" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="700" y="60" text-anchor="middle" fill="#2ecc71" font-size="13" font-weight="bold">Zeugnispflicht</text>
+    <text x="700" y="80" text-anchor="middle" fill="#111" font-size="11">Ausbildungszeugnis</text>
+    <text x="700" y="96" text-anchor="middle" fill="#111" font-size="11">ausstellen</text>
+  </svg>
+  <ul>
+    <li>Ausbildungsmittel kostenlos zur Verfügung stellen (§ 14 Abs. 1 Nr. 3 BBiG)</li>
+    <li>Nur ausbildungsrelevante Tätigkeiten übertragen</li>
+    <li>Charakterliche Förderung des Auszubildenden</li>
+    <li>Ärztliche Untersuchungen ermöglichen (JASchG)</li>
+  </ul>
+  <div class="slide-number">Folie 9 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 10: AUSBILDUNGSVERGÜTUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Ausbildungsvergütung – Mindestausbildungsvergütung (§ 17 BBiG)</h2>
+  <p>Seit 2020 gilt eine gesetzliche <span class="key-term">Mindestausbildungsvergütung</span>.</p>
+  <table>
+    <tr><th>Ausbildungsjahr</th><th>2026 (monatlich brutto)</th><th>Steigerung</th></tr>
+    <tr><td>1. Ausbildungsjahr</td><td>724 €</td><td>Basisjahr</td></tr>
+    <tr><td>2. Ausbildungsjahr</td><td>854 €</td><td>+18 %</td></tr>
+    <tr><td>3. Ausbildungsjahr</td><td>977 €</td><td>+35 %</td></tr>
+    <tr><td>4. Ausbildungsjahr (falls vorhanden)</td><td>1.014 €</td><td>+40 %</td></tr>
+  </table>
+  <div class="info-box" style="margin-top:12px;">
+    <strong>Wichtig:</strong> Der Tarifvertrag kann höhere Vergütungen festlegen. Diese haben immer Vorrang (Günstigkeitsprinzip). Viele IHK-Berufe liegen deutlich über der gesetzlichen Mindestgrenze.
+  </div>
+  <div class="slide-number">Folie 10 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 11: URLAUB -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Urlaub während der Ausbildung</h2>
+  <div class="two-col">
+    <div>
+      <h3>Gesetzliche Grundlagen</h3>
+      <ul>
+        <li>Mindesturlaub: <strong>24 Werktage</strong> (BUrlG)</li>
+        <li>Für Jugendliche unter 18 Jahren: <strong>30 Werktage</strong> (JASchG § 19)</li>
+        <li>Urlaubsanspruch entsteht nach 6 Monaten vollständig</li>
+        <li>Urlaub ist in der unterrichtsfreien Zeit zu nehmen</li>
+      </ul>
+      <div class="success-box" style="margin-top:12px;">
+        <strong>Merke:</strong> Urlaub darf nicht mit Berufsschulferien verrechnet werden, wenn Unterricht stattfindet!
+      </div>
+    </div>
+    <div>
+      <svg width="340" height="220" viewBox="0 0 340 220">
+        <rect x="10" y="10" width="320" height="200" rx="12" fill="rgba(0,0,0,0.05)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+        <text x="170" y="40" text-anchor="middle" fill="#111" font-size="14" font-weight="bold">Urlaubsanspruch</text>
+        <rect x="40" y="60" width="80" height="120" rx="6" fill="rgba(231,76,60,0.5)"/>
+        <text x="80" y="145" text-anchor="middle" fill="#111" font-size="22" font-weight="bold">24</text>
+        <text x="80" y="165" text-anchor="middle" fill="#111" font-size="11">Werktage</text>
+        <text x="80" y="178" text-anchor="middle" fill="#111" font-size="10">Erwachsene</text>
+        <rect x="160" y="30" width="80" height="150" rx="6" fill="rgba(39,174,96,0.5)"/>
+        <text x="200" y="145" text-anchor="middle" fill="#111" font-size="22" font-weight="bold">30</text>
+        <text x="200" y="165" text-anchor="middle" fill="#111" font-size="11">Werktage</text>
+        <text x="200" y="178" text-anchor="middle" fill="#111" font-size="10">unter 18</text>
+        <text x="290" y="100" text-anchor="middle" fill="#3498db" font-size="12">Tarif</text>
+        <text x="290" y="118" text-anchor="middle" fill="#3498db" font-size="12">kann</text>
+        <text x="290" y="136" text-anchor="middle" fill="#3498db" font-size="12">mehr</text>
+        <text x="290" y="154" text-anchor="middle" fill="#3498db" font-size="12">gewähren</text>
+      </svg>
+    </div>
+  </div>
+  <div class="slide-number">Folie 11 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 12: KRANKHEIT UND FEHLZEITEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Krankheit und Fehlzeiten</h2>
+  <div class="two-col">
+    <div>
+      <h3>Pflichten bei Krankheit</h3>
+      <ul>
+        <li>Unverzügliche Mitteilung an den Betrieb und die Berufsschule</li>
+        <li>Ab dem <strong>1. Krankheitstag</strong> besteht Entgeltfortzahlung (EFZG)</li>
+        <li>Ärztliches Attest ab dem <strong>3. Tag</strong> (betriebsindividuell auch früher)</li>
+        <li>Dauer: max. 6 Wochen Lohnfortzahlung je Erkrankung</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Konsequenzen häufiger Fehlzeiten</h3>
+      <ul>
+        <li>Abmahnung durch den Ausbildenden</li>
+        <li>Verzögerung der Zulassung zur Prüfung</li>
+        <li>Im Extremfall: Kündigung</li>
+        <li>Nachholpflicht von versäumtem Stoff</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>Achtung:</strong> Unentschuldigte Fehlzeiten können als wichtiger Kündigungsgrund gewertet werden (§ 22 Abs. 2 BBiG).
+  </div>
+  <div class="slide-number">Folie 12 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 13: KÜNDIGUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Kündigung des Ausbildungsverhältnisses (§ 22 BBiG)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Während der Probezeit</h3>
+      <ul>
+        <li>Jederzeit ohne Grund kündbar</li>
+        <li>Keine Kündigungsfrist</li>
+        <li>Kündigung muss schriftlich erfolgen</li>
+        <li>Probezeit: 1–4 Monate</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Nach der Probezeit</h3>
+      <ul>
+        <li><strong>Ordentliche Kündigung</strong> nur durch Auszubildenden mit 4 Wochen Frist</li>
+        <li><strong>Fristlose Kündigung</strong> bei wichtigem Grund (§ 22 Abs. 2)</li>
+        <li>Ausbildender kann <strong>nicht ordentlich kündigen</strong></li>
+        <li>Kündigung muss schriftlich sein</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px;">
+    <strong>Besonderheit:</strong> Der Ausbildungsbetrieb kann nach der Probezeit nur noch fristlos (aus wichtigem Grund) kündigen. Eine ordentliche Kündigung durch den Betrieb ist nicht möglich!
+  </div>
+  <div class="slide-number">Folie 13 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 14: FRISTLOSE KÜNDIGUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Fristlose Kündigung – Gründe (§ 22 Abs. 2 BBiG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Gründe seitens des Betriebs</h3>
+      <ul>
+        <li>Wiederholtes unentschuldigtes Fehlen</li>
+        <li>Diebstahl im Betrieb</li>
+        <li>Beleidigung von Vorgesetzten / Kollegen</li>
+        <li>Schwere Verletzung der Schweigepflicht</li>
+        <li>Strafbare Handlungen im Betrieb</li>
+        <li>Unüberbrückbarer Vertrauensverlust</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Gründe seitens des Azubis</h3>
+      <ul>
+        <li>Schwere Pflichtverletzungen des Ausbilders</li>
+        <li>Körperliche Übergriffe durch Ausbilder</li>
+        <li>Ausbildung wird nicht mehr durchgeführt</li>
+        <li>Anhaltende Nichtzahlung der Vergütung</li>
+        <li>Gesundheitsgefährdung am Arbeitsplatz</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>Frist:</strong> Die fristlose Kündigung muss innerhalb von <strong>2 Wochen</strong> nach Bekanntwerden des Kündigungsgrundes ausgesprochen werden.
+  </div>
+  <div class="slide-number">Folie 14 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 15: PROBEZEIT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Probezeit in der Ausbildung (§ 20 BBiG)</h2>
+  <div class="definition">
+    Die <span class="key-term">Probezeit</span> dient dazu, dass beide Parteien prüfen können, ob die Ausbildung den Erwartungen entspricht. Sie beginnt mit dem ersten Ausbildungstag.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card">
+      <h3>Dauer der Probezeit</h3>
+      <ul>
+        <li>Mindestens: <strong>1 Monat</strong></li>
+        <li>Höchstens: <strong>4 Monate</strong></li>
+        <li>Festgelegt im Ausbildungsvertrag</li>
+        <li>Verlängerung bei Unterbrechung möglich</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Rechtsfolgen</h3>
+      <ul>
+        <li>Kündigung jederzeit, ohne Frist, ohne Grund</li>
+        <li>Schriftform erforderlich</li>
+        <li>Kein Kündigungsschutz</li>
+        <li>Probezeit kann nicht verlängert werden</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 15 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 16: AUSBILDUNGSNACHWEIS -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Ausbildungsnachweis / Berichtsheft (§ 13 Nr. 7 BBiG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Inhalt des Berichtshefts</h3>
+      <ul>
+        <li>Tätigkeiten in der Ausbildungsstätte (täglich/wöchentlich)</li>
+        <li>Berufsschulunterricht</li>
+        <li>Betriebliche Lehrveranstaltungen</li>
+        <li>Eigene Reflexion des Lernfortschritts</li>
+      </ul>
+      <div class="info-box" style="margin-top:12px;">
+        <strong>Prüfungszulassung:</strong> Vollständige Ausbildungsnachweise sind <em>Voraussetzung</em> für die Zulassung zur Abschlussprüfung!
+      </div>
+    </div>
+    <div>
+      <h3>Formen</h3>
+      <ul>
+        <li><strong>Täglich:</strong> kurze Einträge je Arbeitstag</li>
+        <li><strong>Wöchentlich:</strong> Zusammenfassung der Woche</li>
+        <li><strong>Digital:</strong> viele Betriebe nutzen Azubi-Apps (z.B. Lernportal der IHK)</li>
+      </ul>
+      <div class="success-box" style="margin-top:12px;">
+        Der Ausbilder muss das Berichtsheft <strong>regelmäßig abzeichnen</strong> (§ 14 Abs. 1 Nr. 4 BBiG).
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 16 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 17: PRÜFUNGSANMELDUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Prüfungsanmeldung &amp; Zulassungsvoraussetzungen (§§ 43–44 BBiG)</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Zulassungsvoraussetzungen</h3>
+      <ul>
+        <li>Vollständige Ausbildungsnachweise</li>
+        <li>Teilnahme am Berufsschulunterricht</li>
+        <li>Abgeschlossene Ausbildungszeit (oder 6 Monate vor Ende)</li>
+        <li>Zahlung der IHK-Prüfungsgebühr</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Zwischenprüfung</h3>
+      <ul>
+        <li>Mitte der Ausbildung</li>
+        <li>Keine Bestehenspflicht</li>
+        <li>Standortbestimmung</li>
+        <li>Ergebnis fließt in AP ein (gestreckte Prüfung)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Abschlussprüfung</h3>
+      <ul>
+        <li>Schriftliche Prüfungsteile</li>
+        <li>Praktischer Teil</li>
+        <li>Mindestpunktzahl erforderlich</li>
+        <li>Wiederholung 2× möglich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 17 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 18: SCHLICHTUNGSAUSSCHUSS -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Konfliktlösung: Schlichtungsausschuss der IHK (§ 111 BBiG)</h2>
+  <div class="two-col">
+    <div>
+      <p>Bei Streitigkeiten aus dem Berufsausbildungsverhältnis ist vor Anrufung des <strong>Arbeitsgerichts</strong> der Schlichtungsausschuss der IHK einzuschalten.</p>
+      <h3 style="margin-top:14px;">Ablauf</h3>
+      <ul>
+        <li>Antrag bei der zuständigen IHK stellen</li>
+        <li>Paritätisch besetzt: Arbeitgeber + Arbeitnehmer</li>
+        <li>Schlichtungsverhandlung (mündlich)</li>
+        <li>Einigungsvorschlag des Ausschusses</li>
+        <li>Bei Scheitern: Arbeitsgericht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Typische Streitfälle</h3>
+      <ul>
+        <li>Streit über die Ausbildungsvergütung</li>
+        <li>Nicht berufsbezogene Tätigkeiten</li>
+        <li>Verlängerung der Ausbildungszeit</li>
+        <li>Zeugnisinhalte</li>
+        <li>Kündigungen</li>
+      </ul>
+      <div class="citation">§ 111 ArbGG i.V.m. § 111 BBiG</div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 18 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 19: JASchG WARUM -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Jugendarbeitsschutzgesetz (JASchG) – Warum?</h2>
+  <div class="definition">
+    Das <span class="key-term">Jugendarbeitsschutzgesetz (JASchG)</span> vom 12. April 1976 schützt Kinder und Jugendliche vor körperlicher und seelischer Überforderung am Arbeitsplatz.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Schutzgründe</h3>
+      <ul>
+        <li>Körperliche Entwicklung noch nicht abgeschlossen</li>
+        <li>Psychische Belastbarkeit geringer</li>
+        <li>Schulische Bildung hat Vorrang</li>
+        <li>Schutz vor Ausbeutung</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Geltungsbereich</h3>
+      <ul>
+        <li>Gilt in ganz Deutschland</li>
+        <li>Für alle Beschäftigten bis zur Vollendung des <strong>18. Lebensjahres</strong></li>
+        <li>Auch für Auszubildende</li>
+        <li>Abweichungen nur durch Gesetz möglich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 19 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 20: PERSÖNLICHER GELTUNGSBEREICH -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Persönlicher Geltungsbereich – Wer wird geschützt?</h2>
+  <div class="three-col">
+    <div class="card" style="border-color:#e74c3c;">
+      <h3 style="color:#e74c3c;">Kinder</h3>
+      <p style="font-size:0.95em;">Personen unter <strong>15 Jahren</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>Grundsätzliches Beschäftigungsverbot</li>
+        <li>Ausnahmen: leichte Tätigkeiten, max. 2h/Tag</li>
+        <li>Keine Schulpflichtverletzung</li>
+      </ul>
+      <div class="citation">§§ 5–7 JASchG</div>
+    </div>
+    <div class="card" style="border-color:#f39c12;">
+      <h3 style="color:#f39c12;">Jugendliche</h3>
+      <p style="font-size:0.95em;">Personen von <strong>15 bis unter 18 Jahren</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>Beschäftigung zulässig</li>
+        <li>Mit zahlreichen Schutzvorschriften</li>
+        <li>Hauptzielgruppe des JASchG</li>
+      </ul>
+      <div class="citation">§ 2 JASchG</div>
+    </div>
+    <div class="card" style="border-color:#27ae60;">
+      <h3 style="color:#27ae60;">Junge Erwachsene</h3>
+      <p style="font-size:0.95em;">Personen von <strong>18 bis unter 25 Jahren</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>JASchG gilt grundsätzlich nicht</li>
+        <li>Allgemeines Arbeitsrecht gilt</li>
+        <li>Berufsschulpflicht ggf. noch aktiv</li>
+      </ul>
+      <div class="citation">ArbSchG</div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 20 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 21: ARBEITSZEITEN JUGENDLICHE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Arbeitszeiten für Jugendliche (§§ 8–16 JASchG)</h2>
+  <svg width="880" height="170" viewBox="0 0 880 170">
+    <rect x="10" y="20" width="200" height="130" rx="10" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="110" y="55" text-anchor="middle" fill="#111" font-size="14" font-weight="bold">Täglich</text>
+    <text x="110" y="85" text-anchor="middle" fill="#111" font-size="28" font-weight="bold">8 h</text>
+    <text x="110" y="110" text-anchor="middle" fill="#111" font-size="11">max. pro Tag</text>
+    <text x="110" y="130" text-anchor="middle" fill="#111" font-size="10">(§ 8 Abs. 1 JASchG)</text>
+    <rect x="230" y="20" width="200" height="130" rx="10" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="2"/>
+    <text x="330" y="55" text-anchor="middle" fill="#111" font-size="14" font-weight="bold">Wöchentlich</text>
+    <text x="330" y="85" text-anchor="middle" fill="#111" font-size="28" font-weight="bold">40 h</text>
+    <text x="330" y="110" text-anchor="middle" fill="#111" font-size="11">max. pro Woche</text>
+    <text x="330" y="130" text-anchor="middle" fill="#111" font-size="10">(§ 8 Abs. 1 JASchG)</text>
+    <rect x="450" y="20" width="200" height="130" rx="10" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="550" y="55" text-anchor="middle" fill="#111" font-size="14" font-weight="bold">Werktage</text>
+    <text x="550" y="85" text-anchor="middle" fill="#111" font-size="28" font-weight="bold">5</text>
+    <text x="550" y="110" text-anchor="middle" fill="#111" font-size="11">Tage pro Woche</text>
+    <text x="550" y="130" text-anchor="middle" fill="#111" font-size="10">(§ 15 JASchG)</text>
+    <rect x="670" y="20" width="200" height="130" rx="10" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="2"/>
+    <text x="770" y="55" text-anchor="middle" fill="#111" font-size="14" font-weight="bold">Ausnahme</text>
+    <text x="770" y="85" text-anchor="middle" fill="#111" font-size="22" font-weight="bold">8,5 h</text>
+    <text x="770" y="110" text-anchor="middle" fill="#111" font-size="11">wenn kürzer an</text>
+    <text x="770" y="128" text-anchor="middle" fill="#111" font-size="11">anderen Tagen</text>
+  </svg>
+  <div class="info-box">
+    <strong>Berufsschultage:</strong> An Tagen mit mehr als 5 Stunden Berufsschulunterricht darf der Jugendliche nicht zusätzlich im Betrieb beschäftigt werden. Berufsschulzeiten gelten als Arbeitszeit!
+  </div>
+  <div class="slide-number">Folie 21 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 22: VERBOTENE ARBEITEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Verbotene Arbeiten für Jugendliche (§§ 22–25 JASchG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Absolut verbotene Tätigkeiten</h3>
+      <ul>
+        <li>Arbeiten mit Gesundheitsgefährdung (Giftstoffe, Strahlung)</li>
+        <li>Heben schwerer Lasten (über Grenzwerte)</li>
+        <li>Akkordarbeit und Fließbandarbeit</li>
+        <li>Sittenwidrige Arbeiten</li>
+        <li>Arbeiten in Spielhallen und Wettbüros</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Eingeschränkt erlaubte Tätigkeiten</h3>
+      <ul>
+        <li>Bildschirmarbeit: Pausen vorgeschrieben</li>
+        <li>Arbeit in Gastgewerbe: Einschränkungen</li>
+        <li>Kühlhausarbeit: nur kurzzeitig</li>
+        <li>Bäckereiarbeit: ab 5 Uhr morgens</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>E-Commerce Relevanz:</strong> Jugendliche Azubis im E-Commerce dürfen nicht übermäßig an Bildschirmen ohne Pausen arbeiten und nicht in Nachtschichten eingesetzt werden.
+  </div>
+  <div class="slide-number">Folie 22 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 23: RUHEPAUSEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Ruhepausen und Ruhezeiten (§§ 11–13 JASchG)</h2>
+  <table>
+    <tr><th>Arbeitszeit</th><th>Mindestpause</th><th>Rechtsgrundlage</th></tr>
+    <tr><td>mehr als 4,5 Stunden</td><td>30 Minuten</td><td>§ 11 Abs. 1 JASchG</td></tr>
+    <tr><td>mehr als 6 Stunden</td><td>60 Minuten</td><td>§ 11 Abs. 1 JASchG</td></tr>
+    <tr><td>Tägliche Ruhezeit</td><td>mindestens 12 Stunden</td><td>§ 13 JASchG</td></tr>
+    <tr><td>Wöchentliche Ruhezeit</td><td>2 freie Tage (Sa + So)</td><td>§ 15 JASchG</td></tr>
+  </table>
+  <div class="success-box" style="margin-top:14px;">
+    <strong>Merke:</strong> Pausen müssen im Voraus feststehen. Spontane kurze Unterbrechungen gelten nicht als Ruhepause im Sinne des JASchG.
+  </div>
+  <div class="slide-number">Folie 23 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 24: NACHT UND SCHICHTARBEIT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Nacht- und Schichtarbeit – Verbote (§ 14 JASchG)</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Nachtarbeitsverbot</h3>
+      <ul>
+        <li>Jugendliche dürfen nicht zwischen <strong>20:00 und 6:00 Uhr</strong> beschäftigt werden</li>
+        <li>Ausnahme: Bäcker ab 5:00 Uhr, Gaststätten bis 22:00 Uhr</li>
+        <li>Kulturveranstaltungen bis 23:00 Uhr</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Schichtarbeit</h3>
+      <ul>
+        <li>Wechselschicht grundsätzlich erlaubt</li>
+        <li>Frühschicht nicht vor 6:00 Uhr</li>
+        <li>Spätschicht nicht nach 20:00 Uhr</li>
+        <li>Nach Nachtschicht mind. 12h Ruhe</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px;">
+    Im E-Commerce (z.B. Online-Shops mit 24/7-Betrieb) müssen Jugendliche aus dem Nachtdienst herausgehalten werden. Verstöße können Bußgelder bis zu <strong>15.000 €</strong> kosten.
+  </div>
+  <div class="slide-number">Folie 24 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 25: SAMSTAG UND SONNTAG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Samstags- und Sonntagsarbeit (§§ 15–16 JASchG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Sonntag</h3>
+      <ul>
+        <li><strong>Grundsatz:</strong> Beschäftigungsverbot an Sonntagen</li>
+        <li>Ausnahmen: Krankenhaus, Bäckerei, Gastronomie, Sport, Landwirtschaft</li>
+        <li>Ersatzruhetag innerhalb von 2 Wochen</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Samstag</h3>
+      <ul>
+        <li>Samstagsarbeit grundsätzlich zulässig</li>
+        <li>Aber: max. 5 Werktage pro Woche</li>
+        <li>Kein Samstag UND Sonntag</li>
+        <li>Im Handel üblich (Ausnahme)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>E-Commerce Praxis:</strong> In Versandzentren und Online-Shops, die samstags geöffnet sind, können jugendliche Azubis eingesetzt werden – jedoch nicht in der Nacht und nicht am Sonntag ohne gültigen Ausnahmetatbestand.
+  </div>
+  <div class="slide-number">Folie 25 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 26: FREISTELLUNG BERUFSSCHULE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Freistellung für die Berufsschule (§ 9 JASchG)</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Freistellungspflicht</h3>
+      <p style="font-size:0.95em;">Der Ausbildende muss Jugendliche für den Berufsschulunterricht freistellen – ohne Vergütungsabzug.</p>
+    </div>
+    <div class="card">
+      <h3>Vor dem Unterricht</h3>
+      <p style="font-size:0.95em;">Beginnt der Unterricht vor 9:00 Uhr, darf der Jugendliche am Vortag ab 20:00 Uhr nicht mehr beschäftigt werden.</p>
+    </div>
+    <div class="card">
+      <h3>An Berufsschultagen</h3>
+      <p style="font-size:0.95em;">Bei mehr als 5 Unterrichtsstunden (à 45 min) darf der Jugendliche an diesem Tag nicht im Betrieb eingesetzt werden.</p>
+    </div>
+  </div>
+  <div class="success-box" style="margin-top:14px;">
+    <strong>Vergütung:</strong> Für die Berufsschulzeit ist die Vergütung fortzuzahlen. Berufsschulzeiten zählen als Arbeitszeit und reduzieren die betriebliche Arbeitszeit.
+  </div>
+  <div class="slide-number">Folie 26 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 27: ÄRZTLICHE UNTERSUCHUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Ärztliche Untersuchungspflicht (§§ 32–46 JASchG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Erstuntersuchung</h3>
+      <ul>
+        <li>Vor Beginn der Ausbildung</li>
+        <li>Bescheinigung muss vorgelegt werden</li>
+        <li>Zweck: Gesundheitszustand feststellen</li>
+        <li>Kosten trägt der Ausbildende</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Nachuntersuchung</h3>
+      <ul>
+        <li>1 Jahr nach Aufnahme der Beschäftigung</li>
+        <li>Auf Verlangen auch nach 3,5 Jahren</li>
+        <li>Jugendjährlicher Gesundheitsschutz</li>
+        <li>Freistellung durch Betrieb</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px;">
+    <strong>Beschäftigungsverbot:</strong> Wird die Erstuntersuchung nicht nachgewiesen, darf der Betrieb den Jugendlichen <strong>nicht beschäftigen</strong>. Verstöße sind eine Ordnungswidrigkeit.
+  </div>
+  <div class="slide-number">Folie 27 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 28: VERSTÖßE UND BUßGELDER -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Verstöße gegen das JASchG – Bußgelder &amp; Strafen</h2>
+  <svg width="860" height="150" viewBox="0 0 860 150">
+    <rect x="10" y="20" width="260" height="110" rx="10" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="2"/>
+    <text x="140" y="55" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Ordnungswidrigkeit</text>
+    <text x="140" y="80" text-anchor="middle" fill="#111" font-size="20" font-weight="bold">bis 15.000 €</text>
+    <text x="140" y="105" text-anchor="middle" fill="#111" font-size="11">bei leichten Verstößen</text>
+    <text x="140" y="122" text-anchor="middle" fill="#111" font-size="10">§ 58 JASchG</text>
+    <rect x="300" y="20" width="260" height="110" rx="10" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="430" y="55" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Straftat</text>
+    <text x="430" y="80" text-anchor="middle" fill="#111" font-size="20" font-weight="bold">bis 1 Jahr Haft</text>
+    <text x="430" y="105" text-anchor="middle" fill="#111" font-size="11">oder Geldstrafe (Wiederholung)</text>
+    <text x="430" y="122" text-anchor="middle" fill="#111" font-size="10">§ 59 JASchG</text>
+    <rect x="590" y="20" width="260" height="110" rx="10" fill="rgba(231,76,60,0.35)" stroke="#2563EB" stroke-width="2"/>
+    <text x="720" y="55" text-anchor="middle" fill="#111" font-size="13" font-weight="bold">Vorsätzlich + Wiederholung</text>
+    <text x="720" y="80" text-anchor="middle" fill="#111" font-size="20" font-weight="bold">bis 2 Jahre Haft</text>
+    <text x="720" y="105" text-anchor="middle" fill="#111" font-size="11">oder höhere Geldstrafe</text>
+    <text x="720" y="122" text-anchor="middle" fill="#111" font-size="10">§ 59 Abs. 2 JASchG</text>
+  </svg>
+  <div class="warning-box">
+    <strong>Aufsichtsbehörde:</strong> Die Gewerbeaufsichtsämter / Arbeitsschutzbehörden der Länder kontrollieren die Einhaltung des JASchG und können unangemeldete Betriebskontrollen durchführen.
+  </div>
+  <div class="slide-number">Folie 28 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 29: WAS IST EIN TARIFVERTRAG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Was ist ein Tarifvertrag? – Definition</h2>
+  <div class="definition">
+    Ein <span class="key-term">Tarifvertrag</span> ist ein schriftlicher Vertrag zwischen einer Gewerkschaft und einem Arbeitgeberverband (oder einem einzelnen Arbeitgeber), der Arbeitsbedingungen und Vergütungen kollektiv regelt.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Inhalt eines Tarifvertrags</h3>
+      <ul>
+        <li><strong>Schuldrechtlicher Teil:</strong> Rechte und Pflichten der Tarifparteien (z.B. Friedenspflicht)</li>
+        <li><strong>Normativer Teil:</strong> Verbindliche Mindestbedingungen für Arbeitsverhältnisse (z.B. Lohn, Arbeitszeit)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Wirkung</h3>
+      <ul>
+        <li>Unmittelbare Geltung für Tarifgebundene</li>
+        <li>Zwingende Wirkung – Unterschreitung verboten</li>
+        <li>Nachwirkung nach Ablauf (§ 4 Abs. 5 TVG)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 29 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 30: TVG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Das Tarifvertragsgesetz (TVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Wichtige Paragraphen</h3>
+      <table>
+        <tr><th>§</th><th>Inhalt</th></tr>
+        <tr><td>§ 1 TVG</td><td>Definition, Form (Schriftform)</td></tr>
+        <tr><td>§ 2 TVG</td><td>Tarifvertragsparteien</td></tr>
+        <tr><td>§ 3 TVG</td><td>Tarifgebundenheit</td></tr>
+        <tr><td>§ 4 TVG</td><td>Wirkung der Normen</td></tr>
+        <tr><td>§ 5 TVG</td><td>Allgemeinverbindlichkeit</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Grundprinzipien</h3>
+      <ul>
+        <li>Tarifautonomie (GG Art. 9 Abs. 3)</li>
+        <li>Schriftformgebot für Tarifverträge</li>
+        <li>Günstigkeitsprinzip</li>
+        <li>Tarifvorrang vor Einzelarbeitsvertrag</li>
+        <li>Friedenspflicht während der Laufzeit</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 30 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 31: TARIFVERTRAGSPARTEIEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifvertragsparteien: Gewerkschaft vs. Arbeitgeberverband</h2>
+  <svg width="860" height="180" viewBox="0 0 860 180">
+    <rect x="10" y="20" width="360" height="140" rx="12" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="190" y="55" text-anchor="middle" fill="#111" font-size="16" font-weight="bold">Gewerkschaft</text>
+    <text x="190" y="80" text-anchor="middle" fill="#111" font-size="12">Vertritt die Interessen der Arbeitnehmer</text>
+    <text x="190" y="100" text-anchor="middle" fill="#111" font-size="12">Ver.di, IG Metall, GEW, IG BCE …</text>
+    <text x="190" y="120" text-anchor="middle" fill="#111" font-size="12">Organisiert unter DGB-Dach</text>
+    <text x="190" y="145" text-anchor="middle" fill="#111" font-size="11">§ 2 Abs. 1 TVG</text>
+    <text x="430" y="100" text-anchor="middle" fill="#111" font-size="24" font-weight="bold">⚡</text>
+    <text x="430" y="120" text-anchor="middle" fill="#111" font-size="12">Tarifvertrag</text>
+    <rect x="490" y="20" width="360" height="140" rx="12" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="2"/>
+    <text x="670" y="55" text-anchor="middle" fill="#111" font-size="16" font-weight="bold">Arbeitgeberverband</text>
+    <text x="670" y="80" text-anchor="middle" fill="#111" font-size="12">Vertritt die Interessen der Arbeitgeber</text>
+    <text x="670" y="100" text-anchor="middle" fill="#111" font-size="12">HDE (Handel), bitkom (IT), AGV …</text>
+    <text x="670" y="120" text-anchor="middle" fill="#111" font-size="12">Organisiert unter BDA-Dach</text>
+    <text x="670" y="145" text-anchor="middle" fill="#111" font-size="11">§ 2 Abs. 1 TVG</text>
+  </svg>
+  <div class="info-box">
+    <strong>Einzelarbeitgeber:</strong> Auch ein einzelner Arbeitgeber kann (ohne Verbandsmitgliedschaft) einen Tarifvertrag abschließen – dann spricht man von einem <em>Firmentarifvertrag</em>.
+  </div>
+  <div class="slide-number">Folie 31 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 32: DGB -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>DGB – Deutscher Gewerkschaftsbund</h2>
+  <div class="two-col">
+    <div>
+      <h3>Aufgaben des DGB</h3>
+      <ul>
+        <li>Dachverband der deutschen Gewerkschaften</li>
+        <li>Koordination und Interessenvertretung</li>
+        <li>Politische Lobbyarbeit</li>
+        <li>Kein eigener Tarifvertrag – die Mitgliedsgewerkschaften schließen ab</li>
+      </ul>
+      <h3 style="margin-top:14px;">Mitgliedsgewerkschaften (Auswahl)</h3>
+      <ul>
+        <li><strong>Ver.di</strong> – Vereinte Dienstleistungsgewerkschaft (Handel, IT, Medien)</li>
+        <li><strong>IG Metall</strong> – Metall- und Elektroindustrie</li>
+        <li><strong>IG BCE</strong> – Bergbau, Chemie, Energie</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Ver.di im E-Commerce</h3>
+      <p style="font-size:0.95em;">Für Kaufleute im E-Commerce ist primär <strong>Ver.di</strong> zuständig. Ver.di schließt Tarifverträge im Einzel- und Online-Handel ab.</p>
+      <ul style="font-size:0.9em; margin-top:10px;">
+        <li>Tarifvertrag Einzelhandel NRW</li>
+        <li>Tarifvertrag Online-Handel</li>
+        <li>Amazon-Arbeitskämpfe (seit 2013)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 32 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 33: TARIFVERTRAGSARTEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifvertragsarten im Überblick</h2>
+  <svg width="880" height="160" viewBox="0 0 880 160">
+    <rect x="10" y="20" width="190" height="120" rx="10" fill="rgba(231,76,60,0.25)" stroke="#e74c3c" stroke-width="2"/>
+    <text x="105" y="55" text-anchor="middle" fill="#111" font-size="12" font-weight="bold">Manteltarifvertrag</text>
+    <text x="105" y="75" text-anchor="middle" fill="#111" font-size="10">Allg. Bedingungen:</text>
+    <text x="105" y="91" text-anchor="middle" fill="#111" font-size="10">Arbeitszeit, Urlaub,</text>
+    <text x="105" y="107" text-anchor="middle" fill="#111" font-size="10">Kündigungsfristen</text>
+    <text x="105" y="128" text-anchor="middle" fill="#111" font-size="9">oft 3–5 Jahre</text>
+    <rect x="215" y="20" width="190" height="120" rx="10" fill="rgba(243,156,18,0.25)" stroke="#f39c12" stroke-width="2"/>
+    <text x="310" y="55" text-anchor="middle" fill="#111" font-size="12" font-weight="bold">Entgelttarifvertrag</text>
+    <text x="310" y="75" text-anchor="middle" fill="#111" font-size="10">Löhne, Gehälter,</text>
+    <text x="310" y="91" text-anchor="middle" fill="#111" font-size="10">Ausbildungsvergütung,</text>
+    <text x="310" y="107" text-anchor="middle" fill="#111" font-size="10">Lohngruppen</text>
+    <text x="310" y="128" text-anchor="middle" fill="#111" font-size="9">meist 1–2 Jahre</text>
+    <rect x="420" y="20" width="190" height="120" rx="10" fill="rgba(39,174,96,0.25)" stroke="#27ae60" stroke-width="2"/>
+    <text x="515" y="55" text-anchor="middle" fill="#111" font-size="12" font-weight="bold">Rahmentarifvertrag</text>
+    <text x="515" y="75" text-anchor="middle" fill="#111" font-size="10">Eingruppierungen,</text>
+    <text x="515" y="91" text-anchor="middle" fill="#111" font-size="10">Berufsbilder,</text>
+    <text x="515" y="107" text-anchor="middle" fill="#111" font-size="10">Tätigkeitsmerkmale</text>
+    <text x="515" y="128" text-anchor="middle" fill="#111" font-size="9">langfristig</text>
+    <rect x="625" y="20" width="190" height="120" rx="10" fill="rgba(52,152,219,0.25)" stroke="#3498db" stroke-width="2"/>
+    <text x="720" y="55" text-anchor="middle" fill="#111" font-size="12" font-weight="bold">Sondertarifvertrag</text>
+    <text x="720" y="75" text-anchor="middle" fill="#111" font-size="10">Spezielle Themen:</text>
+    <text x="720" y="91" text-anchor="middle" fill="#111" font-size="10">Altersteilzeit,</text>
+    <text x="720" y="107" text-anchor="middle" fill="#111" font-size="10">Kurzarbeit, bAV</text>
+    <text x="720" y="128" text-anchor="middle" fill="#111" font-size="9">anlassbezogen</text>
+  </svg>
+  <div class="slide-number">Folie 33 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 34: ALLGEMEINVERBINDLICHKEIT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Allgemeinverbindlichkeitserklärung (§ 5 TVG)</h2>
+  <div class="definition">
+    Das Bundesministerium für Arbeit und Soziales (BMAS) kann auf Antrag der Tarifparteien einen Tarifvertrag für <span class="key-term">allgemeinverbindlich</span> erklären. Dann gilt er für <em>alle</em> Arbeitgeber und Arbeitnehmer der Branche – auch für Nicht-Mitglieder.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Voraussetzungen</h3>
+      <ul>
+        <li>Antrag einer Tarifpartei</li>
+        <li>Öffentliches Interesse</li>
+        <li>Zustimmung des Tarifausschusses</li>
+        <li>Veröffentlichung im Bundesanzeiger</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Beispiele</h3>
+      <ul>
+        <li>Bau-Sozialkassenverfahren (SOKA-BAU)</li>
+        <li>Gebäudereinigerhandwerk</li>
+        <li>Sicherheitsdienstleistungen</li>
+        <li>Pflege (seit 2021)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 34 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 35: GÜNSTIGKEITSPRINZIP -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Das Günstigkeitsprinzip (§ 4 Abs. 3 TVG)</h2>
+  <div class="definition">
+    Vom Tarifvertrag <span class="key-term">abweichende Abmachungen</span> sind nur zulässig, soweit sie <em>zugunsten des Arbeitnehmers</em> von den Tarifvorschriften abweichen.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card">
+      <h3>Zulässig (günstiger für AN)</h3>
+      <ul>
+        <li>Höherer Lohn als im Tarifvertrag</li>
+        <li>Mehr Urlaubstage als tariflich</li>
+        <li>Kürzere Arbeitszeit</li>
+        <li>Bessere Kündigungsfristen</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Unzulässig (ungünstiger für AN)</h3>
+      <ul>
+        <li>Niedrigerer Lohn als Tariflohn</li>
+        <li>Weniger Urlaub als tariflich</li>
+        <li>Längere Arbeitszeiten über Tarif</li>
+        <li>Schlechtere Kündigungsschutzregelungen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 35 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 36: TARIFGEBUNDENHEIT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifgebundenheit – Wer ist tarifgebunden? (§ 3 TVG)</h2>
+  <div class="two-col">
+    <div>
+      <h3>Automatische Bindung</h3>
+      <ul>
+        <li>Arbeitgeber, die Mitglied im Arbeitgeberverband sind</li>
+        <li>Arbeitnehmer, die Mitglied der Gewerkschaft sind</li>
+        <li>Bei Allgemeinverbindlichkeit: alle Betriebe der Branche</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Ohne Mitgliedschaft</h3>
+      <ul>
+        <li>Tarifvertrag gilt <strong>nicht</strong> automatisch</li>
+        <li>Arbeitgeber kann Tarifvertrag einzelvertraglich vereinbaren</li>
+        <li>Bezugnahmeklausel im Arbeitsvertrag</li>
+        <li>OT-Mitgliedschaft (ohne Tarifbindung) möglich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:14px;">
+    <strong>Praxis:</strong> Viele Arbeitgeber wenden den Tarifvertrag freiwillig an, um qualifizierte Mitarbeiter zu gewinnen, ohne formal tarifgebunden zu sein.
+  </div>
+  <div class="slide-number">Folie 36 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 37: STREIK UND AUSSPERRUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Streik und Aussperrung</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Streik (Arbeitnehmerseite)</h3>
+      <ul>
+        <li>Kollektive Arbeitsniederlegung</li>
+        <li>Nur durch Gewerkschaft ausgerufen</li>
+        <li>Nur nach Ablauf der Friedenspflicht</li>
+        <li>Ziel: Tarifabschluss erzwingen</li>
+        <li>Kein Lohnanspruch während Streik</li>
+        <li>Gewerkschaft zahlt Streikgeld</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Aussperrung (Arbeitgeberseite)</h3>
+      <ul>
+        <li>Arbeitgeber schließt Arbeitnehmer aus</li>
+        <li>Reaktion auf Streik</li>
+        <li>Umstritten – vom BAG eingeschränkt</li>
+        <li>Verhältnismäßigkeitsprinzip</li>
+        <li>Kein Lohnanspruch</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box">
+    <strong>Grundrecht:</strong> Das Streikrecht ist durch Art. 9 Abs. 3 GG (Koalitionsfreiheit) geschützt. Wilde Streiks (ohne Gewerkschaft) sind rechtswidrig.
+  </div>
+  <div class="slide-number">Folie 37 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 38: FRIEDENSPFLICHT -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Friedenspflicht</h2>
+  <div class="definition">
+    Während der Laufzeit eines Tarifvertrags sind die Tarifparteien verpflichtet, keine <span class="key-term">Arbeitskampfmaßnahmen</span> durchzuführen, die auf die Änderung tariflich geregelter Inhalte abzielen.
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Relative Friedenspflicht</h3>
+      <ul>
+        <li>Keine Kämpfe um tariflich geregelte Inhalte</li>
+        <li>Kämpfe um nicht geregelte Themen erlaubt</li>
+        <li>Standardfall im deutschen Recht</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Absolute Friedenspflicht</h3>
+      <ul>
+        <li>Keinerlei Arbeitskampf während der Laufzeit</li>
+        <li>Nur wenn explizit vereinbart</li>
+        <li>Seltener in der Praxis</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 38 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 39: TARIFAUTONOMIE GG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifautonomie im Grundgesetz (Art. 9 Abs. 3 GG)</h2>
+  <div class="definition">
+    „Das Recht, zur Wahrung und Förderung der Arbeits- und Wirtschaftsbedingungen Vereinigungen zu bilden, ist für jedermann und für alle Berufe gewährleistet."
+    <div class="citation">Art. 9 Abs. 3 GG</div>
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <h3>Was schützt Art. 9 Abs. 3 GG?</h3>
+      <ul>
+        <li>Gründung und Beitritt zu Koalitionen (Gewerkschaften, Arbeitgeberverbände)</li>
+        <li>Koalitionsbetätigung (Tarifverhandlungen, Streik)</li>
+        <li>Koalitionsfreiheit – negativ (kein Beitrittszwang)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Staatliche Neutralität</h3>
+      <ul>
+        <li>Staat darf nicht in Tarifverhandlungen eingreifen</li>
+        <li>Ausnahme: Mindestlohn als gesetzlicher Eingriff</li>
+        <li>Bundearbeitsgericht als Kontrollinstanz</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 39 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 40: MINDESTLOHN VS TARIFLOHN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Mindestlohn vs. Tariflohn</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Gesetzlicher Mindestlohn (MiLoG)</h3>
+      <ul>
+        <li>Seit 2015 in Deutschland</li>
+        <li>2026: <strong>13,90 €/Stunde</strong></li>
+        <li>Gilt für alle Arbeitnehmer (auch Azubis indirekt)</li>
+        <li>Mindestausbildungsvergütung separat (BBiG § 17)</li>
+        <li>Unterschreitung ist Ordnungswidrigkeit</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Tariflohn</h3>
+      <ul>
+        <li>Ausgehandelt zwischen Gewerkschaft und Arbeitgeberverband</li>
+        <li>Branchenspezifisch unterschiedlich</li>
+        <li>Meist <strong>deutlich über Mindestlohn</strong></li>
+        <li>Beispiel: Einzelhandel NRW – ab 15,00 €/h (2025/26)</li>
+        <li>Günstigkeitsprinzip: Tariflohn mindestens = Mindestlohn</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 40 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 41: TARIFREGISTER -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifregister und Tarifauskunft</h2>
+  <div class="two-col">
+    <div>
+      <h3>Das Tarifregister</h3>
+      <ul>
+        <li>Beim Bundesministerium für Arbeit und Soziales (BMAS) geführt</li>
+        <li>Alle geltenden Tarifverträge werden dort hinterlegt</li>
+        <li>Öffentlich einsehbar</li>
+        <li>Pflicht: Tarifparteien müssen abgeschlossene TV einsenden</li>
+      </ul>
+      <div class="citation">§ 6 TVG</div>
+    </div>
+    <div>
+      <h3>Tarifauskunft</h3>
+      <ul>
+        <li>Arbeitnehmer können erfragen, ob ein TV gilt</li>
+        <li>Auskunft gibt: BMAS, Gewerkschaft, IHK</li>
+        <li>Online: www.tarifregister.de</li>
+        <li>Wichtig für: Gehaltsverhandlungen und Rechtsstreitigkeiten</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 41 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 42: BRANCHEN-TARIFVERTRÄGE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Branchen-Tarifverträge (Handel &amp; IT)</h2>
+  <table>
+    <tr><th>Branche</th><th>Gewerkschaft</th><th>Arbeitgeberverband</th><th>Besonderheit</th></tr>
+    <tr><td>Einzelhandel</td><td>Ver.di</td><td>HDE / Landesverbände</td><td>Länderspezifische TV</td></tr>
+    <tr><td>Online-Handel</td><td>Ver.di</td><td>bevh / HDE</td><td>Amazon: kein TV</td></tr>
+    <tr><td>IT-Branche</td><td>Ver.di / IG Metall</td><td>BITKOM</td><td>Haustarifverträge häufig</td></tr>
+    <tr><td>Großhandel</td><td>Ver.di</td><td>HDE</td><td>Ähnlich Einzelhandel</td></tr>
+  </table>
+  <div class="info-box" style="margin-top:14px;">
+    <strong>E-Commerce:</strong> Kaufleute im E-Commerce fallen je nach Tätigkeitsfeld unter den Einzel- oder Großhandels-Tarifvertrag ihres Bundeslandes. Es gibt noch keinen bundeseinheitlichen E-Commerce-Tarifvertrag.
+  </div>
+  <div class="slide-number">Folie 42 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 43: FLÄCHEN VS HAUSTARIFVERTRAG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Flächentarifvertrag vs. Haustarifvertrag</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Flächentarifvertrag</h3>
+      <ul>
+        <li>Gilt für eine ganze Branche in einer Region</li>
+        <li>Zwischen Gewerkschaft und Arbeitgeberverband</li>
+        <li>Einheitliche Standards für alle Mitgliedsbetriebe</li>
+        <li>Typisch: Einzelhandel NRW, Bayern, etc.</li>
+        <li>Vorteil: Keine Konkurrenz über Lohnunterbietung</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Haustarifvertrag (Firmentarifvertrag)</h3>
+      <ul>
+        <li>Gilt nur für ein bestimmtes Unternehmen</li>
+        <li>Zwischen Gewerkschaft und einzelnem Arbeitgeber</li>
+        <li>Mehr Flexibilität für spezifische Regelungen</li>
+        <li>Typisch: Deutsche Bahn, Telekom, Volkswagen</li>
+        <li>Vorteil: Angepasst an Unternehmensbesonderheiten</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 43 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 44: TV FÜR E-COMMERCE KAUFLEUTE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Tarifverträge für Kaufleute im E-Commerce</h2>
+  <div class="two-col">
+    <div>
+      <h3>Aktuelle Situation (2026)</h3>
+      <ul>
+        <li>Kein eigener bundesweiter E-Commerce-Tarifvertrag</li>
+        <li>Meistens: Einzel- oder Großhandelstarifvertrag des jeweiligen Bundeslandes</li>
+        <li>Große Unternehmen (Zalando, Otto, Amazon) haben teils eigene Regelungen</li>
+        <li>Amazon: bis heute kein Tarifvertrag trotz langer Ver.di-Kampagne</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Ausbildungsvergütung Handel NRW</h3>
+      <ul>
+        <li>1. Ausbildungsjahr: 1.100 €</li>
+        <li>2. Ausbildungsjahr: 1.220 €</li>
+        <li>3. Ausbildungsjahr: 1.360 €</li>
+		<li>4. Ausbildungsjahr: 1.440 €</li>
+      </ul>
+      <div class="citation">Tarifregister Einzelhandel NRW, 2025</div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 44 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE ZQ10A: ZWISCHENQUIZ – BBiG & Pflichten -->
+<div class="slide quiz-slide" id="slide-ZQ10A" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2 style="color:#fff; margin-bottom:15px; margin-top:15px;">🧠 Zwischenquiz: BBiG & Azubi-Pflichten</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Welchen Paragraphen des BBiG regelt die Pflichten des Auszubildenden?</p>
+    <div id="q10a1opts">
+      <button onclick="chk10a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) § 10 BBiG</button>
+      <button onclick="chk10a1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) § 13 BBiG</button>
+      <button onclick="chk10a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) § 17 BBiG</button>
+    </div>
+    <p id="q10a1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Die Eselsbrücke „L-S-S-B-F-M" steht für die Pflichten des Azubis. Wofür steht "S-S"?</p>
+    <div id="q10a2opts">
+      <button onclick="chk10a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Pflicht zu Sietzen und Schweigen</button>
+      <button onclick="chk10a2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Sorgfaltspflicht &amp; Schweigepflicht</button>
+      <button onclick="chk10a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Singpflicht &amp; Schulungspflicht</button>
+    </div>
+    <p id="q10a2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Wie hoch ist die gesetzliche Mindestausbildungsvergütung im 1. Lehrjahr (2026)?</p>
+    <div id="q10a3opts">
+      <button onclick="chk10a3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) 650 €</button>
+      <button onclick="chk10a3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) 724 €</button>
+      <button onclick="chk10a3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) 831 €</button>
+    </div>
+    <p id="q10a3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk10a1(btn,correct){
+    document.getElementById('q10a1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10a1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! § 13 BBiG regelt die Pflichten des Azubis.':'❌ Falsch! Richtig: § 13 BBiG.';
+    if(!correct)document.getElementById('q10a1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10a2(btn,correct){
+    document.getElementById('q10a2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10a2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! L-Lern, S-Sorge, S-Schweig, B-Berichtsheft, F-Folg, M-Meld.':'❌ Falsch! Das S-S = Sorgfaltspflicht, Schweigepflicht.';
+    if(!correct)document.getElementById('q10a2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10a3(btn,correct){
+    document.getElementById('q10a3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10a3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! 724 € im 1. Lehrjahr (2026), § 17 BBiG.':'❌ Falsch! Richtig: 724 € (2026).';
+    if(!correct)document.getElementById('q10a3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE ZQ10B: ZWISCHENQUIZ – JASchG -->
+<div class="slide quiz-slide" id="slide-ZQ10B" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2 style="color:#fff;margin-top:15px;margin-bottom:15px;">🧠 Zwischenquiz: Jugendarbeitsschutz (JASchG)</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Wie viele Stunden dürfen Jugendliche maximal pro Tag arbeiten?</p>
+    <div id="q10b1opts">
+      <button onclick="chk10b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) 6 Stunden</button>
+      <button onclick="chk10b1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) 8 Stunden</button>
+      <button onclick="chk10b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) 10 Stunden</button>
+    </div>
+    <p id="q10b1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Ab wie vielen Unterrichtsstunden muss die Azubine Lisa (17 J.) nach der Berufsschule nicht mehr im Betrieb arbeiten?</p>
+    <div id="q10b2opts">
+      <button onclick="chk10b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Ab 4 Stunden</button>
+      <button onclick="chk10b2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Ab mehr als 5 Stunden</button>
+      <button onclick="chk10b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Ab 8 Stunden</button>
+    </div>
+    <p id="q10b2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Ab wann gilt für Jugendliche gemäß § 11 Abs. 1 JASchG eine Pause von mind. 30 Minuten?</p>
+    <div id="q10b3opts">
+      <button onclick="chk10b3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) ab 4,5h</button>
+      <button onclick="chk10b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) ab 6h</button>
+      <button onclick="chk10b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) ab 12h</button>
+    </div>
+    <p id="q10b3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk10b1(btn,correct){
+    document.getElementById('q10b1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10b1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Max. 8 Stunden/Tag (§ 8 JASchG).':'❌ Falsch! Richtig: 8 Stunden/Tag.';
+    if(!correct)document.getElementById('q10b1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10b2(btn,correct){
+    document.getElementById('q10b2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10b2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Bei mehr als 5 Unterrichtsstunden: keine weitere Arbeit (§ 9 JASchG).':'❌ Falsch! Richtig: mehr als 5 Unterrichtsstunden.';
+    if(!correct)document.getElementById('q10b2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10b3(btn,correct){
+    document.getElementById('q10b3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10b3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Ab 4,5h.':'❌ Falsch! Richtig: ab 4,5h.';
+    if(!correct)document.getElementById('q10b3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE: ESELSBRÜCKE AZUBI-PFLICHTEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Eselsbrücke: Pflichten des Azubis (§ 13 BBiG)</h2>
+  <div class="warning-box" style="font-size:1.1em;margin-bottom:20px;">
+    <strong>L – S – S – B – F – M</strong><br>
+    <em>„Liebe Schüler, schweigt bitte fleißig, meldet euch rechtzeitig!"</em>
+  </div>
+  <div class="three-col">
+    <div class="card"><h3>L – Lernpflicht</h3><p style="font-size:0.9em;">Aufgaben gewissenhaft ausführen, Ausbildungsziel anstreben</p></div>
+    <div class="card"><h3>S – Sorgfaltspflicht</h3><p style="font-size:0.9em;">Arbeitsmittel und Einrichtungen pfleglich behandeln</p></div>
+    <div class="card"><h3>S – Schweigepflicht</h3><p style="font-size:0.9em;">Betriebsgeheimnisse wahren – auch nach der Ausbildung!</p></div>
+  </div>
+  <div class="three-col" style="margin-top:14px;">
+    <div class="card"><h3>B – Berichtsheftpflicht</h3><p style="font-size:0.9em;">Ausbildungsnachweis gewissenhaft führen und vorlegen</p></div>
+    <div class="card"><h3>F – Folgepflicht</h3><p style="font-size:0.9em;">Weisungen des Ausbildenden befolgen (soweit rechtmäßig)</p></div>
+    <div class="card"><h3>M – Meldepflicht</h3><p style="font-size:0.9em;">Bei Krankheit unverzüglich melden; ab Tag 3 Attest</p></div>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE: PRAXISBEISPIEL BERUFSSCHUL-FREISTELLUNG -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Praxisbeispiel: Freistellung Berufsschule (§ 9 JASchG)</h2>
+  <div class="definition">
+    <span class="key-term">Situation:</span> Azubine Lisa (17 Jahre) hat am Dienstag 6 Stunden Berufsschule (8:00–14:00 Uhr). Darf der Ausbildungsbetrieb sie danach noch 3 Stunden arbeiten lassen?
+  </div>
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card" style="border-color:#e74c3c;">
+      <h3 style="color:#e74c3c;">Antwort: NEIN!</h3>
+      <ul>
+        <li>Berufsschultag umfasst mehr als <strong>5 Unterrichtsstunden</strong></li>
+        <li>Vollständige Freistellung nach <strong>§ 9 Abs. 1 Nr. 1 JASchG</strong></li>
+        <li>Keine weitere Arbeit – auch nicht nachmittags</li>
+        <li>Berufsschulzeiten zählen als Arbeitszeit!</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Die Regel – Eselsbrücke 8-40-12-30-60</h3>
+      <ul>
+        <li><strong>8</strong> Std. max. pro Tag</li>
+        <li><strong>40</strong> Std. max. pro Woche</li>
+        <li><strong>12</strong> Std. Ruhezeit nach Feierabend</li>
+        <li><strong>30</strong> Min. Pause ab 4,5 Std. Arbeit</li>
+        <li><strong>60</strong> Min. Pause ab 6 Std. Arbeit</li>
+      </ul>
+    </div>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE: GÜNSTIGKEITSPRINZIP – RECHTSHIERARCHIE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Günstigkeitsprinzip – Rechtshierarchie</h2>
+  <div class="definition">
+    <span class="key-term">Günstigkeitsprinzip (§ 4 Abs. 3 TVG):</span> Eine individuelle Vereinbarung ist nur dann gültig, wenn sie den Arbeitnehmer <em>besser</em> stellt als der Tarifvertrag. Schlechtere Regelungen sind <em>unwirksam</em>.
+  </div>
+  <table style="margin-top:16px;">
+    <tr><th>Ebene</th><th>Beispiel</th><th>Vorrang</th></tr>
+    <tr><td><strong>Grundgesetz / EU-Recht</strong></td><td>Art. 9 Abs. 3 GG – Tarifautonomie</td><td>Höchste Ebene</td></tr>
+    <tr><td><strong>Gesetz</strong> (z. B. ArbZG, BBiG)</td><td>Max. Arbeitszeit, Mindestlohn</td><td>Vor Tarifvertrag</td></tr>
+    <tr><td><strong>Tarifvertrag</strong></td><td>Branchenlohn, Urlaubstage</td><td>Vor Betriebsvereinbarung</td></tr>
+    <tr><td><strong>Betriebsvereinbarung</strong></td><td>Gleitzeit, Homeoffice</td><td>Vor Arbeitsvertrag</td></tr>
+    <tr><td><strong>Arbeitsvertrag</strong></td><td>Individuelles Gehalt (nur günstiger!)</td><td>Niedrigste Ebene</td></tr>
+  </table>
+  <div class="success-box" style="margin-top:12px;">
+    <strong>Merke:</strong> Jede niedrigere Ebene gilt nur, wenn sie den Arbeitnehmer <em>besser</em> stellt als die höhere. Verschlechterungen sind unwirksam!
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE: ESELSBRÜCKEN TARIFVERTRAGSARTEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Eselsbrücken: Tarifvertrag &amp; Tarifvertragsarten</h2>
+  <div class="two-col">
+    <div>
+      <div class="warning-box">
+        <strong>G-A-T: „GAT macht den Vertrag!"</strong><br>
+        <strong>G</strong>ewerkschaft + <strong>A</strong>rbeitgeberverband = <strong>T</strong>arifvertrag
+      </div>
+      <div class="warning-box" style="margin-top:14px;">
+        <strong>M-E-R-A: „MERA regelt die Tarife!"</strong><br>
+        <strong>M</strong>antel – <strong>E</strong>ntgelt – <strong>R</strong>ahmen – <strong>A</strong>zubi-Vergütung
+      </div>
+    </div>
+    <div class="card">
+      <h3>Tarifvertragsarten im Überblick</h3>
+      <ul>
+        <li><strong>Manteltarifvertrag:</strong> Arbeitszeit, Urlaub, Kündigungsfristen</li>
+        <li><strong>Entgelttarifvertrag:</strong> Löhne, Gehälter, Lohngruppen</li>
+        <li><strong>Rahmentarifvertrag:</strong> Eingruppierung, Tätigkeitsmerkmale</li>
+        <li><strong>Azubi-Vergütungstarifvertrag:</strong> Ausbildungsvergütungen</li>
+      </ul>
+      <div class="info-box" style="margin-top:10px;font-size:0.9em;">
+        Der <strong>Manteltarifvertrag</strong> bildet den Rahmen – er enthält die grundlegenden Arbeitsbedingungen!
+      </div>
+    </div>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 45: FALLSTUDIE VER.DI -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Fallstudie: Ver.di Tarifverhandlungen im Handel</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ausgangssituation</h3>
+      <p style="font-size:0.95em;">Ver.di fordert für den Einzelhandel NRW eine Lohnerhöhung von 3,00 € je Stunde. Die Arbeitgeber bieten zunächst 1,50 € an.</p>
+      <h3 style="margin-top:12px;">Verlauf</h3>
+      <ul style="font-size:0.9em;">
+        <li>1. Verhandlungsrunde: Positionen weit auseinander</li>
+        <li>Ver.di ruft zu Warnstreiks auf (nach Friedenspflicht)</li>
+        <li>Betriebe: Umsatzausfälle, öffentlicher Druck</li>
+        <li>3. Verhandlungsrunde: Einigung bei +2,00 €/h</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Ergebnis &amp; Lerneffekt</h3>
+      <ul>
+        <li>Tarifvertrag wird unterzeichnet</li>
+        <li>Friedenspflicht greift erneut</li>
+        <li>Günstigkeitsprinzip: Betriebe können mehr zahlen</li>
+        <li>Nicht-Mitglieder: kein Anspruch (ohne Allgemeinverbindlichkeit AVE)</li>
+      </ul>
+      <div class="info-box" style="margin-top:10px; font-size:0.9em;">
+        Arbeitskampf ist das letzte Mittel – erst nach Scheitern der Verhandlungen!
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">Folie 45 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 46: PRAXISAUFGABE -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Praxisaufgabe: Rechte und Pflichten anwenden</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Aufgabe 1: BBiG</h3>
+      <p style="font-size:0.9em;">Lea (17) ist Auszubildende bei der Exclusiva GmbH. Sie erscheint dreimal unentschuldigt nicht zur Arbeit und führt ihr Berichtsheft nicht. Der Betrieb möchte sie kündigen.</p>
+      <p style="font-size:0.9em; margin-top:8px;"><strong>Fragen:</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>Welche Kündigungsart wäre möglich?</li>
+        <li>Welche Voraussetzungen müssen erfüllt sein?</li>
+        <li>Was muss der Betrieb vor der Kündigung tun?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Aufgabe 2: JASchG + TVG</h3>
+      <p style="font-size:0.9em;">Tim (17) soll im Online-Shop der Exclusiva GmbH den Nachtdienst von 22–6 Uhr übernehmen. Der Betrieb beruft sich auf den Haustarifvertrag, der dies angeblich erlaubt.</p>
+      <p style="font-size:0.9em; margin-top:8px;"><strong>Fragen:</strong></p>
+      <ul style="font-size:0.9em;">
+        <li>Ist der Einsatz zulässig? Begründung!</li>
+        <li>Kann ein Tarifvertrag JASchG-Schutz aushebeln?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 46 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 47: DISKUSSIONSFRAGEN -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Aufgaben und Diskussionsfragen</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Block 1.11</h3>
+      <ul style="font-size:0.9em;">
+        <li>Warum kann der Ausbildungsbetrieb nach der Probezeit nicht mehr ordentlich kündigen?</li>
+        <li>Was passiert, wenn die Mindestausbildungsvergütung nicht gezahlt wird?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.12</h3>
+      <ul style="font-size:0.9em;">
+        <li>Warum schützt das JASchG Jugendliche besonders vor Nachtarbeit?</li>
+        <li>Welche Sanktionen drohen einem Betrieb bei Verstößen gegen das JASchG?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.13</h3>
+      <ul style="font-size:0.9em;">
+        <li>Warum weigert sich Amazon, einen Tarifvertrag abzuschließen?</li>
+        <li>Erkläre das Günstigkeitsprinzip anhand eines eigenen Beispiels.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 47 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 48: ZUSAMMENFASSUNG -->
+<div class="slide slide-summary">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Zusammenfassung des Tages</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Block 1.11 – BBiG</h3>
+      <ul style="font-size:0.9em;">
+        <li>Pflichten des Azubis: Lernen, Schweigen, Sorgfalt</li>
+        <li>Mindestausbildungsvergütung seit 2020</li>
+        <li>Kündigung: Probezeit frei, danach nur fristlos durch Betrieb</li>
+        <li>Berichtsheft = Prüfungsvoraussetzung</li>
+        <li>IHK-Schlichtung vor Arbeitsgericht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.12 – JASchG</h3>
+      <ul style="font-size:0.9em;">
+        <li>Gilt für Jugendliche (15–18 Jahre)</li>
+        <li>Max. 8h/Tag, 40h/Woche</li>
+        <li>Nachtarbeitsverbot 20–6 Uhr</li>
+        <li>Berufsschule zählt als Arbeitszeit</li>
+        <li>Ärztliche Untersuchung Pflicht</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.13 – Tarifrecht</h3>
+      <ul style="font-size:0.9em;">
+        <li>Tarifvertrag: Gewerkschaft + Arbeitgeberverband</li>
+        <li>Arten: Mantel-, Entgelt-, Rahmentarifvertrag</li>
+        <li>Günstigkeitsprinzip schützt Arbeitnehmer</li>
+        <li>Streik nur nach Friedenspflicht und durch Gewerkschaft</li>
+        <li>Allgemeinverbindlichkeit = gilt für alle</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-number">Folie 48 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE 49: AUSBLICK TAG 11 -->
+<div class="slide slide-content">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Ausblick: Tag 11 – Mitbestimmung &amp; Entgeltabrechnung</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>Block 1.14 – Mitbestimmung</h3>
+      <ul>
+        <li>Betriebsverfassungsgesetz (BetrVG)</li>
+        <li>Betriebsrat: Wahl, Aufgaben, Rechte</li>
+        <li>Jugend- und Auszubildendenvertretung (JAV)</li>
+        <li>Mitbestimmung bei sozialen, personellen und wirtschaftlichen Angelegenheiten</li>
+        <li>Betriebsvereinbarungen</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Block 1.15 – Entgeltabrechnung</h3>
+      <ul>
+        <li>Brutto vs. Netto</li>
+        <li>Sozialversicherungsbeiträge 2026</li>
+        <li>Lohnsteuer und Steuerklassen</li>
+        <li>Gehaltsabrechnung lesen und verstehen</li>
+        <li>Praxisbeispiel: Azubi-Gehaltszettel</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-box" style="margin-top:16px;">
+    <strong>Vorbereitung:</strong> Bringt eure eigene Gehaltsabrechnung oder die eurer Eltern (anonymisiert) mit – wir analysieren einen echten Gehaltszettel!
+  </div>
+  <div class="slide-number">Folie 49 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- FOLIE ZQ10C: ZWISCHENQUIZ – Tarifverträge & Günstigkeitsprinzip -->
+<div class="slide quiz-slide" id="slide-ZQ10C" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:30px;overflow-y:auto;">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2 style="color:#fff;margin-top:15px;margin-bottom:15px;">🧠 Zwischenquiz: Tarifverträge &amp; Günstigkeitsprinzip</h2>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">1. Welcher Tarifvertragstyp regelt Löhne, Gehälter und Lohngruppen?</p>
+    <div id="q10c1opts">
+      <button onclick="chk10c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Manteltarifvertrag</button>
+      <button onclick="chk10c1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Entgelttarifvertrag</button>
+      <button onclick="chk10c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Rahmentarifvertrag</button>
+    </div>
+    <p id="q10c1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">2. Der Tarifvertrag im Einzelhandel sieht 2.200 € vor. Sinas Arbeitsvertrag nennt 2.050 €. Was gilt?</p>
+    <div id="q10c2opts">
+      <button onclick="chk10c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Der Arbeitsvertrag gilt (2.050 €)</button>
+      <button onclick="chk10c2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Der Tarifvertrag gilt (2.200 €) – Günstigkeitsprinzip</button>
+      <button onclick="chk10c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Sina kann frei wählen</button>
+    </div>
+    <p id="q10c2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;">3. Während der Laufzeit eines gültigen Tarifvertrags gilt…</p>
+    <div id="q10c3opts">
+      <button onclick="chk10c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Streikrecht (jederzeit möglich)</button>
+      <button onclick="chk10c3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Friedenspflicht (kein Streik über geregelte Inhalte)</button>
+      <button onclick="chk10c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Allgemeinverbindlichkeit für alle Betriebe</button>
+    </div>
+    <p id="q10c3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+  <script>
+  function chk10c1(btn,correct){
+    document.getElementById('q10c1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10c1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Entgelttarifvertrag = Löhne und Gehälter.':'❌ Falsch! Richtig: Entgelttarifvertrag.';
+    if(!correct)document.getElementById('q10c1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10c2(btn,correct){
+    document.getElementById('q10c2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10c2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Günstigkeitsprinzip: Der Tarifvertrag schützt Sina (2.200 € gelten).':'❌ Falsch! Günstigkeitsprinzip: 2.200 € gelten, der Arbeitsvertrag ist insoweit unwirksam.';
+    if(!correct)document.getElementById('q10c2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk10c3(btn,correct){
+    document.getElementById('q10c3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q10c3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Friedenspflicht: Kein Streik über bereits geregelte Inhalte.':'❌ Falsch! Richtig: Friedenspflicht gilt während laufendem Tarifvertrag.';
+    if(!correct)document.getElementById('q10c3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- FOLIE 50: LITERATURVERZEICHNIS -->
+<div class="slide slide-refs">
+  <div class="tag-badge">LF1 | Tag 10</div>
+  <h2>Literaturverzeichnis</h2>
+  <ul style="font-size:0.88em; line-height:1.9;">
+    <li>Bundesministerium der Justiz. (2020). <em>Berufsbildungsgesetz (BBiG) in der Fassung vom 4. Mai 2020</em>. BGBl. I S. 920. https://www.gesetze-im-internet.de/bbig_2005/</li>
+    <li>Bundesministerium der Justiz. (2023). <em>Jugendarbeitsschutzgesetz (JASchG) in der Fassung vom 23. Oktober 2023</em>. BGBl. I S. 2470. https://www.gesetze-im-internet.de/jarbschg/</li>
+    <li>Bundesministerium der Justiz. (2022). <em>Tarifvertragsgesetz (TVG) in der Fassung vom 7. Juli 2022</em>. BGBl. I S. 1102. https://www.gesetze-im-internet.de/tvg/</li>
+    <li>Bundesministerium der Justiz. (2023). <em>Mindestlohngesetz (MiLoG)</em>. https://www.gesetze-im-internet.de/milog/</li>
+    <li>Dütz, W., &amp; Thüsing, G. (2022). <em>Arbeitsrecht</em> (27. Aufl.). C.H. Beck.</li>
+    <li>Junker, A. (2023). <em>Grundkurs Arbeitsrecht</em> (22. Aufl.). C.H. Beck.</li>
+    <li>Bundesministerium für Arbeit und Soziales. (2026). <em>Tarifregister Deutschland</em>. https://www.bmas.de/tarifregister</li>
+    <li>Ver.di – Vereinte Dienstleistungsgewerkschaft. (2025). <em>Tarifvertrag Einzelhandel NRW 2025</em>. https://handel.verdi.de/tarifvertraege</li>
+  </ul>
+  <div class="slide-number">Folie 50 / 50</div>
+  <div class="copyright">© Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+</div><!-- end slides-wrapper -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 57</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 10 - Ausbildungsrecht, Jugendschutz & Tarifrecht &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title,h1,h2');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

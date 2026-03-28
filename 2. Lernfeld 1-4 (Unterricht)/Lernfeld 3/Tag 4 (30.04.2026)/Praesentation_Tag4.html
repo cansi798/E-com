@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.4 Das traditionelle Verfahren der Barzahlung – Tag 4</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 4</div>
+    <h1>3.4 Das traditionelle Verfahren<br>der Barzahlung</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 434 – 439</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      30. April 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Barzahlung definieren</strong> – den Begriff der Barzahlung und ihre Merkmale erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Quittung verstehen</strong> – Pflichtangaben einer Quittung benennen und verschiedene Quittungsarten kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Annahmepflicht erklären</strong> – gesetzliche Regelungen zur Bargeldannahme kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Barzahlungsarten unterscheiden</strong> – unmittelbare und mittelbare Barzahlung abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Halbbare Zahlung einordnen</strong> – Barscheck, Zahlschein und Nachnahme als Mischformen verstehen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>E-Commerce-Relevanz beurteilen</strong> – die Bedeutung der Barzahlung im digitalen Handel einschätzen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Welche Rolle spielt die Barzahlung im Zeitalter des E-Commerce – und warum müssen auch Online-Händler dieses Thema kennen?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Definition Barzahlung -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Definition: Barzahlung</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Bei der <strong>Barzahlung</strong> wechselt das Geld physisch den Besitzer: Übergeben werden <strong>Münzen</strong> beziehungsweise <strong>Banknoten</strong>. Weder der Schuldner noch der Gläubiger benutzen ein Konto (vgl. Wirtz, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128176; Merkmale der Barzahlung</h3>
+          <ul>
+            <li>Physischer Geldtransfer (Hand zu Hand)</li>
+            <li>Kein Bankkonto erforderlich</li>
+            <li>Sofortige Erfüllung der Zahlungsverpflichtung</li>
+            <li>Anonymität des Zahlungsvorgangs</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128179; Zahlungsoptionen der Exclusiva GmbH</h3>
+          <ul>
+            <li>Vorkasse</li>
+            <li>Rechnung</li>
+            <li>Nachnahme</li>
+            <li><strong>Barzahlung</strong></li>
+            <li>Lastschrift</li>
+            <li>PayPal Plus</li>
+            <li>Amazon Pay</li>
+            <li>Kreditkarte</li>
+            <li>SOFORT Überweisung</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Die Quittung -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128196;</div>
+      <h2>Die Quittung</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Bei jeder Form der Barzahlung muss die Übergabe des Bargelds <strong>durch Quittungen bestätigt</strong> werden. Eine Quittung ist eine <strong>Empfangsbestätigung</strong> für den Erhalt einer Leistung (vgl. Kollmann, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128196; Pflichtangaben einer Quittung</h3>
+          <ul>
+            <li>Name des Zahlers</li>
+            <li>Zahlungsbetrag in Buchstaben und Ziffern</li>
+            <li>Grund der Zahlung</li>
+            <li>Ort und Tag der Ausstellung</li>
+            <li>Empfangsbestätigung</li>
+            <li>Unterschrift des Zahlungsempfängers</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Was gilt als Quittung?</h3>
+          <ul>
+            <li>Ausgefüllte Quittungsvordrucke</li>
+            <li>Eigenständig erstellte schriftliche Quittungen</li>
+            <li>Kassenzettel (Kassenbon)</li>
+            <li>Auf Rechnungen angebrachte Quittungsvermerke</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Wichtig:</strong> Der Gläubiger ist <strong>verpflichtet</strong>, die Quittung auszustellen. Der Schuldner kann mit der Quittung nachweisen, dass eine Forderung nicht mehr besteht.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Kassenbon und Kleinbetragsrechnung -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>Kassenbon &amp; Kleinbetragsrechnung</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Ein <strong>Kassenbon</strong> bescheinigt ebenfalls rechtlich gesehen die Bezahlung einer Dienstleistung oder eines Einkaufs, erfüllt aber formal <strong>nicht das Schriftformgebot</strong> (Unterschrift) einer Quittung (vgl. Meier &amp; Stormer, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128176; Kleinbetragsrechnung</h3>
+          <p>Bis zu einem Betrag von <strong>150,00 &euro;</strong> muss bei zweiseitigen Handelsgeschäften die Umsatzsteuer nicht ausgewiesen werden.</p>
+          <p style="margin-top:6px">Dies vereinfacht die Abrechnung im Einzelhandel erheblich.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128209; Beispiel: Kassenbon</h3>
+          <p><strong>Boutique Naddy</strong><br>
+          Inhaberin: Nadine Menninger<br>
+          Grafenstr. 5, 76215 Neuhaus</p>
+          <p style="margin-top:6px">
+          Ohrclips „Fancy" – 3,89 &euro;<br>
+          Haargummis „Glas" – 2,99 &euro;<br>
+          Haarschleife „Samt" – 7,49 &euro;<br>
+          <strong>Gesamt: 14,37 &euro;</strong></p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Annahmepflicht von Bargeld -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128181;</div>
+      <h2>Annahmepflicht von Bargeld</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">
+          In der Eurozone sind Banknoten <strong>gesetzliches Zahlungsmittel</strong>: Aufgrund gesetzlicher Bestimmung muss jeder dieses Geld annehmen, wenn damit finanzielle Verpflichtungen erfüllt werden sollen (vgl. Deutsche Bundesbank, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#9888; Ausnahmen</h3>
+          <p>Es kann per <strong>Vertrag oder AGB</strong> vereinbart werden, dass:</p>
+          <ul>
+            <li>eine Verbindlichkeit <strong>nicht mit Bargeld</strong> beglichen werden kann</li>
+            <li>die Annahme von Banknoten auf eine <strong>bestimmte Höhe beschränkt</strong> ist</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128209; Beispiel</h3>
+          <p>Ein Schild an einer Zapfsäule weist darauf hin, dass keine <strong>500-Euro-Noten</strong> angenommen werden. Dies ist zulässig, da es durch die AGB gedeckt ist.</p>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <h3>&#128176; Münzen-Regelung</h3>
+          <p>Im Geltungsbereich des Euros ist <strong>niemand verpflichtet</strong>, mehr als <strong>fünfzig Münzen</strong> in einer Zahlung anzunehmen.</p>
+          <p style="margin-top:6px">Mit dieser Regelung ist <strong>keine Wertangabe</strong> verbunden – es zählt allein die Stückzahl.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Unmittelbare Barzahlung -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#129309;</div>
+      <h2>Unmittelbare Barzahlung</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          Bei der <strong>unmittelbaren Barzahlung</strong> erfolgt die Zahlung von <strong>Hand zu Hand</strong>. Das Bargeld wird persönlich oder durch einen Boten übergeben (vgl. Wirtz, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#129309; Merkmale</h3>
+          <ul>
+            <li>Physische Übergabe von Münzen/Scheinen</li>
+            <li>Persönlich oder durch Boten</li>
+            <li>Sofortige Zahlung</li>
+            <li>Keine Bankbeteiligung</li>
+            <li>Quittung als Nachweis</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128209; Beispiele</h3>
+          <ul>
+            <li>Einkauf im Einzelhandel an der Kasse</li>
+            <li>Zahlung beim Friseur</li>
+            <li>Handwerkerrechnung vor Ort bezahlen</li>
+            <li>Trinkgeld übergeben</li>
+            <li>Flohmarkt-Einkäufe</li>
+          </ul>
+        </div>
+        <div class="highlight" style="margin-top:10px">
+          <strong>Im E-Commerce:</strong> Die unmittelbare Barzahlung spielt im Online-Handel praktisch keine Rolle, da Käufer und Verkäufer sich nicht persönlich gegenüberstehen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Mittelbare Barzahlung -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128230;</div>
+      <h2>Mittelbare Barzahlung</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Bei der <strong>mittelbaren Barzahlung</strong> wird das Bargeld unter Einbeziehung der <strong>Post oder anderer Anbieter</strong> über größere räumliche Entfernungen weitergegeben. Hierbei werden allerdings immer relativ hohe <strong>Gebühren</strong> fällig (vgl. Kollmann, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128233; Bargeldversand per Post</h3>
+          <ul>
+            <li>Bargeld als <strong>„EINSCHREIBEN Wert"</strong> versenden</li>
+            <li>Deutsche Post haftet maximal bis <strong>100,00 &euro;</strong></li>
+            <li>Nur für kleinere Beträge geeignet</li>
+            <li>Hohes Verlustrisiko bei höheren Beträgen</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128176; Bargeldtransfer mit Western Union</h3>
+          <ul>
+            <li>Verfügbar in Postbank Finanzcentern, Filialen der Post, Western Union-Partnern</li>
+            <li>Auch Tankstellen, Kioske, Einzelhandel</li>
+            <li>Formular ausfüllen + gültiger Ausweis</li>
+            <li>Gebühren nach Höhe &amp; Empfängerland</li>
+            <li>Nur Absender zahlt Gebühren</li>
+          </ul>
+        </div>
+        <div class="highlight red" style="margin-top:10px">
+          <strong>Beispiel:</strong> Für einen Bargeldtransfer von 5.000 &euro; von Deutschland nach Frankreich werden bei Western Union 171,00 &euro; Gebühr erhoben.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Western Union – Ablauf -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#127760;</div>
+      <h2>Western Union – Ablauf eines Transfers</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>1. Einzahlung</h4><p>Absender zahlt Bargeld ein und erhält MTCN</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>2. Kontaktaufnahme</h4><p>Absender teilt dem Empfänger die MTCN mit</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>3. Sicherheitsfrage</h4><p>Optional: Empfänger muss Frage beantworten</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>4. Auszahlung</h4><p>Empfänger holt Bargeld mit Ausweis + MTCN ab</p></div>
+      </div>
+      <div class="cards cols2" style="margin-top:16px">
+        <div class="card">
+          <h3>&#128273; MTCN (Money Transfer Control Number)</h3>
+          <p>Transaktionsnummer zur <strong>Sendungsverfolgung</strong>. Der Empfänger benötigt diese Nummer zusammen mit seinem Ausweis, um das Bargeld abzuholen.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127760; Reichweite</h3>
+          <p>Das Bargeld kann an einem von mehr als <strong>355.000 Vertriebsstandorten</strong> in über <strong>200 Ländern</strong> weltweit ausgezahlt werden.</p>
+          <p style="margin-top:6px">Benötigt werden: Name des Absenders, Höhe und Ursprungsland, eigener Ausweis, MTCN.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Bedeutung der Barzahlung -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Bedeutung der Barzahlung heute</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die Barzahlung spielt noch eine <strong>relativ große Rolle</strong> – wenn auch mit abnehmender Tendenz – im <strong>Einzelhandel</strong> sowie im <strong>Personenbeförderungsgewerbe</strong> (vgl. Deutsche Bundesbank, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128202; Zahlungsarten im Einzelhandel 2021</h3>
+          <ul>
+            <li><strong>Karte: 58,8 %</strong> (davon Girocard 42,4 %, Kreditkarte 9,0 %)</li>
+            <li><strong>Bar: 38,5 %</strong></li>
+            <li>Andere: 2,7 %</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128200; Trend über die Jahre</h3>
+          <table class="sum-table" style="margin-top:6px">
+            <thead><tr><th>Jahr</th><th>Bar</th><th>Karte</th></tr></thead>
+            <tbody>
+              <tr><td>2009</td><td>59,1 %</td><td>37,5 %</td></tr>
+              <tr><td>2015</td><td>52,4 %</td><td>44,5 %</td></tr>
+              <tr><td>2018</td><td>48,3 %</td><td>48,6 %</td></tr>
+              <tr><td>2021</td><td>38,5 %</td><td>58,8 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Halbbare Zahlung -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>Die halbbare Zahlung</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight gold">
+        Nicht zu verwechseln mit der Barzahlung sind die <strong>halbbaren Zahlungsformen</strong>. Diese sind eine Zwischenstufe zwischen der Barzahlung und dem bargeldlosen Zahlungsverkehr: Entweder der Zahlungsempfänger erhält Bargeld oder der Zahlungspflichtige zahlt Bargeld ein (vgl. Meier &amp; Stormer, 2021).
+      </div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128176; Barscheck</h3>
+          <p>Der Schuldner hat ein Konto, der Empfänger soll aber <strong>Bargeld ausgezahlt</strong> bekommen.</p>
+          <p style="margin-top:4px">Der Barscheck wird bei der Bank des Ausstellers eingelöst.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Zahlschein</h3>
+          <p>Der Schuldner zahlt <strong>Bargeld auf ein Konto</strong> des Zahlungsempfängers ein.</p>
+          <p style="margin-top:4px">Teurer als eine normale Überweisung von Konto zu Konto. Möglich bei allen Banken und der Postbank.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128666; Nachnahme</h3>
+          <p>Der Schuldner bezahlt <strong>bar beim Empfang</strong> der Ware beim liefernden Post- oder Logistikunternehmen.</p>
+          <p style="margin-top:4px">Der Betrag wird auf das Konto des Lieferanten weitergeleitet.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Gemeinsamkeit:</strong> Bei allen halbbaren Zahlungsformen hat <strong>ein</strong> Geschäftspartner ein Konto, der andere nicht – es findet also eine Mischung aus Bar- und Buchgeld statt.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Pro und Kontra Bargeld -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#9878;</div>
+      <h2>Pro und Kontra Bargeld</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Vorteile der Barzahlung</h3>
+          <ul>
+            <li><strong>Anonymität</strong> – keine digitale Spur</li>
+            <li><strong>Sofortige Erfüllung</strong> – kein Zahlungsverzug möglich</li>
+            <li><strong>Unabhängigkeit</strong> – funktioniert ohne Strom/Internet</li>
+            <li><strong>Kontrolle</strong> – physisches Gefühl für Ausgaben</li>
+            <li><strong>Akzeptanz</strong> – gesetzliches Zahlungsmittel</li>
+            <li><strong>Keine Gebühren</strong> für den Zahlungsvorgang</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#10060; Nachteile der Barzahlung</h3>
+          <ul>
+            <li><strong>Diebstahlrisiko</strong> – Verlust ist endgültig</li>
+            <li><strong>Hygiene</strong> – Münzen und Scheine als Keimträger</li>
+            <li><strong>Logistik</strong> – Geldzählung, Transport, Aufbewahrung</li>
+            <li><strong>Keine Rückverfolgbarkeit</strong> – bei Streitigkeiten</li>
+            <li><strong>Fälschungsrisiko</strong> – Blüten im Umlauf</li>
+            <li><strong>Nicht E-Commerce-tauglich</strong> – kein direkter Online-Einsatz</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Debatte:</strong> Die Diskussion um die Abschaffung des Bargelds wird in Deutschland kontrovers geführt. Während Schweden nahezu bargeldlos ist, schätzen viele Deutsche die Wahlfreiheit (vgl. Deutsche Bundesbank, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Barzahlung im E-Commerce -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128187;</div>
+      <h2>Barzahlung im E-Commerce</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Obwohl es auf den ersten Blick paradox erscheint, müssen auch <strong>E-Commerce-Unternehmen</strong> das Thema Barzahlung beachten. Die Exclusiva GmbH listet „Barzahlung" als eine ihrer Zahlungsoptionen auf (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128722; Warum Barzahlung im E-Commerce?</h3>
+          <ul>
+            <li>Abholung im Ladengeschäft (Click &amp; Collect)</li>
+            <li>Nachnahme als halbbare Zahlungsform</li>
+            <li>Dienste wie Barzahlen.de / Barpay</li>
+            <li>Branchenspezifische Anforderungen</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128176; Barzahlen.de / Barpay</h3>
+          <p>Innovative Dienste ermöglichen es, <strong>Online-Einkäufe mit Bargeld</strong> zu bezahlen:</p>
+          <ul style="margin-top:6px">
+            <li>Kunde erhält einen Zahlschein/Barcode</li>
+            <li>Bezahlung an der Kasse von Partnergeschäften (dm, REWE, Rossmann u. a.)</li>
+            <li>Zahlung wird digital bestätigt</li>
+            <li>Ware wird nach Zahlungseingang versendet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Barzahlen.de im Detail -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>So funktioniert Barzahlen.de / Barpay</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>1. Online bestellen</h4><p>Kunde wählt „Barzahlen" als Zahlungsart</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>2. Zahlschein erhalten</h4><p>Barcode per E-Mail oder App</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>3. Bar bezahlen</h4><p>An der Kasse eines Partnergeschäfts</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>4. Bestätigung</h4><p>Zahlung wird digital an den Shop gemeldet</p></div>
+      </div>
+      <div class="cards cols2" style="margin-top:16px">
+        <div class="card green">
+          <h3>&#9989; Vorteile für den Kunden</h3>
+          <ul>
+            <li>Kein Bankkonto oder Kreditkarte nötig</li>
+            <li>Vertrauter Bezahlvorgang (Bargeld)</li>
+            <li>Datenschutz: keine Bankdaten online preisgeben</li>
+            <li>Zielgruppe: Kunden ohne Online-Banking</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; Vorteile für den Händler</h3>
+          <ul>
+            <li>Neue Zielgruppen erschließen</li>
+            <li>Zahlungsgarantie nach Bareinzahlung</li>
+            <li>Kein Zahlungsausfallrisiko</li>
+            <li>Erhöhung der Conversion Rate</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Vergleich der Zahlungsarten -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Vergleich: Bar-, Halbbar- und Buchgeldzahlung</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Merkmal</th><th>Barzahlung</th><th>Halbbare Zahlung</th><th>Bargeldlose Zahlung</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Medium</strong></td><td>Münzen, Banknoten</td><td>Mischung: Bar + Konto</td><td>Buchgeld (Kontobewegung)</td></tr>
+          <tr><td><strong>Konto nötig?</strong></td><td>Nein</td><td>Für einen Partner</td><td>Für beide Partner</td></tr>
+          <tr><td><strong>Beispiele</strong></td><td>Barkauf, Western Union</td><td>Nachnahme, Barscheck</td><td>Überweisung, Lastschrift</td></tr>
+          <tr><td><strong>E-Commerce</strong></td><td>Click &amp; Collect, Barzahlen.de</td><td>Nachnahme</td><td>PayPal, Kreditkarte, SOFORT</td></tr>
+          <tr><td><strong>Geschwindigkeit</strong></td><td>Sofort</td><td>1–3 Tage</td><td>Sofort bis 1–2 Tage</td></tr>
+          <tr><td><strong>Kosten</strong></td><td>Keine (ggf. Transportkosten)</td><td>Gebühren (Nachnahme etc.)</td><td>Transaktionsgebühren</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Praxisbeispiel Exclusiva GmbH -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#127970;</div>
+      <h2>Praxisbeispiel: Exclusiva GmbH</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die Exclusiva GmbH bietet Barzahlung als Zahlungsoption an – obwohl sie hauptsächlich online verkauft. Die Gärtner wollten gern bar bezahlt werden, was zeigt: Auch im E-Commerce-Umfeld begegnet man der Barzahlung (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128209; Szenario</h3>
+          <p>Die Exclusiva GmbH beauftragt zwei Gärtner. Diese wollen <strong>bar bezahlt</strong> werden.</p>
+          <p style="margin-top:6px"><strong>Problem:</strong> Wie kann die Exclusiva GmbH die Zahlung nachweisen?</p>
+          <p style="margin-top:6px"><strong>Lösung:</strong> Durch eine <strong>Quittung</strong> mit allen Pflichtangaben.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128179; Zahlungsnachweis</h3>
+          <ul>
+            <li>Quittungsvordruck verwenden</li>
+            <li>Betrag in Buchstaben und Ziffern</li>
+            <li>Grund der Zahlung: „Gartenarbeiten"</li>
+            <li>Datum und Ort</li>
+            <li>Unterschrift des Empfängers</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#9888; Nachteile für die Exclusiva GmbH</h3>
+          <ul>
+            <li>Kein digitaler Zahlungsnachweis</li>
+            <li>Bargeld muss vorgehalten werden</li>
+            <li>Höherer Verwaltungsaufwand</li>
+            <li>Diebstahl-/Verlustrisiko</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Übungsaufgaben -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Definieren Sie den Begriff <strong>Barzahlung</strong> und nennen Sie vier Merkmale.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Nennen Sie die <strong>sechs Pflichtangaben</strong> einer Quittung.</p>
+        </div>
+        <div class="card">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Erklären Sie den Unterschied zwischen <strong>unmittelbarer</strong> und <strong>mittelbarer</strong> Barzahlung mit je einem Beispiel.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 4</h3>
+          <p>Was versteht man unter <strong>halbbarer Zahlung</strong>? Nennen Sie drei Beispiele.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 5</h3>
+          <p>Erklären Sie, wie <strong>Barzahlen.de / Barpay</strong> funktioniert und welche Vorteile es für Kunden und Händler bietet.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128172; Diskussion</h3>
+          <p>Diskutieren Sie: Sollte Bargeld abgeschafft werden? Nennen Sie jeweils <strong>drei Pro- und drei Kontra-Argumente</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Zusammenfassung -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Barzahlung</h3>
+          <ul>
+            <li>Physischer Geldtransfer (Münzen/Scheine)</li>
+            <li>Unmittelbar (Hand zu Hand) oder mittelbar (Post, Western Union)</li>
+            <li>Quittung als Pflichtnachweis</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Halbbare Zahlung</h3>
+          <ul>
+            <li>Mischform: ein Partner bar, ein Partner Konto</li>
+            <li>Barscheck, Zahlschein, Nachnahme</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128202; Bedeutung</h3>
+          <ul>
+            <li>38,5 % Bargeldanteil im Einzelhandel (2021)</li>
+            <li>Abnehmender Trend, aber weiterhin relevant</li>
+            <li>Gesetzliches Zahlungsmittel in der Eurozone</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#128187; E-Commerce-Relevanz</h3>
+          <ul>
+            <li>Click &amp; Collect ermöglicht Barzahlung</li>
+            <li>Barzahlen.de / Barpay als Innovation</li>
+            <li>Nachnahme als halbbare Alternative</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Fazit:</strong> Auch wenn die Barzahlung im Online-Handel eine untergeordnete Rolle spielt, müssen E-Commerce-Kaufleute die Grundlagen kennen – insbesondere Quittungspflichten, Annahmepflicht und innovative Dienste wie Barzahlen.de.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021: Vierte Studie über die Verwendung von Bargeld und unbaren Zahlungsinstrumenten</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Meier, A. &amp; Stormer, H. (2021). <em>eBusiness &amp; eCommerce: Management der digitalen Wertschöpfungskette</em> (4. Aufl.). Springer.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">ibi research an der Universität Regensburg (2021). <em>Erfolgsfaktor Payment: Der Einfluss der Zahlungsverfahren auf den Umsatz</em>. ibi research.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 4</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.4 Das traditionelle Verfahren der Barzahlung</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.5 Halbbare und bargeldlose Zahlungsformen</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 4 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

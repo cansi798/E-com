@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.6 Die bargeldlose Zahlung – Tag 6</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 6</div>
+    <h1>3.6 Die bargeldlose Zahlung</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 445 – 449</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      05. Mai 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Überweisung erklären</strong> – den Ablauf und die Bestandteile einer Banküberweisung beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>SEPA-System verstehen</strong> – die Bedeutung des einheitlichen Euro-Zahlungsraums kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Besondere Zahlungsformen unterscheiden</strong> – Sammelüberweisung, Dauerauftrag und Lastschrift abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Lastschriftverfahren anwenden</strong> – SEPA-Basislastschrift und Firmenlastschrift unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Electronic Banking beherrschen</strong> – Ablauf und Vorteile des Online-Bankings erläutern.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Kryptowährungen einordnen</strong> – Blockchain-Technologie als Zukunft des bargeldlosen Zahlungsverkehrs bewerten.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Welche bargeldlosen Zahlungsformen stehen im Geschäftsverkehr zur Verfügung und wie funktioniert das Electronic Banking?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Einstieg – Praxisbeispiel -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#127970;</div>
+      <h2>Einstieg: Praxisfall Exclusiva GmbH</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>Situation:</strong> Jürgen Hoffmann von der Franz Stallmann Fashion OHG bestellt im Onlineshop der Exclusiva GmbH 100 Herrenhemden. Er wählt die Zahlungsmöglichkeit „Zahlung auf Rechnung" und begleicht die Rechnung per <strong>Banküberweisung</strong>.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Vorteile der Banküberweisung:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li><strong>Für Herrn Hoffmann:</strong> Sicheres, nachweisbares Verfahren</li>
+            <li><strong>Für die Exclusiva GmbH:</strong> Direkter Geldeingang auf dem Geschäftskonto</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128176; Rechnungsdetails</h3>
+          <ul>
+            <li>100 Herrenhemden &agrave; 8,10 &euro; = 810,00 &euro;</li>
+            <li>Abzüglich 15 % Rabatt = &minus;121,50 &euro;</li>
+            <li>Zwischensumme: 688,50 &euro;</li>
+            <li>Versandkosten: +10,00 &euro;</li>
+            <li>Netto: 698,50 &euro;</li>
+            <li>19 % USt: +132,72 &euro;</li>
+            <li><strong>Rechnungsbetrag: 831,22 &euro;</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Definition Überweisung -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Die Überweisung</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          <strong>Definition:</strong> Mit <strong>Überweisungen</strong> werden Geldbeträge von einem Konto auf ein anderes Konto umgebucht. Der Überweisungsbetrag wird vom Konto des Zahlers abgezogen und dem Konto des Empfängers gutgeschrieben.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Kontobewegung:</strong>
+          <table style="width:100%;font-size:.82rem;margin-top:6px">
+            <tr><td style="padding:4px 8px"><strong>Konto Zahler (Hoffmann)</strong></td><td style="padding:4px 8px"><strong>Konto Empfänger (Exclusiva)</strong></td></tr>
+            <tr><td style="padding:4px 8px;color:var(--danger)">&minus; 831,22 &euro; (Lastschrift)</td><td style="padding:4px 8px;color:var(--success)">+ 831,22 &euro; (Gutschrift)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128203; Überweisungsauftrag enthält</h3>
+          <ul>
+            <li>Name des Empfängers</li>
+            <li>IBAN und BIC des Empfängers</li>
+            <li>Überweisungsbetrag</li>
+            <li>Name und IBAN des Zahlers</li>
+            <li>Ausstellungsdatum und Unterschrift</li>
+            <li>Verwendungszweck (z. B. Rechnungsnummer)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: SEPA-Überweisung -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#127758;</div>
+      <h2>SEPA – Der einheitliche Euro-Zahlungsraum</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>SEPA</strong> = <em>Single Euro Payments Area</em>. Euro-Überweisungen im einheitlichen Eurozahlungsraum werden mit einer <strong>SEPA-Überweisung</strong> durchgeführt (vgl. Deutsche Bundesbank, 2022).
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li>SEPA-Überweisungen können ausschließlich in <strong>Euro</strong> abgewickelt werden</li>
+          <li>Zahlungen in anderen Währungen erfordern eine <strong>Auslandsüberweisung</strong></li>
+          <li>IBAN ersetzt die bisherige Kontonummer</li>
+          <li>BIC ersetzt die bisherige Bankleitzahl</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Vorteile von SEPA</h3>
+          <ul>
+            <li>Einheitliche Standards in ganz Europa</li>
+            <li>Schnellere grenzüberschreitende Zahlungen</li>
+            <li>Geringere Kosten als Auslandsüberweisungen</li>
+            <li>Mehr Transparenz durch standardisierte Formate</li>
+            <li>Gleiche Bedingungen wie Inlandsüberweisungen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Überweisungsfristen -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#9200;</div>
+      <h2>Überweisungsfristen (§ 675s BGB)</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Gesetzliche Regelung:</strong> Der Zahlungsdienstleister des Zahlers muss sicherstellen, dass der Zahlungsbetrag spätestens am Ende des auf den Zugangszeitpunkt des Zahlungsauftrags folgenden Geschäftstags beim Zahlungsdienstleister des Empfängers eingeht (§ 675s Abs. 1 BGB).
+      </div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card">
+          <h3>&#9200; Gleiche Bank</h3>
+          <p>Gutschrift meist am <strong>selben Geschäftstag</strong>, wenn der Überweisungsauftrag rechtzeitig erteilt wird.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#9200; Andere Bank (online)</h3>
+          <p>Maximal <strong>1 Geschäftstag</strong> gemäß gesetzlicher Frist für elektronische Überweisungen.</p>
+        </div>
+        <div class="card red">
+          <h3>&#9200; Papierform</h3>
+          <p>Die Fristen können um <strong>einen weiteren Geschäftstag</strong> verlängert werden (also bis zu 2 Tage).</p>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>Europäischer Wirtschaftsraum:</strong> Für Zahlungsvorgänge, die nicht in Euro erfolgen, können Zahler und Zahlungsdienstleister eine Frist von maximal vier Geschäftstagen vereinbaren.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Sammelüberweisungsauftrag -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Der Sammelüberweisungsauftrag</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Inhaber von Girokonten können mehrere Überweisungsaufträge an verschiedene Zahlungsempfänger in einem <strong>Sammelüberweisungsauftrag</strong> zusammenfassen.
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li><strong>Zeit- und kostensparend:</strong> Viele Überweisungen zum Preis einer einzigen Buchung</li>
+          <li>Nur die <strong>Gesamtsumme</strong> wird im Sammelüberweisungsauftrag eingetragen</li>
+          <li>Für jeden Zahlungsempfänger wird ein <strong>eigener Überweisungsträger</strong> ausgestellt</li>
+          <li>Endlosformulare erhältlich bei der Bank oder Sparkasse</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Ideal für</h3>
+          <ul>
+            <li>Gehaltszahlungen an Mitarbeiter</li>
+            <li>Lieferantenrechnungen</li>
+            <li>Monatliche Zahlungen an verschiedene Empfänger</li>
+            <li>Unternehmen mit hohem Überweisungsaufkommen</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Praxis:</strong> Die Exclusiva GmbH nutzt Sammelüberweisungen für die monatlichen Lieferantenzahlungen – statt 50 einzelner Buchungen nur eine Sammelbuchung.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Dauerauftrag -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128260;</div>
+      <h2>Der Dauerauftrag</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Mit einem <strong>Dauerauftrag</strong> beauftragt ein Kontoinhaber sein Geldinstitut, regelmäßig zu einem bestimmten Termin einen <strong>bestimmten Betrag</strong> auf das Konto des Zahlungsempfängers zu überweisen.
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>&#128197; Eigenschaften</h3>
+          <ul>
+            <li>Fester Betrag</li>
+            <li>Fester Rhythmus (monatlich, vierteljährlich etc.)</li>
+            <li>Fester Empfänger</li>
+            <li>Automatische Ausführung durch die Bank</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#9989; Geeignet für</h3>
+          <ul>
+            <li>Mietzahlungen</li>
+            <li>Versicherungsprämien</li>
+            <li>Mitgliedsbeiträge (Verein, Partei)</li>
+            <li>Alle wiederkehrenden Zahlungen in <strong>gleicher Höhe</strong></li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Nicht geeignet für</h3>
+          <ul>
+            <li>Zahlungen in wechselnder Höhe (z. B. Stromrechnung)</li>
+            <li>Einmalige Zahlungen</li>
+            <li>Zahlungen an wechselnde Empfänger</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Lastschriftverfahren -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Das Lastschriftverfahren</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Beim <strong>Lastschriftverfahren</strong> erlaubt der Zahlungspflichtige dem Zahlungsempfänger, Zahlungen für einen bestimmten Zweck von seinem Girokonto abzubuchen. Es bietet sich für regelmäßige Zahlungen in <strong>unterschiedlicher Höhe</strong> an.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Typische Anwendungen:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li>Telefongebühren</li>
+            <li>Strom-, Gas- und Wasserkosten</li>
+            <li>Online-Abonnements</li>
+            <li>Versicherungsprämien (variable Höhe)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#127758; SEPA-Lastschrift</h3>
+          <ul>
+            <li>Seit Februar 2014 nur noch <strong>SEPA-Lastschrift</strong> im Euroraum möglich</li>
+            <li>IBAN ersetzt Kontonummer, BIC ersetzt Bankleitzahl</li>
+            <li>Kontoinhaber muss ein <strong>schriftliches Mandat</strong> erteilen</li>
+            <li>Zahlungsempfänger muss 14 Tage vorher informieren</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Widerspruchsrecht:</strong> SEPA-Basislastschriften können innerhalb von <strong>acht Wochen</strong> nach dem Belastungstag ohne Angabe von Gründen rückgängig gemacht werden.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: SEPA-Lastschrift – Zwei Verfahren -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>SEPA-Lastschrift: Zwei Verfahren</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128100; SEPA-Basislastschrift</h3>
+          <ul>
+            <li>Für <strong>alle Bankkunden</strong> (Privat- und Geschäftskunden)</li>
+            <li>Widerspruchsfrist: <strong>8 Wochen</strong> nach Belastung</li>
+            <li>Vorab-Information 14 Tage vor Belastung</li>
+            <li>Mandat durch den Kontoinhaber erforderlich</li>
+            <li>Bank prüft das Mandat bei Einreichung</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; SEPA-Firmenlastschrift</h3>
+          <ul>
+            <li>Ausschließlich für Zahlungen zwischen <strong>Geschäftskunden</strong></li>
+            <li><strong>Kein Widerspruchsrecht</strong> nach Belastung</li>
+            <li>Höhere Sicherheit für den Zahlungsempfänger</li>
+            <li>Mandat muss der Bank des Zahlers vorgelegt werden</li>
+            <li>Ideal für B2B-Geschäftsbeziehungen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>E-Commerce-Relevanz:</strong> Die SEPA-Lastschrift ist im Online-Handel ein beliebtes Zahlungsverfahren, da der Händler den Einzug aktiv steuern kann und der Kunde kein Handeln muss. Für Onlineshops bietet es eine gute Alternative zu Kreditkarte und PayPal (vgl. Bräutigam, 2020).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Vergleich der bargeldlosen Zahlungsformen -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Vergleich: Überweisung, Dauerauftrag, Lastschrift</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Merkmal</th><th>Überweisung</th><th>Dauerauftrag</th><th>Lastschrift</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Initiator</strong></td><td>Zahler</td><td>Zahler (einmalig)</td><td>Zahlungsempfänger</td></tr>
+          <tr><td><strong>Betragshöhe</strong></td><td>Variabel</td><td>Fest</td><td>Variabel</td></tr>
+          <tr><td><strong>Rhythmus</strong></td><td>Einmalig / manuell</td><td>Regelmäßig (fest)</td><td>Regelmäßig (variabel)</td></tr>
+          <tr><td><strong>Anwendung</strong></td><td>Rechnungen, Einmalkäufe</td><td>Miete, Beiträge</td><td>Strom, Telefon, Abo</td></tr>
+          <tr><td><strong>Aufwand Zahler</strong></td><td>Hoch (jedes Mal manuell)</td><td>Gering (einmalige Einrichtung)</td><td>Gering (Mandat erteilen)</td></tr>
+          <tr><td><strong>SEPA-Standard</strong></td><td>SEPA-Überweisung</td><td>SEPA-Überweisung</td><td>SEPA-Lastschrift</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Empfehlung:</strong> Für den E-Commerce-Alltag ist die richtige Wahl des Zahlungsverfahrens entscheidend – sie hängt von der Regelmäßigkeit, Betragshöhe und Geschäftsbeziehung ab (vgl. Kollmann, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Electronic Banking – Definition -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128187;</div>
+      <h2>Electronic Banking – Online-Banking</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Beim <strong>Electronic Banking</strong> erfolgt eine beleglose Auftragserteilung durch den Kunden und eine Weiterleitung der Daten an die Bank auf elektronischem Weg – überwiegend über das <strong>Internet</strong>.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Mögliche Bankgeschäfte:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li>Kontostands-Abfragen</li>
+            <li>Daueraufträge einrichten/ändern</li>
+            <li>Überweisungen durchführen</li>
+            <li>Mitteilungen an die Bank</li>
+            <li>Wertpapierhandel</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Vorteile</h3>
+          <ul>
+            <li><strong>Zeitersparnis:</strong> Keine Bankbesuche nötig</li>
+            <li><strong>Kostenersparnis:</strong> Günstigere Buchungsgebühren</li>
+            <li><strong>Sicherheit:</strong> Verschlüsselte Datenübertragung</li>
+            <li><strong>Verkürzung der Einreichungszeiten</strong></li>
+            <li><strong>Aufträge rund um die Uhr</strong> möglich</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Ablauf Electronic Banking -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Ablauf einer Online-Überweisung</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>1</h4><p>Einstieg in das Online-Banking-System</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>2</h4><p>Auswahl der Leitseite der Bank</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>3</h4><p>Eingabe von Kontonummer und PIN</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box"><h4>4</h4><p>Auswahl der Bankleistung (z. B. Überweisung)</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>5</h4><p>Eingabe der TAN (Transaktionsnummer)</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>6</h4><p>Durchführung des Dialogs mit dem Bankcomputer</p></div>
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128272; PIN</h3>
+          <p>Die <strong>Persönliche Identifikationsnummer</strong> ermöglicht den Zugang zum Bankkonto. Sie dient der Authentifizierung des Kontoinhabers.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128272; TAN</h3>
+          <p>Die <strong>Transaktionsnummer</strong> berechtigt als zusätzliches Sicherheitsmittel zu bestimmten Handlungen. Jede TAN ist nur <strong>einmal</strong> verwendbar.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Kostenvergleich – Praxisbeispiel -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Kostenvergleich: Beleghaft vs. Beleglos</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Kostenposition</th><th>Beleghafte Buchungen</th><th>Beleglose Buchungen</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Anzahl monatl. Buchungen</strong></td><td>3.000 Stück</td><td>3.000 Stück</td></tr>
+          <tr><td><strong>Preis pro Buchung</strong></td><td>0,25 &euro;</td><td>0,05 &euro;</td></tr>
+          <tr><td><strong>Monatliche Kosten (Buchungen)</strong></td><td>750,00 &euro;</td><td>150,00 &euro;</td></tr>
+          <tr><td><strong>Monatliche Kosten (Zeitaufwand)</strong></td><td>200,00 &euro; (4 Std. &agrave; 50 &euro;)</td><td>–</td></tr>
+          <tr><td><strong>Gesamtkosten pro Monat</strong></td><td><span class="badge red">950,00 &euro;</span></td><td><span class="badge green">150,00 &euro;</span></td></tr>
+        </tbody>
+      </table>
+      <div class="highlight green" style="margin-top:14px">
+        <strong>Gesamtkostenvorteil:</strong> Die Exclusiva GmbH spart durch Electronic Banking monatlich <strong>800,00 &euro;</strong> – bestehend aus 600,00 &euro; Buchungsersparnis und 200,00 &euro; Zeitersparnis (vgl. Heinemann, 2023).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Sicherheit im Online-Banking -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Sicherheit im Electronic Banking</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#128272; PIN/TAN-Verfahren</h3>
+          <p>Zwei-Faktor-Authentifizierung: PIN für den Zugang, TAN für jede Transaktion. TAN ist Einmal-Code.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128241; mTAN / SMS-TAN</h3>
+          <p>TAN wird per SMS auf das registrierte Mobiltelefon gesendet. Zusätzliche Sicherheitsebene durch separaten Kanal.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128187; chipTAN</h3>
+          <p>TAN-Generator liest Daten von der Girocard. Offline-Generierung der TAN – sehr sicher gegen Phishing.</p>
+        </div>
+        <div class="card">
+          <h3>&#128241; pushTAN</h3>
+          <p>TAN wird über eine separate Banking-App generiert. Biometrische Freigabe (Fingerabdruck/Face ID) möglich.</p>
+        </div>
+        <div class="card">
+          <h3>&#128274; SSL/TLS-Verschlüsselung</h3>
+          <p>Alle Daten werden verschlüsselt übertragen. Erkennbar am Schloss-Symbol und „https" in der Browserleiste.</p>
+        </div>
+        <div class="card">
+          <h3>&#128373; Betrugsschutz</h3>
+          <p>Banken überwachen Transaktionen auf ungewöhnliche Muster. Automatische Sperrung bei Verdacht.</p>
+        </div>
+      </div>
+      <div class="highlight red" style="margin-top:12px">
+        <strong>Risiken:</strong> Phishing-Mails, gefälschte Bank-Websites, Trojaner auf dem Computer und Social Engineering sind die häufigsten Bedrohungen im Online-Banking (vgl. Wirtz, 2021).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Kryptowährungen -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128279;</div>
+      <h2>Kryptowährungen &amp; Blockchain</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>Kryptowährungen</strong> wie Bitcoin, Ethereum oder Litecoin sind digitale Währungen, die kryptografisch abgesichert werden. Sie stellen eine Alternative zu traditionellen Zahlungsmethoden dar.
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li><strong>Kryptografisch</strong> = Daten werden mithilfe technischer Verfahren verschlüsselt</li>
+          <li><strong>Blockchain</strong> erfasst und beschreibt jede getätigte Transaktion</li>
+          <li>Daten werden verschlüsselt auf vielen Rechnern gespeichert</li>
+          <li>Schutz vor nachträglichen Änderungen und Manipulationen</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128176; Im E-Commerce</h3>
+          <ul>
+            <li>Verschiedene Internetplattformen und Webshops akzeptieren Kryptowährungen</li>
+            <li>Kunden können mit virtuellen Währungen bezahlen</li>
+            <li>Wert hängt von Angebot und Nachfrage ab</li>
+            <li>Kursschwankungen als Risiko</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Blockchain:</strong> Eine sich kontinuierlich erweiternde Liste von Datensätzen („Blöcke"), die miteinander verkettet sind – manipulationssicher und dezentral.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Zusammenfassung -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung: Bargeldlose Zahlungsformen</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Überweisung</h3>
+          <p>Umbuchung von Konto zu Konto. SEPA-Überweisungen und Auslandsüberweisungen als Varianten.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Besondere Formen</h3>
+          <p>Sammelüberweisungsauftrag (mehrere Empfänger), Dauerauftrag (fester Betrag), Lastschrift (variabler Betrag).</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Electronic Banking</h3>
+          <p>Beleglose Weiterleitung von Zahlungsdaten per Internet. Sicherheit durch PIN/TAN-Verfahren.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Kryptowährungen</h3>
+          <p>Digitale, kryptografisch gesicherte Währungen auf Basis der Blockchain-Technologie als Zukunftsperspektive.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Kernaussage:</strong> Die bargeldlose Zahlung umfasst ein breites Spektrum an Verfahren – von der klassischen Überweisung bis zur innovativen Kryptowährung. Für E-Commerce-Kaufleute ist das Verständnis aller Verfahren essenziell.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Übungsaufgaben -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben &amp; Diskussion</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Welche besondere Form der Überweisung würden Sie in folgenden Fällen wählen? Begründen Sie: a) Telefongebühren, b) IHK-Beitrag, c) Miete, d) Stromrechnung.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Die Kundin Barbara Schreiner bestellt im Onlineshop der Exclusiva GmbH: 20 Geschirrtücher (1,50 &euro;/Stück) und 20 Walkfrottiertücher (4,50 &euro;/Stück). Erstellen Sie die Rechnung.</p>
+        </div>
+        <div class="card">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Erstellen Sie eine Übersicht über die Vorteile des SEPA-Lastschriftverfahrens für die Exclusiva GmbH und ihre Kunden.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128172; Diskussion</h3>
+          <p>Erstellen Sie eine Übersicht über mögliche Risiken des Electronic Banking. Welche Schutzmaßnahmen sind empfehlenswert?</p>
+        </div>
+      </div>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Gruppenarbeit:</strong> Erstellen Sie eine Mindmap, die den Inhalt des Textes über Kryptowährungen als Alternativen zum bargeldlosen Zahlungsverkehr zusammenfasst.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Bräutigam, P. (2020). <em>E-Commerce: Rechtshandbuch</em> (2. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021: Vierte Studie über die Verwendung von Bargeld und unbaren Zahlungsinstrumenten</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 6</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.6 Die bargeldlose Zahlung</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.7 Zahlungen mit der Kreditkarte</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 6 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

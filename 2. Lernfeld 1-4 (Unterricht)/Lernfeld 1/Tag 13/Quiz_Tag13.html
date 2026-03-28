@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 13: Wirtschaftskreislauf &amp; Produktionsfaktoren – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 13: Wirtschaftskreislauf &amp; Produktionsfaktoren</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 13: Wirtschaftskreislauf &amp; Produktionsfaktoren</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 13</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "wirtschaft",
+    text: "Was versteht man unter dem Begriff Wirtschaft?",
+    choices: [
+      {label: "A", text: "Die Gesamtheit aller politischen Entscheidungen eines Landes"},
+      {label: "B", text: "Alle Aktivitäten zur Befriedigung menschlicher Bedürfnisse durch den Einsatz knapper Ressourcen"},
+      {label: "C", text: "Das System der staatlichen Steuererhebung"},
+      {label: "D", text: "Die Produktion von Luxusgütern für wohlhabende Haushalte"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "wirtschaft",
+    text: "Was sind freie Güter?",
+    choices: [
+      {label: "A", text: "Güter, die vom Staat kostenlos verteilt werden"},
+      {label: "B", text: "Güter, die in unbegrenzter Menge verfügbar sind (z. B. Luft, Sonnenlicht)"},
+      {label: "C", text: "Güter ohne Mehrwertsteuer"},
+      {label: "D", text: "Güter, die jeder Bürger gratis kaufen darf"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "wirtschaft",
+    text: "Welche der folgenden Aussagen beschreibt wirtschaftliche Güter korrekt?",
+    choices: [
+      {label: "A", text: "Sie sind unbegrenzt verfügbar und kostenfrei"},
+      {label: "B", text: "Sie sind knappe Güter, die produziert oder beschafft werden müssen"},
+      {label: "C", text: "Sie werden ausschließlich vom Staat bereitgestellt"},
+      {label: "D", text: "Sie umfassen nur materielle Produkte, keine Dienstleistungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 4, cat: "wirtschaft",
+    text: "Wozu gehören Dienstleistungen als Güterart?",
+    choices: [
+      {label: "A", text: "Zu den freien Gütern"},
+      {label: "B", text: "Zu den Sachgütern"},
+      {label: "C", text: "Zu den wirtschaftlichen Gütern (immateriell)"},
+      {label: "D", text: "Zu den natürlichen Gütern"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 5, cat: "wirtschaft",
+    text: "Auf welcher Stufe der Maslow-Pyramide stehen physiologische Bedürfnisse wie Essen und Schlafen?",
+    choices: [
+      {label: "A", text: "Ganz oben (Selbstverwirklichung)"},
+      {label: "B", text: "Auf der mittleren Stufe (Soziale Bedürfnisse)"},
+      {label: "C", text: "Ganz unten (unterste Stufe)"},
+      {label: "D", text: "Auf der zweiten Stufe (Sicherheitsbedürfnisse)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 6, cat: "wirtschaft",
+    text: "In welcher Reihenfolge werden die Bedürfnisse nach Maslow von unten nach oben durchlaufen?",
+    choices: [
+      {label: "A", text: "Selbstverwirklichung → Anerkennung → Sozial → Sicherheit → Physiologisch"},
+      {label: "B", text: "Physiologisch → Sicherheit → Sozial → Anerkennung → Selbstverwirklichung"},
+      {label: "C", text: "Sozial → Physiologisch → Sicherheit → Selbstverwirklichung → Anerkennung"},
+      {label: "D", text: "Sicherheit → Sozial → Physiologisch → Anerkennung → Selbstverwirklichung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 7, cat: "wirtschaft",
+    text: "Was besagt die Maslow-Hierarchie bezüglich der Handlungsrelevanz höherer Bedürfnisse?",
+    choices: [
+      {label: "A", text: "Höhere Bedürfnisse sind stets wichtiger als niedrigere"},
+      {label: "B", text: "Höhere Bedürfnisse werden erst handlungsrelevant, wenn niedrigere ausreichend befriedigt sind"},
+      {label: "C", text: "Alle Bedürfnisse sind gleichzeitig gleich wichtig"},
+      {label: "D", text: "Sicherheitsbedürfnisse können nie vollständig befriedigt werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 8, cat: "wirtschaft",
+    text: "Auf welcher Stufe der Maslow-Pyramide befinden sich Bedürfnisse nach Status und Prestige?",
+    choices: [
+      {label: "A", text: "Physiologische Bedürfnisse"},
+      {label: "B", text: "Soziale Bedürfnisse"},
+      {label: "C", text: "Soziale Anerkennung"},
+      {label: "D", text: "Selbstverwirklichung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 9, cat: "wirtschaft",
+    text: "Welches sind die drei klassischen Produktionsfaktoren nach der traditionellen Volkswirtschaftslehre?",
+    choices: [
+      {label: "A", text: "Arbeit, Kapital, Wissen"},
+      {label: "B", text: "Boden, Kapital, Technologie"},
+      {label: "C", text: "Arbeit, Boden, Kapital"},
+      {label: "D", text: "Arbeit, Energie, Rohstoffe"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 10, cat: "wirtschaft",
+    text: "Welcher Produktionsfaktor gilt als vierter, moderner Faktor in der Wissensgesellschaft?",
+    choices: [
+      {label: "A", text: "Energie"},
+      {label: "B", text: "Wissen und Information"},
+      {label: "C", text: "Technologie allein"},
+      {label: "D", text: "Infrastruktur"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "wirtschaft",
+    text: "Welchen Ertrag erzielt der Produktionsfaktor Arbeit?",
+    choices: [
+      {label: "A", text: "Rente / Pacht"},
+      {label: "B", text: "Zins / Gewinn"},
+      {label: "C", text: "Lohn / Gehalt"},
+      {label: "D", text: "Dividende"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 12, cat: "wirtschaft",
+    text: "Was ist der Ertrag des Produktionsfaktors Boden?",
+    choices: [
+      {label: "A", text: "Lohn"},
+      {label: "B", text: "Rente / Pacht"},
+      {label: "C", text: "Zins / Gewinn"},
+      {label: "D", text: "Steuer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 13, cat: "wirtschaft",
+    text: "Welche Aussage beschreibt den Produktionsfaktor Kapital korrekt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Sachkapital umfasst Maschinen, Gebäude und Werkzeuge"},
+      {label: "B", text: "Kapital bezeichnet ausschließlich Bargeld im Tresor"},
+      {label: "C", text: "Geldkapital dient der Finanzierung des Unternehmens"},
+      {label: "D", text: "Kapital ist identisch mit dem Produktionsfaktor Boden"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 14, cat: "wirtschaft",
+    text: "Welche der folgenden Beispiele zählen zum Produktionsfaktor Wissen? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Softwarepatente eines Unternehmens"},
+      {label: "B", text: "Ein Ackerstück in Bayern"},
+      {label: "C", text: "Technologisches Know-how der Mitarbeiter"},
+      {label: "D", text: "Eine Fabrikhalle"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 15, cat: "wirtschaft",
+    text: "Welcher Produktionsfaktor umfasst disponierende (leitende) und ausführende Tätigkeiten?",
+    choices: [
+      {label: "A", text: "Boden"},
+      {label: "B", text: "Kapital"},
+      {label: "C", text: "Wissen"},
+      {label: "D", text: "Arbeit"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 16, cat: "wirtschaft",
+    text: "Wer gilt als Begründer der klassischen Unterscheidung der Produktionsfaktoren?",
+    choices: [
+      {label: "A", text: "Karl Marx und Friedrich Engels"},
+      {label: "B", text: "Adam Smith und David Ricardo"},
+      {label: "C", text: "John Maynard Keynes und Milton Friedman"},
+      {label: "D", text: "Abraham Maslow und Peter Drucker"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 17, cat: "wirtschaft",
+    text: "Welches Unternehmen wird im Handout als Beispiel für den Wissen-Produktionsfaktor genannt?",
+    choices: [
+      {label: "A", text: "Volkswagen AG"},
+      {label: "B", text: "REWE Group"},
+      {label: "C", text: "Google, Amazon oder SAP"},
+      {label: "D", text: "Deutsche Bahn"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 18, cat: "wirtschaft",
+    text: "Im einfachen Wirtschaftskreislauf gibt es zwei Akteure. Welche sind das?",
+    choices: [
+      {label: "A", text: "Staat und Banken"},
+      {label: "B", text: "Haushalte und Unternehmen"},
+      {label: "C", text: "Ausland und Haushalte"},
+      {label: "D", text: "Unternehmen und Staat"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "wirtschaft",
+    text: "Wie fließen Güterströme und Geldströme im Wirtschaftskreislauf zueinander?",
+    choices: [
+      {label: "A", text: "In dieselbe Richtung"},
+      {label: "B", text: "In entgegengesetzter Richtung"},
+      {label: "C", text: "Es gibt nur Geldströme, keine Güterströme"},
+      {label: "D", text: "Güter- und Geldströme fließen unabhängig voneinander"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 20, cat: "wirtschaft",
+    text: "Was liefern Haushalte im einfachen Wirtschaftskreislauf an Unternehmen?",
+    choices: [
+      {label: "A", text: "Fertigwaren und Dienstleistungen"},
+      {label: "B", text: "Steuern und Abgaben"},
+      {label: "C", text: "Produktionsfaktoren (Arbeit, Boden, Kapital)"},
+      {label: "D", text: "Subventionen und Transferleistungen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 21, cat: "wirtschaft",
+    text: "Was erhalten Haushalte von Unternehmen im einfachen Wirtschaftskreislauf?",
+    choices: [
+      {label: "A", text: "Güter und Dienstleistungen sowie Lohn/Gehalt/Pacht/Zins"},
+      {label: "B", text: "Nur staatliche Transferleistungen"},
+      {label: "C", text: "Subventionen und Steuererstattungen"},
+      {label: "D", text: "Ausschließlich Sachgüter"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 22, cat: "wirtschaft",
+    text: "Welche drei zusätzlichen Akteure kommen im erweiterten Wirtschaftskreislauf hinzu?",
+    choices: [
+      {label: "A", text: "Kommunen, Kirchen, Verbände"},
+      {label: "B", text: "Staat, Banken, Ausland"},
+      {label: "C", text: "NGOs, Medien, Gewerkschaften"},
+      {label: "D", text: "Versicherungen, Börse, Arbeitsamt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "wirtschaft",
+    text: "Welche Rolle spielt der Staat im erweiterten Wirtschaftskreislauf? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Er erhebt Steuern von Haushalten und Unternehmen"},
+      {label: "B", text: "Er gibt Subventionen an Unternehmen"},
+      {label: "C", text: "Er legt die Produktionsmenge aller Firmen fest"},
+      {label: "D", text: "Er verteilt alle Güter direkt an Haushalte"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 24, cat: "wirtschaft",
+    text: "Was sind Transfers im Wirtschaftskreislauf?",
+    choices: [
+      {label: "A", text: "Zahlungen des Auslandes an inländische Unternehmen"},
+      {label: "B", text: "Staatliche Zahlungen an Haushalte ohne direkte Gegenleistung (z. B. Kindergeld)"},
+      {label: "C", text: "Kredite der Banken an Haushalte"},
+      {label: "D", text: "Zinszahlungen der Unternehmen an Banken"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "wirtschaft",
+    text: "Was bedeutet Exportieren im Kontext des erweiterten Wirtschaftskreislaufs?",
+    choices: [
+      {label: "A", text: "Inländische Haushalte kaufen ausländische Waren"},
+      {label: "B", text: "Inländische Unternehmen verkaufen Waren ins Ausland"},
+      {label: "C", text: "Der Staat kauft Waren vom Ausland"},
+      {label: "D", text: "Banken vergeben Kredite an ausländische Unternehmen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "wirtschaft",
+    text: "Wie wird der Zusammenhang der Akteure im erweiterten Kreislauf mit der Eselsbrücke H-U-S-B-A beschrieben?",
+    choices: [
+      {label: "A", text: "Handel – Umsatz – Steuer – Bilanz – Abgabe"},
+      {label: "B", text: "Haushalte – Unternehmen – Staat – Banken – Ausland"},
+      {label: "C", text: "Herstellung – Umsatz – Sparen – Budget – Ausgaben"},
+      {label: "D", text: "Haushalte – Unternehmen – Soziales – Berufe – Arbeit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "wirtschaft",
+    text: "Was beschreibt das Maximalprinzip des ökonomischen Prinzips?",
+    choices: [
+      {label: "A", text: "Ein gegebenes Ziel mit dem geringstmöglichen Mitteleinsatz erreichen"},
+      {label: "B", text: "Mit gegebenem Mitteleinsatz den größtmöglichen Ertrag erzielen"},
+      {label: "C", text: "Den Gewinn eines Unternehmens maximieren, unabhängig von Kosten"},
+      {label: "D", text: "Die Produktion auf ein Maximum steigern, egal welche Ressourcen nötig sind"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "wirtschaft",
+    text: "Was beschreibt das Minimalprinzip?",
+    choices: [
+      {label: "A", text: "Mit maximalem Einsatz ein gegebenes Ziel erreichen"},
+      {label: "B", text: "Ein gegebenes Ziel mit dem geringstmöglichen Mitteleinsatz erreichen"},
+      {label: "C", text: "Möglichst wenig produzieren"},
+      {label: "D", text: "Die Kosten auf null reduzieren"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "wirtschaft",
+    text: "Ein Online-Shop möchte mit einem festen Budget von 5.000 EUR möglichst viele Pakete versenden. Welches Prinzip liegt vor?",
+    choices: [
+      {label: "A", text: "Minimalprinzip"},
+      {label: "B", text: "Maximalprinzip"},
+      {label: "C", text: "Gleichgewichtsprinzip"},
+      {label: "D", text: "Kostendeckungsprinzip"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 30, cat: "wirtschaft",
+    text: "Ein Betrieb möchte 1.000 Einheiten produzieren und dabei die Kosten so gering wie möglich halten. Welches Prinzip gilt?",
+    choices: [
+      {label: "A", text: "Maximalprinzip"},
+      {label: "B", text: "Nachfrageprinzip"},
+      {label: "C", text: "Minimalprinzip"},
+      {label: "D", text: "Angebotsprinzip"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "produktion",
+    text: "Wie viele Ziele hat das Magische Viereck der Wirtschaftspolitik?",
+    choices: [
+      {label: "A", text: "Zwei"},
+      {label: "B", text: "Drei"},
+      {label: "C", text: "Vier"},
+      {label: "D", text: "Fünf"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 32, cat: "produktion",
+    text: "Welche vier Ziele umfasst das Magische Viereck? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Preisniveaustabilität und Vollbeschäftigung"},
+      {label: "B", text: "Außenwirtschaftliches Gleichgewicht und Wirtschaftswachstum"},
+      {label: "C", text: "Steuermaximierung und Exportüberschuss"},
+      {label: "D", text: "Soziale Gerechtigkeit und Umweltschutz"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 33, cat: "produktion",
+    text: "Aus welchem Gesetz leitet sich das Magische Viereck ab?",
+    choices: [
+      {label: "A", text: "Grundgesetz (1949)"},
+      {label: "B", text: "Handelsgesetzbuch (HGB)"},
+      {label: "C", text: "Stabilitätsgesetz von 1967"},
+      {label: "D", text: "Bürgerliches Gesetzbuch (BGB)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 34, cat: "produktion",
+    text: "Warum nennt man das Magische Viereck „magisch”?",
+    choices: [
+      {label: "A", text: "Weil der Staat seine Ziele immer problemlos erreicht"},
+      {label: "B", text: "Weil alle vier Ziele gleichzeitig kaum erreichbar sind – es bestehen Zielkonflikte"},
+      {label: "C", text: "Weil die Ziele nur mit Magie erreichbar sind"},
+      {label: "D", text: "Weil das Gesetz geheim ist und nicht öffentlich gilt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 35, cat: "produktion",
+    text: "Welcher Zielkonflikt ist im Magischen Viereck typisch?",
+    choices: [
+      {label: "A", text: "Vollbeschäftigung und Wirtschaftswachstum stehen immer im Einklang"},
+      {label: "B", text: "Starkes Wirtschaftswachstum führt oft zu Inflation (verletzt Preisniveaustabilität)"},
+      {label: "C", text: "Preisstabilität und Außenwirtschaftliches Gleichgewicht sind stets gleichzeitig erreichbar"},
+      {label: "D", text: "Alle vier Ziele können problemlos kombiniert werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 36, cat: "produktion",
+    text: "Was bedeutet Preisniveaustabilität als Ziel des Magischen Vierecks?",
+    choices: [
+      {label: "A", text: "Die Preise sollen maximal steigen"},
+      {label: "B", text: "Das allgemeine Preisniveau soll konstant bleiben (keine Inflation / Deflation)"},
+      {label: "C", text: "Alle Preise sollen vom Staat festgelegt werden"},
+      {label: "D", text: "Preise sollen jährlich sinken"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 37, cat: "produktion",
+    text: "Was bedeutet Vollbeschäftigung als wirtschaftspolitisches Ziel?",
+    choices: [
+      {label: "A", text: "Alle Betriebe arbeiten rund um die Uhr"},
+      {label: "B", text: "Alle arbeitsfähigen und arbeitswilligen Personen haben eine Beschäftigung"},
+      {label: "C", text: "Der Staat hat alle Bürger in Staatsunternehmen beschäftigt"},
+      {label: "D", text: "Es gibt keine Teilzeitstellen mehr"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "produktion",
+    text: "Welche Rolle spielt Amazon als Beispiel im Wirtschaftskreislauf bezüglich des Auslandes?",
+    choices: [
+      {label: "A", text: "Amazon importiert ausschließlich aus Europa"},
+      {label: "B", text: "Amazon importiert Waren aus China und exportiert Dienstleistungen (AWS) weltweit"},
+      {label: "C", text: "Amazon hat keine Beziehung zum Ausland"},
+      {label: "D", text: "Amazon exportiert nur Waren, keine Dienstleistungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 39, cat: "produktion",
+    text: "Welche Steuern zahlt Amazon laut Handout im Wirtschaftskreislauf? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Körperschaftsteuer"},
+      {label: "B", text: "Mehrwertsteuer auf alle privaten Einkäufe"},
+      {label: "C", text: "Gewerbesteuer"},
+      {label: "D", text: "Kirchensteuer"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 40, cat: "produktion",
+    text: "Was ist ein Bedürfnis im wirtschaftlichen Sinne?",
+    choices: [
+      {label: "A", text: "Ein gesetzlicher Anspruch auf staatliche Leistungen"},
+      {label: "B", text: "Der Wunsch nach etwas, das einem fehlt"},
+      {label: "C", text: "Ein vertraglicher Anspruch gegenüber einem Unternehmen"},
+      {label: "D", text: "Eine steuerliche Abzugsmöglichkeit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "produktion",
+    text: "Welche Formel zeigt den volkswirtschaftlichen Zusammenhang von Bedürfnissen und Wirtschaft?",
+    choices: [
+      {label: "A", text: "Bedürfnisse → Angebot → Steuern"},
+      {label: "B", text: "Wirtschaft → Güter → Bedürfnisse"},
+      {label: "C", text: "Bedürfnisse → Nachfrage nach Gütern → Wirtschaftliches Handeln"},
+      {label: "D", text: "Güter → Bedürfnisse → Produktion"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 42, cat: "produktion",
+    text: "Welche Eselsbrücke hilft, die Produktionsfaktoren zu merken?",
+    choices: [
+      {label: "A", text: "„Alle Böden Kaufen Waren”"},
+      {label: "B", text: "„Alle Betriebe Können Wachsen”"},
+      {label: "C", text: "„Arbeit Bringt Kapital Wissen”"},
+      {label: "D", text: "„Alles Braucht Kraft und Wille”"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 43, cat: "produktion",
+    text: "Was gehört laut Handout zum Produktionsfaktor Boden? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Natürliche Ressourcen und Rohstoffe"},
+      {label: "B", text: "Landwirtschaftliche Flächen"},
+      {label: "C", text: "Geldmittel auf dem Bankkonto"},
+      {label: "D", text: "Softwarelizenzen"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 44, cat: "produktion",
+    text: "Welche Aussage zum einfachen Wirtschaftskreislauf ist korrekt?",
+    choices: [
+      {label: "A", text: "Haushalte verkaufen Güter direkt an andere Haushalte"},
+      {label: "B", text: "Unternehmen liefern Güter und Dienstleistungen an Haushalte, die dafür zahlen"},
+      {label: "C", text: "Staat und Banken sind im einfachen Modell immer enthalten"},
+      {label: "D", text: "Güter- und Geldströme fließen in dieselbe Richtung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "produktion",
+    text: "Welche Eselsbrücke steht für die Akteure im erweiterten Kreislauf?",
+    choices: [
+      {label: "A", text: "„Hier Umkreist Sich Beim Austausch”"},
+      {label: "B", text: "„Haushalte Unternehmen Sind Besonders Aktiv”"},
+      {label: "C", text: "„Heute Üben Schüler Betriebsabläufe Aus”"},
+      {label: "D", text: "„Haushalte und Unternehmen Sind Banken Ausland”"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 46, cat: "produktion",
+    text: "Was ist das Gegenteil von Inflation im Kontext der Preisniveaustabilität?",
+    choices: [
+      {label: "A", text: "Rezession"},
+      {label: "B", text: "Deflation"},
+      {label: "C", text: "Stagflation"},
+      {label: "D", text: "Konjunktur"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "produktion",
+    text: "Welches Ziel des Magischen Vierecks beschreibt das Außenwirtschaftliche Gleichgewicht?",
+    choices: [
+      {label: "A", text: "Der Staat soll keine Schulden aufnehmen"},
+      {label: "B", text: "Exporte und Importe sollen sich ausgewogen gegenüberstehen"},
+      {label: "C", text: "Das Ausland soll mehr exportieren als das Inland"},
+      {label: "D", text: "Der Wechselkurs soll fest bleiben"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "produktion",
+    text: "Welche Güterart ist ein Sachgut?",
+    choices: [
+      {label: "A", text: "Eine Beratungsleistung"},
+      {label: "B", text: "Eine Maschine in der Produktion"},
+      {label: "C", text: "Ein Softwareupdate"},
+      {label: "D", text: "Eine Versicherungspolice"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "produktion",
+    text: "Welcher Akteur im Wirtschaftskreislauf vergibt Kredite an Haushalte?",
+    choices: [
+      {label: "A", text: "Der Staat"},
+      {label: "B", text: "Das Ausland"},
+      {label: "C", text: "Die Banken"},
+      {label: "D", text: "Die Unternehmen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 50, cat: "produktion",
+    text: "Was fließt laut Handout von Unternehmen zurück an Banken?",
+    choices: [
+      {label: "A", text: "Güter und Waren"},
+      {label: "B", text: "Steuern und Abgaben"},
+      {label: "C", text: "Ersparnisse und Zinsen"},
+      {label: "D", text: "Subventionen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 51, cat: "produktion",
+    text: "Welche Bedürfnisstufe nach Maslow umfasst Freundschaft und Zugehörigkeit?",
+    choices: [
+      {label: "A", text: "Physiologische Bedürfnisse"},
+      {label: "B", text: "Sicherheitsbedürfnisse"},
+      {label: "C", text: "Soziale Bedürfnisse"},
+      {label: "D", text: "Selbstverwirklichung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 52, cat: "produktion",
+    text: "Was bedeutet Wirtschaftswachstum als Ziel des Magischen Vierecks?",
+    choices: [
+      {label: "A", text: "Das Bruttoinlandsprodukt soll sinken"},
+      {label: "B", text: "Die Wirtschaftsleistung (BIP) soll steigen"},
+      {label: "C", text: "Alle Unternehmen sollen expandieren"},
+      {label: "D", text: "Die Bevölkerung soll wachsen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 53, cat: "produktion",
+    text: "Welches Beispiel wird im Handout für das Maximalprinzip genannt?",
+    choices: [
+      {label: "A", text: "Produktion von 500 Stück so günstig wie möglich"},
+      {label: "B", text: "Mit 1.000 EUR Budget möglichst viel produzieren"},
+      {label: "C", text: "Den Umsatz eines Unternehmens maximieren"},
+      {label: "D", text: "Mitarbeiter so wenig wie möglich bezahlen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "produktion",
+    text: "Welcher Begriff steht für die höchste Stufe der Maslow-Pyramide?",
+    choices: [
+      {label: "A", text: "Sicherheitsbedürfnisse"},
+      {label: "B", text: "Soziale Anerkennung"},
+      {label: "C", text: "Selbstverwirklichung"},
+      {label: "D", text: "Physiologische Bedürfnisse"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 55, cat: "produktion",
+    text: "Welches der folgenden Elemente würde die Exclusiva GmbH dem Produktionsfaktor Wissen zuordnen?",
+    choices: [
+      {label: "A", text: "Lagerhallen"},
+      {label: "B", text: "Mitarbeiter im Lager (körperliche Arbeit)"},
+      {label: "C", text: "Algorithmen und digitale Plattformen"},
+      {label: "D", text: "Firmenwagen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 56, cat: "produktion",
+    text: "Was sind laut Handout Importe im erweiterten Wirtschaftskreislauf?",
+    choices: [
+      {label: "A", text: "Güter, die von inländischen Unternehmen ins Ausland verkauft werden"},
+      {label: "B", text: "Güter, die aus dem Ausland ins Inland geliefert werden"},
+      {label: "C", text: "Staatliche Subventionen für die Industrie"},
+      {label: "D", text: "Bankdarlehen aus dem Ausland"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 57, cat: "produktion",
+    text: "Welche Steuerart zahlen natürliche Personen (z. B. Einzelunternehmer) auf ihr Einkommen?",
+    choices: [
+      {label: "A", text: "Körperschaftsteuer"},
+      {label: "B", text: "Gewerbesteuer"},
+      {label: "C", text: "Einkommensteuer"},
+      {label: "D", text: "Umsatzsteuer"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 58, cat: "produktion",
+    text: "Welche zwei Güterarten unterscheidet das Handout bei wirtschaftlichen Gütern? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Sachgüter (materiell)"},
+      {label: "B", text: "Luxusgüter"},
+      {label: "C", text: "Dienstleistungen (immateriell)"},
+      {label: "D", text: "Kollektivgüter"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 59, cat: "produktion",
+    text: "Was passiert laut Handout, wenn Haushalte weniger konsumieren?",
+    choices: [
+      {label: "A", text: "Die Unternehmen profitieren davon"},
+      {label: "B", text: "Weniger Geld fließt zu den Unternehmen, was deren Umsatz senkt"},
+      {label: "C", text: "Der Staat erhöht automatisch die Subventionen"},
+      {label: "D", text: "Banken senken die Zinsen sofort"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "produktion",
+    text: "Welches Buch wird Abraham Maslow im Handout zugeordnet? Wann erschien seine Theorie?",
+    choices: [
+      {label: "A", text: "„Wealth of Nations” (1776)"},
+      {label: "B", text: "„A Theory of Human Motivation” (1943)"},
+      {label: "C", text: "„Das Kapital” (1867)"},
+      {label: "D", text: "„General Theory” (1936)"}
+    ],
+    multi: false, correct: ["B"]
+  }
+];
+const catLabels={
+  wirtschaft: {label: "Wirtschaft", cls: "cat-definition"},
+  produktion: {label: "Produktionsfaktoren", cls: "cat-technik"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

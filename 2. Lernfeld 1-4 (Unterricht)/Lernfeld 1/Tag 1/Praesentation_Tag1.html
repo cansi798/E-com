@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 1 – Das Modellunternehmen | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="slideshow">
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 1 – DECKBLATT
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide cover active">
+    <span class="kursname">Lernfeld 1 · Tag 1</span>
+    <h1><span>1.1</span> Das Modellunternehmen</h1>
+    <div class="divider"></div>
+    <p class="thema">Buchseiten 8–21 · Kaufmann/-frau im E-Commerce</p>
+    <p class="meta">© 2026 Can Siebert &amp; Hamzah Meyer · Alle Rechte vorbehalten</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 2 – LERNZIELE
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Lernziele</h2>
+      <div class="sub">Was du heute lernst</div>
+    </div>
+    <div class="slide-body" style="gap:8px;">
+      <div class="lernziel-item"><div class="num">1</div><p>Das Modellunternehmen <strong>Exclusiva GmbH</strong> beschreiben und dessen Geschichte nachvollziehen.</p></div>
+      <div class="lernziel-item"><div class="num">2</div><p>Die Rechtsform <strong>GmbH</strong> erklären und von anderen Rechtsformen abgrenzen.</p></div>
+      <div class="lernziel-item"><div class="num">3</div><p>Das Organigramm lesen und die <strong>Funktionsbereiche</strong> benennen; Betriebsrat &amp; JAV einordnen.</p></div>
+      <div class="lernziel-item"><div class="num">4</div><p>Unterschied zwischen <strong>B2B</strong> und <strong>B2C</strong> sowie das Warenwirtschaftssystem erklären.</p></div>
+      <div class="lernziel-item"><div class="num">5</div><p>Die drei <strong>Handlungsvollmachten</strong> (allgemein, Art-, Einzelvollmacht) unterscheiden und anwenden.</p></div>
+      <div class="lernziel-item"><div class="num">6</div><p>Betriebliche <strong>Grundfunktionen</strong> und das Berufsbild <strong>Kaufmann/-frau im E-Commerce</strong> erläutern.</p></div>
+      <div class="lernziel-item"><div class="num">7</div><p>Das <strong>Unternehmensleitbild</strong> der Exclusiva GmbH beschreiben und seinen Zweck erklären.</p></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 3 – EXCLUSIVA GMBH: GESCHICHTE
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Die Exclusiva GmbH – Geschichte</h2>
+      <div class="sub">Buchseiten 8–10</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Gründung &amp; Entwicklung</h3>
+            <ul>
+              <li>Gegründet als stationärer <strong>Schreibwarenhandel</strong></li>
+              <li>Erweiterung um Bürobedarf &amp; Technik</li>
+              <li>Einstieg in den <strong>Online-Handel</strong> (B2C &amp; B2B)</li>
+              <li>Heutiger Hauptumsatz: E-Commerce-Plattform</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Standort &amp; Größe</h3>
+            <ul>
+              <li>Hauptsitz: <strong>Hildesheim</strong> (Niedersachsen)</li>
+              <li>Ca. <strong>300 Mitarbeitende</strong></li>
+              <li>Jahresumsatz: ca. <strong>110 Mio. EUR</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Produktsortiment</h3>
+          <ul>
+            <li>Bürobedarf &amp; Schreibwaren</li>
+            <li>Drucker, Scanner, Hardware</li>
+            <li>Verbrauchsmaterialien (Toner, Papier)</li>
+            <li>Geschenk- &amp; Dekoartikel</li>
+            <li>Exklusive Markenprodukte (Premium)</li>
+          </ul>
+          <br>
+          <h3>Vertriebskanäle</h3>
+          <ul>
+            <li>Eigener Online-Shop (B2C)</li>
+            <li>B2B-Portal für Geschäftskunden</li>
+            <li>Marktplätze (Amazon, eBay)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 4 – UNTERNEHMENSGESCHICHTE TABELLE
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Unternehmensgeschichte – Meilensteine</h2>
+      <div class="sub">Von 1969 bis heute · Buchseiten 8–10</div>
+    </div>
+    <div class="slide-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Jahr</th>
+            <th>Ereignis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent2);">1969</strong></td><td>Gründung als Einzelunternehmen durch Heinrich Exner in Hildesheim; Verkauf von Luxus-Schreibwaren</td></tr>
+          <tr><td><strong style="color:var(--accent2);">1978</strong></td><td>Erweiterung des Sortiments auf Büroausstattung und Geschenkartikel</td></tr>
+          <tr><td><strong style="color:var(--accent2);">1985</strong></td><td>Umwandlung in eine GmbH; Eintritt der Kinder von Heinrich Exner als Gesellschafter</td></tr>
+          <tr><td><strong style="color:var(--accent2);">1993</strong></td><td>Eröffnung eines zweiten Standortes; Aufbau eines regionalen Vertriebsnetzes</td></tr>
+          <tr><td><strong style="color:var(--accent2);">2001</strong></td><td>Start des ersten Onlineshops; Beginn des E-Commerce</td></tr>
+          <tr><td><strong style="color:var(--accent2);">2010</strong></td><td>Vollständige Integration des Onlinevertriebs als eigenständiger Unternehmensbereich</td></tr>
+          <tr><td><strong style="color:var(--accent2);">2015</strong></td><td>Umbenennung in Exclusiva GmbH; Fokussierung auf Premium-Segment</td></tr>
+          <tr><td><strong style="color:var(--accent2);">2019</strong></td><td>50-jähriges Jubiläum; Umsatz überschreitet erstmals 110 Mio. EUR</td></tr>
+        </tbody>
+      </table>
+      <div class="card" style="margin-top:6px;">
+        <h3>Merke!</h3>
+        <p style="font-size:.82em;">Die Exclusiva GmbH ist das <span class="highlight">Modellunternehmen</span> des Lehrbuches. An diesem fiktiven Unternehmen werden alle Lernfelder exemplarisch durchgearbeitet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 5 – RECHTSFORM GMBH
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Rechtsform: GmbH</h2>
+      <div class="sub">Gesellschaft mit beschränkter Haftung · Buchseiten 10–12</div>
+    </div>
+    <div class="slide-body">
+      <div class="three-col">
+        <div class="card">
+          <h3>Merkmale</h3>
+          <ul>
+            <li>Juristische Person des Privatrechts</li>
+            <li>Mindest&shy;stamm&shy;kapital: <strong>25.000 €</strong></li>
+            <li>Haftung: nur Gesellschafts&shy;vermögen</li>
+            <li>Eintrag im Handelsregister (HRB)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Organe</h3>
+          <ul>
+            <li><span class="highlight">Gesellschafter&shy;versammlung</span> – oberstes Beschlussorgan</li>
+            <li><span class="highlight">Geschäftsführung</span> – vertritt die GmbH</li>
+            <li>Ggf. Aufsichtsrat (ab 500 MA)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Vorteile für Exclusiva</h3>
+          <ul>
+            <li>Haftungsbeschränkung schützt Gesellschafter</li>
+            <li>Professionelles Auftreten am Markt</li>
+            <li>Klare Trennung von Privat- &amp; Betriebsvermögen</li>
+            <li>Geeignet für mittlere Unternehmen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top:4px;">
+        <h3>Wichtige Begriffe</h3>
+        <p style="font-size:.82em;">
+          <span class="tag">Stammkapital</span> Einlage der Gesellschafter ·
+          <span class="tag">Geschäftsanteil</span> prozentualer Anteil am Unternehmen ·
+          <span class="tag">Prokura</span> weitreichende Handlungsvollmacht ·
+          <span class="tag">HGB</span> regelt Buchführung &amp; Jahresabschluss
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 6 – ORGANIGRAMM (SVG)
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Organigramm – Exclusiva GmbH</h2>
+      <div class="sub">Aufbauorganisation · Buchseiten 12–13</div>
+    </div>
+    <div class="slide-body">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 820 390" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+          <!-- Connectors -->
+          <line x1="410" y1="72" x2="410" y2="100" stroke="#2563EB" stroke-width="2"/>
+          <line x1="120" y1="100" x2="700" y2="100" stroke="#2563EB" stroke-width="2"/>
+          <line x1="120" y1="100" x2="120" y2="130" stroke="#2563EB" stroke-width="2"/>
+          <line x1="280" y1="100" x2="280" y2="130" stroke="#2563EB" stroke-width="2"/>
+          <line x1="410" y1="100" x2="410" y2="130" stroke="#2563EB" stroke-width="2"/>
+          <line x1="540" y1="100" x2="540" y2="130" stroke="#2563EB" stroke-width="2"/>
+          <line x1="700" y1="100" x2="700" y2="130" stroke="#2563EB" stroke-width="2"/>
+
+          <!-- GF Box -->
+          <rect x="300" y="20" width="220" height="52" rx="6" fill="#2563EB"/>
+          <text x="410" y="43" text-anchor="middle" fill="white" font-size="13" font-weight="bold">Geschäftsführung</text>
+          <text x="410" y="60" text-anchor="middle" fill="#fdd" font-size="10">2 Geschäftsführer</text>
+
+          <!-- Level-2 boxes -->
+          <rect x="50"  y="130" width="140" height="58" rx="6" fill="#1a3060"/>
+          <text x="120" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Einkauf</text>
+          <text x="120" y="170" text-anchor="middle" fill="#9ab" font-size="9">Beschaffung</text>
+
+          <rect x="210" y="130" width="140" height="58" rx="6" fill="#1a3060"/>
+          <text x="280" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Lager &amp;</text>
+          <text x="280" y="170" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Logistik</text>
+
+          <rect x="340" y="130" width="140" height="58" rx="6" fill="#1a3060"/>
+          <text x="410" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Verkauf</text>
+          <text x="410" y="170" text-anchor="middle" fill="#9ab" font-size="9">Kundenberatung</text>
+
+          <rect x="470" y="130" width="140" height="58" rx="6" fill="#1a3060"/>
+          <text x="540" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Rechnungs-</text>
+          <text x="540" y="170" text-anchor="middle" fill="white" font-size="11" font-weight="bold">wesen</text>
+
+          <rect x="630" y="130" width="140" height="58" rx="6" fill="#1a3060"/>
+          <text x="700" y="155" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Online-</text>
+          <text x="700" y="170" text-anchor="middle" fill="white" font-size="11" font-weight="bold">vertrieb</text>
+
+          <!-- Betriebsrat & JAV (side box) -->
+          <rect x="20" y="20" width="140" height="52" rx="6" fill="#162a52" stroke="#3a5a8a" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="90" y="42" text-anchor="middle" fill="#9ab" font-size="10" font-weight="bold">Betriebsrat &amp;</text>
+          <text x="90" y="58" text-anchor="middle" fill="#9ab" font-size="10">JAV</text>
+          <line x1="160" y1="46" x2="300" y2="46" stroke="#3a5a8a" stroke-width="1" stroke-dasharray="4,3"/>
+
+          <!-- Assistenz -->
+          <rect x="350" y="230" width="120" height="40" rx="4" fill="#0d1b3e" stroke="#3a5a8a" stroke-width="1"/>
+          <text x="410" y="248" text-anchor="middle" fill="#ccd" font-size="9">Assistenz</text>
+          <text x="410" y="260" text-anchor="middle" fill="#ccd" font-size="9">Geschäftsleitung</text>
+          <line x1="410" y1="188" x2="410" y2="230" stroke="#3a5a8a" stroke-width="1"/>
+
+          <!-- Legend -->
+          <rect x="20" y="310" width="14" height="14" rx="2" fill="#2563EB"/>
+          <text x="40" y="322" fill="#9ab" font-size="10">Führungsebene</text>
+          <rect x="140" y="310" width="14" height="14" rx="2" fill="#1a3060"/>
+          <text x="160" y="322" fill="#9ab" font-size="10">Abteilungen</text>
+          <rect x="280" y="310" width="14" height="14" rx="2" fill="#0d1b3e" stroke="#3a5a8a" stroke-width="1"/>
+          <text x="300" y="322" fill="#9ab" font-size="10">Stab / Beratung</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 7 – FUNKTIONSBEREICHE & BETRIEBSRAT
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Funktionsbereiche &amp; Personalvertretung</h2>
+      <div class="sub">Aufbau und Struktur · Buchseiten 12–14</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <table>
+            <thead>
+              <tr><th>Bereich</th><th>Hauptaufgaben</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Einkauf</strong></td><td>Beschaffung, Lieferantenverhandlung</td></tr>
+              <tr><td><strong>Lager &amp; Logistik</strong></td><td>Warenannahme, Einlagerung, Versand</td></tr>
+              <tr><td><strong>Verkauf</strong></td><td>Kundenberatung, Auftragsbearbeitung</td></tr>
+              <tr><td><strong>Rechnungswesen</strong></td><td>Buchführung, Controlling, Abschluss</td></tr>
+              <tr><td><strong>Onlinevertrieb</strong></td><td>Shop-Pflege, Online-Marketing</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Betriebsrat (BetrVG)</h3>
+            <ul>
+              <li>Gewähltes Gremium der Arbeitnehmer (ab 5 AN)</li>
+              <li><strong>Mitbestimmungsrecht</strong>: Arbeitszeiten, Urlaub</li>
+              <li><strong>Informationsrecht</strong>: Personalplanung</li>
+              <li>Rechtsgrundlage: Betriebsverfassungsgesetz</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>JAV – Jugend- &amp; Auszubildendenvertretung</h3>
+            <ul>
+              <li>Vertretung für Jugendliche &amp; Azubis</li>
+              <li>Wählbar: unter 18 + alle Auszubildenden</li>
+              <li>Arbeitet eng mit dem Betriebsrat zusammen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 8 – B2B vs. B2C
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>B2B vs. B2C</h2>
+      <div class="sub">Geschäftsbeziehungen · Buchseiten 14–15</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card" style="border-left-color:#3498db;">
+          <h3 style="color:#3498db;">B2B – Business to Business</h3>
+          <ul>
+            <li>Handel zwischen <strong>Unternehmen</strong></li>
+            <li>Großbestellungen, Rahmenverträge</li>
+            <li>Individuelle Preisverhandlungen</li>
+            <li>Rechnungskauf, Zahlungsziele 30–60 Tage</li>
+            <li>Kunden: Büros, Behörden, Schulen</li>
+            <li>Umsatzsteuer abzugsfähig (Vorsteuer)</li>
+          </ul>
+        </div>
+        <div class="card" style="border-left-color:#e74c3c;">
+          <h3 style="color:#e74c3c;">B2C – Business to Consumer</h3>
+          <ul>
+            <li>Handel zwischen Unternehmen &amp; <strong>Endverbraucher</strong></li>
+            <li>Kleinere Mengen, Standardpreise</li>
+            <li>Hohe Bedeutung von UX &amp; Design</li>
+            <li>Kreditkarte, PayPal, Sofortkauf</li>
+            <li>Kunden: Privatpersonen</li>
+            <li>Starke Verbraucherrechte (<strong>Widerrufsrecht</strong>)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Eselsbrücke</h3>
+        <p style="font-size:.82em;"><span class="tag">B2B</span> <strong>B</strong>usiness to <strong>B</strong>usiness = Firmen kaufen bei Firmen &nbsp;|&nbsp; <span class="tag">B2C</span> <strong>B</strong>usiness to <strong>C</strong>onsumer = Firma verkauft an Kunden. Das <strong>C</strong> steht für <strong>C</strong>ustomer!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 9 – WARENWIRTSCHAFTSSYSTEM
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Warenwirtschaftssystem (WWS)</h2>
+      <div class="sub">Software zur Warenverwaltung · Buchseiten 14–15</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Definition WWS</h3>
+            <p style="font-size:.82em;">Ein <span class="highlight">Warenwirtschaftssystem (WWS)</span> ist eine Software zur Verwaltung aller warenbezogenen Daten und Prozesse im Unternehmen.</p>
+          </div>
+          <div class="card">
+            <h3>Umfasst</h3>
+            <ul>
+              <li>Bestandsverwaltung (Lager)</li>
+              <li>Bestellwesen (Einkauf)</li>
+              <li>Verkauf und Auftragsabwicklung</li>
+              <li>Statistiken und Auswertungen</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Bekannte WWS-Systeme</h3>
+            <ul>
+              <li><span class="tag">SAP</span> Marktführer, international</li>
+              <li><span class="tag">Microsoft Dynamics</span> KMU-geeignet</li>
+              <li><span class="tag">Sage</span> Mittelstand</li>
+              <li><span class="tag">Navision</span> kleiner Unternehmen</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Bedeutung im E-Commerce</h3>
+            <ul>
+              <li>Echtzeit-Lagerbestand im Online-Shop</li>
+              <li>Automatische Nachbestellung</li>
+              <li>Verknüpfung mit Marktplätzen</li>
+              <li>Retourenmanagement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 10 – ZWISCHENQUIZ 1: UNTERNEHMEN & RECHTSFORM
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+    <h2 style="color: #2563EB; margin-bottom: 15px;">🧠 Zwischenquiz: Exclusiva GmbH &amp; Rechtsformen</h2>
+    <div id="zq1-container">
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">1. In welchem Jahr wurde die Exclusiva GmbH als Einzelunternehmen gegründet?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ('zq1-q1', this, false)">A) 1978</button>
+          <button onclick="checkZQ('zq1-q1', this, true)">B) 1969</button>
+          <button onclick="checkZQ('zq1-q1', this, false)">C) 1985</button>
+        </div>
+        <p id="zq1-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">2. Wie hoch ist das Mindest-Stammkapital einer GmbH?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ('zq1-q2', this, false)">A) 10.000 EUR</button>
+          <button onclick="checkZQ('zq1-q2', this, true)">B) 25.000 EUR</button>
+          <button onclick="checkZQ('zq1-q2', this, false)">C) 50.000 EUR</button>
+        </div>
+        <p id="zq1-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">3. Was bedeutet B2C?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ('zq1-q3', this, false)">A) Business to Company</button>
+          <button onclick="checkZQ('zq1-q3', this, false)">B) Business to Business</button>
+          <button onclick="checkZQ('zq1-q3', this, true)">C) Business to Consumer</button>
+        </div>
+        <p id="zq1-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+    </div>
+    <script>
+    function checkZQ(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 11 – HANDLUNGSVOLLMACHTEN
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Handlungsvollmachten</h2>
+      <div class="sub">§ 54 HGB · Buchseiten 15–17</div>
+    </div>
+    <div class="slide-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Vollmacht</th>
+            <th>Rechtsgrundlage</th>
+            <th>Umfang</th>
+            <th>Beispiel Exclusiva</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Prokura</strong></td>
+            <td>§§ 48–53 HGB</td>
+            <td>Alle gerichtlichen &amp; außergerichtlichen Geschäfte (außer Grundstücke)</td>
+            <td>Abteilungsleiter mit Prokura</td>
+          </tr>
+          <tr>
+            <td><strong>Allgemeine HV</strong></td>
+            <td>§ 54 HGB</td>
+            <td>Alle gewöhnlichen Handelsgeschäfte</td>
+            <td>Filialleiter für alle Einkäufe</td>
+          </tr>
+          <tr>
+            <td><strong>Artvollmacht</strong></td>
+            <td>§ 54 HGB</td>
+            <td>Bestimmte Art von Geschäften</td>
+            <td>Einkäufer nur für Bestellungen</td>
+          </tr>
+          <tr>
+            <td><strong>Einzelvollmacht</strong></td>
+            <td>§ 54 HGB</td>
+            <td>Einzelnes Rechtsgeschäft</td>
+            <td>Einmalige Messe-Buchung durch Azubi</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card" style="margin-top:6px;">
+        <h3>Eselsbrücke: A – A – E</h3>
+        <p style="font-size:.82em;"><strong>A</strong>lles – <strong>A</strong>rt – <strong>E</strong>inzel: Von Allem über Art bis zum Einzelfall – so wird die Vollmacht enger!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 12 – AUSSCHLÜSSE DER HANDLUNGSVOLLMACHT
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Handlungsvollmacht – Wichtige Ausschlüsse</h2>
+      <div class="sub">§ 54 HGB · Grenzen der Vollmacht</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="border-left-color:#e74c3c; margin-bottom:10px;">
+            <h3 style="color:#e74c3c;">Von der HV ausgeschlossen (ohne ausdrücklIche Erlaubnis)</h3>
+            <ul>
+              <li>Veräußerung und Belastung von <strong>Grundstücken</strong></li>
+              <li>Eingehen von <strong>Wechselverbindlichkeiten</strong></li>
+              <li>Aufnahme von <strong>Darlehen</strong></li>
+              <li><strong>Prozessführung</strong> (Klagen, Beklagte)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Vollmachten – Hierarchie</h3>
+            <ul>
+              <li><span class="tag">Geschäftsführung</span> Unbeschränkt</li>
+              <li><span class="tag">Prokura</span> Sehr weit, HR-Eintrag</li>
+              <li><span class="tag">Allg. HV</span> Alle üblichen Geschäfte</li>
+              <li><span class="tag">Artvollmacht</span> Bestimmte Art</li>
+              <li><span class="tag">Einzelvollmacht</span> Ein Geschäft</li>
+            </ul>
+          </div>
+        </div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 300 280" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+            <polygon points="150,10 280,260 20,260" fill="#0d1b3e" stroke="#1a3060" stroke-width="2"/>
+            <polygon points="150,10 200,100 100,100" fill="#2563EB" opacity="0.9"/>
+            <text x="150" y="62" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Geschäftsführung</text>
+            <polygon points="100,100 200,100 230,175 70,175" fill="#1a3060" opacity="0.95"/>
+            <text x="150" y="138" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Prokura</text>
+            <polygon points="70,175 230,175 265,260 35,260" fill="#162a52" opacity="0.95"/>
+            <text x="150" y="210" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Allg. HV / Art / Einzelvollmacht</text>
+            <text x="150" y="225" text-anchor="middle" fill="#9ab" font-size="8">§ 54 HGB · formlos erteilbar</text>
+            <text x="10" y="140" fill="#6a8aaa" font-size="8" text-anchor="middle">mehr</text>
+            <text x="10" y="152" fill="#6a8aaa" font-size="8" text-anchor="middle">Umfang</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 13 – ZWISCHENQUIZ 2: HANDLUNGSVOLLMACHTEN
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+    <h2 style="color: #2563EB; margin-bottom: 15px;">🧠 Zwischenquiz: Handlungsvollmachten</h2>
+    <div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">1. Herr Müller darf nur Einkaufsverträge abschließen, keine anderen Verträge. Welche Vollmacht hat er?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ2('zq2-q1', this, false)">A) Allgemeine Handlungsvollmacht</button>
+          <button onclick="checkZQ2('zq2-q1', this, true)">B) Artvollmacht</button>
+          <button onclick="checkZQ2('zq2-q1', this, false)">C) Prokura</button>
+        </div>
+        <p id="zq2-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">2. Was ist von der Handlungsvollmacht (§ 54 HGB) ausgeschlossen?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ2('zq2-q2', this, false)">A) Bestellung von Büromaterial</button>
+          <button onclick="checkZQ2('zq2-q2', this, true)">B) Aufnahme von Darlehen</button>
+          <button onclick="checkZQ2('zq2-q2', this, false)">C) Abschluss von Lieferverträgen</button>
+        </div>
+        <p id="zq2-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">3. Frau Schmidt wird beauftragt, genau einen Mietvertrag zu unterzeichnen. Welche Vollmacht liegt vor?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ2('zq2-q3', this, false)">A) Artvollmacht</button>
+          <button onclick="checkZQ2('zq2-q3', this, false)">B) Allgemeine Handlungsvollmacht</button>
+          <button onclick="checkZQ2('zq2-q3', this, true)">C) Einzelvollmacht (Spezialvollmacht)</button>
+        </div>
+        <p id="zq2-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+    </div>
+    <script>
+    function checkZQ2(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 14 – BETRIEBLICHE GRUNDFUNKTIONEN
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Betriebliche Grundfunktionen</h2>
+      <div class="sub">Buchseiten 17–19</div>
+    </div>
+    <div class="slide-body">
+      <div class="three-col" style="gap:8px;">
+        <div class="card">
+          <h3>Beschaffung</h3>
+          <ul>
+            <li>Warenbeschaffung &amp; Lieferantenauswahl</li>
+            <li>Bestellwesen, Angebotsvergleich</li>
+            <li>Lagerplanung &amp; Bestandskontrolle</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Lager</h3>
+          <ul>
+            <li>Warenannahme und -prüfung</li>
+            <li>Einlagerung, Bestandsführung</li>
+            <li>Kommissionierung &amp; Versand</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Verkauf</h3>
+          <ul>
+            <li>Online-Shop-Betrieb</li>
+            <li>Kundenakquise &amp; -bindung</li>
+            <li>Auftragsbearbeitung, Kundendienst</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Rechnungswesen</h3>
+          <ul>
+            <li>Buchhaltung &amp; Controlling</li>
+            <li>Jahresabschluss (HGB)</li>
+            <li>Lohnabrechnung, Liquiditätsplanung</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Personal</h3>
+          <ul>
+            <li>Personalplanung &amp; Recruiting</li>
+            <li>Ausbildung (KfE)</li>
+            <li>Personalabrechnung</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>IT &amp; Verwaltung</h3>
+          <ul>
+            <li>ERP-System (z.B. SAP / WWS)</li>
+            <li>Shop-System &amp; Datenbank</li>
+            <li>Datenschutz (DSGVO)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 15 – UNTERNEHMENSPHILOSOPHIE & LEITBILD
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Unternehmensphilosophie &amp; Leitbild</h2>
+      <div class="sub">Werte und Mission der Exclusiva GmbH</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Grundsätze der Exclusiva GmbH</h3>
+            <ul>
+              <li>⭐ <strong>Qualität vor Quantität</strong> – nur hochwertige Produkte</li>
+              <li>❤️ <strong>Kundenorientierung</strong> – Kunde im Mittelpunkt</li>
+              <li>🌿 <strong>Nachhaltigkeit</strong> – umweltbewusstes Handeln</li>
+              <li>🤝 <strong>Partnerschaft</strong> – langfristige Lieferantenbeziehungen</li>
+              <li>💡 <strong>Innovation</strong> – Weiterentwicklung im E-Commerce</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Was ist ein Unternehmensleitbild?</h3>
+          <p style="font-size:.82em; margin-bottom:8px;">Ein <span class="highlight">Leitbild</span> (Mission Statement) beantwortet:</p>
+          <ul>
+            <li><strong>Wer sind wir?</strong> (Identität)</li>
+            <li><strong>Was wollen wir?</strong> (Vision &amp; Ziele)</li>
+            <li><strong>Wie handeln wir?</strong> (Werte &amp; Prinzipien)</li>
+          </ul>
+          <p style="font-size:.82em; margin-top:8px;">Bestandteile:</p>
+          <ul>
+            <li><span class="tag">Mission</span> Auftrag/Zweck</li>
+            <li><span class="tag">Vision</span> Zukunftsbild</li>
+            <li><span class="tag">Werte</span> Verhaltensgrundlagen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 16 – BERUFSBILD KfE
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Berufsbild: Kaufmann/-frau im E-Commerce</h2>
+      <div class="sub">KfE · Ausbildungsberuf seit 2018 · Buchseiten 19–21</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Eckdaten</h3>
+            <ul>
+              <li>Ausbildungsdauer: <strong>3 Jahre</strong></li>
+              <li>Dual (Betrieb + Berufsschule)</li>
+              <li>Abschluss: IHK-Prüfung</li>
+              <li>Eingeführt: <strong>1. August 2018</strong></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Tätigkeitsfelder</h3>
+            <ul>
+              <li>Pflege und Betrieb von Online-Shops</li>
+              <li>Online-Marketing (SEO, SEA, Social Media)</li>
+              <li>Analyse von Kennzahlen (KPIs, Conversion Rate)</li>
+              <li>Kundenservice &amp; Retourenmanagement</li>
+              <li>Koordination von Logistik und Lieferanten</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Kernkompetenzen</h3>
+          <p style="font-size:.82em; margin-bottom:6px;"><strong>Fachliche Kompetenzen:</strong></p>
+          <ul>
+            <li>Kenntnisse im Online-Marketing</li>
+            <li>Verständnis von Web-Technologien</li>
+            <li>Rechtliche Grundkenntnisse (DSGVO, Vertragsrecht)</li>
+            <li>Buchführungskenntnisse</li>
+          </ul>
+          <p style="font-size:.82em; margin-top:8px; margin-bottom:6px;"><strong>Persönliche Kompetenzen:</strong></p>
+          <ul>
+            <li>Affinität zu digitalen Medien</li>
+            <li>Analytisches Denken</li>
+            <li>Kommunikationsstärke</li>
+            <li>Flexibilität und Lernbereitschaft</li>
+          </ul>
+          <br>
+          <h3>Prüfungsstruktur</h3>
+          <ul>
+            <li>AP1: Nach ca. 18 Monaten (schriftlich)</li>
+            <li>AP2: Am Ende (schriftlich + mündlich)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 17 – AUSBILDUNGSINHALTE (RAHMENLEHRPLAN)
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Ausbildungsinhalte – Rahmenlehrplan KfE</h2>
+      <div class="sub">Lernfelder 1–12 · Buchseiten 20–21</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <table>
+            <thead><tr><th>LF</th><th>Thema</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Das Unternehmen im Markt vorstellen</td></tr>
+              <tr><td>2</td><td>Waren beschaffen &amp; Lager organisieren</td></tr>
+              <tr><td>3</td><td>Online-Shops planen &amp; gestalten</td></tr>
+              <tr><td>4</td><td>Sortiment planen &amp; Produkte präsentieren</td></tr>
+              <tr><td>5</td><td>Kunden gewinnen &amp; binden</td></tr>
+              <tr><td>6</td><td>Aufträge bearbeiten &amp; abwickeln</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <table>
+            <thead><tr><th>LF</th><th>Thema</th></tr></thead>
+            <tbody>
+              <tr><td>7</td><td>Zahlungsverkehr abwickeln</td></tr>
+              <tr><td>8</td><td>Personal gewinnen &amp; einsetzen</td></tr>
+              <tr><td>9</td><td>Marketingmaßnahmen planen</td></tr>
+              <tr><td>10</td><td>Waren lagern &amp; Logistik steuern</td></tr>
+              <tr><td>11</td><td>E-Commerce-Projekte realisieren</td></tr>
+              <tr><td>12</td><td>Unternehmen führen &amp; entwickeln</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Schwerpunkte im Betrieb</h3>
+        <p style="font-size:.82em;">
+          <span class="tag">Digitales Marketing</span>
+          <span class="tag">SEO / SEA</span>
+          <span class="tag">Shop-Systeme</span>
+          <span class="tag">Logistik</span>
+          <span class="tag">Kundenservice</span>
+          <span class="tag">Controlling</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 18 – KOMPETENZEN & SKILLS
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Kompetenzen im Beruf</h2>
+      <div class="sub">Was KfE-Azubis bei Exclusiva lernen</div>
+    </div>
+    <div class="slide-body">
+      <div class="three-col">
+        <div class="card">
+          <h3>Fachkompetenz</h3>
+          <ul>
+            <li>Rechtliche Grundlagen (HGB, BGB, DSGVO)</li>
+            <li>Buchführung &amp; Kalkulation</li>
+            <li>E-Commerce-Recht (Fernabsatzgesetz)</li>
+            <li>Marktplatz-Management</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Digitale Kompetenz</h3>
+          <ul>
+            <li>Shopsystem-Administration</li>
+            <li>Datenanalyse &amp; Reporting</li>
+            <li>Content-Management-Systeme</li>
+            <li>Social-Media-Marketing</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Sozialkompetenz</h3>
+          <ul>
+            <li>Kundenkorrespondenz</li>
+            <li>Teamarbeit &amp; Projektarbeit</li>
+            <li>Beschwerdemanagement</li>
+            <li>Interkulturelle Kommunikation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top:4px;">
+        <h3>E-Commerce in Deutschland – Praxiszahl</h3>
+        <p style="font-size:.82em;">Laut bevh (2023) erwirtschaftete der interaktive Handel in Deutschland über <span class="highlight">100 Milliarden Euro</span>. Der Anteil des E-Commerce am Gesamteinzelhandel wächst kontinuierlich – Fachkräfte sind stark gefragt!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 19 – SVG: GESCHÄFTSMODELL
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Geschäftsmodell – Exclusiva GmbH</h2>
+      <div class="sub">Wertschöpfungskette im E-Commerce</div>
+    </div>
+    <div class="slide-body">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 820 300" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+          <!-- Flow arrows -->
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#2563EB"/>
+            </marker>
+          </defs>
+          <line x1="122" y1="110" x2="168" y2="110" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="282" y1="110" x2="328" y2="110" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="442" y1="110" x2="488" y2="110" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="602" y1="110" x2="648" y2="110" stroke="#2563EB" stroke-width="2" marker-end="url(#arr)"/>
+
+          <!-- Boxes -->
+          <rect x="10" y="75" width="112" height="70" rx="8" fill="#1a3060"/>
+          <text x="66" y="103" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Lieferant</text>
+          <text x="66" y="118" text-anchor="middle" fill="#9ab" font-size="9">Hersteller /</text>
+          <text x="66" y="130" text-anchor="middle" fill="#9ab" font-size="9">Großhändler</text>
+
+          <rect x="170" y="75" width="112" height="70" rx="8" fill="#1a3060"/>
+          <text x="226" y="103" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Einkauf</text>
+          <text x="226" y="118" text-anchor="middle" fill="#9ab" font-size="9">Bestellung &amp;</text>
+          <text x="226" y="130" text-anchor="middle" fill="#9ab" font-size="9">Qualitätsprüfung</text>
+
+          <rect x="330" y="75" width="112" height="70" rx="8" fill="#1a3060"/>
+          <text x="386" y="103" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Lager</text>
+          <text x="386" y="118" text-anchor="middle" fill="#9ab" font-size="9">Lagerung &amp;</text>
+          <text x="386" y="130" text-anchor="middle" fill="#9ab" font-size="9">Kommissionierung</text>
+
+          <rect x="490" y="75" width="112" height="70" rx="8" fill="#1a3060"/>
+          <text x="546" y="103" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Versand</text>
+          <text x="546" y="118" text-anchor="middle" fill="#9ab" font-size="9">DHL, DPD,</text>
+          <text x="546" y="130" text-anchor="middle" fill="#9ab" font-size="9">Hermes etc.</text>
+
+          <rect x="650" y="75" width="112" height="70" rx="8" fill="#2563EB"/>
+          <text x="706" y="103" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Kunde</text>
+          <text x="706" y="118" text-anchor="middle" fill="#fdd" font-size="9">B2C / B2B</text>
+          <text x="706" y="130" text-anchor="middle" fill="#fdd" font-size="9">Online-Bestellung</text>
+
+          <!-- Return arrow -->
+          <path d="M706,145 C706,200 66,200 66,145" stroke="#3a5a8a" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+          <text x="390" y="215" text-anchor="middle" fill="#6a8aaa" font-size="10">Zahlungsfluss / Retourenmanagement</text>
+
+          <!-- Online-Shop highlight -->
+          <rect x="290" y="220" width="240" height="36" rx="6" fill="#0d1b3e" stroke="#2563EB" stroke-width="1.5"/>
+          <text x="410" y="237" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Online-Shop</text>
+          <text x="410" y="250" text-anchor="middle" fill="#9ab" font-size="9">shop.exclusiva.de · Amazon · eBay</text>
+          <line x1="386" y1="145" x2="386" y2="220" stroke="#2563EB" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="546" y1="145" x2="546" y2="220" stroke="#2563EB" stroke-width="1" stroke-dasharray="4,2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 20 – SVG: B2B vs B2C VISUALISIERUNG
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>B2B &amp; B2C – Visualisierung</h2>
+      <div class="sub">Vertriebskanäle der Exclusiva GmbH</div>
+    </div>
+    <div class="slide-body">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 820 340" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+          <!-- Center: Exclusiva -->
+          <rect x="310" y="120" width="200" height="80" rx="10" fill="#2563EB"/>
+          <text x="410" y="154" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Exclusiva GmbH</text>
+          <text x="410" y="172" text-anchor="middle" fill="#fdd" font-size="10">Online-Shop &amp; B2B-Portal</text>
+          <text x="410" y="187" text-anchor="middle" fill="#fdd" font-size="9">shop.exclusiva.de</text>
+
+          <!-- B2C side (left) -->
+          <rect x="30" y="60" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="95" y="85" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Privatkunde A</text>
+          <text x="95" y="100" text-anchor="middle" fill="#9ab" font-size="9">Bestellt Schreibwaren</text>
+          <line x1="160" y1="90" x2="310" y2="145" stroke="#3498db" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <rect x="30" y="160" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="95" y="185" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Privatkunde B</text>
+          <text x="95" y="200" text-anchor="middle" fill="#9ab" font-size="9">Bestellt Druckertoner</text>
+          <line x1="160" y1="190" x2="310" y2="170" stroke="#3498db" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <rect x="30" y="260" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="95" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Privatkunde C</text>
+          <text x="95" y="300" text-anchor="middle" fill="#9ab" font-size="9">Bestellt Geschenkartikel</text>
+          <line x1="160" y1="290" x2="310" y2="190" stroke="#3498db" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <text x="20" y="30" fill="#3498db" font-size="13" font-weight="bold">B2C-Kunden</text>
+          <line x1="20" y1="35" x2="170" y2="35" stroke="#3498db" stroke-width="1.5"/>
+
+          <!-- B2B side (right) -->
+          <rect x="660" y="60" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="725" y="85" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Firma Meier AG</text>
+          <text x="725" y="100" text-anchor="middle" fill="#9ab" font-size="9">Bürobedarf, Rahmenvertrag</text>
+          <line x1="660" y1="90" x2="510" y2="145" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <rect x="660" y="160" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="725" y="185" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Stadtschule GmbH</text>
+          <text x="725" y="200" text-anchor="middle" fill="#9ab" font-size="9">Schulmaterial, Mengenrabatt</text>
+          <line x1="660" y1="190" x2="510" y2="170" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <rect x="660" y="260" width="130" height="60" rx="8" fill="#1a3060"/>
+          <text x="725" y="285" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Behörde Nord</text>
+          <text x="725" y="300" text-anchor="middle" fill="#9ab" font-size="9">Ausschreibung, Rechnung</text>
+          <line x1="660" y1="290" x2="510" y2="190" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+          <text x="660" y="30" fill="#e74c3c" font-size="13" font-weight="bold">B2B-Kunden</text>
+          <line x1="660" y1="35" x2="790" y2="35" stroke="#e74c3c" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 21 – SVG: VOLLMACHTEN HIERARCHIE
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Vollmachten – Hierarchie &amp; Umfang</h2>
+      <div class="sub">Grafische Übersicht nach HGB</div>
+    </div>
+    <div class="slide-body">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 820 340" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+          <!-- Pyramid shape filled -->
+          <polygon points="410,20 760,310 60,310" fill="#0d1b3e" stroke="#1a3060" stroke-width="2"/>
+
+          <!-- Layers -->
+          <!-- GF -->
+          <polygon points="410,20 490,120 330,120" fill="#2563EB" opacity="0.9"/>
+          <text x="410" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Geschäftsführung</text>
+          <text x="410" y="100" text-anchor="middle" fill="#fdd" font-size="9">Unbeschränkte Vertretungsmacht</text>
+
+          <!-- Prokura -->
+          <polygon points="330,120 490,120 580,220 240,220" fill="#1a3060" opacity="0.95"/>
+          <text x="410" y="165" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Prokura (§§ 48–53 HGB)</text>
+          <text x="410" y="182" text-anchor="middle" fill="#9ab" font-size="9">Alle Handelsgeschäfte · Im Handelsregister eingetragen</text>
+
+          <!-- Allg. HV -->
+          <polygon points="240,220 580,220 680,310 160,310" fill="#162a52" opacity="0.95"/>
+          <text x="410" y="257" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Allg. Handlungsvollmacht / Art- / Einzelvollmacht (§ 54 HGB)</text>
+          <text x="410" y="274" text-anchor="middle" fill="#9ab" font-size="9">Begrenzt auf bestimmte Geschäfte · Formlos erteilbar</text>
+          <text x="410" y="290" text-anchor="middle" fill="#9ab" font-size="9">Kein Handelsregistereintrag erforderlich</text>
+
+          <!-- Legend arrows -->
+          <text x="50" y="175" fill="#6a8aaa" font-size="9" text-anchor="middle">weniger</text>
+          <text x="50" y="188" fill="#6a8aaa" font-size="9" text-anchor="middle">Umfang</text>
+          <line x1="50" y1="130" x2="50" y2="305" stroke="#6a8aaa" stroke-width="1" marker-end="url(#arr)"/>
+
+          <text x="770" y="75" fill="#6a8aaa" font-size="9" text-anchor="middle">mehr</text>
+          <text x="770" y="88" fill="#6a8aaa" font-size="9" text-anchor="middle">Umfang</text>
+          <line x1="770" y1="305" x2="770" y2="130" stroke="#6a8aaa" stroke-width="1" marker-end="url(#arr)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 22 – ZWISCHENQUIZ 3: GRUNDFUNKTIONEN & BERUFSBILD
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide quiz-slide" style="background: linear-gradient(135deg, #0d1b3e 0%, #1a2a50 100%); padding: 30px; overflow-y: auto;">
+    <h2 style="color: #2563EB; margin-bottom: 15px;">🧠 Zwischenquiz: Grundfunktionen &amp; KfE-Beruf</h2>
+    <div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">1. Welche der folgenden Aufgaben gehört NICHT zu den betrieblichen Grundfunktionen?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ3('zq3-q1', this, false)">A) Beschaffung</button>
+          <button onclick="checkZQ3('zq3-q1', this, false)">B) Rechnungswesen</button>
+          <button onclick="checkZQ3('zq3-q1', this, true)">C) Werbung schalten</button>
+        </div>
+        <p id="zq3-q1-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">2. Seit wann ist Kaufmann/-frau im E-Commerce ein eigenständiger Ausbildungsberuf?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ3('zq3-q2', this, false)">A) 2015</button>
+          <button onclick="checkZQ3('zq3-q2', this, true)">B) 2018</button>
+          <button onclick="checkZQ3('zq3-q2', this, false)">C) 2020</button>
+        </div>
+        <p id="zq3-q2-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+      <div class="zq-question" style="margin-bottom: 18px;">
+        <p style="font-weight: bold; margin-bottom: 8px; font-size:.9em;">3. Was verwaltet ein Warenwirtschaftssystem (WWS) primär?</p>
+        <div class="zq-options">
+          <button onclick="checkZQ3('zq3-q3', this, true)">A) Warenbestände, Bestellungen, Verkauf und Statistiken</button>
+          <button onclick="checkZQ3('zq3-q3', this, false)">B) Nur Kundendaten und Rechnungen</button>
+          <button onclick="checkZQ3('zq3-q3', this, false)">C) Nur die Mitarbeiterdaten des Unternehmens</button>
+        </div>
+        <p id="zq3-q3-result" style="margin-top:5px; font-weight:bold; display:none;"></p>
+      </div>
+    </div>
+    <script>
+    function checkZQ3(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 23 – ZUSAMMENFASSUNG I
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Zusammenfassung – Teil 1</h2>
+      <div class="sub">Modellunternehmen &amp; Rechtsformen</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:10px;">
+            <h3>Exclusiva GmbH</h3>
+            <ul>
+              <li>Gegründet 1969, Sitz in Hildesheim</li>
+              <li>Ca. 300 MA, ~110 Mio. EUR Umsatz</li>
+              <li>Rechtsform: <strong>GmbH</strong> – Haftungsbeschränkung</li>
+              <li>Mindestkapital: 25.000 € Stammkapital</li>
+              <li>Organe: Gesellschafterversammlung &amp; GF</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Organisationsstruktur</h3>
+            <ul>
+              <li>5 Abteilungen: Einkauf, Lager, Verkauf, RW, Online</li>
+              <li>Betriebsrat &amp; JAV als Personalvertretung</li>
+              <li>Assistenz der Geschäftsleitung</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Kernbegriffe auf einen Blick</h3>
+          <ul>
+            <li><span class="highlight">B2B</span> – Geschäftskunden, Rahmenverträge, Zahlungsziel</li>
+            <li><span class="highlight">B2C</span> – Privatkunden, Widerrufsrecht, schnelle Zahlung</li>
+            <li><span class="highlight">WWS</span> – Warenwirtschaftssystem, Bestandsverwaltung</li>
+            <li><span class="highlight">Prokura</span> – weitreichend, HR-Eintrag nötig</li>
+            <li><span class="highlight">Allg. HV</span> – alle üblichen Geschäfte, formlos</li>
+            <li><span class="highlight">Artvollmacht</span> – bestimmte Art</li>
+            <li><span class="highlight">Einzelvollmacht</span> – ein konkretes Geschäft</li>
+            <li><span class="highlight">GmbH</span> – juristische Person, beschränkte Haftung</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 24 – ZUSAMMENFASSUNG II
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Zusammenfassung – Teil 2</h2>
+      <div class="sub">Berufsbild &amp; Grundfunktionen</div>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card">
+          <h3>KfE – Kaufmann/-frau im E-Commerce</h3>
+          <ul>
+            <li>Ausbildungsdauer: <strong>3 Jahre</strong> (dual)</li>
+            <li>Seit 2018 eigenständiger Ausbildungsberuf</li>
+            <li>Prüfung: AP1 (18 Monate) + AP2 (Ende)</li>
+            <li>12 Lernfelder im Rahmenlehrplan</li>
+            <li>Tätigkeiten: Shop, Content, KPIs, Kundenservice</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Betriebliche Grundfunktionen</h3>
+          <ul>
+            <li><span class="highlight">Beschaffung</span> – Waren &amp; Lieferanten</li>
+            <li><span class="highlight">Lager</span> – Kommissionierung, Versand</li>
+            <li><span class="highlight">Verkauf</span> – Online-Shop, Marktplätze</li>
+            <li><span class="highlight">Rechnungswesen</span> – Buchhaltung, Controlling</li>
+            <li><span class="highlight">Leitbild</span> – Qualität, Kundenorientierung, Nachhaltigkeit</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top:4px; background: linear-gradient(90deg,#1a3060,#2a0a20); border-left-color:#e74c3c;">
+        <h3 style="color:#e74c3c;">Merksatz</h3>
+        <p style="font-size:.85em; font-style:italic;">"Die Exclusiva GmbH vereint als hybrides E-Commerce-Unternehmen B2B- und B2C-Vertrieb unter einem Dach – gesteuert durch klar definierte Vollmachten, strukturierte Abteilungen und digital kompetente Fachkräfte."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       FOLIE 25 – LITERATURVERZEICHNIS
+  ══════════════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="slide-header">
+      <h2>Literaturverzeichnis</h2>
+      <div class="sub">APA 7th Edition</div>
+    </div>
+    <div class="slide-body" style="gap:10px;">
+      <div class="card">
+        <h3>Schulbuch</h3>
+        <p class="small">Howe, F., Schäfer, F., &amp; Schnell, R. (2022). <em>Kaufmann/Kauffrau im E-Commerce: Lernfelder 1–6</em> (1. Aufl.). Westermann Verlag.</p>
+      </div>
+      <div class="card">
+        <h3>Gesetzliche Grundlagen</h3>
+        <p class="small">Bundesministerium der Justiz. (2024). <em>Handelsgesetzbuch (HGB)</em>. https://www.gesetze-im-internet.de/hgb/<br>
+        Bundesministerium der Justiz. (2024). <em>Bürgerliches Gesetzbuch (BGB)</em>. https://www.gesetze-im-internet.de/bgb/<br>
+        Europäisches Parlament. (2016). <em>Datenschutz-Grundverordnung (DSGVO) – Verordnung (EU) 2016/679</em>. https://eur-lex.europa.eu</p>
+      </div>
+      <div class="card">
+        <h3>Ausbildungsrahmen &amp; Statistiken</h3>
+        <p class="small">Bundesinstitut für Berufsbildung (BIBB). (2018). <em>Ausbildungsrahmenplan für den Ausbildungsberuf Kaufmann/-frau im E-Commerce</em>. Bundesanzeiger Verlag. https://www.bibb.de<br>
+        Bundesverband E-Commerce und Versandhandel (bevh). (2023). <em>Interaktiver Handel in Deutschland</em>. bevh.<br>
+        Wöhe, G., &amp; Döring, U. (2020). <em>Einführung in die Allgemeine Betriebswirtschaftslehre</em> (27. Aufl.). Vahlen.</p>
+      </div>
+      <p class="small" style="margin-top:4px; text-align:right;">© 2026 Can Siebert &amp; Hamzah Meyer · Lernfeld 1 · Tag 1</p>
+    </div>
+  </div>
+
+</div><!-- /slideshow -->
+
+<!-- Grid Overlay -->
+
+
+<!-- Navigation -->
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 25</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Das Modellunternehmen | Lernfeld 1 &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

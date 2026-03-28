@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 8: SEO und Online-Marketing – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 8: SEO und Online-Marketing</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 8: SEO und Online-Marketing</div><div class="quiz-meta">61 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">61</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 8</footer>
+<script>
+const TOTAL=61;
+const questions=[
+  {
+    num: 1, cat: "seo",
+    text: "Wofür steht die Abkürzung SEO?",
+    choices: [
+      {label: "A", text: "Search Engine Operations"},
+      {label: "B", text: "Search Engine Optimization"},
+      {label: "C", text: "Social Engagement Online"},
+      {label: "D", text: "Sales and E-Commerce Operations"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "seo",
+    text: "Was beschreibt SEO grundlegend?",
+    choices: [
+      {label: "A", text: "Bezahlte Werbeanzeigen in Suchmaschinen schalten"},
+      {label: "B", text: "Alle Maßnahmen zur kostenlosen Verbesserung der Sichtbarkeit in organischen Suchergebnissen"},
+      {label: "C", text: "Die technische Entwicklung eines Webshops"},
+      {label: "D", text: "Die Verwaltung von Social-Media-Kanälen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "seo",
+    text: "Wie viel Prozent aller Webshop-Besuche kommen ungefähr über organische Suchergebnisse?",
+    choices: [
+      {label: "A", text: "10 %"},
+      {label: "B", text: "25 %"},
+      {label: "C", text: "40 %"},
+      {label: "D", text: "70 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 4, cat: "seo",
+    text: "Welche drei Säulen hat SEO? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "On-Page-SEO und Off-Page-SEO"},
+      {label: "B", text: "Paid SEO und Earned SEO"},
+      {label: "C", text: "Technisches SEO"},
+      {label: "D", text: "Social SEO und Display SEO"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 5, cat: "seo",
+    text: "Was umfasst On-Page-SEO?",
+    choices: [
+      {label: "A", text: "Backlinks von anderen Websites"},
+      {label: "B", text: "Ladezeit und Mobiloptimierung"},
+      {label: "C", text: "Alle Optimierungsmaßnahmen direkt auf der eigenen Website (Inhalte, Technik, Struktur)"},
+      {label: "D", text: "Bezahlte Werbeanzeigen bei Google"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 6, cat: "seo",
+    text: "Wie viele Zeichen sollte ein Title-Tag maximal haben?",
+    choices: [
+      {label: "A", text: "30 Zeichen"},
+      {label: "B", text: "60 Zeichen"},
+      {label: "C", text: "100 Zeichen"},
+      {label: "D", text: "160 Zeichen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 7, cat: "seo",
+    text: "Was ist die Meta-Description?",
+    choices: [
+      {label: "A", text: "Die H1-Überschrift auf der Seite"},
+      {label: "B", text: "Eine Kurzbeschreibung unter dem Titel in den Google-Suchergebnissen (max. 160 Zeichen)"},
+      {label: "C", text: "Der Dateiname eines Produktbildes"},
+      {label: "D", text: "Das robots.txt-File des Webshops"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 8, cat: "seo",
+    text: "Wie viele H1-Überschriften sollte eine SEO-optimierte Webseite haben?",
+    choices: [
+      {label: "A", text: "Mindestens drei"},
+      {label: "B", text: "Beliebig viele"},
+      {label: "C", text: "Genau eine"},
+      {label: "D", text: "Keine – H1 ist veraltet"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 9, cat: "seo",
+    text: "Wozu dienen Alt-Texte bei Bildern?",
+    choices: [
+      {label: "A", text: "Als Untertitel für Videos"},
+      {label: "B", text: "Als Bildbeschreibung für Suchmaschinen und Screenreader"},
+      {label: "C", text: "Als Dateiname beim Hochladen"},
+      {label: "D", text: "Als Metadaten für den Webserver"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 10, cat: "seo",
+    text: "Was ist eine „sprechende URL“?",
+    choices: [
+      {label: "A", text: "Eine URL mit Audio-Funktion"},
+      {label: "B", text: "Eine URL wie /cat=23&id=4512 mit technischen Parametern"},
+      {label: "C", text: "Eine URL wie /damen/schuhe/sneaker, die den Inhalt klar beschreibt"},
+      {label: "D", text: "Eine URL in Landessprache des Nutzers"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 11, cat: "seo",
+    text: "Was versteht man unter Duplicate Content?",
+    choices: [
+      {label: "A", text: "Mehrere Produktbilder auf einer Seite"},
+      {label: "B", text: "Identischer oder sehr ähnlicher Inhalt auf mehreren Seiten, der SEO schadet"},
+      {label: "C", text: "Eine doppelte Navigation auf der Website"},
+      {label: "D", text: "Zwei identische Webshops unter verschiedenen Domains"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "seo",
+    text: "Welche Elemente enthält die On-Page-SEO-Checkliste T-M-H-A-U? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Title und Meta-Description"},
+      {label: "B", text: "Traffic und Monitoring"},
+      {label: "C", text: "Alt-Text und URL"},
+      {label: "D", text: "Analytics und User-Data"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 13, cat: "seo",
+    text: "Was sind Keywords im SEO-Kontext?",
+    choices: [
+      {label: "A", text: "Passwörter für den Webshop-Zugang"},
+      {label: "B", text: "Suchbegriffe, die Nutzer in Google eingeben"},
+      {label: "C", text: "Verschlüsselungsschlüssel für SSL"},
+      {label: "D", text: "Programmierbefehle im Quellcode"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 14, cat: "seo",
+    text: "Welches Merkmal haben Short-Tail-Keywords?",
+    choices: [
+      {label: "A", text: "Geringes Suchvolumen und hohe Conversion"},
+      {label: "B", text: "Sehr hohes Suchvolumen, aber auch sehr hoher Wettbewerb und niedrige Conversion"},
+      {label: "C", text: "Geringes Suchvolumen und geringer Wettbewerb"},
+      {label: "D", text: "Mittleres Suchvolumen und mittlerer Wettbewerb"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "seo",
+    text: "Warum sind Long-Tail-Keywords für neue und kleine Webshops besonders geeignet? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Sie haben deutlich weniger Wettbewerb"},
+      {label: "B", text: "Sie haben das größte Suchvolumen"},
+      {label: "C", text: "Sie signalisieren eine hohe Kaufabsicht des Nutzers"},
+      {label: "D", text: "Sie kosten bei Google Ads am wenigsten"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 16, cat: "seo",
+    text: "Was ist ein Beispiel für ein Long-Tail-Keyword?",
+    choices: [
+      {label: "A", text: "„Schuhe“"},
+      {label: "B", text: "„Nike Sneaker Damen“"},
+      {label: "C", text: "„Nike Air Max 90 Damen Weiß Größe 38 kaufen“"},
+      {label: "D", text: "„Sport“"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 17, cat: "seo",
+    text: "Was sind Core Web Vitals im technischen SEO?",
+    choices: [
+      {label: "A", text: "Die wichtigsten Sicherheitsmerkmale eines Webshops"},
+      {label: "B", text: "Ladezeit (LCP), Interaktivität (FID) und Layoutstabilität (CLS)"},
+      {label: "C", text: "Anzahl der Backlinks, Besucher und Conversions"},
+      {label: "D", text: "Die drei Phasen des Kaufprozesses"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 18, cat: "seo",
+    text: "Seit wann indexiert Google zuerst die mobile Version einer Website?",
+    choices: [
+      {label: "A", text: "2012"},
+      {label: "B", text: "2015"},
+      {label: "C", text: "2018"},
+      {label: "D", text: "2021"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 19, cat: "seo",
+    text: "Was ist die robots.txt-Datei?",
+    choices: [
+      {label: "A", text: "Eine Datei mit Produktbeschreibungen für Roboter-Lieferanten"},
+      {label: "B", text: "Eine Datei, die definiert, welche Seiten Suchmaschinen crawlen dürfen"},
+      {label: "C", text: "Eine Konfigurationsdatei für den Webserver"},
+      {label: "D", text: "Eine Liste aller registrierten Nutzer des Webshops"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 20, cat: "seo",
+    text: "Was ist eine sitemap.xml?",
+    choices: [
+      {label: "A", text: "Eine Grafik des Website-Layouts"},
+      {label: "B", text: "Eine Liste aller URLs des Webshops, die Google beim Finden aller Seiten hilft"},
+      {label: "C", text: "Eine Datei zur Verschlüsselung von Siteinhalten"},
+      {label: "D", text: "Ein XML-basiertes Bezahlsystem"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "marketing",
+    text: "Was ist das PESO-Modell im Online-Marketing?",
+    choices: [
+      {label: "A", text: "Ein Vergütungsmodell für Affiliates"},
+      {label: "B", text: "Ein Modell, das Paid, Earned, Shared und Owned Media unterscheidet"},
+      {label: "C", text: "Eine Methode zur KPI-Berechnung"},
+      {label: "D", text: "Ein SEO-Ranking-Algorithmus"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 22, cat: "marketing",
+    text: "Was gehört zu Paid Media im PESO-Modell?",
+    choices: [
+      {label: "A", text: "Eigener Blog und Newsletter"},
+      {label: "B", text: "Organische Suchergebnisse und PR"},
+      {label: "C", text: "Google Ads, Social Ads und Display-Werbung"},
+      {label: "D", text: "Social-Media-Posts und Viralvideos"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 23, cat: "marketing",
+    text: "Wofür steht die Abkürzung SEA?",
+    choices: [
+      {label: "A", text: "Search Engine Analytics"},
+      {label: "B", text: "Search Engine Advertising"},
+      {label: "C", text: "Social Engagement Advertising"},
+      {label: "D", text: "Search and E-Commerce Acquisition"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 24, cat: "marketing",
+    text: "Wie sind SEA-Anzeigen bei Google gekennzeichnet?",
+    choices: [
+      {label: "A", text: "Mit einem grünen Häkchen"},
+      {label: "B", text: "Mit dem Wort „Gesponsert“"},
+      {label: "C", text: "Mit einem roten Rahmen"},
+      {label: "D", text: "Mit einem blauen Stern"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "marketing",
+    text: "Was ist der Hauptvorteil von SEA gegenüber SEO?",
+    choices: [
+      {label: "A", text: "SEA ist kostengünstiger als SEO"},
+      {label: "B", text: "SEA ist langfristig nachhaltiger"},
+      {label: "C", text: "SEA ist sofort sichtbar, ohne monatelange Wartezeit"},
+      {label: "D", text: "SEA erzeugt mehr Vertrauen bei Nutzern"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 26, cat: "marketing",
+    text: "Was ist der Hauptnachteil von SEA gegenüber SEO?",
+    choices: [
+      {label: "A", text: "SEA dauert Monate bis zur Wirkung"},
+      {label: "B", text: "SEA kostet Geld pro Klick und endet mit dem Budget"},
+      {label: "C", text: "SEA kann nicht für saisonales Geschäft eingesetzt werden"},
+      {label: "D", text: "SEA funktioniert nur auf Instagram"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "marketing",
+    text: "Was bedeutet PPC im Kontext von Google Ads?",
+    choices: [
+      {label: "A", text: "Paid Page Content"},
+      {label: "B", text: "Pay-per-Click – man zahlt nur, wenn jemand auf die Anzeige klickt"},
+      {label: "C", text: "Premium Partner Commission"},
+      {label: "D", text: "Product Placement Cost"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "marketing",
+    text: "Welche typischen CPC-Kosten im E-Commerce werden im Handout genannt?",
+    choices: [
+      {label: "A", text: "0,01–0,05 EUR pro Klick"},
+      {label: "B", text: "0,20–5,00 EUR pro Klick"},
+      {label: "C", text: "10–50 EUR pro Klick"},
+      {label: "D", text: "100–500 EUR pro Klick"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "marketing",
+    text: "Was ist der höchste ROI unter allen Online-Marketing-Kanälen laut Handout?",
+    choices: [
+      {label: "A", text: "Social Media Marketing"},
+      {label: "B", text: "Google Ads (SEA)"},
+      {label: "C", text: "E-Mail-Marketing"},
+      {label: "D", text: "Display-Werbung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 30, cat: "marketing",
+    text: "Welchen ROI hat E-Mail-Marketing laut Statista 2023?",
+    choices: [
+      {label: "A", text: "Ca. 5 EUR Ertrag pro 1 EUR Invest"},
+      {label: "B", text: "Ca. 12 EUR Ertrag pro 1 EUR Invest"},
+      {label: "C", text: "Ca. 36 EUR Ertrag pro 1 EUR Invest"},
+      {label: "D", text: "Ca. 100 EUR Ertrag pro 1 EUR Invest"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "marketing",
+    text: "Was ist beim E-Mail-Marketing laut DSGVO Pflicht?",
+    choices: [
+      {label: "A", text: "E-Mails dürfen nur mit ausdrücklicher Einwilligung (Double-Opt-In) versendet werden"},
+      {label: "B", text: "E-Mails müssen immer auf Englisch versendet werden"},
+      {label: "C", text: "E-Mails dürfen keine Bilder enthalten"},
+      {label: "D", text: "E-Mails müssen wöchentlich versendet werden"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 32, cat: "marketing",
+    text: "Was ist der Preheader in einem Newsletter?",
+    choices: [
+      {label: "A", text: "Das Logo am Anfang des Newsletters"},
+      {label: "B", text: "Die erste sichtbare Zeile im Postfach, die die Betreffzeile ergänzt"},
+      {label: "C", text: "Der Call-to-Action-Button"},
+      {label: "D", text: "Der Footer mit dem Abmelde-Link"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "marketing",
+    text: "Welche Angabe muss im Footer eines Newsletters unbedingt aus DSGVO-Gründen enthalten sein?",
+    choices: [
+      {label: "A", text: "Postadresse des Empfängers"},
+      {label: "B", text: "Preisinformationen aller Produkte"},
+      {label: "C", text: "Abmelde-Link"},
+      {label: "D", text: "Geburtsdatum des Empfängers"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 34, cat: "marketing",
+    text: "Welche Social-Media-Plattform richtet sich hauptsächlich an eine Zielgruppe von 13–30 Jahren und bietet TikTok Shop an?",
+    choices: [
+      {label: "A", text: "Facebook"},
+      {label: "B", text: "Pinterest"},
+      {label: "C", text: "Instagram"},
+      {label: "D", text: "TikTok"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 35, cat: "marketing",
+    text: "Was ist Social Commerce?",
+    choices: [
+      {label: "A", text: "Marketing ausschließlich über soziale Netzwerke"},
+      {label: "B", text: "Der direkte Kauf von Produkten innerhalb einer Social-Media-App, ohne die App zu verlassen"},
+      {label: "C", text: "Eine Methode zum Vergleichen sozialer Netzwerke"},
+      {label: "D", text: "Bezahlte Werbung in sozialen Netzwerken"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 36, cat: "marketing",
+    text: "Welche Social-Media-Plattform eignet sich besonders für Produktbilder, Stories und Shopping-Tags im E-Commerce?",
+    choices: [
+      {label: "A", text: "YouTube"},
+      {label: "B", text: "Pinterest"},
+      {label: "C", text: "Instagram"},
+      {label: "D", text: "Facebook"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 37, cat: "marketing",
+    text: "Was bedeutet KPI?",
+    choices: [
+      {label: "A", text: "Key Product Indicator"},
+      {label: "B", text: "Key Performance Indicator"},
+      {label: "C", text: "Knowledge Performance Index"},
+      {label: "D", text: "Kundenprofil-Information"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "marketing",
+    text: "Wie berechnet man die Conversion Rate?",
+    choices: [
+      {label: "A", text: "Umsatz geteilt durch Besucher mal 100"},
+      {label: "B", text: "Käufe geteilt durch Besucher mal 100"},
+      {label: "C", text: "Bestellungen geteilt durch Umsatz"},
+      {label: "D", text: "Klicks geteilt durch Impressionen mal 100"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 39, cat: "marketing",
+    text: "Welche Conversion Rate gilt im E-Commerce als „gut“?",
+    choices: [
+      {label: "A", text: "0,1–0,5 %"},
+      {label: "B", text: "1–3 %"},
+      {label: "C", text: "10–15 %"},
+      {label: "D", text: "30–50 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 40, cat: "marketing",
+    text: "Was ist die Bounce Rate?",
+    choices: [
+      {label: "A", text: "Der Anteil der Besucher, die nach dem Kauf eine Bewertung hinterlassen"},
+      {label: "B", text: "Der Anteil der Besucher, die die Website verlassen, ohne eine weitere Seite aufzurufen"},
+      {label: "C", text: "Die Rate der zurückgesendeten Pakete"},
+      {label: "D", text: "Der Prozentsatz nicht zugestellter E-Mails"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "kpi",
+    text: "Welcher Bounce-Rate-Wert gilt als gut für einen Webshop?",
+    choices: [
+      {label: "A", text: "Unter 20 %"},
+      {label: "B", text: "Unter 60 %"},
+      {label: "C", text: "Über 80 %"},
+      {label: "D", text: "Genau 100 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 42, cat: "kpi",
+    text: "Wie berechnet man den AOV (Average Order Value)?",
+    choices: [
+      {label: "A", text: "Umsatz geteilt durch Besucher"},
+      {label: "B", text: "Umsatz geteilt durch Anzahl der Bestellungen"},
+      {label: "C", text: "Anzahl Produkte geteilt durch Bestellungen"},
+      {label: "D", text: "Marketingkosten geteilt durch Umsatz"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 43, cat: "kpi",
+    text: "Was ist CAC?",
+    choices: [
+      {label: "A", text: "Content Analytics Cost"},
+      {label: "B", text: "Customer Acquisition Cost – Kosten, um einen neuen Kunden zu gewinnen"},
+      {label: "C", text: "Conversion and Analytics Center"},
+      {label: "D", text: "Click and Cart-Kosten pro Bestellung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "kpi",
+    text: "Wie berechnet man den CAC?",
+    choices: [
+      {label: "A", text: "Umsatz geteilt durch Neukunden"},
+      {label: "B", text: "Marketingkosten geteilt durch Anzahl der Neukunden"},
+      {label: "C", text: "Besucher geteilt durch Marketingkosten"},
+      {label: "D", text: "AOV geteilt durch Käufe pro Jahr"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "kpi",
+    text: "Welches Verhältnis von CLV zu CAC gilt als Mindest-Ziel für ein profitables E-Commerce-Geschäftsmodell?",
+    choices: [
+      {label: "A", text: "CLV sollte mindestens gleich CAC sein (1:1)"},
+      {label: "B", text: "CLV muss mindestens 3-mal den CAC übersteigen (CLV 3 × CAC)"},
+      {label: "C", text: "CLV sollte maximal halb so hoch wie CAC sein"},
+      {label: "D", text: "CLV und CAC sollen immer identisch sein"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "kpi",
+    text: "Wie wird der CLV (Customer Lifetime Value) berechnet?",
+    choices: [
+      {label: "A", text: "Marketingkosten multipliziert mit Neukunden"},
+      {label: "B", text: "AOV mal Käufe pro Jahr mal Kundenjahre"},
+      {label: "C", text: "Umsatz geteilt durch Kundenjahre"},
+      {label: "D", text: "Bounce Rate mal CAC mal AOV"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "kpi",
+    text: "Was ist ROAS?",
+    choices: [
+      {label: "A", text: "Rate of Advertising and Sales"},
+      {label: "B", text: "Return on Ad Spend – Verhältnis von Werbeumsatz zu Werbekosten"},
+      {label: "C", text: "Revenue of All Shops"},
+      {label: "D", text: "Return of Annual Sales"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "kpi",
+    text: "Welchen ROAS-Wert hält das Handout für gut?",
+    choices: [
+      {label: "A", text: "Über 1"},
+      {label: "B", text: "Über 2"},
+      {label: "C", text: "Über 4"},
+      {label: "D", text: "Über 10"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 49, cat: "kpi",
+    text: "Welche KPIs werden im Praxisbeispiel ModeWelt.de berechnet? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Conversion Rate von 2,5 %"},
+      {label: "B", text: "ROAS von 6,25"},
+      {label: "C", text: "CAC von 25 EUR"},
+      {label: "D", text: "CLV von 75 EUR"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 50, cat: "kpi",
+    text: "Was bedeutet Off-Page-SEO?",
+    choices: [
+      {label: "A", text: "Optimierungen am Quellcode der Website"},
+      {label: "B", text: "Backlinks von anderen Websites auf den eigenen Webshop"},
+      {label: "C", text: "Die Optimierung des Checkout-Prozesses"},
+      {label: "D", text: "Bezahlte Werbeanzeigen außerhalb von Google"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 51, cat: "kpi",
+    text: "Was sind Backlinks?",
+    choices: [
+      {label: "A", text: "Interne Links innerhalb des Webshops"},
+      {label: "B", text: "Links von anderen Websites, die auf den eigenen Webshop verweisen"},
+      {label: "C", text: "Broken Links, die auf nicht vorhandene Seiten zeigen"},
+      {label: "D", text: "Links zu externen Datenschutzseiten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 52, cat: "kpi",
+    text: "Welches Konzept steht über Usability und beschreibt alle Erfahrungen mit einem Produkt vor, während und nach der Nutzung?",
+    choices: [
+      {label: "A", text: "Customer Journey"},
+      {label: "B", text: "Brand Awareness"},
+      {label: "C", text: "User Experience (UX)"},
+      {label: "D", text: "Conversion Funnel"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 53, cat: "kpi",
+    text: "Welche Aussage zum Unterschied SEO vs. SEA ist richtig?",
+    choices: [
+      {label: "A", text: "SEO ist schnell wirksam, SEA braucht Monate"},
+      {label: "B", text: "SEO hat höheres Nutzervertrauen, SEA ist sofort sichtbar aber kostenpflichtig"},
+      {label: "C", text: "SEA hat höheres Nutzervertrauen als SEO"},
+      {label: "D", text: "SEO und SEA sind identisch – nur der Name unterscheidet sich"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "kpi",
+    text: "Was ist Structured Data / Schema.org-Markup?",
+    choices: [
+      {label: "A", text: "Ein Datenbankformat für Webshop-Produkte"},
+      {label: "B", text: "Ausgezeichnete Daten im Quellcode für Rich Snippets in Google"},
+      {label: "C", text: "Eine Methode zur Verschlüsselung von Kundendaten"},
+      {label: "D", text: "Ein bezahltes Google-Produkt für Werbeschaltungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "kpi",
+    text: "Was sind die 5 KPI-Riesen im E-Commerce laut der Eselsbrücke C-B-A-CC?",
+    choices: [
+      {label: "A", text: "Conversion, Bounce, AOV, CAC, CLV"},
+      {label: "B", text: "Click, Buy, Average, Cost, Cart"},
+      {label: "C", text: "Content, Blog, Ads, Campaign, Customer"},
+      {label: "D", text: "Checkout, Basket, Affiliate, Catalog, Campaign"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 56, cat: "kpi",
+    text: "Welches Content-Format ist für TikTok typisch?",
+    choices: [
+      {label: "A", text: "Lange Blogartikel"},
+      {label: "B", text: "Infografiken und Pinterest-Pins"},
+      {label: "C", text: "Kurzvideo"},
+      {label: "D", text: "Podcast-Episoden"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 57, cat: "kpi",
+    text: "Was ist Affiliate-Marketing?",
+    choices: [
+      {label: "A", text: "Direkte Werbung auf der eigenen Website"},
+      {label: "B", text: "Kooperationen, bei denen Partner-Websites gegen Provision für eigene Produkte werben"},
+      {label: "C", text: "E-Mail-Kampagnen an Bestandskunden"},
+      {label: "D", text: "Organic Social Media Posts"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "kpi",
+    text: "Welche Kombination von Kanälen empfiehlt das Handout für eine nachhaltige UND schnell wirksame Marketing-Strategie?",
+    choices: [
+      {label: "A", text: "Nur SEO"},
+      {label: "B", text: "Nur SEA"},
+      {label: "C", text: "SEO für langfristige Strategie kombiniert mit SEA für schnelle Ergebnisse"},
+      {label: "D", text: "Display Ads kombiniert mit Affiliate"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 59, cat: "kpi",
+    text: "Welche Plattform ist laut Handout besonders für ältere Zielgruppen (25–55 Jahre) geeignet und bietet Marketplace und Gruppen?",
+    choices: [
+      {label: "A", text: "TikTok"},
+      {label: "B", text: "Instagram"},
+      {label: "C", text: "Facebook"},
+      {label: "D", text: "YouTube"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 60, cat: "kpi",
+    text: "Was ist Owned Media im PESO-Modell? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Der eigene Webshop"},
+      {label: "B", text: "Google Ads-Kampagnen"},
+      {label: "C", text: "Der eigene Newsletter"},
+      {label: "D", text: "Kundenbewertungen auf externen Portalen"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 61, cat: "kpi",
+    text: "Wie lautet die Formel für die Conversion Rate im Praxisbeispiel TechGadgets.de (25.000 Besucher, 375 Bestellungen)?",
+    choices: [
+      {label: "A", text: "375 25.000 × 100 = 1,5 %"},
+      {label: "B", text: "25.000 375 × 100 = 6.666 %"},
+      {label: "C", text: "375 × 25.000 = 9.375.000"},
+      {label: "D", text: "25.000 - 375 = 24.625"}
+    ],
+    multi: false, correct: ["A"]
+  }
+];
+const catLabels={
+  seo: {label: "SEO", cls: "cat-definition"},
+  marketing: {label: "Marketing", cls: "cat-shopsystem"},
+  kpi: {label: "KPIs", cls: "cat-technik"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

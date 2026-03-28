@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 4: Soziale Kompetenz & E-Commerce-Arten – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #b41e1e;
+    --blue: #1e3c78;
+    --dark: #1a1a2e;
+    --green: #2d8a4e;
+    --orange: #d97706;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+  }
+  header h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  header p { color: #aaa; font-size: 0.85rem; }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: #666; margin-top: 3px; }
+
+  .score-box { display: flex; gap: 16px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 70px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--blue); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border: 1px solid var(--border);
+    border-radius: 16px; background: white; cursor: pointer; font-size: 0.8rem;
+  }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 1rem; line-height: 1.5; margin-bottom: 14px; font-weight: 500; }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.92rem; line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: #eef1f9; }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: #d4f0df; }
+  .choice-btn.wrong-selected { border-color: var(--red); background: #fde8e8; }
+  .choice-btn.missed { border-color: var(--orange); background: #fef3e2; }
+  .choice-btn:disabled { cursor: default; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #d4f0df; color: #1a5c30; }
+  .q-feedback.partial { background: #fef3e2; color: #8a5c00; }
+  .q-feedback.fail { background: #fde8e8; color: #8a0000; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--blue);
+    color: white; border: none; border-radius: 7px; cursor: pointer; font-size: 0.88rem;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: white; border-radius: 12px; padding: 24px;
+    text-align: center; margin-bottom: 20px; display: none;
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 8px 0; }
+  .final-banner .sub { color: #ccc; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#127891; Quiz – Tag 4: Soziale Kompetenz & E-Commerce-Arten</h1>
+  <p>Kaufmann im E-Commerce &middot; Lernfeld 1 &middot; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 4: Soziale Kompetenz & E-Commerce-Arten</div>
+      <div class="quiz-meta">64 Fragen &middot; Bei jeder Frage sind 1 oder 2 Antworten korrekt</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">64</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div>Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    num: 1,
+    text: `Was beschreibt „soziale Kompetenz" am besten?`,
+    choices: [
+    {"label": "A", "text": "Die Fähigkeit, komplexe Software zu bedienen"},
+    {"label": "B", "text": "Die Fähigkeit, in sozialen Situationen erfolgreich mit anderen Menschen umzugehen"},
+    {"label": "C", "text": "Die Kenntnis aller rechtlichen Vorschriften im E-Commerce"},
+    {"label": "D", "text": "Die Fähigkeit, Finanzkennzahlen zu analysieren enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 2,
+    text: `Wie definiert Kanning (2015) soziale Kompetenz?`,
+    choices: [
+    {"label": "A", "text": "Als rein angeborene Eigenschaft ohne Lernpotenzial"},
+    {"label": "B", "text": "Als Gesamtheit des Wissens, der Fähigkeiten und Fertigkeiten, die die Qualität eigenen Sozialverhaltens fördern"},
+    {"label": "C", "text": "Als ausschließlich kommunikative Fähigkeit"},
+    {"label": "D", "text": "Als Messgröße für Teamgröße in Unternehmen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 3,
+    text: `Wofür steht das Akronym KEKK?`,
+    choices: [
+    {"label": "A", "text": "Kunden -- Effizienz -- Kosten -- Kennzahlen"},
+    {"label": "B", "text": "Kommunikation -- Empathie -- Kooperation -- Konfliktlösung"},
+    {"label": "C", "text": "Kreativität -- Einsatz -- Kompetenz -- Kundschaft"},
+    {"label": "D", "text": "Kalkulation -- Einnahmen -- Kosten -- Kennziffern enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 4,
+    text: `Welche der folgenden Aussagen beschreibt die Dimension „Empathie" im KEKK-Modell korrekt?`,
+    choices: [
+    {"label": "A", "text": "Aufgaben innerhalb eines Projektteams gleichmäßig verteilen"},
+    {"label": "B", "text": "Sich in andere hineinversetzen und einen Perspektivwechsel vornehmen"},
+    {"label": "C", "text": "Konflikte durch Mehrheitsentscheid lösen"},
+    {"label": "D", "text": "Klar und verständlich kommunizieren enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 5,
+    text: `Ein E-Commerce-Kaufmann beantwortet Kundenanfragen per E-Mail präzise und verständlich. Welche KEKK-Dimension wird hier primär gezeigt?`,
+    choices: [
+    {"label": "A", "text": "Konfliktlösung"},
+    {"label": "B", "text": "Kooperation"},
+    {"label": "C", "text": "Kommunikation"},
+    {"label": "D", "text": "Empathie enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 6,
+    text: `Ein Team aus Marketing und Logistik arbeitet gemeinsam an einem Projekt und verteilt Aufgaben fair. Welche KEKK-Dimension steht dabei im Vordergrund?`,
+    choices: [
+    {"label": "A", "text": "Empathie"},
+    {"label": "B", "text": "Kooperation"},
+    {"label": "C", "text": "Kommunikation"},
+    {"label": "D", "text": "Konfliktlösung enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 7,
+    text: `Warum ist soziale Kompetenz im E-Commerce-Berufsalltag besonders relevant? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Kundenkommunikation via Chat, E-Mail und Social Media gehört zum Alltag"},
+    {"label": "B", "text": "Alle Arbeitsaufgaben im E-Commerce werden vollständig automatisiert"},
+    {"label": "C", "text": "Projekte werden häufig in agilen, interdisziplinären Teams bearbeitet"},
+    {"label": "D", "text": "Soziale Kompetenz ersetzt vollständig das fachliche Wissen enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 8,
+    text: `Welche Aussage zum Mehrabian-Modell (1971) ist korrekt?`,
+    choices: [
+    {"label": "A", "text": "Der Wortinhalt macht 55 % der Wirkung einer emotionalen Botschaft aus"},
+    {"label": "B", "text": "Körpersprache macht 55 %, Stimme 38 % und Wortinhalt 7 % aus"},
+    {"label": "C", "text": "Körpersprache macht 38 %, Stimme 55 % und Wortinhalt 7 % aus"},
+    {"label": "D", "text": "Wortinhalt und Körpersprache haben je 50 % Einfluss auf die Wirkung enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 9,
+    text: `Für welchen Kommunikationstyp gilt das Mehrabian-Modell laut Handout primär?`,
+    choices: [
+    {"label": "A", "text": "Schriftliche E-Mail-Kommunikation ohne Video"},
+    {"label": "B", "text": "Sachliche Informationsweitergabe in Berichten"},
+    {"label": "C", "text": "Direkte, persönliche Gespräche bei emotionalen Aussagen"},
+    {"label": "D", "text": "Automatisierte Chatbot-Nachrichten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 10,
+    text: `Welchen prozentualen Anteil hat laut Mehrabian die Stimme (Tonfall) an der Wirkung einer emotionalen Botschaft?`,
+    choices: [
+    {"label": "A", "text": "7 %"},
+    {"label": "B", "text": "55 %"},
+    {"label": "C", "text": "38 %"},
+    {"label": "D", "text": "25 % enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 11,
+    text: `Was versteht man unter „verbaler Kommunikation"?`,
+    choices: [
+    {"label": "A", "text": "Kommunikation durch Mimik, Gestik und Körperhaltung"},
+    {"label": "B", "text": "Kommunikation durch Sprache (gesprochen oder geschrieben)"},
+    {"label": "C", "text": "Kommunikation ausschließlich durch Emojis in digitalen Medien"},
+    {"label": "D", "text": "Kommunikation durch Tonfall und Lautstärke ohne Wörter enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 12,
+    text: `Welche der folgenden Beispiele zählen zur nonverbalen Kommunikation? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "E-Mail an einen Kunden schreiben"},
+    {"label": "B", "text": "Körperhaltung beim Kundengespräch"},
+    {"label": "C", "text": "Telefonisches Gespräch mit einem Lieferanten"},
+    {"label": "D", "text": "Mimik und Gestik im persönlichen Meeting enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 13,
+    text: `Welchen Anteil macht laut Kommunikationstabelle im Handout die nonverbale Kommunikation am Gesamteindruck aus?`,
+    choices: [
+    {"label": "A", "text": "ca. 7 %"},
+    {"label": "B", "text": "ca. 50 %"},
+    {"label": "C", "text": "ca. 93 %"},
+    {"label": "D", "text": "ca. 38 % enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 14,
+    text: `Welche Technik wird beim „aktiven Zuhören" eingesetzt?`,
+    choices: [
+    {"label": "A", "text": "Den Gesprächspartner unterbrechen, um schneller zu einer Lösung zu kommen"},
+    {"label": "B", "text": "Inhalt mit eigenen Worten wiederholen und offene Fragen stellen"},
+    {"label": "C", "text": "Ausschließlich geschlossene Ja/Nein-Fragen stellen"},
+    {"label": "D", "text": "Smartphone parallel zum Gespräch nutzen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 15,
+    text: `Wer hat das Modell der Teamentwicklungsphasen entwickelt?`,
+    choices: [
+    {"label": "A", "text": "Albert Mehrabian"},
+    {"label": "B", "text": "Uwe Peter Kanning"},
+    {"label": "C", "text": "Bruce Tuckman"},
+    {"label": "D", "text": "Tobias Kollmann enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 16,
+    text: `In welcher Reihenfolge verlaufen die Phasen nach Tuckman?`,
+    choices: [
+    {"label": "A", "text": "Storming -- Forming -- Performing -- Norming"},
+    {"label": "B", "text": "Forming -- Norming -- Storming -- Performing"},
+    {"label": "C", "text": "Forming -- Storming -- Norming -- Performing"},
+    {"label": "D", "text": "Norming -- Storming -- Forming -- Performing enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 17,
+    text: `Was kennzeichnet die Forming-Phase nach Tuckman?`,
+    choices: [
+    {"label": "A", "text": "Hohe Effizienz, Eigenverantwortung und Vertrauen"},
+    {"label": "B", "text": "Konflikte, Machtkämpfe und Rollenklärung"},
+    {"label": "C", "text": "Höflichkeit, Unsicherheit und unklare Rollen"},
+    {"label": "D", "text": "Gemeinsame Regeln und entstehender Zusammenhalt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 18,
+    text: `Welche Beschreibung passt zur Storming-Phase?`,
+    choices: [
+    {"label": "A", "text": "Kennenlernen und Unsicherheit dominieren"},
+    {"label": "B", "text": "Das Team arbeitet hocheffizient und zielorientiert"},
+    {"label": "C", "text": "Konflikte, Kritik und Machtkämpfe treten auf"},
+    {"label": "D", "text": "Vertrauen und gemeinsame Normen entstehen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 19,
+    text: `Welche Führungsaufgabe ist in der Norming-Phase besonders wichtig?`,
+    choices: [
+    {"label": "A", "text": "Ziele erklären und Orientierung geben"},
+    {"label": "B", "text": "Konflikte moderieren und vermitteln"},
+    {"label": "C", "text": "Stärken der Teammitglieder fördern"},
+    {"label": "D", "text": "Vollständig delegieren und Aufgaben abgeben enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 20,
+    text: `Was zeichnet die Performing-Phase laut Tuckman aus?`,
+    choices: [
+    {"label": "A", "text": "Unklare Rollen und Höflichkeit unter Unbekannten"},
+    {"label": "B", "text": "Hohe Effizienz, Eigenverantwortung und Zielorientierung"},
+    {"label": "C", "text": "Intensive Konflikte zwischen Teammitgliedern"},
+    {"label": "D", "text": "Das Entstehen erster gemeinsamer Regeln enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 21,
+    text: `Welche Merkhilfe gibt das Handout für die Tuckman-Phasen?`,
+    choices: [
+    {"label": "A", "text": "„Für Starke Normen Performen Teams am besten.\""},
+    {"label": "B", "text": "„Kunden Erwarten Klare Konzepte.\""},
+    {"label": "C", "text": "„Betriebe 2 Consumer -- digital und weltweit!\""},
+    {"label": "D", "text": "„Schon wieder mal shopst du.\" enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 22,
+    text: `Welche Konfliktart beschreibt unterschiedliche Meinungen zur besten Lösung, z. B. bei der Wahl des Shopsystems?`,
+    choices: [
+    {"label": "A", "text": "Beziehungskonflikt"},
+    {"label": "B", "text": "Rollenkonflikt"},
+    {"label": "C", "text": "Sachkonflikt"},
+    {"label": "D", "text": "Zielkonflikt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 23,
+    text: `Ein Unternehmen will gleichzeitig Kosten senken und die Qualität steigern. Was für ein Konflikt entsteht?`,
+    choices: [
+    {"label": "A", "text": "Sachkonflikt"},
+    {"label": "B", "text": "Zielkonflikt"},
+    {"label": "C", "text": "Rollenkonflikt"},
+    {"label": "D", "text": "Beziehungskonflikt enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 24,
+    text: `Welches Konzept steht hinter der Win-Win-Strategie der Konfliktlösung?`,
+    choices: [
+    {"label": "A", "text": "Eine Seite setzt sich vollständig auf Kosten der anderen durch"},
+    {"label": "B", "text": "Beide Seiten geben gleichermaßen nach und erzielen keinen Vorteil"},
+    {"label": "C", "text": "Beide Seiten suchen gemeinsam nach einer Lösung, mit der alle zufrieden sind"},
+    {"label": "D", "text": "Ein externer Schiedsrichter entscheidet, wer Recht hat enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 25,
+    text: `Welche Regel gilt laut Handout für Konfliktgespräche?`,
+    choices: [
+    {"label": "A", "text": "Du-Botschaften verwenden: „Du machst immer...\""},
+    {"label": "B", "text": "Ich-Botschaften verwenden: „Ich fühle mich...\""},
+    {"label": "C", "text": "Den Konflikt so lange ignorieren, bis er sich von selbst löst"},
+    {"label": "D", "text": "Persönliche Angriffe sind erlaubt, wenn man sachlich im Recht ist enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 26,
+    text: `Was sollte nach einem Konfliktgespräch laut Handout unbedingt getan werden?`,
+    choices: [
+    {"label": "A", "text": "Den Konflikt geheim halten, damit Dritte nicht informiert sind"},
+    {"label": "B", "text": "Die Ergebnisse schriftlich festhalten und eine Vereinbarung treffen"},
+    {"label": "C", "text": "Sofort einen neuen Konflikt ansprechen"},
+    {"label": "D", "text": "Das Gespräch ohne Ergebnis beenden und neu ansetzen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 27,
+    text: `Was versteht man laut Handout unter E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Ausschließlich der Verkauf physischer Produkte in stationären Läden"},
+    {"label": "B", "text": "Der Kauf und Verkauf von Waren, Dienstleistungen und Informationen über digitale Kanäle"},
+    {"label": "C", "text": "Nur der Austausch von E-Mails zwischen Unternehmen"},
+    {"label": "D", "text": "Die Herstellung von Waren mithilfe digitaler Maschinen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 28,
+    text: `Welche Akteure werden im E-Commerce mit dem Buchstaben „B" bezeichnet?`,
+    choices: [
+    {"label": "A", "text": "Behörden (Bund und Länder)"},
+    {"label": "B", "text": "Business (Unternehmen)"},
+    {"label": "C", "text": "Banken und Finanzinstitute"},
+    {"label": "D", "text": "Berater und Consultants enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 29,
+    text: `Wofür steht „C" im Kontext der E-Commerce-Akteure?`,
+    choices: [
+    {"label": "A", "text": "Computer"},
+    {"label": "B", "text": "Commerce"},
+    {"label": "C", "text": "Consumer (Endverbraucher/Privatkunde)"},
+    {"label": "D", "text": "Content enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 30,
+    text: `Was beschreibt B2C-E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Ein Unternehmen kauft bei einem anderen Unternehmen ein"},
+    {"label": "B", "text": "Privatpersonen handeln untereinander über Plattformen"},
+    {"label": "C", "text": "Ein Unternehmen verkauft direkt an Privatkunden"},
+    {"label": "D", "text": "Der Staat kauft bei Unternehmen ein enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 31,
+    text: `Welches der folgenden Unternehmen ist ein typisches Beispiel für B2C im deutschen E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Alibaba (als globale B2B-Plattform)"},
+    {"label": "B", "text": "Mercateo"},
+    {"label": "C", "text": "Zalando"},
+    {"label": "D", "text": "Beschaffung.de enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 32,
+    text: `Welchen ungefähren Jahresumsatz erzielte Zalando laut Handout im Jahr 2022?`,
+    choices: [
+    {"label": "A", "text": "ca. 37 Mrd. EUR"},
+    {"label": "B", "text": "ca. 10,3 Mrd. EUR"},
+    {"label": "C", "text": "ca. 4,4 Mrd. EUR"},
+    {"label": "D", "text": "ca. 3,8 Mrd. EUR enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 33,
+    text: `Welche Schutzrechte gelten im B2C-E-Commerce besonders? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "14-tägiges Widerrufsrecht gemäß §312g BGB"},
+    {"label": "B", "text": "Keine besonderen Verbraucherschutzrechte -- B2C und B2B sind gleichgestellt"},
+    {"label": "C", "text": "Verbraucherschutzrechte gelten für Privatkunden"},
+    {"label": "D", "text": "Unbegrenztes Rückgaberecht ohne Frist enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 34,
+    text: `Was sind typische Merkmale von B2C? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Große Zielgruppe (Massenmarkt)"},
+    {"label": "B", "text": "Individuelle Verhandlung von Preisen und Rahmenverträgen"},
+    {"label": "C", "text": "Standardisierte Produkte und Preise"},
+    {"label": "D", "text": "Zahlungsziel von 30--90 Tagen ist üblich enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 35,
+    text: `Was beschreibt B2B-E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Privatpersonen kaufen bei staatlichen Stellen ein"},
+    {"label": "B", "text": "Unternehmen kaufen bei anderen Unternehmen ein"},
+    {"label": "C", "text": "Endverbraucher kaufen direkt beim Hersteller"},
+    {"label": "D", "text": "Der Staat beschafft Dienstleistungen von Privatpersonen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 36,
+    text: `Welche Plattform gilt laut Handout als weltgrößte B2B-Plattform?`,
+    choices: [
+    {"label": "A", "text": "eBay Kleinanzeigen"},
+    {"label": "B", "text": "Alibaba"},
+    {"label": "C", "text": "Amazon.de (B2C-Version)"},
+    {"label": "D", "text": "Vinted enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 37,
+    text: `Was ist ein wesentlicher Unterschied zwischen B2C und B2B hinsichtlich der Kaufentscheidung?`,
+    choices: [
+    {"label": "A", "text": "Im B2B ist die Kaufentscheidung oft schnell und emotional; im B2C rational"},
+    {"label": "B", "text": "Im B2C ist die Kaufentscheidung oft schnell oder emotional; im B2B rational mit mehreren Entscheidern"},
+    {"label": "C", "text": "Beide Formen haben identische Kaufentscheidungsprozesse"},
+    {"label": "D", "text": "Im B2B gibt es keine Kaufentscheidungsinstanz enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 38,
+    text: `Wie lang ist das typische Zahlungsziel im B2B laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Sofort bei Bestellung"},
+    {"label": "B", "text": "1--5 Tage"},
+    {"label": "C", "text": "30--90 Tage"},
+    {"label": "D", "text": "1 Jahr enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 39,
+    text: `Was beschreibt die E-Commerce-Form C2C?`,
+    choices: [
+    {"label": "A", "text": "Ein Unternehmen beliefert den Staat mit IT-Dienstleistungen"},
+    {"label": "B", "text": "Privatpersonen handeln direkt untereinander über digitale Plattformen"},
+    {"label": "C", "text": "Ein Unternehmen verkauft über seine eigene App an Endkunden"},
+    {"label": "D", "text": "Verbraucher kaufen bei staatlichen Portalen ein enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 40,
+    text: `Welche Plattform ist ein bekanntes Beispiel für C2C in Deutschland?`,
+    choices: [
+    {"label": "A", "text": "Amazon Business"},
+    {"label": "B", "text": "Mercateo"},
+    {"label": "C", "text": "eBay Kleinanzeigen (Kleinanzeigen.de)"},
+    {"label": "D", "text": "Beschaffung.de enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 41,
+    text: `Wie verdient Vinted laut Handout sein Geld?`,
+    choices: [
+    {"label": "A", "text": "Durch eine Provision vom Verkäufer (ca. 10--15 %)"},
+    {"label": "B", "text": "Durch eine Käuferschutzgebühr (ca. 5--8 % des Kaufpreises)"},
+    {"label": "C", "text": "Durch monatliche Mitgliedsbeiträge der Nutzer"},
+    {"label": "D", "text": "Durch staatliche Fördergelder enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 42,
+    text: `Wie viele Nutzer hatte Vinted laut Handout im Jahr 2022 in Europa?`,
+    choices: [
+    {"label": "A", "text": "ca. 10 Millionen"},
+    {"label": "B", "text": "ca. 30 Millionen"},
+    {"label": "C", "text": "ca. 65 Millionen"},
+    {"label": "D", "text": "ca. 100 Millionen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 43,
+    text: `Was versteht man unter B2G-E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Privatpersonen kaufen staatliche Dienstleistungen digital"},
+    {"label": "B", "text": "Unternehmen beliefern den Staat / die öffentliche Hand"},
+    {"label": "C", "text": "Unternehmen kaufen bei anderen Unternehmen ein"},
+    {"label": "D", "text": "Großhändler beliefern Einzelhändler enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 44,
+    text: `Welche der folgenden Plattformen/Dienste ist ein Beispiel für B2G?`,
+    choices: [
+    {"label": "A", "text": "Vinted"},
+    {"label": "B", "text": "Zalando"},
+    {"label": "C", "text": "Beschaffung.de (öffentliche Ausschreibungen)"},
+    {"label": "D", "text": "TikTok Shop enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 45,
+    text: `Was ist M-Commerce?`,
+    choices: [
+    {"label": "A", "text": "E-Commerce über Mobilgeräte wie Smartphones und Tablets"},
+    {"label": "B", "text": "Handel zwischen Militär und Unternehmen"},
+    {"label": "C", "text": "E-Commerce ausschließlich über Desktop-Computer"},
+    {"label": "D", "text": "Marketing-Commerce: Werbung im Internet enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 46,
+    text: `Was beschreibt Social Commerce?`,
+    choices: [
+    {"label": "A", "text": "Sozialer Zusammenhalt von Unternehmen in der Lieferkette"},
+    {"label": "B", "text": "Der direkte Kaufprozess über Social-Media-Plattformen"},
+    {"label": "C", "text": "Kundenbewertungen und Reviews in Online-Shops"},
+    {"label": "D", "text": "Kommunikation zwischen Kunden im Forum eines Webshops enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 47,
+    text: `Welche Plattform ist ein Beispiel für Social Commerce?`,
+    choices: [
+    {"label": "A", "text": "Beschaffung.de"},
+    {"label": "B", "text": "Mercateo"},
+    {"label": "C", "text": "Instagram Shopping"},
+    {"label": "D", "text": "Amazon Business enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 48,
+    text: `Was versteht man unter G2C-E-Commerce?`,
+    choices: [
+    {"label": "A", "text": "Unternehmen kaufen bei staatlichen Institutionen ein"},
+    {"label": "B", "text": "Staatliche digitale Dienstleistungen für Bürger (z. B. Online-Bürgeramt)"},
+    {"label": "C", "text": "Privatpersonen bieten dem Staat Dienstleistungen an"},
+    {"label": "D", "text": "Gemeinnützige Organisationen handeln mit Unternehmen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 49,
+    text: `Welcher E-Commerce-Gesamtumsatz wurde in Deutschland im Jahr 2022 erzielt?`,
+    choices: [
+    {"label": "A", "text": "ca. 50 Mrd. EUR"},
+    {"label": "B", "text": "ca. 70 Mrd. EUR"},
+    {"label": "C", "text": "ca. 90,4 Mrd. EUR"},
+    {"label": "D", "text": "ca. 120 Mrd. EUR enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 50,
+    text: `Wie hat sich der E-Commerce-Umsatz in Deutschland von 2021 auf 2022 verändert?`,
+    choices: [
+    {"label": "A", "text": "Er stieg um ca. 9,3 % an"},
+    {"label": "B", "text": "Er blieb unverändert"},
+    {"label": "C", "text": "Er sank um ca. 9,3 % (Normalisierung nach COVID-Boom)"},
+    {"label": "D", "text": "Er sank um ca. 50 % enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 51,
+    text: `Wie hoch war der Anteil des E-Commerce am Gesamthandel in Deutschland im Jahr 2022?`,
+    choices: [
+    {"label": "A", "text": "ca. 5 %"},
+    {"label": "B", "text": "ca. 10,5 %"},
+    {"label": "C", "text": "ca. 25 %"},
+    {"label": "D", "text": "ca. 40 % enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 52,
+    text: `Was war laut Handout die beliebteste Online-Shopping-Kategorie in Deutschland 2022?`,
+    choices: [
+    {"label": "A", "text": "Bücher, Filme, Musik"},
+    {"label": "B", "text": "Unterhaltungselektronik"},
+    {"label": "C", "text": "Bekleidung & Schuhe"},
+    {"label": "D", "text": "Lebensmittel enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 53,
+    text: `Wie viele Online-Käufer gab es laut Handout in Deutschland im Jahr 2022?`,
+    choices: [
+    {"label": "A", "text": "ca. 20 Millionen"},
+    {"label": "B", "text": "ca. 40 Millionen"},
+    {"label": "C", "text": "ca. 58 Millionen"},
+    {"label": "D", "text": "ca. 80 Millionen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 54,
+    text: `Welche Zahlungsart war laut Handout in Deutschland die häufigste beim Online-Einkauf?`,
+    choices: [
+    {"label": "A", "text": "Kreditkarte"},
+    {"label": "B", "text": "Bitcoin / Kryptowährungen"},
+    {"label": "C", "text": "PayPal / Kauf auf Rechnung"},
+    {"label": "D", "text": "SEPA-Lastschrift enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 55,
+    text: `Welches Unternehmen ist laut Handout der größte Online-Händler in Deutschland?`,
+    choices: [
+    {"label": "A", "text": "Zalando"},
+    {"label": "B", "text": "Otto"},
+    {"label": "C", "text": "MediaMarkt"},
+    {"label": "D", "text": "Amazon.de enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 56,
+    text: `Wofür steht die Abkürzung KEKK als Eselsbrücke?`,
+    choices: [
+    {"label": "A", "text": "Kommunikation, Empathie, Kreativität, Kooperation"},
+    {"label": "B", "text": "Kommunikation, Empathie, Kooperation, Konfliktlösung"},
+    {"label": "C", "text": "Kundenpflege, Effizienz, Kompetenz, Kennzahlen"},
+    {"label": "D", "text": "Kanal, E-Commerce, Kommunikation, Kontrolle enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 57,
+    text: `Eine Mitarbeiterin bringt für einen verärgerten Kunden Verständnis auf und versucht, dessen Perspektive einzunehmen. Welche soziale Kompetenz zeigt sie damit?`,
+    choices: [
+    {"label": "A", "text": "Kooperation"},
+    {"label": "B", "text": "Kommunikation"},
+    {"label": "C", "text": "Empathie"},
+    {"label": "D", "text": "Konfliktlösung enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 58,
+    text: `Welche Aussage über B2B-Preisgestaltung ist korrekt?`,
+    choices: [
+    {"label": "A", "text": "Preise sind immer öffentlich und für alle gleich"},
+    {"label": "B", "text": "Preise werden individuell verhandelt, oft mit Staffelpreisen"},
+    {"label": "C", "text": "Es gibt keine Rabatte im B2B-Handel"},
+    {"label": "D", "text": "B2B-Preise entsprechen immer den B2C-Preisen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 59,
+    text: `Was ist laut Handout ein Merkmal von digitalem E-Commerce im Vergleich zu direkten Gesprächen?`,
+    choices: [
+    {"label": "A", "text": "Digitale Kommunikation ist immer klarer als direkte Gespräche"},
+    {"label": "B", "text": "Digitale Kommunikation ist oft missverständlicher als direkte Gespräche"},
+    {"label": "C", "text": "Körpersprache spielt digital eine noch größere Rolle als persönlich"},
+    {"label": "D", "text": "Nonverbale Signale können digital nicht übertragen werden enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 60,
+    text: `Welche Quellen nennt das Handout für die E-Commerce-Statistiken Deutschland 2022? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "HDE Online-Monitor 2023"},
+    {"label": "B", "text": "Statista Jahresbericht 2022"},
+    {"label": "C", "text": "bevh -- Bundesverband E-Commerce und Versandhandel Deutschland"},
+    {"label": "D", "text": "Bundeszentrale für politische Bildung enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 61,
+    text: `Ein Unternehmen kauft 500 Druckerpatronen über Amazon Business. Welche E-Commerce-Form liegt vor?`,
+    choices: [
+    {"label": "A", "text": "B2C"},
+    {"label": "B", "text": "C2C"},
+    {"label": "C", "text": "B2G"},
+    {"label": "D", "text": "B2B enumerate"}
+    ],
+    multi: false,
+    correct: []
+  },
+  {
+    num: 62,
+    text: `Lena verkauft ihr altes Kleid über Vinted an Maja. Welche E-Commerce-Form liegt vor?`,
+    choices: [
+    {"label": "A", "text": "B2C"},
+    {"label": "B", "text": "C2C"},
+    {"label": "C", "text": "B2B"},
+    {"label": "D", "text": "B2G enumerate"}
+    ],
+    multi: false,
+    correct: []
+  },
+  {
+    num: 63,
+    text: `Du siehst ein Produkt in einem Instagram-Post und kaufst es direkt in der App. Welche E-Commerce-Form beschreibt das?`,
+    choices: [
+    {"label": "A", "text": "B2G"},
+    {"label": "B", "text": "M-Commerce ausschließlich"},
+    {"label": "C", "text": "Social Commerce"},
+    {"label": "D", "text": "C2C enumerate"}
+    ],
+    multi: false,
+    correct: []
+  },
+  {
+    num: 64,
+    text: `Welche zwei E-Commerce-Arten sind laut Handout neben B2C und B2B die wichtigsten weiteren Formen? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "C2C (Consumer to Consumer)"},
+    {"label": "B", "text": "D2D (Dealer to Dealer)"},
+    {"label": "C", "text": "B2G (Business to Government)"},
+    {"label": "D", "text": "P2P (Peer to Peer -- nicht im Handout als eigene Kategorie) enumerate"}
+    ],
+    multi: true,
+    correct: []
+  },
+];
+
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">ℹ Mehrfachauswahl: 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '✓ Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '◑ Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '✗ Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% · Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

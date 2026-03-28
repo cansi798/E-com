@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 12: Fort-/Weiterbildung &amp; Unternehmensziele – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 12: Fort-/Weiterbildung &amp; Unternehmensziele</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 12: Fort-/Weiterbildung &amp; Unternehmensziele</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 12</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "bildung",
+    text: "Was bedeutet der Begriff lebenslanges Lernen im beruflichen Kontext?",
+    choices: [
+      {label: "A", text: "Man lernt nur während der Schulzeit"},
+      {label: "B", text: "Berufliche Weiterbildung endet mit dem Ausbildungsabschluss"},
+      {label: "C", text: "Kontinuierliche Weiterentwicklung der eigenen Kompetenzen ist berufliche Notwendigkeit"},
+      {label: "D", text: "Weiterbildung ist nur für Führungskräfte relevant"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 2, cat: "bildung",
+    text: "Wie schnell veraltet IT-Wissen laut Handout?",
+    choices: [
+      {label: "A", text: "Alle 10 Jahre"},
+      {label: "B", text: "Alle 5 Jahre"},
+      {label: "C", text: "Alle 2–3 Jahre"},
+      {label: "D", text: "Alle 6 Monate"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 3, cat: "bildung",
+    text: "Was unterscheidet Fortbildung von Weiterbildung?",
+    choices: [
+      {label: "A", text: "Fortbildung ist immer teurer als Weiterbildung"},
+      {label: "B", text: "Fortbildung vertieft Wissen im erlernten Beruf; Weiterbildung erwirbt neue Qualifikationen mit formalem Abschluss"},
+      {label: "C", text: "Weiterbildung findet nur online statt"},
+      {label: "D", text: "Fortbildung führt immer zu einem höheren Abschluss"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 4, cat: "bildung",
+    text: "Was ist eine Umschulung?",
+    choices: [
+      {label: "A", text: "Vertiefung im erlernten Beruf"},
+      {label: "B", text: "Erwerb eines Masterstudiums"},
+      {label: "C", text: "Wechsel in einen völlig anderen Beruf"},
+      {label: "D", text: "Eine Form der betrieblichen Ausbildung nach BBiG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 5, cat: "bildung",
+    text: "Welche IHK-Aufstiegsfortbildung ist für Kaufleute im E-Commerce direkt nach dem Abschluss möglich?",
+    choices: [
+      {label: "A", text: "Geprüfter Buchhalter"},
+      {label: "B", text: "Fachwirt für E-Commerce"},
+      {label: "C", text: "Diplom-Kaufmann"},
+      {label: "D", text: "Technischer Betriebswirt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 6, cat: "bildung",
+    text: "Welchem DQR-Niveau entspricht der Fachwirt für E-Commerce?",
+    choices: [
+      {label: "A", text: "DQR 4"},
+      {label: "B", text: "DQR 5"},
+      {label: "C", text: "DQR 6"},
+      {label: "D", text: "DQR 8"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 7, cat: "bildung",
+    text: "Wie lange dauert der Fachwirt für E-Commerce typischerweise?",
+    choices: [
+      {label: "A", text: "6 Monate Vollzeit"},
+      {label: "B", text: "1 Jahr Vollzeit"},
+      {label: "C", text: "2 Jahre berufsbegleitend"},
+      {label: "D", text: "4 Jahre Vollzeit"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 8, cat: "bildung",
+    text: "Was regelt der Kaufmännische Betriebswirt?",
+    choices: [
+      {label: "A", text: "Spezialisierung auf E-Commerce-Plattformen"},
+      {label: "B", text: "Betriebswirtschaft, Führung und Strategie – aufbauend auf dem Fachwirt"},
+      {label: "C", text: "Ausschließlich Buchhaltung und Steuerrecht"},
+      {label: "D", text: "Lagerlogistik und Warenwirtschaft"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 9, cat: "bildung",
+    text: "Welches Förderprogramm unterstützt anerkannte Aufstiegsfortbildungen (IHK, HWK)? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Aufstiegs-BAföG (AFBG)"},
+      {label: "B", text: "Bildungsgutschein der Bundesagentur für Arbeit"},
+      {label: "C", text: "BaföG für Hochschulstudenten"},
+      {label: "D", text: "Arbeitslosengeld II"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 10, cat: "bildung",
+    text: "Wie hoch kann die Gesamtförderung durch das Aufstiegs-BAföG maximal sein?",
+    choices: [
+      {label: "A", text: "5.000 EUR"},
+      {label: "B", text: "10.000 EUR"},
+      {label: "C", text: "15.000 EUR"},
+      {label: "D", text: "25.000 EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 11, cat: "bildung",
+    text: "Wie viel Prozent der Lehrgangskosten werden durch das Aufstiegs-BAföG gefördert?",
+    choices: [
+      {label: "A", text: "25 %"},
+      {label: "B", text: "50 %"},
+      {label: "C", text: "75 %"},
+      {label: "D", text: "100 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 12, cat: "bildung",
+    text: "Für wen ist der Bildungsgutschein der Bundesagentur für Arbeit gedacht?",
+    choices: [
+      {label: "A", text: "Ausschließlich für Azubis"},
+      {label: "B", text: "Arbeitssuchende oder von Arbeitslosigkeit Bedrohte"},
+      {label: "C", text: "Nur für Hochschulabsolventen"},
+      {label: "D", text: "Für alle Arbeitnehmer unabhängig vom Beschäftigungsstatus"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 13, cat: "bildung",
+    text: "Welche digitale Zertifizierung wird von Google angeboten? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Google Analytics Certification"},
+      {label: "B", text: "Meta Blueprint"},
+      {label: "C", text: "Google Ads Certification"},
+      {label: "D", text: "HubSpot Inbound Marketing Certificate"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 14, cat: "bildung",
+    text: "Was zertifiziert das Meta Blueprint?",
+    choices: [
+      {label: "A", text: "Cloud-Grundlagen"},
+      {label: "B", text: "E-Commerce-Shop-Betrieb"},
+      {label: "C", text: "Social-Media-Werbung auf Instagram und Facebook"},
+      {label: "D", text: "Suchmaschinenwerbung (SEA)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 15, cat: "bildung",
+    text: "Welche Zertifizierung richtet sich besonders auf den Betrieb von E-Commerce-Shops?",
+    choices: [
+      {label: "A", text: "AWS Cloud Practitioner"},
+      {label: "B", text: "Shopify Partner Certification"},
+      {label: "C", text: "HubSpot Inbound Marketing Certificate"},
+      {label: "D", text: "Google Analytics Certification"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 16, cat: "bildung",
+    text: "Was beschreibt der Begriff Qualifizierungsgeld?",
+    choices: [
+      {label: "A", text: "Eine staatliche Subvention für Unternehmen, die neue Maschinen kaufen"},
+      {label: "B", text: "60/67 % des Lohns für Weiterbildung während Kurzarbeit"},
+      {label: "C", text: "Ein Zuschuss zur Rentenversicherung"},
+      {label: "D", text: "Geld für Bildungsurlaub im Ausland"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 17, cat: "bildung",
+    text: "Wie viele Tage Bildungsurlaub stehen Arbeitnehmern pro Jahr typischerweise zu?",
+    choices: [
+      {label: "A", text: "2–3 Tage"},
+      {label: "B", text: "5–10 Tage"},
+      {label: "C", text: "15–20 Tage"},
+      {label: "D", text: "30 Tage"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 18, cat: "bildung",
+    text: "Was sind Unternehmensziele?",
+    choices: [
+      {label: "A", text: "Rückblickende Bewertungen vergangener Leistungen"},
+      {label: "B", text: "Der angestrebte Soll-Zustand, den ein Unternehmen innerhalb eines Zeitraums erreichen will"},
+      {label: "C", text: "Vorgaben der Bundesregierung für Unternehmen"},
+      {label: "D", text: "Gewünschte Urlaubsziele der Mitarbeiter"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "bildung",
+    text: "Wozu dienen Unternehmensziele? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Orientierung und Koordination unternehmerischer Entscheidungen"},
+      {label: "B", text: "Kontrolle und Messung des Unternehmenserfolgs"},
+      {label: "C", text: "Vermeidung von Steuerzahlungen"},
+      {label: "D", text: "Einschränkung der Mitarbeiterrechte"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 20, cat: "bildung",
+    text: "Welche drei Kategorien von Unternehmenszielen bilden das magische Dreieck?",
+    choices: [
+      {label: "A", text: "Politisch, wirtschaftlich, religiös"},
+      {label: "B", text: "Ökonomisch, ökologisch, sozial"},
+      {label: "C", text: "Kurzfristig, mittelfristig, langfristig"},
+      {label: "D", text: "Intern, extern, global"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "bildung",
+    text: "Welches ist ein Beispiel für ein ökonomisches Unternehmensziel?",
+    choices: [
+      {label: "A", text: "CO2-Neutralität bis 2030"},
+      {label: "B", text: "Ausbildungsplätze anbieten"},
+      {label: "C", text: "Umsatzwachstum um 15 %"},
+      {label: "D", text: "Recyclingquote erhöhen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 22, cat: "bildung",
+    text: "Welches ist ein Beispiel für ein ökologisches Unternehmensziel?",
+    choices: [
+      {label: "A", text: "Gewinnmaximierung"},
+      {label: "B", text: "Mitarbeiterzufriedenheit steigern"},
+      {label: "C", text: "CO2-Neutralität bis 2030 erreichen"},
+      {label: "D", text: "Marktanteil um 10 % erhöhen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 23, cat: "bildung",
+    text: "Welches ist ein Beispiel für ein soziales Unternehmensziel?",
+    choices: [
+      {label: "A", text: "Umsatzsteigerung um 20 %"},
+      {label: "B", text: "Verpackungsreduzierung"},
+      {label: "C", text: "Drei neue Ausbildungsplätze pro Jahr anbieten"},
+      {label: "D", text: "Liquiditätssicherung"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 24, cat: "bildung",
+    text: "Was bedeutet das S in der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Schnell"},
+      {label: "B", text: "Spezifisch (klar und eindeutig formuliert)"},
+      {label: "C", text: "Sinnvoll"},
+      {label: "D", text: "Simpel"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "bildung",
+    text: "Was bedeutet das M in der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Machbar"},
+      {label: "B", text: "Motivierend"},
+      {label: "C", text: "Messbar (quantifizierbar, mit Kennzahlen)"},
+      {label: "D", text: "Modular"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 26, cat: "bildung",
+    text: "Was bedeutet das A in der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Aktuell"},
+      {label: "B", text: "Attraktiv (motivierend und akzeptiert)"},
+      {label: "C", text: "Autonom"},
+      {label: "D", text: "Adaptiv"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 27, cat: "bildung",
+    text: "Was bedeutet das R in der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Relevant"},
+      {label: "B", text: "Redundant"},
+      {label: "C", text: "Realistisch (erreichbar mit vorhandenen Mitteln)"},
+      {label: "D", text: "Revidierbar"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 28, cat: "bildung",
+    text: "Was bedeutet das T in der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Transparent"},
+      {label: "B", text: "Terminiert (mit konkretem Enddatum)"},
+      {label: "C", text: "Taktisch"},
+      {label: "D", text: "Teamfähig"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "bildung",
+    text: "Welches der folgenden Ziele ist SMART formuliert?",
+    choices: [
+      {label: "A", text: "Wir wollen mehr Umsatz machen."},
+      {label: "B", text: "Die Exclusiva GmbH steigert den Online-Umsatz im Bereich Sneakers bis zum 31.12.2025 um 20 % gegenüber dem Vorjahr."},
+      {label: "C", text: "Wir wollen mehr Follower auf Instagram."},
+      {label: "D", text: "Die Mitarbeiter sollen zufriedener werden."}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 30, cat: "bildung",
+    text: "Welches der folgenden Ziele ist nicht SMART formuliert?",
+    choices: [
+      {label: "A", text: "Umsatz um 15 % bis 30.06.2025, gemessen am Vorjahresvergleich"},
+      {label: "B", text: "Retourenquote unter 10 % bis Jahresende"},
+      {label: "C", text: "Wir wollen besser werden"},
+      {label: "D", text: "Kundenbewertung auf Amazon \\(\\) 4,5 Sterne bis Q4 2025"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "ziele",
+    text: "Wie heißt die Zielbeziehung, bei der sich Ziele gegenseitig unterstützen?",
+    choices: [
+      {label: "A", text: "Konkurrierend"},
+      {label: "B", text: "Neutral"},
+      {label: "C", text: "Komplementär"},
+      {label: "D", text: "Antagonistisch"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 32, cat: "ziele",
+    text: "Wie heißt die Zielbeziehung, bei der sich Ziele gegenseitig behindern?",
+    choices: [
+      {label: "A", text: "Komplementär"},
+      {label: "B", text: "Konkurrierend"},
+      {label: "C", text: "Neutral"},
+      {label: "D", text: "Synergistisch"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "ziele",
+    text: "Welches ist ein Beispiel für konkurrierende Ziele?",
+    choices: [
+      {label: "A", text: "Kundenzufriedenheit steigern und Umsatz erhöhen"},
+      {label: "B", text: "Gewinnmaximierung (Kosten senken) vs. Lohnerhöhung für Mitarbeiter"},
+      {label: "C", text: "CO2-Reduktion und Einführung einer neuen Produktfarbe"},
+      {label: "D", text: "Neue Märkte erschließen und Umsatz steigern"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 34, cat: "ziele",
+    text: "Welches ist ein Beispiel für neutrale Ziele?",
+    choices: [
+      {label: "A", text: "Gewinnsteigerung und höhere Löhne zahlen"},
+      {label: "B", text: "Kundenzufriedenheit und Wiederkaufrate steigern"},
+      {label: "C", text: "CO2-Reduktion und Einführung einer neuen Produktfarbe"},
+      {label: "D", text: "Marketingbudget erhöhen und Umsatz steigern"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 35, cat: "ziele",
+    text: "Was versteht man unter kurzfristiger / operativer Planung?",
+    choices: [
+      {label: "A", text: "Planung für 5 Jahre und länger"},
+      {label: "B", text: "Planung für 1–5 Jahre"},
+      {label: "C", text: "Planung für bis zu 1 Jahr (Tagesgeschäft)"},
+      {label: "D", text: "Planung für Jahrzehnte"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 36, cat: "ziele",
+    text: "Was versteht man unter strategischer Planung?",
+    choices: [
+      {label: "A", text: "Planung für wenige Wochen"},
+      {label: "B", text: "Planung für 1–5 Jahre"},
+      {label: "C", text: "Langfristige Unternehmensausrichtung für mehr als 5 Jahre"},
+      {label: "D", text: "Planung der täglichen Arbeitsabläufe"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 37, cat: "ziele",
+    text: "Was ist ein Beispiel für strategische Planung im E-Commerce?",
+    choices: [
+      {label: "A", text: "Werbekampagne für die nächste Woche planen"},
+      {label: "B", text: "Neue Märkte in Europa innerhalb von 5 Jahren erschließen"},
+      {label: "C", text: "Den Social-Media-Post für morgen schreiben"},
+      {label: "D", text: "Den Urlaubsplan für das Quartal erstellen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "ziele",
+    text: "Von wem wurde die Balanced Scorecard (BSC) entwickelt?",
+    choices: [
+      {label: "A", text: "Porter & Drucker"},
+      {label: "B", text: "Wöhe & Döring"},
+      {label: "C", text: "Kaplan & Norton (1996)"},
+      {label: "D", text: "Taylor & Fayol"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 39, cat: "ziele",
+    text: "Was ist die Grundidee der Balanced Scorecard?",
+    choices: [
+      {label: "A", text: "Nur finanzielle Kennzahlen sind relevant"},
+      {label: "B", text: "Unternehmen steuern aus vier gleichgewichtigen Perspektiven, nicht nur finanziell"},
+      {label: "C", text: "Die BSC ist ein Budgetierungsinstrument"},
+      {label: "D", text: "Die BSC ersetzt alle anderen Managementmethoden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 40, cat: "ziele",
+    text: "Welche vier Perspektiven hat die Balanced Scorecard? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Finanzen und Kunden"},
+      {label: "B", text: "Politik und Gesellschaft"},
+      {label: "C", text: "Interne Prozesse und Lernen & Wachstum"},
+      {label: "D", text: "Lieferanten und Wettbewerber"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 41, cat: "ziele",
+    text: "Welche Leitfrage gehört zur Finanzperspektive der BSC?",
+    choices: [
+      {label: "A", text: "Wie können wir uns verändern und verbessern?"},
+      {label: "B", text: "Wie sehen uns unsere Kunden?"},
+      {label: "C", text: "Wie sehen uns die Anteilseigner (finanziell)?"},
+      {label: "D", text: "Worin müssen wir besonders gut sein (Prozesse)?"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 42, cat: "ziele",
+    text: "Welche Kennzahlen (KPIs) gehören zur Kundenperspektive der BSC? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Net Promoter Score (NPS) und Kundenzufriedenheit"},
+      {label: "B", text: "Marktanteil und Customer Lifetime Value (CLV)"},
+      {label: "C", text: "EBIT und Cash-Flow"},
+      {label: "D", text: "Weiterbildungsquote und Innovationsrate"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 43, cat: "ziele",
+    text: "Welcher BSC-Perspektive ist die Kennzahl Retourenquote zuzuordnen?",
+    choices: [
+      {label: "A", text: "Finanzperspektive"},
+      {label: "B", text: "Kundenperspektive"},
+      {label: "C", text: "Interne Prozessperspektive"},
+      {label: "D", text: "Lern- und Wachstumsperspektive"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 44, cat: "ziele",
+    text: "Welcher BSC-Perspektive ist die Kennzahl Mitarbeiterzufriedenheit und Weiterbildungsquote zuzuordnen?",
+    choices: [
+      {label: "A", text: "Finanzperspektive"},
+      {label: "B", text: "Kundenperspektive"},
+      {label: "C", text: "Interne Prozessperspektive"},
+      {label: "D", text: "Lern- und Wachstumsperspektive"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 45, cat: "ziele",
+    text: "Welche Eselsbrücke hilft, die vier BSC-Perspektiven zu merken?",
+    choices: [
+      {label: "A", text: "K-R-A-P"},
+      {label: "B", text: "M-E-R-A"},
+      {label: "C", text: "F-K-P-L (Finanzen – Kunden – Prozesse – Lernen)"},
+      {label: "D", text: "G-A-T"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 46, cat: "ziele",
+    text: "Was steht im Mittelpunkt der Balanced Scorecard?",
+    choices: [
+      {label: "A", text: "Die Marketingstrategie"},
+      {label: "B", text: "Vision und Strategie des Unternehmens"},
+      {label: "C", text: "Der Jahresabschluss"},
+      {label: "D", text: "Die Personalplanung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "ziele",
+    text: "Welcher Kennzahltyp gehört zur Finanzperspektive der BSC?",
+    choices: [
+      {label: "A", text: "Fehlerquote und Durchlaufzeit"},
+      {label: "B", text: "Umsatz, EBIT, ROI, Cash-Flow"},
+      {label: "C", text: "Mitarbeiterzufriedenheit"},
+      {label: "D", text: "Marktanteil und NPS"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "ziele",
+    text: "Warum reicht rein finanzielle Steuerung eines Unternehmens laut BSC-Konzept nicht aus?",
+    choices: [
+      {label: "A", text: "Weil finanzielle Zahlen zu kompliziert sind"},
+      {label: "B", text: "Weil auch Kunden-, Prozess- und Lernperspektiven den langfristigen Erfolg bestimmen"},
+      {label: "C", text: "Weil Finanzkennzahlen verboten sind"},
+      {label: "D", text: "Weil nur soziale Ziele zählen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "ziele",
+    text: "Welches der folgenden Ziele ist ein komplementäres Zielpaar?",
+    choices: [
+      {label: "A", text: "Gewinnmaximierung und Lohnerhöhung für alle Mitarbeiter"},
+      {label: "B", text: "Kundenzufriedenheit steigern und steigende Wiederkaufrate"},
+      {label: "C", text: "CO2-Reduktion und Gewinnmaximierung"},
+      {label: "D", text: "Kostensenkung und qualitative Verbesserung aller Produkte"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "ziele",
+    text: "Was ist nicht Teil der SMART-Formel?",
+    choices: [
+      {label: "A", text: "Spezifisch"},
+      {label: "B", text: "Messbar"},
+      {label: "C", text: "Attraktiv"},
+      {label: "D", text: "Subventioniert"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 51, cat: "ziele",
+    text: "Welchen DQR-Abschluss hat der Geprüfte Handelsfachwirt?",
+    choices: [
+      {label: "A", text: "DQR 4"},
+      {label: "B", text: "DQR 5"},
+      {label: "C", text: "DQR 6"},
+      {label: "D", text: "DQR 7"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 52, cat: "ziele",
+    text: "Was ist Inhalt des Fachwirts für E-Commerce? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Vertiefung E-Commerce und Online-Marketing"},
+      {label: "B", text: "Projektmanagement"},
+      {label: "C", text: "Ausschließlich manuelle Buchhaltung"},
+      {label: "D", text: "Kündigungsrecht nach BBiG"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 53, cat: "ziele",
+    text: "Welche Aussage zur Exclusiva GmbH BSC-Beispiel ist korrekt?",
+    choices: [
+      {label: "A", text: "Das Ziel „Kundenbewertung \\(\\) 4,5 Sterne auf Amazon“ gehört zur Finanzperspektive"},
+      {label: "B", text: "Das Ziel „Umsatz um 20 % steigern“ gehört zur Finanzperspektive"},
+      {label: "C", text: "Das Ziel „alle Azubis zertifiziert“ gehört zur Kundenperspektive"},
+      {label: "D", text: "Das Ziel „Retourenquote unter 10 %“ gehört zur Lernperspektive"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "ziele",
+    text: "Welche Aussage zu Unternehmenszielen ist korrekt?",
+    choices: [
+      {label: "A", text: "Unternehmen müssen sich nur auf ökonomische Ziele konzentrieren"},
+      {label: "B", text: "Heute müssen alle drei Zieldimensionen (ökonomisch / ökologisch / sozial) berücksichtigt werden"},
+      {label: "C", text: "Ökologische Ziele haben immer Vorrang vor ökonomischen Zielen"},
+      {label: "D", text: "Soziale Ziele sind optional und nicht relevant für den Unternehmenserfolg"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "ziele",
+    text: "Welcher Begriff beschreibt den Zeithorizont von taktischer Planung?",
+    choices: [
+      {label: "A", text: "Bis 1 Jahr (operativ)"},
+      {label: "B", text: "1–5 Jahre (mittelfristig)"},
+      {label: "C", text: "Über 5 Jahre (strategisch)"},
+      {label: "D", text: "Bis 10 Jahre"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 56, cat: "ziele",
+    text: "Welches Zertifikat von HubSpot ist besonders relevant für E-Commerce-Kaufleute?",
+    choices: [
+      {label: "A", text: "AWS Cloud Practitioner"},
+      {label: "B", text: "Google Ads Certification"},
+      {label: "C", text: "HubSpot Inbound Marketing Certificate"},
+      {label: "D", text: "Shopify Partner Certification"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 57, cat: "ziele",
+    text: "Welche Kennzahl misst in der BSC-Prozessperspektive die Qualität der Lieferung?",
+    choices: [
+      {label: "A", text: "Net Promoter Score"},
+      {label: "B", text: "EBIT"},
+      {label: "C", text: "Lieferzeit und Fehlerquote"},
+      {label: "D", text: "Weiterbildungsquote"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 58, cat: "ziele",
+    text: "Was ist der Unterschied zwischen operativer und strategischer Planung im E-Commerce-Kontext? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Operativ: Werbekampagne für nächste Woche planen"},
+      {label: "B", text: "Strategisch: Neue Märkte in den nächsten 5 Jahren erschließen"},
+      {label: "C", text: "Operativ: Unternehmensphilosophie für die nächsten 20 Jahre festlegen"},
+      {label: "D", text: "Strategisch: Die heutige Rechnungsstellung erledigen"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 59, cat: "ziele",
+    text: "Welche BSC-Perspektive beantwortet die Frage „Worin müssen wir besonders gut sein?“",
+    choices: [
+      {label: "A", text: "Finanzperspektive"},
+      {label: "B", text: "Kundenperspektive"},
+      {label: "C", text: "Interne Prozessperspektive"},
+      {label: "D", text: "Lern- und Wachstumsperspektive"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 60, cat: "ziele",
+    text: "Welche Aussage zu Zielbeziehungen ist korrekt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Komplementäre Ziele fördern sich gegenseitig"},
+      {label: "B", text: "Konkurrierende Ziele müssen vom Management priorisiert werden"},
+      {label: "C", text: "Neutrale Ziele behindern sich immer"},
+      {label: "D", text: "Alle Unternehmensziele sind automatisch komplementär"}
+    ],
+    multi: true, correct: ["A", "B"]
+  }
+];
+const catLabels={
+  bildung: {label: "Fort-/Weiterbildung", cls: "cat-definition"},
+  ziele: {label: "Unternehmensziele", cls: "cat-shopsystem"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

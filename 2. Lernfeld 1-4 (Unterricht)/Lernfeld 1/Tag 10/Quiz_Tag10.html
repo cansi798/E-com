@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 10: Rechte, Pflichten &amp; Tarifverträge – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 10: Rechte, Pflichten &amp; Tarifverträge</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 10: Rechte, Pflichten &amp; Tarifverträge</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 10</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "recht",
+    text: "Wie heißt das zentrale Gesetz für alle betrieblichen Berufsausbildungen in Deutschland?",
+    choices: [
+      {label: "A", text: "Arbeitsschutzgesetz (ArbSchG)"},
+      {label: "B", text: "Berufsbildungsgesetz (BBiG)"},
+      {label: "C", text: "Tarifvertragsgesetz (TVG)"},
+      {label: "D", text: "Betriebsverfassungsgesetz (BetrVG)"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "recht",
+    text: "In welchem Jahr trat das BBiG erstmals in Kraft?",
+    choices: [
+      {label: "A", text: "1945"},
+      {label: "B", text: "1990"},
+      {label: "C", text: "1969"},
+      {label: "D", text: "2005"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 3, cat: "recht",
+    text: "Welcher Paragraph des BBiG regelt die Pflichten des Auszubildenden?",
+    choices: [
+      {label: "A", text: "17 BBiG"},
+      {label: "B", text: "22 BBiG"},
+      {label: "C", text: "10 BBiG"},
+      {label: "D", text: "13 BBiG"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 4, cat: "recht",
+    text: "Was verlangt die Lernpflicht vom Auszubildenden?",
+    choices: [
+      {label: "A", text: "Den Betrieb nach Arbeitsende zu reinigen"},
+      {label: "B", text: "Sich zu bemühen, die zum Ausbildungsziel nötigen Fertigkeiten zu erwerben"},
+      {label: "C", text: "Das Berichtsheft monatlich vorzulegen"},
+      {label: "D", text: "Alle Weisungen des Ausbilders ohne Prüfung zu befolgen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 5, cat: "recht",
+    text: "Wie lange gilt die Schweigepflicht des Auszubildenden bezüglich Betriebsgeheimnissen?",
+    choices: [
+      {label: "A", text: "Nur während der Probezeit"},
+      {label: "B", text: "Nur bis zum Ende der Ausbildung"},
+      {label: "C", text: "Auch nach Ende der Ausbildung"},
+      {label: "D", text: "Nur im ersten Lehrjahr"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 6, cat: "recht",
+    text: "Welche Konsequenzen drohen bei Verstoß gegen die Schweigepflicht? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Gehaltserhöhung"},
+      {label: "B", text: "Fristlose Kündigung"},
+      {label: "C", text: "Schadensersatzforderungen"},
+      {label: "D", text: "Versetzung in eine höhere Ausbildungsgruppe"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 7, cat: "recht",
+    text: "Ab welchem Krankheitstag muss der Auszubildende eine ärztliche Bescheinigung vorlegen?",
+    choices: [
+      {label: "A", text: "Ab dem ersten Tag"},
+      {label: "B", text: "Ab dem zweiten Tag"},
+      {label: "C", text: "Ab dem dritten Tag"},
+      {label: "D", text: "Erst ab der zweiten Krankheitswoche"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 8, cat: "recht",
+    text: "Welcher Paragraph regelt die Pflichten des Ausbildenden?",
+    choices: [
+      {label: "A", text: "13 BBiG"},
+      {label: "B", text: "22 BBiG"},
+      {label: "C", text: "14 BBiG"},
+      {label: "D", text: "17 BBiG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 9, cat: "recht",
+    text: "Was bedeutet die Freistellungspflicht des Ausbildungsbetriebs?",
+    choices: [
+      {label: "A", text: "Der Azubi darf jederzeit nach Hause gehen"},
+      {label: "B", text: "Freistellung für Berufsschule und Prüfungen mit Lohnfortzahlung"},
+      {label: "C", text: "Freistellung von der Lernpflicht"},
+      {label: "D", text: "Der Betrieb muss Urlaub gewähren, wann immer der Azubi möchte"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 10, cat: "recht",
+    text: "Welche Voraussetzung muss ein Ausbilder gemäß BBiG erfüllen?",
+    choices: [
+      {label: "A", text: "Er muss mindestens 50 Jahre alt sein"},
+      {label: "B", text: "Er muss AEVO-zertifiziert sein"},
+      {label: "C", text: "Er muss denselben Beruf wie der Azubi erlernt haben"},
+      {label: "D", text: "Er muss Mitglied einer Gewerkschaft sein"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "recht",
+    text: "Wie hoch ist die gesetzliche Mindestausbildungsvergütung im 1. Lehrjahr (2024)?",
+    choices: [
+      {label: "A", text: "500 EUR"},
+      {label: "B", text: "649 EUR"},
+      {label: "C", text: "800 EUR"},
+      {label: "D", text: "909 EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "recht",
+    text: "Wie hoch ist die Mindestausbildungsvergütung im 3. Lehrjahr (2024)?",
+    choices: [
+      {label: "A", text: "649 EUR"},
+      {label: "B", text: "766 EUR"},
+      {label: "C", text: "876 EUR"},
+      {label: "D", text: "909 EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 13, cat: "recht",
+    text: "Was gilt, wenn ein Tarifvertrag eine höhere Ausbildungsvergütung als die gesetzliche MAV vorsieht?",
+    choices: [
+      {label: "A", text: "Der tarifvertragliche Betrag ist unzulässig"},
+      {label: "B", text: "Der gesetzliche Betrag hat immer Vorrang"},
+      {label: "C", text: "Der tarifvertragliche höhere Betrag gilt (Günstigkeitsprinzip)"},
+      {label: "D", text: "Der Azubi kann wählen, welcher Betrag gilt"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 14, cat: "recht",
+    text: "Während der Probezeit kann das Ausbildungsverhältnis gekündigt werden …",
+    choices: [
+      {label: "A", text: "nur mit wichtigem Grund"},
+      {label: "B", text: "jederzeit, ohne Angabe von Gründen, ohne Frist"},
+      {label: "C", text: "nur durch den Azubi"},
+      {label: "D", text: "nur nach schriftlicher Abmahnung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 15, cat: "recht",
+    text: "Wie lang darf die Probezeit gemäß 22 BBiG höchstens dauern?",
+    choices: [
+      {label: "A", text: "2 Monate"},
+      {label: "B", text: "3 Monate"},
+      {label: "C", text: "4 Monate"},
+      {label: "D", text: "6 Monate"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 16, cat: "recht",
+    text: "Was ist nach Ablauf der Probezeit die einzige Möglichkeit für den Betrieb, das Ausbildungsverhältnis zu beenden?",
+    choices: [
+      {label: "A", text: "Ordentliche Kündigung mit 4 Wochen Frist"},
+      {label: "B", text: "Fristlose Kündigung aus wichtigem Grund oder Kündigung bei Berufsaufgabe (4 Wochen)"},
+      {label: "C", text: "Automatische Beendigung nach 2 Abmahnungen"},
+      {label: "D", text: "Einvernehmliche Aufhebung durch den Betriebsrat"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 17, cat: "recht",
+    text: "Welche Gruppe wird durch das JASchG geschützt?",
+    choices: [
+      {label: "A", text: "Alle Arbeitnehmer unabhängig vom Alter"},
+      {label: "B", text: "Nur Auszubildende im ersten Lehrjahr"},
+      {label: "C", text: "Alle Arbeitnehmer unter 18 Jahren"},
+      {label: "D", text: "Arbeitnehmer zwischen 18 und 25 Jahren"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 18, cat: "recht",
+    text: "Ab welchem Alter gilt grundsätzlich ein Beschäftigungsverbot für Kinder?",
+    choices: [
+      {label: "A", text: "Unter 14 Jahre"},
+      {label: "B", text: "Unter 15 Jahre"},
+      {label: "C", text: "Unter 16 Jahre"},
+      {label: "D", text: "Unter 18 Jahre"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 19, cat: "recht",
+    text: "Wie viele Stunden darf ein Jugendlicher (15–17 Jahre) maximal täglich arbeiten?",
+    choices: [
+      {label: "A", text: "6 Stunden"},
+      {label: "B", text: "7 Stunden"},
+      {label: "C", text: "8 Stunden"},
+      {label: "D", text: "10 Stunden"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 20, cat: "recht",
+    text: "Wie viele Stunden darf ein Jugendlicher maximal pro Woche arbeiten?",
+    choices: [
+      {label: "A", text: "35 Stunden"},
+      {label: "B", text: "38 Stunden"},
+      {label: "C", text: "40 Stunden"},
+      {label: "D", text: "48 Stunden"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 21, cat: "recht",
+    text: "Wie lange muss die Ruhezeit nach Feierabend für Jugendliche mindestens betragen?",
+    choices: [
+      {label: "A", text: "8 Stunden"},
+      {label: "B", text: "10 Stunden"},
+      {label: "C", text: "12 Stunden"},
+      {label: "D", text: "11 Stunden"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 22, cat: "recht",
+    text: "Ab wie vielen Arbeitsstunden müssen Jugendliche mindestens 30 Minuten Pause erhalten?",
+    choices: [
+      {label: "A", text: "Ab 3 Stunden"},
+      {label: "B", text: "Ab 4,5 Stunden"},
+      {label: "C", text: "Ab 6 Stunden"},
+      {label: "D", text: "Ab 8 Stunden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "recht",
+    text: "Welche Pausendauer ist vorgeschrieben, wenn ein Jugendlicher mehr als 6 Stunden arbeitet?",
+    choices: [
+      {label: "A", text: "20 Minuten"},
+      {label: "B", text: "30 Minuten"},
+      {label: "C", text: "45 Minuten"},
+      {label: "D", text: "60 Minuten"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 24, cat: "recht",
+    text: "Auf wie viele Arbeitstage pro Woche ist die Beschäftigung Jugendlicher grundsätzlich beschränkt?",
+    choices: [
+      {label: "A", text: "4 Tage"},
+      {label: "B", text: "5 Tage"},
+      {label: "C", text: "6 Tage"},
+      {label: "D", text: "7 Tage"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "recht",
+    text: "Zu welchen Zeiten gilt Nachtarbeitsverbot für Jugendliche? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "20:00–22:00 Uhr"},
+      {label: "B", text: "22:00–06:00 Uhr"},
+      {label: "C", text: "06:00–08:00 Uhr"},
+      {label: "D", text: "00:00–06:00 Uhr"}
+    ],
+    multi: true, correct: ["B", "D"]
+  },
+  {
+    num: 26, cat: "recht",
+    text: "Welche Tätigkeiten sind für Jugendliche nach 22 JASchG verboten? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Leichte Büroarbeiten"},
+      {label: "B", text: "Akkordarbeit"},
+      {label: "C", text: "Gefährliche Arbeiten mit Giftstoffen"},
+      {label: "D", text: "Telefonische Kundenkommunikation"}
+    ],
+    multi: true, correct: ["B", "C"]
+  },
+  {
+    num: 27, cat: "recht",
+    text: "Die 17-jährige Azubine Lisa hat am Dienstag 6 Unterrichtsstunden Berufsschule (8:00–14:00 Uhr). Was gilt?",
+    choices: [
+      {label: "A", text: "Lisa kann danach noch 4 Stunden arbeiten"},
+      {label: "B", text: "Lisa ist vollständig freigestellt, da mehr als 5 Unterrichtsstunden"},
+      {label: "C", text: "Lisa muss vor 9:00 Uhr im Betrieb erscheinen"},
+      {label: "D", text: "Lisa muss mindestens 2 Stunden nach Schulschluss arbeiten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "recht",
+    text: "Was gilt, wenn der Berufsschulbeginn vor 9:00 Uhr liegt?",
+    choices: [
+      {label: "A", text: "Der Jugendliche muss dennoch vor der Schule arbeiten"},
+      {label: "B", text: "Kein Arbeitsantritt vor der Schule (mindestens bis 9:00 Uhr frei)"},
+      {label: "C", text: "Der Jugendliche muss die Fehlstunden nachholen"},
+      {label: "D", text: "Es gelten keine besonderen Regelungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 29, cat: "recht",
+    text: "Wann ist ein Azubi am Tag vor der Abschlussprüfung gemäß JASchG freizustellen?",
+    choices: [
+      {label: "A", text: "Nur nachmittags"},
+      {label: "B", text: "Nur am Morgen"},
+      {label: "C", text: "Vollständig"},
+      {label: "D", text: "Nur wenn der Azubi Jugendlicher ist"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 30, cat: "recht",
+    text: "Welcher Paragraph des JASchG regelt die Freistellung für die Berufsschule?",
+    choices: [
+      {label: "A", text: "8 JASchG"},
+      {label: "B", text: "9 JASchG"},
+      {label: "C", text: "22 JASchG"},
+      {label: "D", text: "14 JASchG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 31, cat: "tarif",
+    text: "Welches Gesetz definiert den Tarifvertrag?",
+    choices: [
+      {label: "A", text: "Berufsbildungsgesetz (BBiG)"},
+      {label: "B", text: "Betriebsverfassungsgesetz (BetrVG)"},
+      {label: "C", text: "Tarifvertragsgesetz (TVG) 1"},
+      {label: "D", text: "Arbeitsschutzgesetz (ArbSchG)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 32, cat: "tarif",
+    text: "Was ist ein Tarifvertrag nach 1 TVG?",
+    choices: [
+      {label: "A", text: "Eine mündliche Absprache zwischen Arbeitgeber und Arbeitnehmer"},
+      {label: "B", text: "Eine schriftliche Vereinbarung zwischen Gewerkschaft und Arbeitgeberverband"},
+      {label: "C", text: "Ein staatlich erlassenes Gesetz über Löhne"},
+      {label: "D", text: "Eine Betriebsvereinbarung des Betriebsrats"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "tarif",
+    text: "Wer sind die Tarifvertragsparteien? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Der Betriebsrat"},
+      {label: "B", text: "Die Gewerkschaft"},
+      {label: "C", text: "Das Finanzamt"},
+      {label: "D", text: "Der Arbeitgeberverband (oder ein einzelner Arbeitgeber)"}
+    ],
+    multi: true, correct: ["B", "D"]
+  },
+  {
+    num: 34, cat: "tarif",
+    text: "Welche Organisation ist ein Beispiel für eine Gewerkschaft?",
+    choices: [
+      {label: "A", text: "HDE (Handelsverband Deutschland)"},
+      {label: "B", text: "ver.di (Vereinte Dienstleistungsgewerkschaft)"},
+      {label: "C", text: "IHK (Industrie- und Handelskammer)"},
+      {label: "D", text: "BMBF (Bundesministerium für Bildung und Forschung)"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 35, cat: "tarif",
+    text: "Was regelt der Manteltarifvertrag?",
+    choices: [
+      {label: "A", text: "Löhne und Gehälter"},
+      {label: "B", text: "Eingruppierung und Tätigkeitsmerkmale"},
+      {label: "C", text: "Allgemeine Arbeitsbedingungen (Arbeitszeit, Urlaub, Kündigungsfristen)"},
+      {label: "D", text: "Ausbildungsvergütungen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 36, cat: "tarif",
+    text: "Welcher Tarifvertragstyp regelt Löhne, Gehälter und Gehaltstabellen?",
+    choices: [
+      {label: "A", text: "Rahmentarifvertrag"},
+      {label: "B", text: "Manteltarifvertrag"},
+      {label: "C", text: "Entgelttarifvertrag"},
+      {label: "D", text: "Flächentarifvertrag"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 37, cat: "tarif",
+    text: "Was regelt der Rahmentarifvertrag?",
+    choices: [
+      {label: "A", text: "Pausenzeiten der Auszubildenden"},
+      {label: "B", text: "Eingruppierung, Tätigkeitsmerkmale und Berufsgruppen"},
+      {label: "C", text: "Die Höhe der gesetzlichen Mindestausbildungsvergütung"},
+      {label: "D", text: "Urlaubsdauer aller Arbeitnehmer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "tarif",
+    text: "Wie lautet die Abkürzungseselsbrücke für die vier Tarifvertragsarten?",
+    choices: [
+      {label: "A", text: "G-A-T"},
+      {label: "B", text: "L-S-S-B-F-M"},
+      {label: "C", text: "M-E-R-A"},
+      {label: "D", text: "K-R-A-P"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 39, cat: "tarif",
+    text: "Welcher Tarifvertrag bildet den Rahmen für alle anderen Tarifverträge?",
+    choices: [
+      {label: "A", text: "Entgelttarifvertrag"},
+      {label: "B", text: "Manteltarifvertrag"},
+      {label: "C", text: "Rahmentarifvertrag"},
+      {label: "D", text: "Tarifvertrag über Ausbildungsvergütungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 40, cat: "tarif",
+    text: "Was besagt das Günstigkeitsprinzip?",
+    choices: [
+      {label: "A", text: "Der Tarifvertrag gilt immer, auch wenn der Arbeitsvertrag bessere Bedingungen enthält"},
+      {label: "B", text: "Eine individuelle Vereinbarung ist zulässig, wenn sie den Arbeitnehmer besser stellt"},
+      {label: "C", text: "Das Gesetz hat immer Vorrang vor dem Tarifvertrag"},
+      {label: "D", text: "Schlechtere Bedingungen im Arbeitsvertrag können durch Boni ausgeglichen werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "tarif",
+    text: "Was ist die Folge, wenn ein Arbeitsvertrag schlechtere Bedingungen als der Tarifvertrag enthält?",
+    choices: [
+      {label: "A", text: "Der Arbeitsvertrag gilt trotzdem"},
+      {label: "B", text: "Der Arbeitnehmer kann wählen, welche Regelung gilt"},
+      {label: "C", text: "Die schlechtere Regelung ist unwirksam"},
+      {label: "D", text: "Der Betriebsrat muss zustimmen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 42, cat: "tarif",
+    text: "Was versteht man unter dem Streikrecht?",
+    choices: [
+      {label: "A", text: "Arbeitnehmer dürfen Geräte beschädigen, um Tarifziele durchzusetzen"},
+      {label: "B", text: "Arbeitnehmer dürfen die Arbeit niederlegen, um Tarifziele durchzusetzen (nur durch Gewerkschaft)"},
+      {label: "C", text: "Einzelne Arbeitnehmer können spontan streiken"},
+      {label: "D", text: "Der Arbeitgeber darf streikende Arbeitnehmer ohne Angabe von Gründen entlassen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 43, cat: "tarif",
+    text: "Welcher Artikel des Grundgesetzes schützt das Streikrecht?",
+    choices: [
+      {label: "A", text: "Art. 1 GG"},
+      {label: "B", text: "Art. 3 GG"},
+      {label: "C", text: "Art. 9 Abs. 3 GG"},
+      {label: "D", text: "Art. 20 GG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 44, cat: "tarif",
+    text: "Was bedeutet die Friedenspflicht im Tarifrecht?",
+    choices: [
+      {label: "A", text: "Arbeitgeber und Arbeitnehmer müssen immer freundlich miteinander umgehen"},
+      {label: "B", text: "Während der Laufzeit eines gültigen Tarifvertrags dürfen keine Streiks über geregelte Themen stattfinden"},
+      {label: "C", text: "Der Betriebsrat muss alle Konflikte intern lösen"},
+      {label: "D", text: "Gewerkschaften dürfen keine Forderungen stellen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "tarif",
+    text: "Was kann bei Tarifkonflikten eingeschaltet werden?",
+    choices: [
+      {label: "A", text: "Das Bundeskartellamt"},
+      {label: "B", text: "Die Einigungsstelle / Schlichtungsstelle"},
+      {label: "C", text: "Der Betriebsarzt"},
+      {label: "D", text: "Das Finanzamt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "tarif",
+    text: "Welche Eselsbrücke hilft, die Tarifvertragsparteien zu merken?",
+    choices: [
+      {label: "A", text: "M-E-R-A"},
+      {label: "B", text: "G-A-T (Gewerkschaft + Arbeitgeberverband = Tarifvertrag)"},
+      {label: "C", text: "8-40-12-30-60"},
+      {label: "D", text: "L-S-S-B-F-M"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "tarif",
+    text: "Welche Mindestausbildungsvergütung gilt im 2. Lehrjahr (2024)?",
+    choices: [
+      {label: "A", text: "649 EUR"},
+      {label: "B", text: "766 EUR"},
+      {label: "C", text: "876 EUR"},
+      {label: "D", text: "1.000 EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "tarif",
+    text: "Welche Mindestausbildungsvergütung gilt im 4. Lehrjahr (2024)?",
+    choices: [
+      {label: "A", text: "649 EUR"},
+      {label: "B", text: "766 EUR"},
+      {label: "C", text: "876 EUR"},
+      {label: "D", text: "909 EUR"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 49, cat: "tarif",
+    text: "Welche Steigerung gilt für die Mindestausbildungsvergütung vom 1. zum 3. Lehrjahr (2024)?",
+    choices: [
+      {label: "A", text: "+10 %"},
+      {label: "B", text: "+18 %"},
+      {label: "C", text: "+35 %"},
+      {label: "D", text: "+50 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 50, cat: "tarif",
+    text: "Welcher Paragraph des BBiG regelt die Vergütung des Auszubildenden?",
+    choices: [
+      {label: "A", text: "10 BBiG"},
+      {label: "B", text: "13 BBiG"},
+      {label: "C", text: "17 BBiG"},
+      {label: "D", text: "22 BBiG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 51, cat: "tarif",
+    text: "Was versteht man unter der Berichtsheftpflicht?",
+    choices: [
+      {label: "A", text: "Der Ausbilder muss täglich Berichte schreiben"},
+      {label: "B", text: "Der Azubi muss den Ausbildungsnachweis gewissenhaft führen und regelmäßig vorlegen"},
+      {label: "C", text: "Das Berichtsheft muss dem Finanzamt vorgelegt werden"},
+      {label: "D", text: "Der Betriebsrat muss das Berichtsheft genehmigen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 52, cat: "tarif",
+    text: "Wann ist eine betriebliche Vergütungsvereinbarung rechtswidrig?",
+    choices: [
+      {label: "A", text: "Wenn sie höher als die MAV liegt"},
+      {label: "B", text: "Wenn sie genau der MAV entspricht"},
+      {label: "C", text: "Wenn sie unter der gesetzlichen Mindestausbildungsvergütung liegt"},
+      {label: "D", text: "Wenn sie im Tarifvertrag nicht erwähnt wird"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 53, cat: "tarif",
+    text: "Was regelt 10 BBiG?",
+    choices: [
+      {label: "A", text: "Die Probezeit im Ausbildungsverhältnis"},
+      {label: "B", text: "Den schriftlichen Abschluss des Ausbildungsvertrags"},
+      {label: "C", text: "Die Mindestausbildungsvergütung"},
+      {label: "D", text: "Die verbotenen Tätigkeiten für Jugendliche"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 54, cat: "tarif",
+    text: "Die 16-jährige Azubine Laura arbeitet bis 22:30 Uhr. Welche Vorschrift wird verletzt?",
+    choices: [
+      {label: "A", text: "Das Günstigkeitsprinzip"},
+      {label: "B", text: "Das Nachtarbeitsverbot des JASchG (Verbot nach 22:00 Uhr)"},
+      {label: "C", text: "Die Lohnpflicht des Ausbildenden"},
+      {label: "D", text: "Das Manteltarifvertragsrecht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "tarif",
+    text: "Welche Aussage zur Probezeit im Ausbildungsverhältnis ist korrekt?",
+    choices: [
+      {label: "A", text: "Während der Probezeit ist eine Kündigung nur mit Abmahnung möglich"},
+      {label: "B", text: "Die Probezeit beträgt mindestens 1 Monat und höchstens 4 Monate"},
+      {label: "C", text: "Die Probezeit kann auf 6 Monate verlängert werden"},
+      {label: "D", text: "Nur der Azubi kann während der Probezeit kündigen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 56, cat: "tarif",
+    text: "Was ist der Unterschied zwischen Manteltarifvertrag und Entgelttarifvertrag? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Der Manteltarifvertrag regelt allgemeine Arbeitsbedingungen wie Arbeitszeit und Urlaub"},
+      {label: "B", text: "Der Entgelttarifvertrag regelt Löhne, Gehälter und Lohngruppen"},
+      {label: "C", text: "Der Entgelttarifvertrag regelt die Kündigungsfristen"},
+      {label: "D", text: "Beide regeln identische Inhalte"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 57, cat: "tarif",
+    text: "Was gilt ab dem Ablauf der Probezeit für eine ordentliche Kündigung durch den Betrieb?",
+    choices: [
+      {label: "A", text: "Sie ist mit einer Frist von 2 Wochen möglich"},
+      {label: "B", text: "Sie ist grundsätzlich nicht mehr möglich"},
+      {label: "C", text: "Sie bedarf der Zustimmung des Betriebsrats"},
+      {label: "D", text: "Sie ist nur mit einem Jahr Vorankündigung möglich"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "tarif",
+    text: "Worauf bezieht sich die Hierarchie im Günstigkeitsprinzip von oben nach unten? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Grundgesetz steht über allem"},
+      {label: "B", text: "Der Arbeitsvertrag steht über dem Grundgesetz"},
+      {label: "C", text: "Betriebsvereinbarungen stehen unter dem Tarifvertrag"},
+      {label: "D", text: "Gewerkschaften stehen über dem Gesetz"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 59, cat: "tarif",
+    text: "Welches Zeugnis muss der Ausbildungsbetrieb nach Beendigung der Ausbildung ausstellen?",
+    choices: [
+      {label: "A", text: "Einfaches Zeugnis mit nur dem Namen des Azubis"},
+      {label: "B", text: "Qualifiziertes Ausbildungszeugnis"},
+      {label: "C", text: "Schulzeugnis"},
+      {label: "D", text: "Zeugnis des Betriebsrats"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "tarif",
+    text: "Welche Aussage zum Jugendarbeitsschutzgesetz ist korrekt?",
+    choices: [
+      {label: "A", text: "Es gilt für alle Arbeitnehmer ohne Altersgrenze"},
+      {label: "B", text: "Ab dem 18. Geburtstag gilt stattdessen das allgemeine Arbeitsschutzrecht"},
+      {label: "C", text: "Es gilt nur für Auszubildende, nicht für andere jugendliche Arbeitnehmer"},
+      {label: "D", text: "Es gilt nur in Großbetrieben mit mehr als 50 Mitarbeitern"}
+    ],
+    multi: false, correct: ["B"]
+  }
+];
+const catLabels={
+  recht: {label: "Recht & Pflichten", cls: "cat-recht"},
+  tarif: {label: "Tarifverträge", cls: "cat-checkout"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.11 Abschluss von Rechtsgeschäften – Tag 11</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100;}
+#viewport{width:100vw;height:100vh;position:relative;overflow:hidden;}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg);}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all;}.slide.exit-left{opacity:0;transform:translateX(-60px);}.slide.cover{justify-content:center;text-align:center;}
+.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px;}
+.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px;}
+.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px;}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px;}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8;}
+.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start;}.slide-header .icon{font-size:1.6rem;}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1;}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.content{width:100%;flex:1;overflow:hidden;}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px;}
+.cards{display:grid;gap:14px;width:100%;}.cols2{grid-template-columns:1fr 1fr;}.cols3{grid-template-columns:1fr 1fr 1fr;}.cols4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px;}.card.gold::before{background:var(--accent);}.card.green::before{background:var(--success);}.card.red::before{background:var(--danger);}
+.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px;}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6;}.card ul{padding-left:16px;}.card li{margin-bottom:3px;}
+.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px;}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55;}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px;}
+.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6;}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent);}.highlight.green{background:var(--success-light);border-left-color:var(--success);}.highlight.red{background:var(--danger-light);border-left-color:var(--danger);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;}
+.badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:4px;}.badge.gold{background:var(--accent);}.badge.green{background:var(--success);}.badge.red{background:var(--danger);}
+table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem;}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700;}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border);}.sum-table tr:nth-child(even) td{background:var(--bg-alt);}.sum-table tr:hover td{background:var(--primary-light);}
+.step-flow{display:flex;align-items:stretch;gap:0;width:100%;margin-top:8px;}.step-box{flex:1;background:var(--bg-card);border-radius:10px;padding:14px 12px;text-align:center;font-size:.8rem;border:1px solid var(--border);box-shadow:var(--shadow);}.step-box h4{color:var(--primary);font-size:.82rem;margin-bottom:4px;}.step-box p{color:var(--text-muted);font-size:.72rem;line-height:1.4;}.step-arrow{display:flex;align-items:center;color:var(--primary);font-size:1.2rem;padding:0 4px;}
+.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px;}
+.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5;}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;}
+.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow);}
+#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg);}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s;}#nav button:hover{background:var(--primary-light);}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center;}
+#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both;}.slide.active .slide-header{animation-delay:.05s;}.slide.active .content{animation-delay:.15s;}
+#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px;}#grid-overlay.visible{display:block;}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px;}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary);}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px;}#grid-header button:hover{background:var(--bg-alt);}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px;}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px);}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light);}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px;}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 11</div>
+    <h1>3.11 Der Abschluss von<br>Rechtsgesch&auml;ften</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 491 – 496</div>
+    <div class="cover-meta">Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>12. Mai 2026<br><br><strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong></div>
+  </section>
+
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 20</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Willenserkl&auml;rungen verstehen</strong> – Definition, Formen und Beispiele von Willenserkl&auml;rungen benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Rechtsgesch&auml;fte unterscheiden</strong> – einseitige und mehrseitige Rechtsgesch&auml;fte abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Vertragsarten kennen</strong> – wichtige Vertragsarten im E-Commerce benennen und zuordnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Vertragsfreiheit erkl&auml;ren</strong> – Abschluss-, Form- und Inhaltsfreiheit erl&auml;utern.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Nichtigkeit &amp; Anfechtbarkeit</strong> – Gr&uuml;nde f&uuml;r nichtige und anfechtbare Willenserkl&auml;rungen kennen.</div></div>
+      <div class="highlight" style="margin-top:12px"><strong>Leitfrage:</strong> Wie kommen Vertr&auml;ge im E-Commerce rechtswirksam zustande und wann sind sie ung&uuml;ltig?</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#128220;</div><h2>Was ist eine Willenserkl&auml;rung?</h2><span class="tag">Folie 3 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Willenserkl&auml;rungen</strong> sind gewollte und zwangsfreie Erkl&auml;rungen einer Person. Rechtsgesch&auml;fte entstehen durch eine oder mehrere Willenserkl&auml;rungen (vgl. K&ouml;hler &amp; Bornkamm, 2023).</div>
+        <div class="card" style="margin-top:12px"><h3>&#128221; Formen der Abgabe</h3><ul>
+          <li><strong>Ausdr&uuml;cklich m&uuml;ndlich oder schriftlich</strong></li>
+          <li><strong>Durch blo&szlig;e Handlungen</strong> (z. B. Handzeichen bei Versteigerung, Geldeinwurf in Automaten, Einsteigen in ein Taxi)</li>
+          <li><strong>Durch Schweigen</strong> (nur in Ausnahmef&auml;llen bei Kaufleuten mit regelm&auml;&szlig;igem Gesch&auml;ftsverkehr)</li>
+        </ul></div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128161; Beispiele</h3><ul>
+          <li>Ein Verk&auml;ufer bietet eine Kaffeemaschine an</li>
+          <li>Eine Gesch&auml;ftsf&uuml;hrerin k&uuml;ndigt einem Mitarbeiter</li>
+          <li>Ein Kunde bestellt eine Jeanshose im Onlineshop</li>
+        </ul></div>
+        <div class="info-box" style="margin-top:12px"><strong>Wichtig f&uuml;r Privatpersonen:</strong> Ist der Empf&auml;nger der unbestellten Ware eine Privatperson, gilt Schweigen <strong>immer als Ablehnung</strong>. Der Verbraucher ist nicht verpflichtet, unbestellte Ware zu bezahlen oder zur&uuml;ckzusenden.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#128196;</div><h2>Einseitige Rechtsgesch&auml;fte</h2><span class="tag">Folie 4 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">Bei <strong>einseitigen Rechtsgesch&auml;ften</strong> gen&uuml;gt die Willenserkl&auml;rung <strong>nur einer Person</strong>. Sie k&ouml;nnen empfangsbed&uuml;rftig oder nicht empfangsbed&uuml;rftig sein.</div>
+        <div class="card green" style="margin-top:12px"><h3>&#9989; Empfangsbed&uuml;rftig</h3><p>Werden erst wirksam, wenn sie einer anderen Person zugehen.</p><ul><li>K&uuml;ndigungen</li><li>Mahnungen</li><li>B&uuml;rgschaften</li></ul></div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128221; Nicht empfangsbed&uuml;rftig</h3><p>Sind g&uuml;ltig, ohne dass sie einer anderen Person zugehen.</p><ul><li>Testamente</li><li>Auslobungen</li></ul></div>
+        <div class="info-box" style="margin-top:12px"><strong>E-Commerce-Bezug:</strong> Eine <strong>K&uuml;ndigung per E-Mail</strong> ist ein einseitiges, empfangsbed&uuml;rftiges Rechtsgesch&auml;ft. Sie wird erst wirksam, wenn sie dem Empf&auml;nger zugeht.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#128196;</div><h2>Mehrseitige Rechtsgesch&auml;fte (Vertr&auml;ge)</h2><span class="tag">Folie 5 / 20</span></div>
+    <div class="content">
+      <div class="highlight">Vertr&auml;ge kommen durch die Abgabe von <strong>zwei &uuml;bereinstimmenden g&uuml;ltigen Willenserkl&auml;rungen</strong> zustande: Die 1. wird als <strong>Antrag</strong>, die 2. als <strong>Annahme</strong> bezeichnet. Mit der Annahme des Antrags ist der Vertrag abgeschlossen.</div>
+      <div class="step-flow" style="margin-top:14px">
+        <div class="step-box" style="background:var(--primary-light)"><h4>1. Willenserkl&auml;rung</h4><p>Antrag (Angebot)</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>2. Willenserkl&auml;rung</h4><p>Annahme</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>Vertrag</h4><p>Rechtsgesch&auml;ft zustande gekommen</p></div>
+      </div>
+      <div class="info-box" style="margin-top:14px"><strong>E-Commerce-Beispiel:</strong> Ein Kunde klickt im Webshop auf &bdquo;Jetzt kaufen&ldquo; (Antrag). Der Webshop sendet eine Auftragsbest&auml;tigung (Annahme). Der Kaufvertrag ist damit abgeschlossen.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Wichtige Vertragsarten</h2><span class="tag">Folie 6 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Vertragsart</th><th>Vertragsinhalt</th><th>Beispiel</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kaufvertrag</strong></td><td>Ver&auml;u&szlig;erung von Sachen und Rechten</td><td>Verk&auml;ufer verkauft Anzug gegen Bezahlung</td></tr>
+          <tr><td><strong>Mietvertrag</strong></td><td>&Uuml;berlassung einer Sache gegen Mietpreis</td><td>Mieter mietet Wohnung gegen monatliche Miete</td></tr>
+          <tr><td><strong>Dienstvertrag</strong></td><td>Leistung von Diensten gegen Bezahlung</td><td>Arbeitnehmer arbeitet f&uuml;r Arbeitgeber gegen Gehalt</td></tr>
+          <tr><td><strong>Werkvertrag</strong></td><td>Herstellung eines Werks gegen Bezahlung</td><td>Schneiderin n&auml;ht Kleid, Kundin liefert Stoff</td></tr>
+          <tr><td><strong>Darlehensvertrag</strong></td><td>&Uuml;berlassung von Geld gegen sp&auml;tere R&uuml;ckgabe</td><td>Einzelh&auml;ndler nimmt Kredit bei Bank auf</td></tr>
+          <tr><td><strong>Leihvertrag</strong></td><td>Unentgeltliche &Uuml;berlassung einer Sache</td><td>Buch aus der Stadtb&uuml;cherei ausleihen</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px"><strong>Tauschvertrag &amp; Schenkung:</strong> Beim Tauschvertrag werden Sachen/Rechte gegenseitig &uuml;bereignet. Bei der Schenkung erfolgt eine unentgeltliche Verm&ouml;gens&uuml;bertragung.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Weitere Vertragsarten im E-Commerce</h2><span class="tag">Folie 7 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128197; Pachtvertrag</h3><p>&Uuml;berlassung von Sachen und Rechten zum <strong>Gebrauch und zur Nutzung</strong> gegen einen Pachtzins. Beispiel: Landwirt pachtet Ackerland.</p></div>
+        <div class="card gold"><h3>&#9992; Reisevertrag</h3><p>Reiseveranstalter erbringt Reiseleistungen (Fl&uuml;ge, Hotels) gegen Bezahlung. Im E-Commerce h&auml;ufig &uuml;ber Buchungsportale.</p></div>
+        <div class="card green"><h3>&#128274; Versicherungsvertrag</h3><p>Leistungen des Versicherers gegen Versicherungsbeitr&auml;ge. Beispiel: Einbruchdiebstahlversicherung f&uuml;r einen Onlineshop.</p></div>
+        <div class="card"><h3>&#128179; Tauschvertrag</h3><p>Gegenseitige &Uuml;bereignung von Sachen oder Rechten. Beispiel: Briefmarkensammler tauscht doppelte Marke.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#128274;</div><h2>Vertragsfreiheit</h2><span class="tag">Folie 8 / 20</span></div>
+    <div class="content">
+      <div class="highlight">F&uuml;r den Abschluss von Rechtsgesch&auml;ften gilt der Grundsatz der <strong>Vertragsfreiheit</strong>, der sich aus drei Aspekten zusammensetzt (vgl. Br&auml;utigam, 2020):</div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card green"><h3>&#9989; Abschlussfreiheit</h3><p>Jeder Person steht es <strong>frei</strong>, einen Vertrag abzuschlie&szlig;en. Niemand kann gezwungen werden.</p><p style="margin-top:8px"><strong>Ausnahme:</strong> Kontrahierungszwang (z. B. Stromanbieter).</p></div>
+        <div class="card gold"><h3>&#128221; Formfreiheit</h3><p>Vertr&auml;ge k&ouml;nnen m&uuml;ndlich, fernm&uuml;ndlich, schriftlich, per Fax, E-Mail oder im Internet geschlossen werden.</p><p style="margin-top:8px"><strong>Ausnahme:</strong> Darlehensvertr&auml;ge, Ausbildungsvertr&auml;ge (Schriftform).</p></div>
+        <div class="card"><h3>&#128203; Inhaltsfreiheit</h3><p>Die Vertragspartner k&ouml;nnen die Inhalte eines Vertrags <strong>frei festlegen</strong>.</p><p style="margin-top:8px"><strong>Grenze:</strong> Vertr&auml;ge d&uuml;rfen nicht gegen Gesetze oder gute Sitten versto&szlig;en.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#128683;</div><h2>Nichtige Willenserkl&auml;rungen</h2><span class="tag">Folie 9 / 20</span></div>
+    <div class="content">
+      <div class="highlight red"><strong>Nichtige Willenserkl&auml;rungen</strong> sind von Anfang an ung&uuml;ltig. Sie haben <strong>keine Rechtsfolgen</strong>.</div>
+      <table class="sum-table" style="margin-top:12px">
+        <thead><tr><th>Nichtigkeitsgrund</th><th>Beispiel</th></tr></thead>
+        <tbody>
+          <tr><td>Willenserkl&auml;rungen von <strong>Gesch&auml;ftsunf&auml;higen</strong></td><td>6-j&auml;hriger Sch&uuml;ler kauft eine H&ouml;rspielkassette</td></tr>
+          <tr><td>Erkl&auml;rung im Zustand der <strong>Bewusstlosigkeit/Geistesk</strong>rankheit</td><td>Volltrunkener kauft Schlafzimmereinrichtung</td></tr>
+          <tr><td>Erkl&auml;rung <strong>beschr&auml;nkt Gesch&auml;ftsf&auml;higer</strong> ohne Zustimmung</td><td>17-J&auml;hriger kauft ohne Einwilligung des Vaters ein Motorrad</td></tr>
+          <tr><td><strong>Scheingesch&auml;ft</strong></td><td>Gast l&auml;sst sich h&ouml;here Quittung ausstellen als tats&auml;chlich bezahlt</td></tr>
+          <tr><td><strong>Scherzerkl&auml;rung</strong></td><td>&bdquo;Du kannst mein Haus geschenkt haben!&ldquo;</td></tr>
+          <tr><td>Fehlende <strong>vorgeschriebene Form</strong></td><td>Hauskauf nur m&uuml;ndlich abgeschlossen</td></tr>
+          <tr><td>Versto&szlig; gegen <strong>gesetzliches Verbot</strong></td><td>Alkoholverkauf an Kinder</td></tr>
+          <tr><td>Versto&szlig; gegen <strong>gute Sitten</strong> (Wucher)</td><td>&Uuml;berh&ouml;hte Preise nach Sturmkatastrophe</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#9888;</div><h2>Anfechtbare Willenserkl&auml;rungen</h2><span class="tag">Folie 10 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight gold"><strong>Anfechtbare Willenserkl&auml;rungen</strong> k&ouml;nnen im Nachhinein durch Anfechtung ung&uuml;ltig werden. Bis zur Anfechtung sind sie <strong>g&uuml;ltig</strong>.</div>
+        <div class="card" style="margin-top:12px"><h3>&#128221; Anfechtungsfristen</h3><ul>
+          <li><strong>Irrtum:</strong> Unverz&uuml;glich nach Entdeckung</li>
+          <li><strong>Widerrechtliche Drohung:</strong> Innerhalb eines Jahres nach Ende der Drohung</li>
+          <li><strong>Arglistige T&auml;uschung:</strong> Innerhalb eines Jahres nach Entdeckung</li>
+        </ul></div>
+      </div>
+      <div>
+        <table class="sum-table">
+          <thead><tr><th>Anfechtungsgrund</th><th>Beispiel</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Irrtum in der Erkl&auml;rung</strong></td><td>Einzelh&auml;ndler bestellt 53 statt 35 M&auml;ntel</td></tr>
+            <tr><td><strong>Irrtum &uuml;ber Eigenschaft</strong></td><td>Buchhalter ist wegen Urkundenf&auml;lschung vorbestraft</td></tr>
+            <tr><td><strong>Irrtum in der &Uuml;bermittlung</strong></td><td>Angestellter bestellt irrt&uuml;mlich karierte statt rautierte Bl&ouml;cke</td></tr>
+            <tr><td><strong>Widerrechtliche Drohung</strong></td><td>Zeitschriftenwerber bedroht alte Frau zur Bestellung</td></tr>
+            <tr><td><strong>Arglistige T&auml;uschung</strong></td><td>Pkw als unfallfrei verkauft, obwohl Unfallschaden vorhanden</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#128161;</div><h2>Praxisbeispiel: Anfechtung wegen Irrtum</h2><span class="tag">Folie 11 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="info-box"><strong>Fall:</strong> Jens K. kauft einen Gebrauchtwagen f&uuml;r 5.500 &euro;. Noch am selben Tag will der Autoh&auml;ndler das Gesch&auml;ft r&uuml;ckg&auml;ngig machen: &bdquo;Ich habe den Preis versehentlich um 1.500 &euro; zu niedrig angesetzt.&ldquo;</div>
+        <div class="highlight green" style="margin-top:12px"><strong>Ergebnis:</strong> Es ist ein wirksamer Kaufvertrag zustande gekommen. Jens K. darf den Wagen behalten.</div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#128221; Rechtliche Bewertung</h3><ul>
+          <li>Zwar sind Angebote bei Irrtum anfechtbar (BGB)</li>
+          <li><strong>Aber:</strong> Ein &bdquo;Berechnungsirrtum&ldquo; ist <strong>kein</strong> Anfechtungsgrund</li>
+          <li>Der H&auml;ndler k&ouml;nnte nur anfechten, wenn er sich im Verkaufsgespr&auml;ch <strong>versprochen</strong> oder beim Vertrag <strong>verschrieben</strong> hat</li>
+          <li>In diesem Fall m&uuml;sste Jens K. den Wagen zur&uuml;ckgeben, bek&auml;me aber Kosten ersetzt</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>Nichtig vs. Anfechtbar im Vergleich</h2><span class="tag">Folie 12 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Merkmal</th><th>Nichtige Rechtsgesch&auml;fte</th><th>Anfechtbare Rechtsgesch&auml;fte</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Wirksamkeit</strong></td><td>Von Anfang an ung&uuml;ltig</td><td>Zun&auml;chst g&uuml;ltig, erst nach Anfechtung ung&uuml;ltig</td></tr>
+          <tr><td><strong>Handlung n&ouml;tig?</strong></td><td>Nein, automatisch nichtig</td><td>Ja, Anfechtung muss erkl&auml;rt werden</td></tr>
+          <tr><td><strong>Frist</strong></td><td>Keine Frist, immer nichtig</td><td>Unverz&uuml;glich (Irrtum) oder 1 Jahr (T&auml;uschung/Drohung)</td></tr>
+          <tr><td><strong>Rechtsfolgen</strong></td><td>Keine, so als ob nie abgeschlossen</td><td>Nach erfolgreicher Anfechtung: r&uuml;ckwirkend nichtig</td></tr>
+          <tr><td><strong>Schadenersatz</strong></td><td>Nein</td><td>Ja, Anfechtender ggf. schadenersatzpflichtig (bei Irrtum)</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:12px"><strong>Merke:</strong> Im E-Commerce ist die Unterscheidung besonders wichtig, da Online-Vertr&auml;ge schnell und oft automatisiert geschlossen werden. Fehler bei Preisangaben oder Bestellmengen k&ouml;nnen zu Anfechtungssituationen f&uuml;hren (vgl. K&ouml;hler &amp; Bornkamm, 2023).</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#128187;</div><h2>Vertragsschluss im Onlinehandel</h2><span class="tag">Folie 13 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">Im E-Commerce gelten dieselben rechtlichen Grunds&auml;tze wie im station&auml;ren Handel: Ein Vertrag kommt durch <strong>Antrag und Annahme</strong> zustande. Die Darstellung im Webshop ist in der Regel eine <strong>invitatio ad offerendum</strong> (Aufforderung zur Abgabe eines Angebots).</div>
+        <div class="step-flow" style="margin-top:12px">
+          <div class="step-box"><h4>Webshop</h4><p>Produktanzeige = Einladung zum Angebot</p></div>
+          <div class="step-arrow">&#10140;</div>
+          <div class="step-box"><h4>Kunde</h4><p>Bestellung = Antrag (Angebot)</p></div>
+          <div class="step-arrow">&#10140;</div>
+          <div class="step-box"><h4>Webshop</h4><p>Auftragsbest&auml;tigung = Annahme</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="card gold"><h3>&#9888; Wichtige Unterscheidung</h3><ul>
+          <li><strong>Best&auml;tigungsmail &ne; Annahme:</strong> Die automatische Eingangsbest&auml;tigung ist meist noch keine Vertragsannahme</li>
+          <li>Erst die <strong>Auftragsbest&auml;tigung</strong> oder die <strong>Versandmitteilung</strong> gilt als Annahme</li>
+          <li>AGB m&uuml;ssen vor Vertragsschluss akzeptiert werden</li>
+          <li>Widerrufsrecht bei Fernabsatzvertr&auml;gen: 14 Tage</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#128200;</div><h2>Zusammenfassung: Rechtsgesch&auml;fte</h2><span class="tag">Folie 14 / 20</span></div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box" style="background:var(--primary-light)"><h4>Willenserkl&auml;rung</h4><p>Gewollte, zwangsfreie Erkl&auml;rung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>Einseitiges RG</h4><p>Nur eine Willenserkl&auml;rung n&ouml;tig</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>Mehrseitiges RG</h4><p>Zwei &uuml;bereinstimmende WE = Vertrag</p></div>
+      </div>
+      <div class="cards cols3" style="margin-top:16px">
+        <div class="card green"><h3>&#9989; Vertragsfreiheit</h3><ul><li>Abschlussfreiheit</li><li>Formfreiheit</li><li>Inhaltsfreiheit</li></ul></div>
+        <div class="card red"><h3>&#10060; Nichtigkeit</h3><ul><li>Von Anfang an ung&uuml;ltig</li><li>Gesch&auml;ftsunf&auml;higkeit, Formversto&szlig;, Sittenwidrigkeit</li></ul></div>
+        <div class="card gold"><h3>&#9888; Anfechtbarkeit</h3><ul><li>Zun&auml;chst g&uuml;ltig</li><li>Irrtum, Drohung, T&auml;uschung</li><li>Frist beachten!</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgaben (Teil 1)</h2><span class="tag">Folie 15 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128209; Aufgabe 1</h3><p>In welcher Form k&ouml;nnen Willenserkl&auml;rungen abgegeben werden? Nennen Sie drei Formen und geben Sie je ein Beispiel.</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 2</h3><p>Was bedeutet der Grundsatz der Vertragsfreiheit f&uuml;r den Abschluss von Rechtsgesch&auml;ften? Erl&auml;utern Sie die drei Aspekte.</p></div>
+        <div class="card green"><h3>&#128209; Aufgabe 3</h3><p>Pr&uuml;fen Sie, ob in den folgenden F&auml;llen ein Vertrag zustande gekommen ist:<br>a) Reiseb&uuml;ro unterbreitet Angebot, Kunde bucht<br>b) Kunde bestellt, ohne Angebot erhalten zu haben<br>c) Exclusiva GmbH beauftragt Teppichreinigung</p></div>
+        <div class="card"><h3>&#128209; Aufgabe 4</h3><p>Welche Vertragsarten liegen in folgenden F&auml;llen vor?<br>a) Kfz-Werkstatt beult Kotfl&uuml;gel aus<br>b) Bankkredit mit Zinsr&uuml;ckzahlung<br>c) Verk&auml;ufer arbeitet f&uuml;r 1.200 &euro;/Monat<br>d) Tischler fertigt Einbauschrank</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgaben (Teil 2)</h2><span class="tag">Folie 16 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card gold"><h3>&#128209; Aufgabe 5</h3><p>Beurteilen Sie folgende F&auml;lle im Hinblick auf die G&uuml;ltigkeit der Willenserkl&auml;rung:<br>a) Ware f&uuml;r 198 &euro; wird irrt&uuml;mlich mit 189 &euro; angeboten<br>b) Kunsth&auml;ndler verkauft Kopie als Original<br>c) 16-J&auml;hriger kauft Motorrad f&uuml;r 1.250 &euro; ohne Erlaubnis des Vaters</p></div>
+        <div class="card red"><h3>&#128209; Aufgabe 6</h3><p>Wodurch unterscheiden sich Mietvertrag und Pachtvertrag? Erkl&auml;ren Sie den Unterschied anhand eines Beispiels.</p></div>
+        <div class="card green"><h3>&#128209; Aufgabe 7</h3><p>Die Exclusiva GmbH bestellt irrt&uuml;mlich 1.000 statt 100 Herrenhemden. Der Lieferant hat nicht genug auf Lager und bestellt beim Hersteller. Versetzen Sie sich in die Rolle von Tacdin Akay und entwickeln Sie eine L&ouml;sungsstrategie.</p></div>
+        <div class="card"><h3>&#128172; Diskussion</h3><p>Welche Vertragsarten werden in Ihrem Ausbildungsbetrieb abgeschlossen? Wie werden diese Vertr&auml;ge zwischen dem Betrieb und seinen Vertragspartnern geschlossen?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128172;</div><h2>Diskussionsfragen</h2><span class="tag">Folie 17 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Preisfehler im Onlineshop</h3><p>Ein Webshop bietet ein Smartphone f&uuml;r 49 &euro; statt 490 &euro; an. 500 Kunden bestellen. Ist der Webshop verpflichtet, zu diesem Preis zu liefern? Begr&uuml;nden Sie.</p></div>
+        <div class="card gold"><h3>2. AGB-Akzeptanz</h3><p>Reicht ein H&auml;kchen bei &bdquo;Ich habe die AGB gelesen&ldquo; f&uuml;r einen g&uuml;ltigen Vertragsschluss? Was, wenn der Kunde sie nicht gelesen hat?</p></div>
+        <div class="card green"><h3>3. Minderjährige im E-Commerce</h3><p>Unter welchen Bedingungen k&ouml;nnen Minderj&auml;hrige g&uuml;ltige Online-K&auml;ufe t&auml;tigen? Diskutieren Sie den &bdquo;Taschengeldparagraph&ldquo;.</p></div>
+        <div class="card"><h3>4. Schweigen als Annahme</h3><p>Ein H&auml;ndler schickt einem Stammkunden unbestellt 50 Kartons Papier. Der Kunde schweigt. Ist ein Vertrag zustande gekommen?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="18">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Was wir heute gelernt haben</h2><span class="tag">Folie 18 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green"><h3>&#9989; Willenserkl&auml;rung</h3><p>Gewollte, zwangsfreie Erkl&auml;rung – m&uuml;ndlich, schriftlich, durch Handlung oder Schweigen.</p></div>
+        <div class="card green"><h3>&#9989; Rechtsgesch&auml;fte</h3><p>Einseitig (K&uuml;ndigung, Testament) oder mehrseitig (Vertr&auml;ge durch Antrag + Annahme).</p></div>
+        <div class="card green"><h3>&#9989; Vertragsarten</h3><p>Kauf-, Miet-, Dienst-, Werk-, Darlehens-, Leih-, Pacht-, Reise-, Versicherungsvertrag u.a.</p></div>
+        <div class="card green"><h3>&#9989; Vertragsfreiheit</h3><p>Abschluss-, Form- und Inhaltsfreiheit mit gesetzlichen Grenzen.</p></div>
+        <div class="card green"><h3>&#9989; Nichtigkeit</h3><p>Von Anfang an ung&uuml;ltig: Gesch&auml;ftsunf&auml;higkeit, Formfehler, Gesetzesversto&szlig;, Sittenwidrigkeit.</p></div>
+        <div class="card green"><h3>&#9989; Anfechtbarkeit</h3><p>Zun&auml;chst g&uuml;ltig, Anfechtung bei Irrtum, Drohung, T&auml;uschung m&ouml;glich.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="19">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 19 / 20</span></div>
+    <div class="content">
+      <div class="ref-entry">Blank, A., Hagel, H., Hahn, H., Krause, K. &amp; Schmidthausen, M. (2024). <em>Kaufmann/Kauffrau im E-Commerce: Lernfelder 1–4</em>. Westermann.</div>
+      <div class="ref-entry">Br&auml;utigam, P. (2020). <em>E-Commerce: Rechtshandbuch f&uuml;r den elektronischen Gesch&auml;ftsverkehr</em> (2. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Gesch&auml;ftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">K&ouml;hler, H. &amp; Bornkamm, J. (2023). <em>Gesetz gegen den unlauteren Wettbewerb: UWG mit PAngV, UKlaG, DL-InfoV</em> (41. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 11</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.11 Abschluss von Rechtsgesch&auml;ften</div>
+    <div class="cover-meta">N&auml;chstes Thema: <strong>3.12 Gesch&auml;ftsf&auml;higkeit</strong><br><br>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten</div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folien&uuml;bersicht</span><button onclick="toggleGrid()">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev">&#8592;</button><span id="slide-counter">1 / 20</span><button id="btn-next">&#8594;</button><button id="btn-grid">&#8862;</button></div>
+<div id="footer"><span>Tag 11 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;
+function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%';}
+document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));
+document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return;}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid();});
+let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1);}});
+function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible');}
+function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid();};c.appendChild(d);});}
+document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

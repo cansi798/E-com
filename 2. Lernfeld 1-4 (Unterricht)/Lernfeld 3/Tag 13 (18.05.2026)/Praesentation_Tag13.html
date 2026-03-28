@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.13 Weitere wichtige Vertragsarten – Tag 13</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none}#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100}#viewport{width:100vw;height:100vh;position:relative;overflow:hidden}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg)}.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit-left{opacity:0;transform:translateX(-60px)}.slide.cover{justify-content:center;text-align:center}.slide.section-slide{background:linear-gradient(135deg,var(--primary),var(--primary-dark));text-align:center;color:#fff}.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px}.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px}.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8}.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start}.slide-header .icon{font-size:1.6rem}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap}.content{width:100%;flex:1;overflow:hidden}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px}.cards{display:grid;gap:14px;width:100%}.cols2{grid-template-columns:1fr 1fr}.cols3{grid-template-columns:1fr 1fr 1fr}.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow)}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px}.card.gold::before{background:var(--accent)}.card.green::before{background:var(--success)}.card.red::before{background:var(--danger)}.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6}.card ul{padding-left:16px}.card li{margin-bottom:3px}.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px}.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent)}.highlight.green{background:var(--success-light);border-left-color:var(--success)}.highlight.red{background:var(--danger-light);border-left-color:var(--danger)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}.badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:4px}.badge.gold{background:var(--accent)}.badge.green{background:var(--success)}.badge.red{background:var(--danger)}table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border)}.sum-table tr:nth-child(even) td{background:var(--bg-alt)}.sum-table tr:hover td{background:var(--primary-light)}.step-flow{display:flex;align-items:stretch;gap:0;width:100%;margin-top:8px}.step-box{flex:1;background:var(--bg-card);border-radius:10px;padding:14px 12px;text-align:center;position:relative;font-size:.8rem;border:1px solid var(--border);box-shadow:var(--shadow)}.step-box h4{color:var(--primary);font-size:.82rem;margin-bottom:4px}.step-box p{color:var(--text-muted);font-size:.72rem;line-height:1.4}.step-arrow{display:flex;align-items:center;color:var(--primary);font-size:1.2rem;padding:0 4px}.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px}.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem}.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow)}#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg)}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s}#nav button:hover{background:var(--primary-light)}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center}#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both}.slide.active .slide-header{animation-delay:.05s}.slide.active .content{animation-delay:.15s}#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px}#grid-overlay.visible{display:block}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary)}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px}#grid-header button:hover{background:var(--bg-alt)}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px)}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light)}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1 -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 13</div>
+    <h1>3.13 Weitere wichtige<br>Vertragsarten</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 502 – 506</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      18. Mai 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2 -->
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 20</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Dienstvertrag definieren</strong> – freien Dienstvertrag und Arbeitsvertrag unterscheiden.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Werkvertrag abgrenzen</strong> – den Unterschied zum Dienstvertrag (T&auml;tigkeit vs. Erfolg) erkl&auml;ren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Mietvertrag erkl&auml;ren</strong> – Pflichten von Vermieter und Mieter benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Vertragsarten zuordnen</strong> – Praxisf&auml;lle der richtigen Vertragsart zuordnen k&ouml;nnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Pflichten der Vertragspartner</strong> – die jeweiligen Rechte und Pflichten benennen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Welche Vertragsarten gibt es neben dem Kaufvertrag und worin unterscheiden sie sich?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3 -->
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#128100;</div><h2>Der Dienstvertrag</h2><span class="tag">Folie 3 / 20</span></div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Definition:</strong> Der <strong>Dienstvertrag</strong> ist ein Vertrag &uuml;ber die Leistung von Diensten gegen Bezahlung. Er kommt durch zwei &uuml;bereinstimmende Willenserkl&auml;rungen eines Dienstberechtigten (Auftraggeber) und eines Dienstverpflichteten zustande.
+      </div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128196; Freier Dienstvertrag</h3>
+          <p>Der Dienstverpflichtete f&uuml;hrt die T&auml;tigkeit <strong>selbstst&auml;ndig und eigenverantwortlich</strong> aus. Kann formlos geschlossen werden.</p>
+          <p style="margin-top:6px"><strong>Beispiele:</strong></p>
+          <ul>
+            <li>Nachhilfeunterricht</li>
+            <li>Trainingsstunden beim Tennislehrer</li>
+            <li>&Auml;rzte, Architekten, Rechtsanw&auml;lte</li>
+            <li>Haushaltshilfen, Fensterputzer</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128188; Arbeitsvertrag</h3>
+          <p>Der Dienstverpflichtete f&uuml;hrt die T&auml;tigkeit &uuml;ber einen gewissen Zeitraum in <strong>pers&ouml;nlicher und wirtschaftlicher Abh&auml;ngigkeit</strong> vom Dienstberechtigten aus.</p>
+          <p style="margin-top:6px">Der Arbeitsvertrag ist eine <strong>Sonderform</strong> des Dienstvertrags mit zus&auml;tzlichem Arbeitnehmerschutz.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4 -->
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Pflichten beim Dienstvertrag</h2><span class="tag">Folie 4 / 20</span></div>
+    <div class="content">
+      <div class="two-col">
+        <div class="card">
+          <h3>Pflichten des Dienstverpflichteten</h3>
+          <ul>
+            <li>Die versprochenen Dienste gem&auml;&szlig; der vertraglichen Vereinbarung <strong>leisten</strong></li>
+            <li>Die Dienste im Zweifel <strong>pers&ouml;nlich</strong> erbringen</li>
+            <li>Pflicht zur <strong>Aufkl&auml;rung und Verschwiegenheit</strong></li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>Pflichten des Dienstberechtigten</h3>
+          <ul>
+            <li>Die vereinbarte <strong>Verg&uuml;tung</strong> nach Leistung des Dienstes entrichten</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:14px">
+        <strong>Wichtig:</strong> Beim Dienstvertrag schuldet der Dienstverpflichtete allein die <strong>Leistung der T&auml;tigkeit</strong>. Der <strong>Erfolg</strong> spielt keine Rolle – auch ohne Erfolg wird verg&uuml;tet! Es gibt auch <strong>keine Abnahme</strong> und <strong>kein Recht auf Nachbesserung</strong>.
+      </div>
+      <div class="info-box" style="margin-top:10px">
+        <strong>Beispiel:</strong> Die Exclusiva GmbH verpflichtet die Berufsschullehrerin Claudia Fr&ouml;hlich. Sie wird bezahlt, unabh&auml;ngig von den Ergebnissen der Auszubildenden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5 -->
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#128295;</div><h2>Der Werkvertrag</h2><span class="tag">Folie 5 / 20</span></div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Definition:</strong> Der <strong>Werkvertrag</strong> ist ein formloser Vertrag &uuml;ber die Herstellung eines Werks gegen Bezahlung. Er kommt durch zwei &uuml;bereinstimmende Willenserkl&auml;rungen eines Bestellers (Auftraggebers) und eines Unternehmers (Werkunternehmers) zustande.
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        <strong>Beispiele f&uuml;r Werkvertr&auml;ge:</strong>
+        <ul style="margin-top:6px;padding-left:16px;font-size:.84rem;color:var(--text-muted)">
+          <li>Streichen der Gesch&auml;ftsr&auml;ume durch einen Malermeister</li>
+          <li>Erstellen eines B&uuml;roregals f&uuml;r den Anlageberater</li>
+          <li>Erstellung einer neuen Werkstatt durch ein Bauunternehmen</li>
+          <li>Reparatur der EDV-Anlage durch einen IT-Dienstleister</li>
+          <li>G&uuml;tertransport durch eine Spedition</li>
+          <li>Erstellung eines Rechtsgutachtens durch einen Rechtsanwalt</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6 -->
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Pflichten beim Werkvertrag</h2><span class="tag">Folie 6 / 20</span></div>
+    <div class="content">
+      <div class="two-col">
+        <div class="card">
+          <h3>Pflichten des Werkunternehmers</h3>
+          <ul>
+            <li>Das versprochene Werk <strong>herstellen</strong></li>
+            <li>Dem Besteller das Werk frei von <strong>Sach- und Rechtsm&auml;ngeln</strong> verschaffen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>Pflichten des Bestellers</h3>
+          <ul>
+            <li>Das vertragsgem&auml;&szlig; hergestellte Werk <strong>abnehmen</strong></li>
+            <li>Die vereinbarte Verg&uuml;tung <strong>nach Abnahme</strong> bezahlen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight green" style="margin-top:14px">
+        <strong>Kernunterschied zum Dienstvertrag:</strong> Beim Werkvertrag schuldet der Unternehmer einen <strong>bestimmten Erfolg</strong> (= Werk). Erst mit der <strong>Abnahme</strong> akzeptiert der Besteller das Werk und die Verg&uuml;tung wird f&auml;llig.
+      </div>
+      <div class="highlight red" style="margin-top:10px">
+        <strong>Bei M&auml;ngeln:</strong> Der Besteller kann <strong>Nacherf&uuml;llung</strong> verlangen, nach Fristablauf den Mangel selbst beseitigen, vom Vertrag <strong>zur&uuml;cktreten</strong> oder die Verg&uuml;tung <strong>mindern</strong>.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7 -->
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>Dienstvertrag vs. Werkvertrag</h2><span class="tag">Folie 7 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Merkmal</th><th>Dienstvertrag</th><th>Werkvertrag</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Gegenstand</strong></td><td>Leistung von Diensten</td><td>Herstellung eines Werks</td></tr>
+          <tr><td><strong>Geschuldet wird</strong></td><td>Die <strong>T&auml;tigkeit</strong> selbst</td><td>Ein bestimmter <strong>Erfolg</strong></td></tr>
+          <tr><td><strong>Abnahme</strong></td><td>Keine Abnahme</td><td>Abnahme erforderlich</td></tr>
+          <tr><td><strong>Verg&uuml;tung f&auml;llig</strong></td><td>Nach Leistung des Dienstes</td><td>Nach Abnahme des Werks</td></tr>
+          <tr><td><strong>M&auml;ngelrechte</strong></td><td>Keine Nachbesserung</td><td>Nacherf&uuml;llung, R&uuml;cktritt, Minderung</td></tr>
+          <tr><td><strong>Schadensersatz</strong></td><td>Bei schuldhaft schlechter Leistung</td><td>Bei mangelhaftem Werk</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8 -->
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#127968;</div><h2>Der Mietvertrag</h2><span class="tag">Folie 8 / 20</span></div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Definition:</strong> Ein <strong>Mietvertrag</strong> regelt die &Uuml;berlassung einer Sache gegen Zahlung eines vereinbarten Mietpreises. Er kommt durch zwei &uuml;bereinstimmende Willenserkl&auml;rungen eines Vermieters und eines Mieters zustande.
+      </div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card">
+          <h3>Bewegliche Sachen</h3>
+          <ul>
+            <li>Kraftfahrzeuge</li>
+            <li>Maschinen</li>
+            <li>B&uuml;romaschinen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>Unbewegliche Sachen</h3>
+          <ul>
+            <li>Grundst&uuml;cke, Geb&auml;ude</li>
+            <li>Gesch&auml;ftsr&auml;ume</li>
+            <li>Lagerr&auml;ume, Wohnungen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        <strong>Befristet vs. Unbefristet:</strong> Befristete Mietvertr&auml;ge enden nach der festgelegten Zeit. Unbefristete k&ouml;nnen jederzeit ohne Angabe eines K&uuml;ndigungsgrundes gek&uuml;ndigt werden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9 -->
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Pflichten beim Mietvertrag</h2><span class="tag">Folie 9 / 20</span></div>
+    <div class="content">
+      <div class="two-col">
+        <div class="card">
+          <h3>Pflichten des Vermieters</h3>
+          <ul>
+            <li>Dem Mieter die Sache <strong>zeitweise &uuml;berlassen</strong></li>
+            <li>Den <strong>Gebrauch</strong> w&auml;hrend der Mietzeit erm&ouml;glichen</li>
+            <li>Die Sache in <strong>gebrauchsf&auml;higem Zustand</strong> &uuml;berlassen</li>
+            <li>Den Zustand w&auml;hrend der Mietzeit <strong>erhalten</strong></li>
+            <li>Den vertragsgem&auml;&szlig;en Gebrauch <strong>dulden</strong></li>
+            <li><strong>Versorgung</strong> mit Wasser, Strom und Heizung sicherstellen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>Pflichten des Mieters</h3>
+          <ul>
+            <li>Die vereinbarte <strong>Miete bezahlen</strong></li>
+            <li>Die Sache nur <strong>vertragsgem&auml;&szlig; gebrauchen</strong></li>
+            <li>Die Sache <strong>nicht ohne Erlaubnis</strong> einem Dritten &uuml;berlassen</li>
+            <li>Die Sache dem Vermieter <strong>nach Beendigung zur&uuml;ckgeben</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10 -->
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#128176;</div><h2>Leihvertrag und Darlehensvertrag</h2><span class="tag">Folie 10 / 20</span></div>
+    <div class="content">
+      <div class="two-col">
+        <div class="card green">
+          <h3>&#128588; Leihvertrag</h3>
+          <ul>
+            <li>&Uuml;berlassung einer Sache zum <strong>unentgeltlichen</strong> Gebrauch</li>
+            <li>Der Entleiher muss die Sache <strong>zur&uuml;ckgeben</strong></li>
+            <li>Beispiel: Ausleihe eines Buches in der Bibliothek</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Darlehensvertrag</h3>
+          <ul>
+            <li>&Uuml;berlassung von <strong>Geld oder vertretbaren Sachen</strong></li>
+            <li>Darlehensnehmer muss <strong>gleichwertig zur&uuml;ckgeben</strong></li>
+            <li>In der Regel gegen <strong>Zinsen</strong></li>
+            <li>Beispiel: Bankkredit f&uuml;r Gesch&auml;ftserweiterung</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Abgrenzung Miete vs. Leihe:</strong> Beim Mietvertrag wird eine <strong>Verg&uuml;tung</strong> gezahlt, beim Leihvertrag ist die &Uuml;berlassung <strong>unentgeltlich</strong>.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11 -->
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#128202;</div><h2>Vergleich aller Vertragsarten</h2><span class="tag">Folie 11 / 20</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Vertragsart</th><th>Gegenstand</th><th>Verg&uuml;tung</th><th>Besonderheit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge">Kaufvertrag</span></td><td>&Uuml;bereignung einer Sache</td><td>Kaufpreis</td><td>Eigentums&uuml;bergang</td></tr>
+          <tr><td><span class="badge gold">Dienstvertrag</span></td><td>Leistung von Diensten</td><td>Verg&uuml;tung</td><td>Kein Erfolg geschuldet</td></tr>
+          <tr><td><span class="badge green">Werkvertrag</span></td><td>Herstellung eines Werks</td><td>Werklohn</td><td>Erfolg geschuldet, Abnahme</td></tr>
+          <tr><td><span class="badge red">Mietvertrag</span></td><td>&Uuml;berlassung einer Sache</td><td>Miete</td><td>Zeitweise, R&uuml;ckgabe</td></tr>
+          <tr><td><span class="badge">Leihvertrag</span></td><td>&Uuml;berlassung einer Sache</td><td>Unentgeltlich</td><td>Kostenlos, R&uuml;ckgabe</td></tr>
+          <tr><td><span class="badge gold">Darlehen</span></td><td>Geld/vertretbare Sachen</td><td>Zinsen</td><td>Gleichwertiger R&uuml;ckgabeanspruch</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12 -->
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#127970;</div><h2>Praxisbeispiel: Exclusiva GmbH</h2><span class="tag">Folie 12 / 20</span></div>
+    <div class="content">
+      <div class="info-box">
+        Gesch&auml;ftsf&uuml;hrer <strong>Herr Hertien</strong> ben&ouml;tigt eine neue Schrankwand f&uuml;r sein B&uuml;ro und ein neues Fotokopierger&auml;t f&uuml;r sein Vorzimmer. Die <strong>Schreinerei Sch&ouml;ller</strong> soll die Schrankwand nach seinen W&uuml;nschen herstellen und einbauen (7.000,00 &euro;). Die <strong>Orga-B&uuml;roger&auml;te GmbH</strong> stellt das Fotokopierger&auml;t gegen monatlich 135,00 &euro; zur Verf&uuml;gung.
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#128295; Schrankwand = Werkvertrag</h3>
+          <p>Ein bestimmtes <strong>Werk</strong> (Schrankwand) soll hergestellt werden. Schreinerei schuldet den <strong>Erfolg</strong>. Bezahlung nach <strong>Abnahme</strong>.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127968; Kopierer = Mietvertrag</h3>
+          <p>Eine Sache wird gegen <strong>monatliche Zahlung</strong> zur Verf&uuml;gung gestellt. Kein Eigentums&uuml;bergang – nur <strong>zeitweise &Uuml;berlassung</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13 -->
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#128187;</div><h2>Vertragsarten im E-Commerce</h2><span class="tag">Folie 13 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128722; Kaufvertrag</h3>
+          <p>Klassischer Warenkauf im Onlineshop – Eigentums&uuml;bergang der bestellten Ware.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128100; Dienstvertrag</h3>
+          <p>Beauftragung von SEO-Agenturen, Social-Media-Management, Beratungsleistungen.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128295; Werkvertrag</h3>
+          <p>Erstellung einer Website, Programmierung einer App, individuelle Software-Entwicklung.</p>
+        </div>
+        <div class="card red">
+          <h3>&#127968; Mietvertrag</h3>
+          <p>SaaS-Abonnements, Server-Hosting, Leasing von IT-Hardware.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Praxistipp:</strong> Im E-Commerce ist die korrekte Einordnung der Vertragsart entscheidend f&uuml;r die Rechte bei M&auml;ngeln: Bei einem Werkvertrag (z.&thinsp;B. Webseiten-Erstellung) hat der Besteller <strong>Recht auf Nachbesserung</strong>, bei einem Dienstvertrag (z.&thinsp;B. SEO-Beratung) <strong>nicht</strong>.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14 -->
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 1: Zuordnung</h2><span class="tag">Folie 14 / 20</span></div>
+    <div class="content">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px"><strong>Entscheiden Sie:</strong> Dienstvertrag, Werkvertrag oder Mietvertrag?</p>
+      <table class="sum-table">
+        <thead><tr><th>Fall</th><th>Vertragsart</th></tr></thead>
+        <tbody>
+          <tr><td>a) Haareschneiden beim Friseur</td><td><strong>Werkvertrag</strong></td></tr>
+          <tr><td>b) Auswechseln einer Platine im Fernseher</td><td><strong>Werkvertrag</strong></td></tr>
+          <tr><td>c) Durchf&uuml;hrung eines &Ouml;lwechsels am Auto</td><td><strong>Werkvertrag</strong></td></tr>
+          <tr><td>d) Bereitstellung von Konferenzm&ouml;beln gegen monatliche Zahlung</td><td><strong>Mietvertrag</strong></td></tr>
+          <tr><td>e) Auslichten von Obstb&auml;umen durch einen G&auml;rtner</td><td><strong>Werkvertrag</strong></td></tr>
+          <tr><td>f) K&uuml;rzen einer Hose</td><td><strong>Werkvertrag</strong></td></tr>
+          <tr><td>g) Behandlung einer Beinverletzung durch einen Chirurgen</td><td><strong>Dienstvertrag</strong></td></tr>
+          <tr><td>h) Bereitstellung von Gl&auml;sern f&uuml;r eine Jubil&auml;umsfeier</td><td><strong>Mietvertrag</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15 -->
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 2: Fallbeispiel</h2><span class="tag">Folie 15 / 20</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="card">
+          <h3>&#128209; Aufgabe</h3>
+          <p>Ein Maler hat den Auftrag, die B&uuml;ror&auml;ume der Exclusiva GmbH zu streichen. Er f&uuml;hrt die Arbeit mangelhaft aus.</p>
+          <p style="margin-top:8px"><strong>a)</strong> Um welche Vertragsart handelt es sich?</p>
+          <p><strong>b)</strong> Welche Rechte kann die Exclusiva GmbH geltend machen?</p>
+        </div>
+        <div class="card gold" style="margin-top:12px">
+          <h3>&#128209; Weitere Aufgabe</h3>
+          <p>Trotz aller Bem&uuml;hungen ihres Rechtsanwalts wird Claudia Jungmann von einem Gericht zu einer Geldstrafe verurteilt. Welche Rechte hat sie gegen&uuml;ber ihrem Rechtsanwalt?</p>
+        </div>
+      </div>
+      <div>
+        <div class="highlight green">
+          <strong>L&ouml;sung a):</strong> <strong>Werkvertrag</strong> – der Maler schuldet ein bestimmtes Ergebnis (gestrichene R&auml;ume).
+        </div>
+        <div class="highlight" style="margin-top:10px">
+          <strong>L&ouml;sung b):</strong> Nacherf&uuml;llung, Fristsetzung, ggf. Selbstbeseitigung mit Kostenersatz, R&uuml;cktritt oder Minderung.
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>L&ouml;sung Rechtsanwalt:</strong> <strong>Dienstvertrag</strong> – kein Erfolg geschuldet. Keine Nachbesserung m&ouml;glich. Nur bei <strong>schuldhaftem Verhalten</strong> Schadensersatzanspruch.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16 -->
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>&Uuml;bungsaufgabe 3: Kauf vs. Miete</h2><span class="tag">Folie 16 / 20</span></div>
+    <div class="content">
+      <div class="info-box">
+        Herr Hertien m&ouml;chte die EDV-Systeme in der Verwaltung modernisieren. Er &uuml;berlegt, ob er die neue EDV-Ausstattung <strong>kaufen oder mieten</strong> soll. Sammeln Sie in Partnerarbeit Vor- und Nachteile.
+      </div>
+      <div class="two-col" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#9989; Vorteile Kauf</h3>
+          <ul>
+            <li>Eigentum an der Hardware</li>
+            <li>Langfristig g&uuml;nstiger</li>
+            <li>Freie Verf&uuml;gungsgewalt</li>
+            <li>Bilanzierung als Verm&ouml;gensgegenstand</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#9989; Vorteile Miete</h3>
+          <ul>
+            <li>Geringere Anfangsinvestition</li>
+            <li>Flexibilit&auml;t bei Technologiewechsel</li>
+            <li>Wartung oft inklusive</li>
+            <li>Steuerlich als Betriebsausgabe absetzbar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17 -->
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Was wir heute gelernt haben</h2><span class="tag">Folie 17 / 20</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#9989; Dienstvertrag</h3>
+          <p>T&auml;tigkeit geschuldet, kein Erfolg. Freier DV vs. Arbeitsvertrag.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Werkvertrag</h3>
+          <p>Erfolg geschuldet. Abnahme erforderlich. M&auml;ngelrechte.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Mietvertrag</h3>
+          <p>Zeitweise &Uuml;berlassung gegen Entgelt. Befristet/unbefristet.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Leihvertrag</h3>
+          <p>Unentgeltliche &Uuml;berlassung mit R&uuml;ckgabepflicht.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Darlehensvertrag</h3>
+          <p>Geld&uuml;berlassung gegen Zinsen mit R&uuml;ckzahlung.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; E-Commerce-Bezug</h3>
+          <p>Korrekte Vertragsart bestimmt M&auml;ngelrechte und Pflichten.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18 -->
+  <section class="slide" data-index="18">
+    <div class="slide-header"><div class="icon">&#128172;</div><h2>Diskussionsfragen</h2><span class="tag">Folie 18 / 20</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Abgrenzung in der Praxis</h3><p>Ein Freelancer erstellt eine Website f&uuml;r ein Unternehmen. Ist das ein Dienst- oder Werkvertrag? Welche Konsequenzen hat die Zuordnung?</p></div>
+        <div class="card gold"><h3>2. SaaS-Vertr&auml;ge</h3><p>Welche Vertragsart liegt vor, wenn ein Unternehmen eine Cloud-Software im Abo nutzt? Miete oder Dienst?</p></div>
+        <div class="card"><h3>3. Mietvertrag im Betrieb</h3><p>Welche Gegenst&auml;nde werden in Ihrem Ausbildungsbetrieb gemietet statt gekauft? Warum?</p></div>
+        <div class="card gold"><h3>4. Gest&ouml;rtes Mietverh&auml;ltnis</h3><p>Das gemietete Fotokopierger&auml;t von Herrn Hertien ist defekt. Welche Rechte hat er?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19 -->
+  <section class="slide" data-index="19">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 19 / 20</span></div>
+    <div class="content">
+      <div class="ref-entry">Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.</div>
+      <div class="ref-entry">Br&auml;utigam, P. (2020). <em>E-Commerce: Rechtshandbuch</em>. C.H.Beck.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">K&ouml;hler, H. &amp; Bornkamm, J. (2023). <em>Gesetz gegen den unlauteren Wettbewerb: UWG</em> (41. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Palandt, O. (2023). <em>B&uuml;rgerliches Gesetzbuch: BGB</em> (82. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Spindler, G. &amp; Schuster, F. (2019). <em>Recht der elektronischen Medien</em> (4. Aufl.). C.H.Beck.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20 -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 13</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.13 Weitere wichtige Vertragsarten</div>
+    <div class="cover-meta">
+      N&auml;chstes Thema: <strong>3.14 Die Gesch&auml;ftsf&auml;higkeit</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folien&uuml;bersicht</span><button onclick="toggleGrid()" title="Schlie&szlig;en">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev">&#8592;</button><span id="slide-counter">1 / 20</span><button id="btn-next">&#8594;</button><button id="btn-grid">&#8862;</button></div>
+<div id="footer"><span>Tag 13 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%'}document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid()});let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1)}});function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible')}function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid()};c.appendChild(d)})}document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

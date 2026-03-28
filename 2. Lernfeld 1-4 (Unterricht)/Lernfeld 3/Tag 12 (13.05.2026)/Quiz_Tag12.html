@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Tag 12: Abschluss und Erfüllung von Kaufverträgen</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --accent: #f59e0b;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; text-align: center; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; }
+  .progress-bar-wrap { width: 100%; max-width: 680px; height: 6px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; }
+  .progress-bar { height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.4s ease; }
+  .dots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 680px; margin-bottom: 1.5rem; }
+  .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .dot.current { border-color: var(--primary); color: var(--primary); background: #ede9fe; }
+  .dot.answered-ok { background: var(--success); color: #fff; border-color: var(--success); }
+  .dot.answered-err { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .quiz-area { width: 100%; max-width: 680px; position: relative; }
+  .q-card { display: none; background: var(--card); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .q-card.active { display: block; }
+  .q-number { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .q-text { font-size: 1.1rem; font-weight: 600; line-height: 1.5; margin-bottom: 1.5rem; }
+  .options { display: flex; flex-direction: column; gap: 0.75rem; }
+  .opt { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.4; background: #fafafa; }
+  .opt:hover:not(.locked) { border-color: var(--primary); background: #ede9fe; }
+  .opt .badge { min-width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+  .opt.correct { border-color: var(--success); background: #f0fdf4; }
+  .opt.correct .badge { background: var(--success); color: #fff; }
+  .opt.wrong { border-color: var(--danger); background: #fff5f5; }
+  .opt.wrong .badge { background: var(--danger); color: #fff; }
+  .opt.locked { cursor: default; }
+  .feedback { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.5; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+  .feedback.err { background: #fff5f5; border: 1px solid #fecaca; color: #b91c1c; }
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-next { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.4rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: none; transition: background 0.2s; }
+  .btn-next:hover { background: #4338ca; }
+  .btn-next.show { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .result-card { display: none; background: var(--card); border-radius: 16px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); text-align: center; width: 100%; max-width: 680px; }
+  .result-card.show { display: block; }
+  .result-score { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+  .result-label { font-size: 1.15rem; font-weight: 600; margin: 0.5rem 0 1rem; }
+  .result-msg { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .btn-restart { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.7rem 1.6rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+  .btn-restart:hover { background: #4338ca; }
+</style>
+</head>
+<body>
+
+<h1>Quiz – Tag 12</h1>
+<p class="subtitle">3.12 Abschluss und Erfüllung von Kaufverträgen · 20 Fragen</p>
+
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<div class="dots" id="dotsContainer"></div>
+
+<div class="quiz-area" id="quizArea">
+
+  <!-- Frage 1 -->
+  <div class="q-card active" id="q1">
+    <div class="q-number">Frage 1 von 20</div>
+    <div class="q-text">Wie viele übereinstimmende Willenserklärungen sind für das Zustandekommen eines Kaufvertrags erforderlich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Eine (einseitiger Akt)</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Zwei (Angebot und Annahme)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Drei (Angebot, Gegenangebot, Bestätigung)</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Beliebig viele, Hauptsache alle Parteien stimmen zu</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Kaufvertrag setzt genau zwei übereinstimmende Willenserklärungen voraus: Angebot (Antrag) und Annahme. Erst wenn beide vorliegen, ist der Vertrag wirksam geschlossen.</div>
+    <div class="feedback err">Nicht ganz. Ein Kaufvertrag kommt durch genau zwei übereinstimmende Willenserklärungen zustande: Angebot (Antrag) und Annahme.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card" id="q2">
+    <div class="q-number">Frage 2 von 20</div>
+    <div class="q-text">Was versteht man unter „invitatio ad offerendum" im E-Commerce-Kontext?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Das verbindliche Kaufangebot des Kunden an den Händler</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Die rechtlich bindende Annahme durch den Onlineshop</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Die unverbindliche Aufforderung des Shops, ein Angebot abzugeben (z. B. Produktpräsentation)</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der automatische Vertrag beim Klick auf „Kaufen"</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Produktanzeige im Webshop ist nur eine „Einladung zur Angebotsabgabe" – der Kunde gibt durch den Bestellklick das Angebot ab, der Shop nimmt es (z. B. per Bestätigungs-E-Mail) an.</div>
+    <div class="feedback err">Nicht korrekt. „Invitatio ad offerendum" bedeutet: Der Shop präsentiert Waren unverbindlich; erst der Bestellklick des Kunden ist das eigentliche Angebot.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card" id="q3">
+    <div class="q-number">Frage 3 von 20</div>
+    <div class="q-text">Welche der folgenden Handlungen stellt im typischen Onlineshop-Prozess das rechtliche „Angebot" (Antrag) dar?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Das Einstellen eines Produkts mit Preis durch den Händler</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Das Absenden der Bestellung durch den Kunden</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Das Hinzufügen eines Artikels in den Warenkorb</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Das Aufrufen der Produktdetailseite</div>
+    </div>
+    <div class="feedback ok">Richtig! Erst der Klick auf „Jetzt kaufen" / das Absenden der Bestellung ist das verbindliche Angebot des Kunden. Die vorherigen Schritte (Ansehen, Warenkorb) sind unverbindlich.</div>
+    <div class="feedback err">Nicht korrekt. Das Absenden der Bestellung durch den Kunden ist das rechtsverbindliche Angebot – nicht die Produktanzeige des Händlers.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card" id="q4">
+    <div class="q-number">Frage 4 von 20</div>
+    <div class="q-text">Was ist die Hauptpflicht des Verkäufers beim Kaufvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Den Kaufpreis in Rechnung stellen und mahnen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Mangelfreie Ware übergeben und Eigentum verschaffen</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Eine Garantie von mindestens 2 Jahren gewähren</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Ware auf eigene Kosten zum Käufer liefern</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Verkäufer muss die Ware mangelfrei übergeben und dem Käufer das Eigentum daran verschaffen – das sind die beiden Hauptpflichten aus dem Kaufvertrag.</div>
+    <div class="feedback err">Nicht korrekt. Die Hauptpflichten des Verkäufers sind: mangelfreie Ware liefern und das Eigentum an der Ware auf den Käufer übertragen.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card" id="q5">
+    <div class="q-number">Frage 5 von 20</div>
+    <div class="q-text">Was ist die Hauptpflicht des Käufers beim Kaufvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Die Ware auf Mängel prüfen und sofort reklamieren</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Eine Bewertung im Onlineshop hinterlassen</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Die Ware abnehmen und den Kaufpreis bezahlen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Ware innerhalb von 14 Tagen zurücksenden</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Käufer muss die Ware abnehmen und den vereinbarten Kaufpreis bezahlen – das sind seine vertraglichen Hauptpflichten.</div>
+    <div class="feedback err">Nicht korrekt. Die Hauptpflichten des Käufers bestehen in der Abnahme der Ware und der Zahlung des Kaufpreises.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card" id="q6">
+    <div class="q-number">Frage 6 von 20</div>
+    <div class="q-text">Worin besteht der rechtliche Unterschied zwischen „Eigentum" und „Besitz"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Eigentum und Besitz sind gesetzliche Synonyme ohne Unterschied</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Eigentum ist das dingliche Recht; Besitz ist die tatsächliche Sachherrschaft</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Besitz ist das stärkere Recht; Eigentum nur eine wirtschaftliche Kategorie</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Eigentum entsteht automatisch mit dem Besitz</div>
+    </div>
+    <div class="feedback ok">Richtig! Eigentum ist das rechtliche (dingliche) Zuordnungsrecht an einer Sache; Besitz ist die tatsächliche körperliche Herrschaft. Beides kann bei verschiedenen Personen liegen (z. B. Miete, Eigentumsvorbehalt).</div>
+    <div class="feedback err">Nicht korrekt. Eigentum = rechtliche Zuordnung (dingliches Recht); Besitz = tatsächliche Sachherrschaft. Beide können auseinanderfallen.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card" id="q7">
+    <div class="q-number">Frage 7 von 20</div>
+    <div class="q-text">Was bewirkt ein „einfacher Eigentumsvorbehalt" beim Kaufvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="badge">A</span>Der Käufer erhält Besitz, aber das Eigentum verbleibt beim Verkäufer bis zur vollständigen Bezahlung</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Der Käufer darf die Ware erst nach vollständiger Zahlung in Besitz nehmen</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Verkäufer kann die Ware jederzeit ohne Grund zurückfordern</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Das Eigentum geht sofort mit Übergabe auf den Käufer über</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim einfachen Eigentumsvorbehalt erhält der Käufer zwar die Ware (Besitz), das Eigentum bleibt aber beim Verkäufer, bis der Kaufpreis vollständig bezahlt ist.</div>
+    <div class="feedback err">Nicht korrekt. Beim einfachen Eigentumsvorbehalt: Übergabe der Ware (Besitz geht über), aber Eigentum verbleibt beim Verkäufer bis zur vollständigen Zahlung.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card" id="q8">
+    <div class="q-number">Frage 8 von 20</div>
+    <div class="q-text">Was kennzeichnet den „verlängerten Eigentumsvorbehalt"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Eigentumsvorbehalt gilt für eine verlängerte Zeitspanne von 5 Jahren</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Eigentumsvorbehalt erstreckt sich auf die Forderung aus dem Weiterverkauf der Ware</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Käufer darf die Ware nur nach schriftlicher Genehmigung weiterverkaufen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Das Eigentum geht erst nach 2 Jahren automatisch über</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim verlängerten Eigentumsvorbehalt darf der Käufer die Ware zwar weiterverkaufen, aber die Forderung gegen seinen Kunden tritt automatisch an den ursprünglichen Verkäufer ab (Vorausabtretung).</div>
+    <div class="feedback err">Nicht korrekt. „Verlängert" bedeutet: Der Vorbehalt setzt sich an der Kaufpreisforderung fort, wenn der Käufer die Ware weiterverkauft.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card" id="q9">
+    <div class="q-number">Frage 9 von 20</div>
+    <div class="q-text">Was unterscheidet den „erweiterten Eigentumsvorbehalt" vom einfachen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Er sichert nur den aktuellen Kaufpreis, nicht frühere Schulden</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Er sichert alle Forderungen des Verkäufers gegen den Käufer (Kontokorrentvorbehalt)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Er ist nur im Verbrauchergeschäft zulässig</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Er erlaubt dem Käufer, das Eigentum sofort zu erwerben</div>
+    </div>
+    <div class="feedback ok">Richtig! Der erweiterte Eigentumsvorbehalt sichert nicht nur die aktuelle Kaufpreisforderung, sondern alle bestehenden Forderungen des Lieferanten gegen den Käufer – oft im B2B-Bereich als Kontokorrentvorbehalt eingesetzt.</div>
+    <div class="feedback err">Nicht korrekt. Beim erweiterten Eigentumsvorbehalt bleibt das Eigentum bis zur Begleichung aller Forderungen des Verkäufers aus der Geschäftsbeziehung beim Verkäufer.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card" id="q10">
+    <div class="q-number">Frage 10 von 20</div>
+    <div class="q-text">Wo liegt der Erfüllungsort für die Warenlieferung beim Kaufvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Am Wohnort des Käufers</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Am Sitz des Verkäufers (Schickschuld)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Am Sitz des Spediteurs</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>An der nächsten DHL-Filiale</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Erfüllungsort für die Warenlieferung ist der Sitz des Verkäufers – es handelt sich um eine Schickschuld. Der Verkäufer erfüllt seine Pflicht, wenn er die Ware dem Transporteur übergibt.</div>
+    <div class="feedback err">Nicht korrekt. Der Erfüllungsort für die Ware liegt am Sitz des Verkäufers (Schickschuld) – dort muss er die Übergabe an den Frachtführer leisten.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card" id="q11">
+    <div class="q-number">Frage 11 von 20</div>
+    <div class="q-text">Wo liegt der Erfüllungsort für die Kaufpreiszahlung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Am Sitz des Verkäufers</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Am Sitz des Käufers (Holschuld)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Am Sitz der Bank des Käufers</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>An einem beliebigen, vertraglich nicht geregelten Ort</div>
+    </div>
+    <div class="feedback ok">Richtig! Die Kaufpreiszahlung ist eine Holschuld – der Verkäufer muss den Preis beim Käufer „abholen" (d. h. der Erfüllungsort liegt am Sitz des Käufers). In der Praxis wird der Betrag überwiesen.</div>
+    <div class="feedback err">Nicht korrekt. Der Erfüllungsort für Geld (Kaufpreis) liegt am Sitz des Käufers – es ist eine Holschuld des Verkäufers.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card" id="q12">
+    <div class="q-number">Frage 12 von 20</div>
+    <div class="q-text">Was bestimmt der „Gerichtsstand" bei einem Kaufvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Den Lieferweg der Ware</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Das zuständige Gericht bei Streitigkeiten – in der Regel am Sitz des Beklagten</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Die Höhe des Gerichtskostenvorschusses</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Den Ort der Vertragsunterzeichnung</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Gerichtsstand legt fest, welches Gericht bei Streitigkeiten zuständig ist – gesetzlich am Wohnsitz/Sitz des Beklagten. Im B2B-Bereich kann er vertraglich abweichend vereinbart werden.</div>
+    <div class="feedback err">Nicht korrekt. Der Gerichtsstand bestimmt das örtlich zuständige Gericht bei Rechtsstreitigkeiten – in der Regel am Wohnsitz/Sitz des Beklagten.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card" id="q13">
+    <div class="q-number">Frage 13 von 20</div>
+    <div class="q-text">Wann geht beim Versendungskauf im B2B-Bereich die Gefahr auf den Käufer über?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Erst bei Übergabe der Ware an den Käufer am Lieferort</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Mit Übergabe der Ware an den Frachtführer/Spediteur</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Beim Absenden der Auftragsbestätigung</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Erst nach vollständiger Bezahlung des Kaufpreises</div>
+    </div>
+    <div class="feedback ok">Richtig! Im B2B-Versendungskauf geht die Preisgefahr auf den Käufer über, sobald der Verkäufer die Ware dem Frachtführer übergeben hat (Schickschuld-Prinzip).</div>
+    <div class="feedback err">Nicht korrekt. Im B2B-Bereich geht die Gefahr (Preisgefahr) auf den Käufer über, wenn der Verkäufer die Ware an den Frachtführer übergibt – nicht erst bei Ankunft.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card" id="q14">
+    <div class="q-number">Frage 14 von 20</div>
+    <div class="q-text">Welche Sonderregelung gilt gemäß §475 BGB für den Gefahrübergang beim Versendungskauf im B2C-Bereich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Auch im B2C gilt der Gefahrübergang bei Übergabe an den Frachtführer</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Im B2C geht die Gefahr erst mit der tatsächlichen Übergabe an den Verbraucher über</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Im B2C gibt es gar keinen Gefahrübergang – der Händler haftet immer</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>§475 BGB regelt ausschließlich Garantieansprüche</div>
+    </div>
+    <div class="feedback ok">Richtig! §475 BGB schützt Verbraucher: Beim B2C-Versendungskauf geht die Preisgefahr erst über, wenn die Ware dem Verbraucher tatsächlich übergeben wird – nicht schon beim Frachtführer.</div>
+    <div class="feedback err">Nicht korrekt. §475 BGB (Verbraucherschutz): Im B2C-Versendungskauf trägt der Händler die Gefahr bis zur tatsächlichen Übergabe an den Verbraucher.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card" id="q15">
+    <div class="q-number">Frage 15 von 20</div>
+    <div class="q-text">Ein Paket geht auf dem Versandweg verloren. Käufer ist ein Privatkunde (B2C). Wer trägt den Schaden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Käufer, weil er die Versandart gewählt hat</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Der Frachtführer allein – der Verkäufer ist frei</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Der Verkäufer (Händler), weil die Gefahr noch nicht übergegangen ist</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Beide teilen sich den Schaden je zur Hälfte</div>
+    </div>
+    <div class="feedback ok">Richtig! Da es sich um B2C handelt, geht die Preisgefahr nach §475 BGB erst bei Übergabe an den Verbraucher über. Der Händler muss erneut liefern oder erstatten.</div>
+    <div class="feedback err">Nicht korrekt. Im B2C-Bereich (§475 BGB) trägt der Händler das Transportrisiko bis zur Übergabe an den Käufer – er muss erneut liefern oder den Kaufpreis erstatten.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card" id="q16">
+    <div class="q-number">Frage 16 von 20</div>
+    <div class="q-text">Welche der folgenden Aussagen zum Eigentumsvorbehalt ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Beim Eigentumsvorbehalt muss die Ware bis zur Zahlung beim Verkäufer verbleiben</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Der Eigentumsvorbehalt ist nur im B2C-Bereich zulässig</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Die Ware kann übergeben werden; das Eigentum geht erst mit vollständiger Zahlung über</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Ein Eigentumsvorbehalt ist nach deutschem Recht grundsätzlich unwirksam</div>
+    </div>
+    <div class="feedback ok">Richtig! Beim Eigentumsvorbehalt erhält der Käufer die Ware bereits (Besitz geht über), aber das Eigentum verbleibt beim Verkäufer bis zur vollständigen Bezahlung des Kaufpreises.</div>
+    <div class="feedback err">Nicht korrekt. Beim Eigentumsvorbehalt kann die Ware übergeben werden – Besitz und Eigentum sind getrennt. Eigentum geht erst mit vollständiger Zahlung über.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card" id="q17">
+    <div class="q-number">Frage 17 von 20</div>
+    <div class="q-text">Ein Onlineshop stellt ein Produkt mit Preis und Bild ein. Ein Kunde klickt „Jetzt kaufen" und bestellt. Wann ist der Vertrag verbindlich geschlossen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Sobald der Kunde auf „In den Warenkorb" klickt</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Mit dem Einstellen des Produkts durch den Händler</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Mit der Auftragsbestätigung/Annahmeerklärung des Händlers</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Erst wenn die Ware beim Käufer eingetroffen ist</div>
+    </div>
+    <div class="feedback ok">Richtig! Erst wenn der Händler das Angebot des Kunden (Bestellklick) annimmt – z. B. durch eine Auftragsbestätigung – ist der Vertrag verbindlich geschlossen.</div>
+    <div class="feedback err">Nicht korrekt. Erst die Annahmeerklärung des Händlers (Auftragsbestätigung) schließt den Vertrag wirksam ab – die Bestellung ist nur das Angebot des Kunden.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card" id="q18">
+    <div class="q-number">Frage 18 von 20</div>
+    <div class="q-text">Welche Aussage zum Versendungskauf im B2B trifft zu?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Verkäufer trägt die Transportgefahr bis zum Eintreffen beim Käufer</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Mit Übergabe an den Frachtführer hat der Verkäufer seine Lieferpflicht erfüllt</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>§475 BGB gilt auch für B2B-Verträge</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Versandkosten trägt immer der Verkäufer</div>
+    </div>
+    <div class="feedback ok">Richtig! Im B2B-Versendungskauf gilt: Mit Übergabe der Ware an den Frachtführer hat der Verkäufer seine Lieferpflicht erfüllt und die Preisgefahr geht auf den Käufer über.</div>
+    <div class="feedback err">Nicht korrekt. Im B2B: Mit der Übergabe an den Frachtführer ist die Lieferpflicht des Verkäufers erfüllt, und die Preisgefahr geht über. §475 BGB gilt nur für B2C.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card" id="q19">
+    <div class="q-number">Frage 19 von 20</div>
+    <div class="q-text">Was bedeutet es, wenn eine E-Mail vom Shop lautet: „Wir haben Ihre Bestellung erhalten und prüfen die Verfügbarkeit"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Kaufvertrag ist damit rechtlich bindend zustande gekommen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Dies ist lediglich eine Eingangsbestätigung, kein verbindlicher Vertragsschluss</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Kunde hat damit sein Widerrufsrecht verloren</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Bestellung wird storniert, wenn keine weitere E-Mail folgt</div>
+    </div>
+    <div class="feedback ok">Richtig! Eine bloße Eingangsbestätigung ist noch keine Annahme des Angebots. Erst eine ausdrückliche Auftragsbestätigung mit Annahme schließt den Vertrag verbindlich ab.</div>
+    <div class="feedback err">Nicht korrekt. Eine reine Eingangsbestätigung ist rechtlich noch keine Annahme – der Vertrag ist damit noch nicht wirksam geschlossen.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card" id="q20">
+    <div class="q-number">Frage 20 von 20</div>
+    <div class="q-text">Warum ist der Eigentumsvorbehalt für Onlinehändler im B2B-Bereich besonders wichtig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Weil er die Rücksendung durch den Käufer verhindert</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Weil er den Händler von der Lieferpflicht befreit</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Weil er den Verkäufer bei Zahlungsausfall schützt – er kann die Ware zurückfordern</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Weil er die Gewährleistungspflicht des Verkäufers verlängert</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Eigentumsvorbehalt schützt den Verkäufer: Zahlt der Käufer nicht, bleibt der Verkäufer Eigentümer und kann die Ware herausverlangen – besonders wichtig bei Insolvenz des Käufers.</div>
+    <div class="feedback err">Nicht korrekt. Der Eigentumsvorbehalt schützt den Verkäufer bei Zahlungsausfall – er bleibt Eigentümer bis zur vollständigen Zahlung und kann die Ware zurückfordern.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+</div><!-- end quiz-area -->
+
+<!-- Result Card -->
+<div class="result-card" id="resultCard">
+  <div class="result-score" id="resultScore">0/20</div>
+  <div class="result-label" id="resultLabel">Ergebnis</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn-restart" onclick="restartQuiz()">Quiz wiederholen</button>
+</div>
+
+<script>
+  const totalQ = 20;
+  let answers = new Array(totalQ).fill(null);
+  let currentQ = 0;
+
+  const dots = document.getElementById('dotsContainer');
+  const progressBar = document.getElementById('progressBar');
+  const quizArea = document.getElementById('quizArea');
+  const resultCard = document.getElementById('resultCard');
+
+  function buildDots() {
+    dots.innerHTML = '';
+    for (let i = 0; i < totalQ; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' current' : '');
+      d.textContent = i + 1;
+      d.addEventListener('click', () => goTo(i));
+      dots.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const allDots = dots.querySelectorAll('.dot');
+    allDots.forEach((d, i) => {
+      d.className = 'dot';
+      if (answers[i] === true) d.classList.add('answered-ok');
+      else if (answers[i] === false) d.classList.add('answered-err');
+      if (i === currentQ) d.classList.add('current');
+    });
+  }
+
+  function updateProgress() {
+    const answered = answers.filter(a => a !== null).length;
+    progressBar.style.width = (answered / totalQ * 100) + '%';
+  }
+
+  function goTo(index) {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards[currentQ].classList.remove('active');
+    currentQ = index;
+    cards[currentQ].classList.add('active');
+    updateDots();
+  }
+
+  function lockCard(card, chosenOpt, isCorrect) {
+    const opts = card.querySelectorAll('.opt');
+    opts.forEach(o => {
+      o.classList.add('locked');
+      if (o.dataset.correct === 'true') o.classList.add('correct');
+    });
+    if (!isCorrect) chosenOpt.classList.add('wrong');
+    const fbOk = card.querySelector('.feedback.ok');
+    const fbErr = card.querySelector('.feedback.err');
+    if (isCorrect) fbOk.classList.add('show');
+    else fbErr.classList.add('show');
+    const btn = card.querySelector('.btn-next');
+    btn.classList.add('show');
+    if (currentQ === totalQ - 1) btn.textContent = 'Auswertung →';
+  }
+
+  function initOptions() {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      const opts = card.querySelectorAll('.opt');
+      opts.forEach(opt => {
+        opt.addEventListener('click', function () {
+          if (opt.classList.contains('locked')) return;
+          const isCorrect = opt.dataset.correct === 'true';
+          answers[idx] = isCorrect;
+          lockCard(card, opt, isCorrect);
+          updateDots();
+          updateProgress();
+        });
+      });
+      const btn = card.querySelector('.btn-next');
+      btn.addEventListener('click', () => {
+        if (currentQ < totalQ - 1) goTo(currentQ + 1);
+        else showResult();
+      });
+    });
+  }
+
+  function showResult() {
+    quizArea.style.display = 'none';
+    dots.style.display = 'none';
+    document.querySelector('.progress-bar-wrap').style.display = 'none';
+    resultCard.classList.add('show');
+    const correct = answers.filter(a => a === true).length;
+    const pct = Math.round(correct / totalQ * 100);
+    document.getElementById('resultScore').textContent = correct + '/' + totalQ;
+    let label, msg;
+    if (pct >= 85) { label = 'Ausgezeichnet!'; msg = 'Hervorragende Leistung – du kennst den Kaufvertragsabschluss sehr gut.'; }
+    else if (pct >= 70) { label = 'Gut gemacht!'; msg = 'Solides Wissen – kleinere Lücken noch schließen.'; }
+    else if (pct >= 50) { label = 'Bestanden'; msg = 'Grundkenntnisse vorhanden – die Themen noch einmal vertiefen.'; }
+    else { label = 'Weiter üben'; msg = 'Präsentation Tag 12 noch einmal durcharbeiten und dann erneut versuchen.'; }
+    document.getElementById('resultLabel').textContent = label;
+    document.getElementById('resultMsg').textContent = msg;
+  }
+
+  function restartQuiz() {
+    answers = new Array(totalQ).fill(null);
+    currentQ = 0;
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      card.classList.remove('active');
+      card.querySelectorAll('.opt').forEach(o => { o.className = 'opt'; });
+      card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+      card.querySelector('.btn-next').classList.remove('show');
+      if (idx === 0) card.classList.add('active');
+    });
+    quizArea.style.display = '';
+    dots.style.display = '';
+    document.querySelector('.progress-bar-wrap').style.display = '';
+    resultCard.classList.remove('show');
+    progressBar.style.width = '0%';
+    updateDots();
+  }
+
+  buildDots();
+  initOptions();
+  updateDots();
+</script>
+</body>
+</html>

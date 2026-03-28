@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tag 2 – Lernfeld 1 | Orientierung im Unternehmen &amp; Aktives Lesen</title>
+  <style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="slideshow">
+
+  <!-- ══════════════════════════════════════
+       FOLIE 1 – DECKBLATT
+  ══════════════════════════════════════ -->
+  <div class="slide cover-slide active" id="slide-1">
+    <div class="cover-inner">
+      <div class="cover-badge">Lernfeld 1 &nbsp;·&nbsp; Tag 2</div>
+      <h1>1.2 Orientierung im Unternehmen<br><span>&amp; 1.3 Aktives Lesen</span></h1>
+      <div class="cover-divider"></div>
+      <p class="cover-sub">Buchseiten 22–32 &nbsp;|&nbsp; Berufsschule Kaufleute für E-Commerce</p>
+      <div class="cover-meta">
+        <div class="meta-item">
+          <span class="meta-label">Fach</span>
+          <span class="meta-value">Lernfeld 1</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Datum</span>
+          <span class="meta-value">03.03.2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Autoren</span>
+          <span class="meta-value">Can Siebert &amp; Hamzah Meyer</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Folien</span>
+          <span class="meta-value">26</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 2 – LERNZIELE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <span class="slide-num">02 / 26</span>
+      <h2>Lernziele</h2>
+      <span class="section-tag">Überblick</span>
+    </div>
+    <div class="slide-body">
+      <div class="highlight-box">
+        Nach dieser Einheit kannst du <strong>Abläufe und Strukturen im Unternehmen</strong> einordnen
+        und <strong>Fachtexte gezielt und effizient</strong> lesen.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="lernziel-item"><span class="lernziel-num">1</span><p>Du beschreibst, worauf es in den <strong>ersten Tagen im Betrieb</strong> ankommt, und kennst wichtige Verhaltensregeln.</p></div>
+        <div class="lernziel-item"><span class="lernziel-num">2</span><p>Du unterscheidest die drei <strong>Organisationsformen</strong> (Einlinien-, Mehrlinien-, Stabliniensystem) und erklärst Organigramme.</p></div>
+        <div class="lernziel-item"><span class="lernziel-num">3</span><p>Du definierst <strong>Geschäftsprozesse</strong> und erklärst Kundenorientierung als Unternehmensprinzip.</p></div>
+        <div class="lernziel-item"><span class="lernziel-num">4</span><p>Du wendest die <strong>5-Schritt-Methode (SQ3R)</strong> und weitere Lesetechniken zur aktiven Textarbeit an.</p></div>
+        <div class="lernziel-item"><span class="lernziel-num">5</span><p>Du nutzt <strong>Textmarkierung und Notizen</strong> strukturiert, um Lerninhalte zu sichern.</p></div>
+      </div>
+      <div class="tag-row">
+        <span class="tag-chip">S. 22–32</span>
+        <span class="tag-chip">Handlungsorientierung</span>
+        <span class="tag-chip">Teamarbeit</span>
+        <span class="tag-chip">Medienkompetenz</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 3 – ERSTE TAGE IM BETRIEB
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <span class="slide-num">03 / 26</span>
+      <h2>Die ersten Tage im Betrieb</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="highlight-box">
+        Die ersten Tage in einem neuen Unternehmen sind entscheidend für den weiteren Verlauf der Ausbildung. Ein guter erster Eindruck legt den Grundstein für ein professionelles Arbeitsverhältnis.
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Der erste Eindruck zählt!</div>
+          <ul class="styled">
+            <li><strong>Pünktlichkeit</strong> – besser 10 Minuten früher als 1 Minute zu spät</li>
+            <li><strong>Äußeres Erscheinungsbild</strong> – angepasste, gepflegte Kleidung</li>
+            <li><strong>Freundlichkeit &amp; Offenheit</strong> – lächeln, Blickkontakt halten</li>
+            <li><strong>Aktives Zuhören</strong> – Notizen machen, nachfragen</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Wichtige Informationen am 1. Tag</div>
+          <ul class="styled">
+            <li>Ansprechpartner &amp; Vorgesetzte kennenlernen</li>
+            <li>Arbeitszeiten &amp; Pausenregelungen erfragen</li>
+            <li>Betriebliche Abläufe &amp; Prozesse verstehen</li>
+            <li>Sicherheits- &amp; Verhaltensregeln beachten</li>
+            <li>Kollegen &amp; Teamstruktur erkunden</li>
+          </ul>
+        </div>
+      </div>
+      <div class="warn-box">
+        <strong>Merke:</strong> Der erste Eindruck entsteht in wenigen Sekunden und ist nur schwer korrigierbar!
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 4 – VERHALTENSREGELN AM ARBEITSPLATZ
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <span class="slide-num">04 / 26</span>
+      <h2>Verhaltensregeln am neuen Arbeitsplatz</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <table class="styled">
+        <thead>
+          <tr>
+            <th>Bereich</th>
+            <th>Empfehlung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Kleidung</strong></td><td>Ordentlich, sauber, dem Unternehmen angepasst (Dresscode beachten)</td></tr>
+          <tr><td><strong>Pünktlichkeit</strong></td><td>Immer rechtzeitig erscheinen; Abwesenheiten frühzeitig ankündigen</td></tr>
+          <tr><td><strong>Ordnung</strong></td><td>Sauberer Arbeitsplatz, Unterlagen sortiert und beschriftet</td></tr>
+          <tr><td><strong>Anrede</strong></td><td>Im Zweifel siezen; erst duzen, wenn angeboten</td></tr>
+          <tr><td><strong>Kommunikation</strong></td><td>Höflich, respektvoll; keine privaten Telefonate am Arbeitsplatz</td></tr>
+          <tr><td><strong>Sozialverhalten</strong></td><td>Teamfähigkeit, Hilfsbereitschaft, Zuverlässigkeit zeigen</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box">
+        <strong>Tipp für Azubis:</strong> Frage lieber einmal zu viel als einmal zu wenig – Neugier und Initiative werden positiv bewertet. Notiere dir unbekannte Begriffe und recherchiere sie nach.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 5 – AUFBAUORGANISATION
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <span class="slide-num">05 / 26</span>
+      <h2>Aufbauorganisation &amp; Organigramm</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="highlight-box">
+        <strong>Aufbauorganisation:</strong> Beschreibt die hierarchische Struktur eines Unternehmens – wer ist wem unterstellt? Wer hat welche Aufgaben und Kompetenzen? Wird im <strong>Organigramm</strong> dargestellt.
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Das Organigramm zeigt</div>
+          <ul class="styled">
+            <li><strong>Hierarchieebenen</strong> – Leitungs- und Ausführungsebenen</li>
+            <li><strong>Über- und Unterordnungsverhältnisse</strong> – wer ist wem unterstellt</li>
+            <li><strong>Kommunikationswege</strong> – Dienstwege und Weisungsstränge</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Organisationsformen im Überblick</div>
+          <ul class="styled">
+            <li><strong>Einliniensystem</strong> – jede Stelle hat genau 1 Vorgesetzten</li>
+            <li><strong>Mehrliniensystem</strong> – mehrere Vorgesetzte möglich (Fachprinzip)</li>
+            <li><strong>Stabliniensystem</strong> – Einlinien + beratende Stabsstellen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="warn-box">
+        <strong>Eselsbrücke – E–M–S:</strong> <strong>E</strong>in-Linien – <strong>M</strong>ehr-Linien – <strong>S</strong>tabliniensystem. „Einmal, Mehrmals, Stab berät" – von einfach zu komplex!
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 6 – EINLINIENSYSTEM
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <span class="slide-num">06 / 26</span>
+      <h2>Das Einliniensystem</h2>
+      <span class="section-tag">Organisationsformen</span>
+    </div>
+    <div class="slide-body">
+      <div class="info-box">
+        Jede Stelle hat <strong>genau einen</strong> Vorgesetzten. Weisungen laufen streng von oben nach unten.
+      </div>
+      <div class="two-col">
+        <div class="svg-area">
+          <svg viewBox="0 0 300 220" width="100%" style="max-height:200px;" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial,sans-serif">
+            <rect x="100" y="10" width="100" height="36" rx="6" fill="#2563EB"/>
+            <text x="150" y="23" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Geschäfts-</text>
+            <text x="150" y="36" text-anchor="middle" fill="white" font-size="10" font-weight="bold">leitung</text>
+            <line x1="90" y1="46" x2="150" y2="68" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="210" y1="46" x2="150" y2="68" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="150" y1="46" x2="90" y2="68" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="150" y1="46" x2="210" y2="68" stroke="#4a90d9" stroke-width="1.5"/>
+            <rect x="40" y="68" width="100" height="34" rx="5" fill="#1e3170"/>
+            <text x="90" y="83" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold">Abteilungs-</text>
+            <text x="90" y="96" text-anchor="middle" fill="#f0c040" font-size="10">leitung A</text>
+            <rect x="160" y="68" width="100" height="34" rx="5" fill="#1e3170"/>
+            <text x="210" y="83" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold">Abteilungs-</text>
+            <text x="210" y="96" text-anchor="middle" fill="#f0c040" font-size="10">leitung B</text>
+            <line x1="65" y1="102" x2="55" y2="124" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="115" y1="102" x2="125" y2="124" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="185" y1="102" x2="175" y2="124" stroke="#4a90d9" stroke-width="1.5"/>
+            <line x1="235" y1="102" x2="245" y2="124" stroke="#4a90d9" stroke-width="1.5"/>
+            <rect x="18"  y="124" width="74" height="28" rx="4" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+            <text x="55"  y="142" text-anchor="middle" fill="#dde4f0" font-size="9">Mitarbeiter 1</text>
+            <rect x="98"  y="124" width="74" height="28" rx="4" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+            <text x="135" y="142" text-anchor="middle" fill="#dde4f0" font-size="9">Mitarbeiter 2</text>
+            <rect x="148" y="124" width="74" height="28" rx="4" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+            <text x="185" y="142" text-anchor="middle" fill="#dde4f0" font-size="9">Mitarbeiter 3</text>
+            <rect x="228" y="124" width="74" height="28" rx="4" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+            <text x="265" y="142" text-anchor="middle" fill="#dde4f0" font-size="9">Mitarbeiter 4</text>
+          </svg>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom: 12px;">
+            <div class="card-title" style="color: #27ae60;">✅ Vorteile</div>
+            <ul class="styled">
+              <li>Klare Zuständigkeiten</li>
+              <li>Eindeutiger Dienstweg</li>
+              <li>Keine Kompetenzkonflikte</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color: var(--red2);">❌ Nachteile</div>
+            <ul class="styled">
+              <li>Langer Dienstweg</li>
+              <li>Wenig flexibel</li>
+              <li>Überlastung der Führungsspitze</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 7 – MEHRLINIEN- & STABLINIENSYSTEM
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <span class="slide-num">07 / 26</span>
+      <h2>Mehrlinien- &amp; Stabliniensystem</h2>
+      <span class="section-tag">Organisationsformen</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="highlight-box" style="margin-bottom:12px;">
+            <strong>Mehrliniensystem:</strong> Jede Stelle kann mehrere Vorgesetzte haben (Funktionsprinzip, F.W. Taylor).
+          </div>
+          <div class="two-col" style="gap:10px;">
+            <div class="card">
+              <div class="card-title" style="color:#27ae60;">✅ Vorteile</div>
+              <ul class="styled">
+                <li>Spezialisierung der Führung</li>
+                <li>Kurze fachliche Wege</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-title" style="color:var(--red2);">❌ Nachteile</div>
+              <ul class="styled">
+                <li>Kompetenzkonflikte</li>
+                <li>Unklare Zuständigkeiten</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="info-box" style="margin-bottom:12px;">
+            <strong>Stabliniensystem:</strong> Kombination aus Einlinien + beratende Stabsstellen (ohne Weisungsbefugnis). Stäbe z.B.: Controlling, Rechtsabteilung, Datenschutz.
+          </div>
+          <div class="two-col" style="gap:10px;">
+            <div class="card">
+              <div class="card-title" style="color:#27ae60;">✅ Vorteile</div>
+              <ul class="styled">
+                <li>Fachberatung ohne Konflikt</li>
+                <li>Klare Weisungswege</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-title" style="color:var(--red2);">❌ Nachteile</div>
+              <ul class="styled">
+                <li>Stäbe können teuer sein</li>
+                <li>Kein direkter Einfluss</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="styled" style="margin-top:4px;">
+        <thead><tr><th>System</th><th>Merkmal</th><th>Weisungswege</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Einliniensystem</strong></td><td>1 Vorgesetzter</td><td>Eindeutig</td></tr>
+          <tr><td><strong>Mehrliniensystem</strong></td><td>Mehrere Vorgesetzte</td><td>Mehrfach (fachlich)</td></tr>
+          <tr><td><strong>Stabliniensystem</strong></td><td>Einlinien + Stab</td><td>Eindeutig + beratend</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 8 – KUNDENORIENTIERUNG & GESCHÄFTSPROZESSE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <span class="slide-num">08 / 26</span>
+      <h2>Kundenorientierung &amp; Geschäftsprozesse</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Kundenorientierung</div>
+          <p style="font-size:0.82rem;margin-bottom:10px;">Alle Unternehmensprozesse konsequent auf die Bedürfnisse der Kunden ausrichten – im E-Commerce besonders wichtig, da Kunden jederzeit wechseln können.</p>
+          <ul class="styled">
+            <li><strong>Kundenbedürfnisse verstehen</strong> – Marktforschung, Befragungen</li>
+            <li><strong>Kundenservice</strong> – schnelle Reaktionszeiten, Kulanz</li>
+            <li><strong>Produktqualität</strong> – Kundenanforderungen einbeziehen</li>
+            <li><strong>Kundenbindung</strong> – Loyalitätsprogramme, Newsletter</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Was ist ein Geschäftsprozess?</div>
+          <p style="font-size:0.82rem;margin-bottom:10px;">Eine Folge von logisch zusammenhängenden Aktivitäten mit definiertem Anfang und Ende, die wiederholt abläuft und einen Wert für Kunden erzeugt.</p>
+          <ul class="styled">
+            <li>Hat einen definierten <strong>Anfang (Trigger)</strong> und ein <strong>Ergebnis</strong></li>
+            <li>Läuft <strong>wiederholt</strong> in ähnlicher Form ab</li>
+            <li>Kann <strong>gemessen und optimiert</strong> werden</li>
+          </ul>
+          <div class="info-box" style="margin-top:10px;font-size:0.78rem;">
+            <strong>Beispiel Bestellprozess:</strong> Kundenbestellung → Auftragseingang → Kommissionierung → Verpackung → Versand → Zustellung → Rechnung
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 9 – ABTEILUNGEN
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-9">
+    <div class="slide-header">
+      <span class="slide-num">09 / 26</span>
+      <h2>Abteilungen im Unternehmen</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="info-box">
+        Unternehmen sind in <strong>Funktionsbereiche (Abteilungen)</strong> gegliedert.
+        Jede Abteilung hat klar definierte Aufgaben und Verantwortlichkeiten.
+      </div>
+      <table class="styled">
+        <thead>
+          <tr>
+            <th>Abteilung</th>
+            <th>Kernaufgaben</th>
+            <th>Relevanz E-Commerce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Einkauf / Beschaffung</strong></td><td>Waren beschaffen, Lieferanten auswählen, Verträge verhandeln</td><td>Sortimentspflege, Drop-Shipping-Partner</td></tr>
+          <tr><td><strong>Vertrieb / Verkauf</strong></td><td>Produkte vermarkten, Kunden betreuen, Umsatzziele erfüllen</td><td>Online-Shop-Management, Marktplätze</td></tr>
+          <tr><td><strong>Marketing</strong></td><td>Werbung, Kampagnen, Markenaufbau</td><td>SEO, SEA, Social Media, Newsletter</td></tr>
+          <tr><td><strong>Lager / Logistik</strong></td><td>Warenannahme, Lagerung, Versand</td><td>Fulfillment, Retouren, Lieferzeiten</td></tr>
+          <tr><td><strong>Buchhaltung / Finanzen</strong></td><td>Buchführung, Rechnungen, Controlling</td><td>Payment-Abwicklung, Gebühren</td></tr>
+          <tr><td><strong>IT / Systemadmin</strong></td><td>Hard-/Software, Netzwerk, Datensicherheit</td><td>Shop-Technik, ERP, Schnittstellen</td></tr>
+          <tr><td><strong>Personal (HR)</strong></td><td>Recruiting, Lohn, Weiterbildung</td><td>Remote-Teams, Onboarding</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 10 – ZWISCHENQUIZ 1: ORIENTIERUNG & ORGANISATION
+  ══════════════════════════════════════ -->
+  <div class="slide quiz-slide active-quiz" id="slide-10">
+    <h2>🧠 Zwischenquiz: Orientierung &amp; Organisation</h2>
+    <div class="zq-question">
+      <p>1. Frau Bauer erhält Weisungen von zwei verschiedenen Abteilungsleitern gleichzeitig. Welche Organisationsform liegt vor?</p>
+      <div class="zq-options">
+        <button onclick="checkZQT2('zq1-q1', this, false)">A) Einliniensystem</button>
+        <button onclick="checkZQT2('zq1-q1', this, true)">B) Mehrliniensystem</button>
+        <button onclick="checkZQT2('zq1-q1', this, false)">C) Stabliniensystem</button>
+      </div>
+      <p id="zq1-q1-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>2. Was ist ein Merkmal des Stabliniensystems?</p>
+      <div class="zq-options">
+        <button onclick="checkZQT2('zq1-q2', this, false)">A) Mehrere Vorgesetzte mit Weisungsbefugnis</button>
+        <button onclick="checkZQT2('zq1-q2', this, true)">B) Beratende Stabsstellen ohne Weisungsbefugnis</button>
+        <button onclick="checkZQT2('zq1-q2', this, false)">C) Jeder Mitarbeiter ist direkt der Geschäftsleitung unterstellt</button>
+      </div>
+      <p id="zq1-q2-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>3. Was zeichnet eine gute Kundenorientierung im E-Commerce aus?</p>
+      <div class="zq-options">
+        <button onclick="checkZQT2('zq1-q3', this, false)">A) Möglichst viele Produkte im Sortiment</button>
+        <button onclick="checkZQT2('zq1-q3', this, true)">B) Alle Prozesse konsequent auf Kundenbedürfnisse ausrichten</button>
+        <button onclick="checkZQT2('zq1-q3', this, false)">C) Möglichst niedrige Preise anbieten</button>
+      </div>
+      <p id="zq1-q3-result" class="zq-result"></p>
+    </div>
+    <script>
+    function checkZQT2(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 11 – KOMMUNIKATIONSWEGE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-11">
+    <div class="slide-header">
+      <span class="slide-num">11 / 26</span>
+      <h2>Kommunikationswege</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Interne Kommunikation</div>
+          <ul class="styled">
+            <li>E-Mail (Abteilung zu Abteilung)</li>
+            <li>Intranet / Wikis (Unternehmens-Wiki)</li>
+            <li>Besprechungen &amp; Meetings (täglich/wöchentlich)</li>
+            <li>Dienstanweisungen &amp; Rundschreiben</li>
+            <li>Chat-Tools (z. B. Slack, Teams)</li>
+            <li>Schwarzes Brett / Aushänge</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Externe Kommunikation</div>
+          <ul class="styled">
+            <li>Geschäftsbriefe &amp; E-Mails an Kunden</li>
+            <li>Angebote, Rechnungen, Mahnungen</li>
+            <li>Social-Media-Kanäle (öffentlich)</li>
+            <li>Pressemitteilungen</li>
+            <li>Kundenservice (Telefon, Chat, Ticket)</li>
+            <li>Newsletter &amp; Marketingmails</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>Kommunikationsprinzipien:</strong> Klare Betreffzeilen, sachlicher Ton,
+        Vollständigkeit (Wer? Was? Wann? Warum?), Vertraulichkeit interner Informationen wahren.
+      </div>
+      <div class="card">
+        <div class="card-title">Kommunikationskanäle im Vergleich</div>
+        <div class="tag-row">
+          <span class="tag-chip">Formell: Brief, Fax, offizielle E-Mail</span>
+          <span class="tag-chip">Semi-formell: Intranet-Post, Meeting</span>
+          <span class="tag-chip">Informell: Chat, Zuruf</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 12 – INTERNE DOKUMENTE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-12">
+    <div class="slide-header">
+      <span class="slide-num">12 / 26</span>
+      <h2>Interne Dokumente im Betrieb</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="info-box">
+        Interne Dokumente regeln Abläufe, sichern Wissen und dienen der Nachvollziehbarkeit.
+        Sie sind <strong>nicht für Außenstehende</strong> bestimmt.
+      </div>
+      <div class="three-col">
+        <div class="card">
+          <div class="card-title">Organisatorisch</div>
+          <ul class="styled">
+            <li>Organigramm</li>
+            <li>Stellenbeschreibungen</li>
+            <li>Dienstpläne</li>
+            <li>Urlaubsanträge</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Operativ</div>
+          <ul class="styled">
+            <li>Arbeitsanweisungen</li>
+            <li>Checklisten</li>
+            <li>Protokolle</li>
+            <li>Bestellformulare</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Informativ</div>
+          <ul class="styled">
+            <li>Berichte &amp; Reports</li>
+            <li>Schulungsunterlagen</li>
+            <li>Preislisten (intern)</li>
+            <li>Projektpläne</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>Tipp:</strong> Dokumente immer mit <strong>Datum, Version und Autor</strong> kennzeichnen.
+        So bleibt die Aktualität nachvollziehbar – wichtig für Qualitätsmanagement (ISO 9001 etc.).
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 13 – INFORMATIONSQUELLEN
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-13">
+    <div class="slide-header">
+      <span class="slide-num">13 / 26</span>
+      <h2>Informationsquellen im Unternehmen</h2>
+      <span class="section-tag">1.2 Orientierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card-title" style="color:var(--accent);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Interne Quellen</div>
+          <div class="method-steps">
+            <div class="method-step">
+              <div class="step-letter" style="background:var(--navy3);border:1px solid var(--accent);">I</div>
+              <div class="step-content"><h4>Intranet / Wiki</h4><p>Zentrale Wissensdatenbank, Prozessbeschreibungen, Formulare</p></div>
+            </div>
+            <div class="method-step">
+              <div class="step-letter" style="background:var(--navy3);border:1px solid var(--accent);">E</div>
+              <div class="step-content"><h4>ERP-System</h4><p>Lagerbestände, Bestellungen, Kundendaten (z. B. SAP, Navision)</p></div>
+            </div>
+            <div class="method-step">
+              <div class="step-letter" style="background:var(--navy3);border:1px solid var(--accent);">K</div>
+              <div class="step-content"><h4>Kollegen &amp; Vorgesetzte</h4><p>Erfahrungswissen, direkte Auskunft, Mentoring</p></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card-title" style="color:var(--accent);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Externe Quellen</div>
+          <div class="method-steps">
+            <div class="method-step">
+              <div class="step-letter">G</div>
+              <div class="step-content"><h4>Gesetze &amp; Normen</h4><p>HGB, BGB, Verbraucherschutzgesetze, DSGVO</p></div>
+            </div>
+            <div class="method-step">
+              <div class="step-letter">B</div>
+              <div class="step-content"><h4>Branchenverbände</h4><p>BEVH, IHK, Handelskammer – Statistiken, Leitfäden</p></div>
+            </div>
+            <div class="method-step">
+              <div class="step-letter">F</div>
+              <div class="step-content"><h4>Fachliteratur &amp; Internet</h4><p>Lehrbücher, Fachzeitschriften, seriöse Websites</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>Kritische Quellenprüfung:</strong> Wer hat die Information verfasst? Wann?
+        Welche Absichten stecken dahinter? &rarr; Immer Quellen vergleichen!
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 14 – SQ3R-METHODE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-14">
+    <div class="slide-header">
+      <span class="slide-num">14 / 26</span>
+      <h2>SQ3R-Methode – Aktives Lesen</h2>
+      <span class="section-tag">1.3 Aktives Lesen</span>
+    </div>
+    <div class="slide-body">
+      <div class="info-box">
+        Die <strong>SQ3R-Methode</strong> (Francis P. Robinson, 1941) ist eine bewährte Strategie
+        zum strukturierten, verständnisfördernden Lesen von Fachtexten.
+      </div>
+      <div class="method-steps">
+        <div class="method-step">
+          <div class="step-letter">S</div>
+          <div class="step-content">
+            <h4>Survey – Überblick verschaffen</h4>
+            <p>Text überflogen: Überschriften, Bilder, Zusammenfassungen, Stichwörter lesen. Dauer: 2–3 Min.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-letter">Q</div>
+          <div class="step-content">
+            <h4>Question – Fragen formulieren</h4>
+            <p>Überschriften in W-Fragen umwandeln: „Was ist…?", „Wie funktioniert…?", „Warum ist…?" – erzeugt Leseerwartung.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-letter">R</div>
+          <div class="step-content">
+            <h4>Read – Aktiv lesen</h4>
+            <p>Abschnitt für Abschnitt lesen, Antworten auf eigene Fragen suchen. Wichtiges markieren (sparsam!).</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-letter">R</div>
+          <div class="step-content">
+            <h4>Recite – Wiedergeben</h4>
+            <p>Abschnitt zuklappen und Kernaussagen in eigenen Worten formulieren (mündlich oder schriftlich).</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-letter">R</div>
+          <div class="step-content">
+            <h4>Review – Überprüfen</h4>
+            <p>Gesamten Text nochmals überfliegen. Fragen noch einmal beantworten. Lücken schließen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 15 – PASSIVES vs. AKTIVES LESEN
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-15">
+    <div class="slide-header">
+      <span class="slide-num">15 / 26</span>
+      <h2>Passives vs. Aktives Lesen</h2>
+      <span class="section-tag">1.3 Aktives Lesen</span>
+    </div>
+    <div class="slide-body">
+      <table class="styled">
+        <thead>
+          <tr><th>Passives Lesen</th><th>Aktives Lesen</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Text wird von vorne nach hinten gelesen</td><td>Text wird strukturiert angegangen</td></tr>
+          <tr><td>Keine Fragen werden gestellt</td><td>Fragen leiten das Lesen</td></tr>
+          <tr><td>Wenig wird behalten (~10 %)</td><td>Deutlich mehr wird langfristig behalten</td></tr>
+          <tr><td>Kein Nacharbeiten</td><td>Notizen und Zusammenfassungen</td></tr>
+          <tr><td>Passiv konsumierend</td><td>Aktiv verarbeitend</td></tr>
+          <tr><td>Kurzes Vergessen</td><td>Tiefere Verarbeitung im Langzeitgedächtnis</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Lernpsychologie:</strong> Aktiv erarbeitetes Wissen wird deutlich besser im Langzeitgedächtnis verankert als passiv aufgenommene Informationen (Ausubel, 1968). Beim aktiven Lesen werden mehr <strong>kognitive Verknüpfungen</strong> hergestellt.
+      </div>
+      <div class="info-box">
+        <strong>Im Berufsalltag als KfE:</strong> Gesetzestexte (DSGVO, UWG), Produktbeschreibungen, Lieferantenunterlagen, Fachzeitschriften – die SQ3R-Methode hilft, das Wesentliche herauszufiltern.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 16 – LESETECHNIKEN
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-16">
+    <div class="slide-header">
+      <span class="slide-num">16 / 26</span>
+      <h2>Lesetechniken im Überblick</h2>
+      <span class="section-tag">1.3 Aktives Lesen</span>
+    </div>
+    <div class="slide-body">
+      <table class="styled">
+        <thead>
+          <tr>
+            <th>Technik</th>
+            <th>Beschreibung</th>
+            <th>Anwendungsfall</th>
+            <th>Tempo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Überfliegen</strong><br><em>(Skimming)</em></td>
+            <td>Nur Überschriften, Ersatz- und Schlusssätze lesen</td>
+            <td>Erster Überblick, Relevanzcheck</td>
+            <td>Sehr schnell</td>
+          </tr>
+          <tr>
+            <td><strong>Suchen</strong><br><em>(Scanning)</em></td>
+            <td>Gezielt nach Schlüsselwörtern, Zahlen, Namen suchen</td>
+            <td>Fakten &amp; Daten finden</td>
+            <td>Schnell</td>
+          </tr>
+          <tr>
+            <td><strong>Diagonales Lesen</strong></td>
+            <td>Blick wandert zeilenweise diagonal über die Seite</td>
+            <td>Strukturerkennung</td>
+            <td>Mittel</td>
+          </tr>
+          <tr>
+            <td><strong>Intensives Lesen</strong></td>
+            <td>Jedes Wort bewusst lesen, Zusammenhänge erfassen</td>
+            <td>Vertragsklauseln, Gesetze, Prüfungen</td>
+            <td>Langsam</td>
+          </tr>
+          <tr>
+            <td><strong>Selektives Lesen</strong></td>
+            <td>Nur ausgewählte Passagen genau lesen</td>
+            <td>Recherche, gezieltes Lernen</td>
+            <td>Variabel</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Strategie:</strong> Kombiniere Techniken! Erst Skimming &rarr; dann gezieltes intensives Lesen
+        der relevanten Abschnitte spart bis zu <strong>40 % Zeit</strong> gegenüber linearem Lesen.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 17 – TEXTMARKIERUNG
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-17">
+    <div class="slide-header">
+      <span class="slide-num">17 / 26</span>
+      <h2>Textmarkierung – Regeln &amp; Farbsystem</h2>
+      <span class="section-tag">1.3 Aktives Lesen</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-title">Regeln der Textmarkierung</div>
+            <ul class="styled">
+              <li>Erst lesen, <em>dann</em> markieren (nicht gleichzeitig)</li>
+              <li>Maximal <strong>20–30 %</strong> eines Textes markieren</li>
+              <li>Nur <strong>Schlüsselbegriffe</strong>, nicht ganze Sätze</li>
+              <li>Einheitliches Farbsystem konsequent anwenden</li>
+              <li>Randnotizen ergänzen Markierungen sinnvoll</li>
+              <li>Bei digitalen Texten: Kommentarfunktion nutzen</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title">Empfohlenes Farbsystem</div>
+            <ul class="styled">
+              <li><span style="color:#f5d000;">&#9646;</span> <strong style="color:#f5d000;">Gelb</strong> – Hauptaussagen, Definitionen</li>
+              <li><span style="color:#27ae60;">&#9646;</span> <strong style="color:#27ae60;">Grün</strong> – Beispiele, Belege</li>
+              <li><span style="color:#e74c3c;">&#9646;</span> <strong style="color:#e74c3c;">Rot / Pink</strong> – Wichtige Fachbegriffe</li>
+              <li><span style="color:#3498db;">&#9646;</span> <strong style="color:#3498db;">Blau</strong> – Fragen, Unklarheiten</li>
+              <li><span style="color:#e67e22;">&#9646;</span> <strong style="color:#e67e22;">Orange</strong> – Prüfungsrelevantes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>Häufiger Fehler:</strong> Zu viel markieren &rarr; alles ist wichtig = nichts ist wichtig.
+        Selektivität ist der Schlüssel zu effektiver Textarbeit.
+      </div>
+      <div class="info-box">
+        <strong>Digitale Tools:</strong> Adobe Acrobat, GoodNotes, OneNote, Zotero –
+        alle bieten Farbmarkierung + Kommentarfunktion. Ideal für papierloses Lernen.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 18 – NOTIZEN
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-18">
+    <div class="slide-header">
+      <span class="slide-num">18 / 26</span>
+      <h2>Notizen strukturiert anlegen</h2>
+      <span class="section-tag">1.3 Aktives Lesen</span>
+    </div>
+    <div class="slide-body">
+      <div class="three-col">
+        <div class="card">
+          <div class="card-title">Cornell-Methode</div>
+          <ul class="styled">
+            <li>Seite in 3 Bereiche: Notizen | Stichwörter | Zusammenfassung</li>
+            <li>Während des Lesens: rechts Notizen</li>
+            <li>Danach: links Schlüsselwörter ergänzen</li>
+            <li>Unten: 2–3-Satz-Zusammenfassung</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Mindmap</div>
+          <ul class="styled">
+            <li>Thema in der Mitte</li>
+            <li>Hauptäste = Unterthemen</li>
+            <li>Bilder &amp; Symbole einsetzen</li>
+            <li>Ideal für visuelle Lerntypen</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Lineares Mitschreiben</div>
+          <ul class="styled">
+            <li>Gliederung übernehmen</li>
+            <li>Eigene Formulierungen nutzen</li>
+            <li>Abkürzungen definieren</li>
+            <li>Nachträglich strukturieren</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>Lernpyramide:</strong> Eigene Notizen (aktives Erarbeiten) führen zu
+        <strong>ca. 75 % Behaltensrate</strong> – verglichen mit nur ~10 % bei passivem Lesen.
+      </div>
+      <div class="card">
+        <div class="card-title">Nützliche Abkürzungen im Studium &amp; Beruf</div>
+        <div class="tag-row">
+          <span class="tag-chip">z. B. = zum Beispiel</span>
+          <span class="tag-chip">d. h. = das heißt</span>
+          <span class="tag-chip">→ = führt zu</span>
+          <span class="tag-chip">⊕ = Vorteil</span>
+          <span class="tag-chip">⊖ = Nachteil</span>
+          <span class="tag-chip">? = unklar</span>
+          <span class="tag-chip">! = wichtig</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 19 – ZWISCHENQUIZ 2: AKTIVES LESEN
+  ══════════════════════════════════════ -->
+  <div class="slide quiz-slide" id="slide-19">
+    <h2>🧠 Zwischenquiz: Aktives Lesen &amp; SQ3R</h2>
+    <div class="zq-question">
+      <p>1. Wie lautet die Eselsbrücke für die 5-Schritt-Methode des aktiven Lesens?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2Tag2('zq2-q1', this, false)">A) SMART – Spezifisch, Messbar, Attraktiv, Realistisch, Terminiert</button>
+        <button onclick="checkZQ2Tag2('zq2-q1', this, true)">B) Ü–F–L–K–W: Überfliegen – Fragen – Lesen – Kürzen – Wiederholen</button>
+        <button onclick="checkZQ2Tag2('zq2-q1', this, false)">C) S–E–A–R–C–H: Survey, Evaluate, Apply...</button>
+      </div>
+      <p id="zq2-q1-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>2. Wie viel Prozent eines Textes sollte man maximal markieren?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2Tag2('zq2-q2', this, false)">A) 50–60 %</button>
+        <button onclick="checkZQ2Tag2('zq2-q2', this, true)">B) 20–30 %</button>
+        <button onclick="checkZQ2Tag2('zq2-q2', this, false)">C) 80–90 %</button>
+      </div>
+      <p id="zq2-q2-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>3. Welche Lesetechnik wird eingesetzt, um gezielt nach einem bestimmten Datum in einem Dokument zu suchen?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ2Tag2('zq2-q3', this, false)">A) Intensives Lesen</button>
+        <button onclick="checkZQ2Tag2('zq2-q3', this, false)">B) Skimming (Überfliegen)</button>
+        <button onclick="checkZQ2Tag2('zq2-q3', this, true)">C) Scanning (Suchen)</button>
+      </div>
+      <p id="zq2-q3-result" class="zq-result"></p>
+    </div>
+    <script>
+    function checkZQ2Tag2(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 20 – SVG: ORGANIGRAMM
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-20">
+    <div class="slide-header">
+      <span class="slide-num">20 / 26</span>
+      <h2>SVG-Grafik: Organigramm E-Commerce</h2>
+      <span class="section-tag">Visualisierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="svg-area">
+        <svg viewBox="0 0 780 360" width="100%" style="max-height:320px;" xmlns="http://www.w3.org/2000/svg" aria-label="Organigramm eines E-Commerce Unternehmens">
+          <!-- Geschäftsführung -->
+          <rect x="290" y="10" width="200" height="46" rx="8" fill="#2563EB"/>
+          <text x="390" y="29" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI,Arial">Geschäftsführung</text>
+          <text x="390" y="46" text-anchor="middle" fill="#fdd" font-size="9" font-family="Segoe UI,Arial">CEO / Inhaber</text>
+          <!-- vertical line from GF -->
+          <line x1="390" y1="56" x2="390" y2="82" stroke="#4a90d9" stroke-width="1.5"/>
+          <!-- horizontal bar -->
+          <line x1="80" y1="82" x2="700" y2="82" stroke="#4a90d9" stroke-width="1.5"/>
+          <!-- vertical drops -->
+          <line x1="80"  y1="82" x2="80"  y2="100" stroke="#4a90d9" stroke-width="1.5"/>
+          <line x1="210" y1="82" x2="210" y2="100" stroke="#4a90d9" stroke-width="1.5"/>
+          <line x1="340" y1="82" x2="340" y2="100" stroke="#4a90d9" stroke-width="1.5"/>
+          <line x1="470" y1="82" x2="470" y2="100" stroke="#4a90d9" stroke-width="1.5"/>
+          <line x1="600" y1="82" x2="600" y2="100" stroke="#4a90d9" stroke-width="1.5"/>
+          <!-- Abteilungs-Boxen Reihe 1 -->
+          <rect x="20"  y="100" width="120" height="44" rx="6" fill="#1e3170"/>
+          <text x="80"  y="118" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Einkauf</text>
+          <text x="80"  y="132" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Beschaffung</text>
+
+          <rect x="150" y="100" width="120" height="44" rx="6" fill="#1e3170"/>
+          <text x="210" y="118" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Marketing</text>
+          <text x="210" y="132" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">SEO / Kampagnen</text>
+
+          <rect x="280" y="100" width="120" height="44" rx="6" fill="#1e3170"/>
+          <text x="340" y="118" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Vertrieb</text>
+          <text x="340" y="132" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Shop / Marktplätze</text>
+
+          <rect x="410" y="100" width="120" height="44" rx="6" fill="#1e3170"/>
+          <text x="470" y="118" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Logistik</text>
+          <text x="470" y="132" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Lager / Versand</text>
+
+          <rect x="540" y="100" width="120" height="44" rx="6" fill="#1e3170"/>
+          <text x="600" y="118" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Finanzen / IT</text>
+          <text x="600" y="132" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Buchhaltung / System</text>
+
+          <!-- Sub-boxes Logistik -->
+          <line x1="440" y1="144" x2="440" y2="174" stroke="#4a90d9" stroke-width="1"/>
+          <line x1="500" y1="144" x2="500" y2="174" stroke="#4a90d9" stroke-width="1"/>
+          <line x1="440" y1="174" x2="500" y2="174" stroke="#4a90d9" stroke-width="1"/>
+          <line x1="440" y1="174" x2="440" y2="188" stroke="#4a90d9" stroke-width="1"/>
+          <line x1="500" y1="174" x2="500" y2="188" stroke="#4a90d9" stroke-width="1"/>
+          <rect x="400" y="188" width="84" height="34" rx="5" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+          <text x="442" y="201" text-anchor="middle" fill="#dde4f0" font-size="8" font-family="Segoe UI,Arial">Wareneingang</text>
+          <text x="442" y="214" text-anchor="middle" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">Kommissionierung</text>
+          <rect x="496" y="188" width="84" height="34" rx="5" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+          <text x="538" y="201" text-anchor="middle" fill="#dde4f0" font-size="8" font-family="Segoe UI,Arial">Versand</text>
+          <text x="538" y="214" text-anchor="middle" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">Retouren</text>
+
+          <!-- Legend -->
+          <rect x="20" y="300" width="14" height="14" rx="3" fill="#2563EB"/>
+          <text x="40" y="312" fill="#a0aec8" font-size="9" font-family="Segoe UI,Arial">Führungsebene</text>
+          <rect x="130" y="300" width="14" height="14" rx="3" fill="#1e3170"/>
+          <text x="150" y="312" fill="#a0aec8" font-size="9" font-family="Segoe UI,Arial">Abteilungen</text>
+          <rect x="230" y="300" width="14" height="14" rx="3" fill="#142254" stroke="#4a90d9" stroke-width="0.8"/>
+          <text x="250" y="312" fill="#a0aec8" font-size="9" font-family="Segoe UI,Arial">Unterabteilungen</text>
+          <text x="400" y="345" text-anchor="middle" fill="rgba(160,174,200,0.4)" font-size="8" font-family="Segoe UI,Arial">Abb. 1: Vereinfachtes Organigramm eines E-Commerce-Unternehmens</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 21 – SVG: SQ3R-KREISLAUF
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-21">
+    <div class="slide-header">
+      <span class="slide-num">21 / 26</span>
+      <h2>SVG-Grafik: SQ3R-Kreislauf</h2>
+      <span class="section-tag">Visualisierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="svg-area">
+        <svg viewBox="0 0 700 380" width="100%" style="max-height:340px;" xmlns="http://www.w3.org/2000/svg" aria-label="SQ3R Kreislauf Diagramm">
+          <defs>
+            <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#2563EB"/>
+            </marker>
+          </defs>
+          <!-- Center circle -->
+          <circle cx="350" cy="190" r="52" fill="#1e3170" stroke="#4a90d9" stroke-width="2"/>
+          <text x="350" y="185" text-anchor="middle" fill="#f0c040" font-size="15" font-weight="bold" font-family="Segoe UI,Arial">SQ3R</text>
+          <text x="350" y="202" text-anchor="middle" fill="#a0aec8" font-size="9" font-family="Segoe UI,Arial">Aktives Lesen</text>
+
+          <!-- S - Survey -->
+          <circle cx="350" cy="60" r="44" fill="#2563EB"/>
+          <text x="350" y="54" text-anchor="middle" fill="white" font-size="18" font-weight="900" font-family="Segoe UI,Arial">S</text>
+          <text x="350" y="70" text-anchor="middle" fill="#fdd" font-size="10" font-family="Segoe UI,Arial">Survey</text>
+          <text x="350" y="82" text-anchor="middle" fill="rgba(255,220,220,0.7)" font-size="8" font-family="Segoe UI,Arial">Überblick</text>
+          <line x1="350" y1="104" x2="350" y2="138" stroke="#2563EB" stroke-width="2" marker-end="url(#arr2)"/>
+
+          <!-- Q - Question -->
+          <circle cx="558" cy="130" r="44" fill="#142254" stroke="#2563EB" stroke-width="2"/>
+          <text x="558" y="124" text-anchor="middle" fill="white" font-size="18" font-weight="900" font-family="Segoe UI,Arial">Q</text>
+          <text x="558" y="140" text-anchor="middle" fill="#dde4f0" font-size="10" font-family="Segoe UI,Arial">Question</text>
+          <text x="558" y="152" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Fragen</text>
+          <line x1="516" y1="152" x2="402" y2="172" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- R1 - Read -->
+          <circle cx="558" cy="250" r="44" fill="#142254" stroke="#2563EB" stroke-width="2"/>
+          <text x="558" y="244" text-anchor="middle" fill="white" font-size="18" font-weight="900" font-family="Segoe UI,Arial">R</text>
+          <text x="558" y="260" text-anchor="middle" fill="#dde4f0" font-size="10" font-family="Segoe UI,Arial">Read</text>
+          <text x="558" y="272" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Lesen</text>
+          <line x1="558" y1="174" x2="558" y2="206" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+          <!-- R2 - Recite -->
+          <circle cx="350" cy="320" r="44" fill="#142254" stroke="#2563EB" stroke-width="2"/>
+          <text x="350" y="314" text-anchor="middle" fill="white" font-size="18" font-weight="900" font-family="Segoe UI,Arial">R</text>
+          <text x="350" y="330" text-anchor="middle" fill="#dde4f0" font-size="10" font-family="Segoe UI,Arial">Recite</text>
+          <text x="350" y="342" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Wiedergeben</text>
+          <line x1="516" y1="272" x2="394" y2="300" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- R3 - Review -->
+          <circle cx="142" cy="250" r="44" fill="#142254" stroke="#2563EB" stroke-width="2"/>
+          <text x="142" y="244" text-anchor="middle" fill="white" font-size="18" font-weight="900" font-family="Segoe UI,Arial">R</text>
+          <text x="142" y="260" text-anchor="middle" fill="#dde4f0" font-size="10" font-family="Segoe UI,Arial">Review</text>
+          <text x="142" y="272" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">Überprüfen</text>
+          <line x1="306" y1="300" x2="184" y2="274" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="142" y1="206" x2="142" y2="174" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- Caption -->
+          <text x="350" y="372" text-anchor="middle" fill="rgba(160,174,200,0.4)" font-size="8" font-family="Segoe UI,Arial">Abb. 2: SQ3R-Methode als zyklischer Leseprozess (nach Robinson, 1941)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 22 – SVG: KOMMUNIKATIONSFLUSS
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-22">
+    <div class="slide-header">
+      <span class="slide-num">22 / 26</span>
+      <h2>SVG: Kommunikationsfluss &amp; Vergleichstabelle</h2>
+      <span class="section-tag">Visualisierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col" style="align-items:start;">
+        <div class="svg-area" style="justify-content:flex-start;">
+          <svg viewBox="0 0 340 280" width="100%" style="max-height:260px;" xmlns="http://www.w3.org/2000/svg" aria-label="Kommunikationsfluss Diagramm">
+            <rect x="100" y="10" width="140" height="48" rx="8" fill="#1e3170" stroke="#4a90d9" stroke-width="1.5"/>
+            <text x="170" y="30" text-anchor="middle" fill="#f0c040" font-size="11" font-weight="bold" font-family="Segoe UI,Arial">Unternehmen</text>
+            <text x="170" y="47" text-anchor="middle" fill="#a0aec8" font-size="8" font-family="Segoe UI,Arial">intern</text>
+
+            <rect x="20" y="108" width="110" height="40" rx="6" fill="#142254" stroke="#2563EB" stroke-width="1.2"/>
+            <text x="75" y="124" text-anchor="middle" fill="#dde4f0" font-size="9" font-family="Segoe UI,Arial">Abteilung A</text>
+            <text x="75" y="138" text-anchor="middle" fill="#a0aec8" font-size="7.5" font-family="Segoe UI,Arial">z. B. Einkauf</text>
+
+            <rect x="210" y="108" width="110" height="40" rx="6" fill="#142254" stroke="#2563EB" stroke-width="1.2"/>
+            <text x="265" y="124" text-anchor="middle" fill="#dde4f0" font-size="9" font-family="Segoe UI,Arial">Abteilung B</text>
+            <text x="265" y="138" text-anchor="middle" fill="#a0aec8" font-size="7.5" font-family="Segoe UI,Arial">z. B. Logistik</text>
+
+            <line x1="130" y1="108" x2="170" y2="58" stroke="#4a90d9" stroke-width="1.2"/>
+            <line x1="210" y1="108" x2="170" y2="58" stroke="#4a90d9" stroke-width="1.2"/>
+            <line x1="130" y1="128" x2="210" y2="128" stroke="#4a90d9" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <rect x="100" y="205" width="140" height="40" rx="6" fill="#2563EB"/>
+            <text x="170" y="222" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="Segoe UI,Arial">Externe Partner</text>
+            <text x="170" y="237" text-anchor="middle" fill="#fdd" font-size="7.5" font-family="Segoe UI,Arial">Kunden, Lieferanten, Behörden</text>
+
+            <line x1="170" y1="58" x2="170" y2="205" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="182" y="140" fill="#a0aec8" font-size="7.5" font-family="Segoe UI,Arial" transform="rotate(90,182,140)">Extern</text>
+
+            <text x="170" y="270" text-anchor="middle" fill="rgba(160,174,200,0.4)" font-size="7" font-family="Segoe UI,Arial">Abb. 3: Interne &amp; externe Kommunikation</text>
+          </svg>
+        </div>
+        <div>
+          <table class="styled" style="font-size:0.76rem;">
+            <thead>
+              <tr><th>Kanal</th><th>Formell?</th><th>Schnell?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Brief</td><td>Ja</td><td>Nein</td></tr>
+              <tr><td>E-Mail</td><td>Ja</td><td>Ja</td></tr>
+              <tr><td>Chat</td><td>Nein</td><td>Sehr</td></tr>
+              <tr><td>Meeting</td><td>Semi</td><td>Mittel</td></tr>
+              <tr><td>Telefon</td><td>Semi</td><td>Sehr</td></tr>
+              <tr><td>Intranet</td><td>Ja</td><td>Ja</td></tr>
+              <tr><td>Fax</td><td>Ja</td><td>Mittel</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 23 – LERNTECHNIKEN-VERGLEICH & BEHALTENSRATE
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-23">
+    <div class="slide-header">
+      <span class="slide-num">23 / 26</span>
+      <h2>Lerntechniken-Vergleich &amp; Behaltensrate</h2>
+      <span class="section-tag">Visualisierung</span>
+    </div>
+    <div class="slide-body">
+      <div class="two-col" style="align-items:start;">
+        <div>
+          <table class="styled" style="font-size:0.78rem;">
+            <thead>
+              <tr><th>Methode</th><th>Behaltensrate</th><th>Aufwand</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Passives Lesen</td><td>~10 %</td><td>Gering</td></tr>
+              <tr><td>Markieren (viel)</td><td>~15 %</td><td>Gering</td></tr>
+              <tr><td>Markieren (selektiv)</td><td>~30 %</td><td>Mittel</td></tr>
+              <tr><td>Notizen (eigene Worte)</td><td>~50 %</td><td>Mittel</td></tr>
+              <tr><td>SQ3R</td><td>~65 %</td><td>Hoch</td></tr>
+              <tr><td>Erklären / Lehren</td><td>~75 %</td><td>Sehr hoch</td></tr>
+              <tr><td>Anwenden / Üben</td><td>~85 %</td><td>Sehr hoch</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="svg-area">
+          <svg viewBox="0 0 300 270" width="100%" style="max-height:260px;" xmlns="http://www.w3.org/2000/svg" aria-label="Balkendiagramm Behaltensrate">
+            <text x="150" y="16" text-anchor="middle" fill="#f0c040" font-size="10" font-weight="bold" font-family="Segoe UI,Arial">Behaltensrate nach Methode (%)</text>
+            <line x1="55" y1="25" x2="55" y2="230" stroke="#4a90d9" stroke-width="1"/>
+            <line x1="55" y1="230" x2="285" y2="230" stroke="#4a90d9" stroke-width="1"/>
+            <text x="50" y="230" text-anchor="end" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">0</text>
+            <text x="50" y="189" text-anchor="end" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">20</text>
+            <text x="50" y="148" text-anchor="end" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">40</text>
+            <text x="50" y="107" text-anchor="end" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">60</text>
+            <text x="50" y="66" text-anchor="end" fill="#a0aec8" font-size="7" font-family="Segoe UI,Arial">80</text>
+            <line x1="53" y1="189" x2="57" y2="189" stroke="#4a90d9" stroke-width="1"/>
+            <line x1="53" y1="148" x2="57" y2="148" stroke="#4a90d9" stroke-width="1"/>
+            <line x1="53" y1="107" x2="57" y2="107" stroke="#4a90d9" stroke-width="1"/>
+            <line x1="53" y1="66"  x2="57" y2="66"  stroke="#4a90d9" stroke-width="1"/>
+            <rect x="62"  y="209.5" width="24" height="20.5"  rx="3" fill="#2563EB" opacity="0.7"/>
+            <text x="74"  y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">10</text>
+            <rect x="94"  y="199.25" width="24" height="30.75" rx="3" fill="#2563EB" opacity="0.75"/>
+            <text x="106" y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">15</text>
+            <rect x="126" y="168.5" width="24" height="61.5"  rx="3" fill="#e74c3c" opacity="0.8"/>
+            <text x="138" y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">30</text>
+            <rect x="158" y="127.5" width="24" height="102.5" rx="3" fill="#4a90d9"/>
+            <text x="170" y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">50</text>
+            <rect x="190" y="97"    width="24" height="133"   rx="3" fill="#1e3170" stroke="#4a90d9" stroke-width="1"/>
+            <text x="202" y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">65</text>
+            <rect x="222" y="76.25" width="24" height="153.75" rx="3" fill="#f0c040"/>
+            <text x="234" y="225" text-anchor="middle" fill="#0d1b3e" font-size="7" font-weight="bold" font-family="Segoe UI,Arial">75</text>
+            <rect x="254" y="55.75" width="24" height="174.25" rx="3" fill="#27ae60"/>
+            <text x="266" y="225" text-anchor="middle" fill="white" font-size="7" font-family="Segoe UI,Arial">85</text>
+            <text x="150" y="255" text-anchor="middle" fill="rgba(160,174,200,0.4)" font-size="7" font-family="Segoe UI,Arial">Abb. 4: Lernpyramide – Behaltensrate nach Methode</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 24 – ZWISCHENQUIZ 3: ABSCHLUSSQUIZ
+  ══════════════════════════════════════ -->
+  <div class="slide quiz-slide" id="slide-24">
+    <h2>🧠 Zwischenquiz: Abschluss Tag 2</h2>
+    <div class="zq-question">
+      <p>1. Was kennzeichnet einen Geschäftsprozess?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3Tag2('zq3-q1', this, false)">A) Er wird nur einmalig durchgeführt</button>
+        <button onclick="checkZQ3Tag2('zq3-q1', this, true)">B) Er hat definierten Anfang und Ende, läuft wiederholt ab und erzeugt Wert für Kunden</button>
+        <button onclick="checkZQ3Tag2('zq3-q1', this, false)">C) Er betrifft nur die IT-Abteilung</button>
+      </div>
+      <p id="zq3-q1-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>2. Welches Farbsystem wird beim Textmarkieren für Beispiele und Belege empfohlen?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3Tag2('zq3-q2', this, false)">A) Gelb</button>
+        <button onclick="checkZQ3Tag2('zq3-q2', this, true)">B) Grün</button>
+        <button onclick="checkZQ3Tag2('zq3-q2', this, false)">C) Blau</button>
+      </div>
+      <p id="zq3-q2-result" class="zq-result"></p>
+    </div>
+    <div class="zq-question">
+      <p>3. Welche Organisationsform beschreibt eine Kombination aus Einliniensystem mit beratenden Stellen ohne Weisungsbefugnis?</p>
+      <div class="zq-options">
+        <button onclick="checkZQ3Tag2('zq3-q3', this, false)">A) Mehrliniensystem</button>
+        <button onclick="checkZQ3Tag2('zq3-q3', this, false)">B) Matrixorganisation</button>
+        <button onclick="checkZQ3Tag2('zq3-q3', this, true)">C) Stabliniensystem</button>
+      </div>
+      <p id="zq3-q3-result" class="zq-result"></p>
+    </div>
+    <script>
+    function checkZQ3Tag2(qid, btn, correct) {
+      btn.closest('.zq-options').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#2563EB';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Richtige Antwort ist markiert.';
+      if (!correct) {
+        btn.closest('.zq-options').querySelectorAll('button').forEach(b => {
+          if (b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 25 – ZUSAMMENFASSUNG
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-25">
+    <div class="slide-header">
+      <span class="slide-num">25 / 26</span>
+      <h2>Zusammenfassung Tag 2</h2>
+      <span class="section-tag">Zusammenfassung</span>
+    </div>
+    <div class="slide-body">
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h4>Erste Tage im Betrieb</h4>
+          <p>Pünktlichkeit, gepflegtes Erscheinungsbild, Höflichkeit und aktives Zuhören sind entscheidend. Verhaltensregeln konsequent einhalten.</p>
+        </div>
+        <div class="summary-item">
+          <h4>Aufbauorganisation</h4>
+          <p>Drei Grundformen: Einlinien (1 Vorgesetzter), Mehrlinien (mehrere Vorgesetzte), Stablinie (Einlinien + beratende Stäbe). Im Organigramm dargestellt.</p>
+        </div>
+        <div class="summary-item">
+          <h4>Kundenorientierung &amp; Geschäftsprozesse</h4>
+          <p>Alle Prozesse auf Kundenbedürfnisse ausrichten. Geschäftsprozesse haben definierten Anfang, Ende und erzeugen wiederholbaren Wert.</p>
+        </div>
+        <div class="summary-item">
+          <h4>SQ3R &amp; Aktives Lesen</h4>
+          <p>Survey → Question → Read → Recite → Review. Aktives Lesen erhöht die Behaltensrate auf bis zu 65–75 %. Sparsam markieren: max. 20–30 %.</p>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top:4px;">
+        <strong>Kernbotschaft:</strong> Wer sich im Unternehmen orientiert und Texte aktiv liest, kommuniziert effizienter, findet Informationen schneller und lernt nachhaltiger.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FOLIE 26 – LITERATURVERZEICHNIS
+  ══════════════════════════════════════ -->
+  <div class="slide" id="slide-26">
+    <div class="slide-header">
+      <span class="slide-num">26 / 26</span>
+      <h2>Literaturverzeichnis</h2>
+      <span class="section-tag">APA 7. Auflage</span>
+    </div>
+    <div class="slide-body">
+      <div class="info-box">
+        Alle Quellen sind nach den Richtlinien der <strong>APA 7. Auflage</strong> formatiert. Buchseiten 22–32 sind die Primärquelle dieser Einheit.
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        <div class="ref-item">
+          Ausubel, D. P. (1968). <em>Educational psychology: A cognitive view</em>. Holt, Rinehart &amp; Winston.
+        </div>
+        <div class="ref-item">
+          Berthel, J., &amp; Becker, F. G. (2017). <em>Personal-Management: Grundzüge für Konzeptionen betrieblicher Personalarbeit</em> (11. Aufl.). Schäffer-Poeschel.
+        </div>
+        <div class="ref-item">
+          Bundesverband E-Commerce und Versandhandel Deutschland e. V. (BEVH). (2024). <em>Interaktiver Handel in Deutschland: Jahresbericht 2024</em>. BEVH. <span style="color:var(--accent);">https://www.bevh.org</span>
+        </div>
+        <div class="ref-item">
+          Holtbrügge, D. (2022). <em>Personalmanagement</em> (8. Aufl.). Springer Gabler.
+        </div>
+        <div class="ref-item">
+          Olfert, K. (2019). <em>Personalwirtschaft</em> (17. Aufl.). Kiehl.
+        </div>
+        <div class="ref-item">
+          Robinson, F. P. (1941). <em>Effective study</em>. Harper &amp; Row.
+        </div>
+        <div class="ref-item">
+          Schneider, F., &amp; Müller, T. (2023). <em>Kaufleute im E-Commerce: Lernfelder 1–4</em>. Winklers Verlag. (Buchseiten 22–32)
+        </div>
+      </div>
+      <div class="copyright" style="margin-top:auto;padding-top:12px;">
+        &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 1, Tag 2 &nbsp;|&nbsp; Alle Rechte vorbehalten.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #slideshow -->
+
+<!-- ── Navigation Bar ── -->
+<!-- Grid Overlay -->
+
+
+<!-- Navigation -->
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 26</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Lernfeld 1 | Orientierung im Unternehmen &amp; Aktives Lesen &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

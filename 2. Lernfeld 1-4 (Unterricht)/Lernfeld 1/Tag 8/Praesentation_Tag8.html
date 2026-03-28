@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 8 – SEO & Online-Marketing | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+<style>
+/* === Supplemental CSS for Tag 8 undefined classes === */
+
+/* Cover slide elements */
+.cover-badge {
+  font-size:.8rem; letter-spacing:4px; text-transform:uppercase;
+  color:var(--primary); margin-bottom:20px; font-weight:600;
+}
+.cover-divider {
+  width:80px; height:4px; background:var(--primary);
+  border-radius:2px; margin:20px auto;
+}
+.cover-tags {
+  display:flex; gap:12px; flex-wrap:wrap;
+  justify-content:center; margin-bottom:24px;
+}
+
+/* Slide structure: header + tag */
+.slide-header {
+  display:flex; flex-direction:column; align-self:flex-start;
+  margin-bottom:20px; width:100%;
+}
+.slide-tag {
+  font-size:.75rem; letter-spacing:3px; text-transform:uppercase;
+  color:var(--primary); font-weight:600; margin-bottom:6px;
+  display:inline-block;
+}
+.slide-toc {
+  justify-content:flex-start; padding-top:70px;
+  display:flex; flex-direction:column; align-items:center;
+  /* inherits .slide base styles */
+}
+
+/* TOC sub-elements */
+.toc-text {
+  flex:1; font-size:.9rem; color:var(--text); font-weight:500;
+}
+.toc-page {
+  font-size:.75rem; color:var(--text-muted); white-space:nowrap;
+  min-width:60px; text-align:right;
+}
+
+/* Box system (card-like content boxes) */
+.box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow); width:100%;
+  margin-bottom:12px; border-left:4px solid var(--primary);
+}
+.box ul { padding-left:18px; margin:8px 0 0; }
+.box li { font-size:.88rem; color:var(--text-muted); line-height:1.6; margin-bottom:4px; }
+.box p { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.box-title {
+  font-size:1rem; font-weight:700; color:var(--primary);
+  margin-bottom:10px;
+}
+.box-blue { border-left-color:var(--primary); }
+.box-blue .box-title { color:var(--primary); }
+.box-green { border-left-color:var(--success); }
+.box-green .box-title { color:var(--success); }
+.box-orange { border-left-color:var(--accent); }
+.box-orange .box-title { color:var(--accent); }
+.box-red { border-left-color:var(--danger); }
+.box-red .box-title { color:var(--danger); }
+.box-gray { border-left-color:var(--text-muted); background:var(--bg-alt); }
+.box-gray .box-title { color:var(--text-muted); }
+
+/* Learning objective text */
+.lz-text { flex:1; }
+
+/* Section divider slide elements */
+.section-number {
+  font-size:6rem; font-weight:900; color:rgba(255,255,255,.12);
+  position:absolute; bottom:30px; right:60px; line-height:1;
+}
+.section-title-big {
+  font-size:2.8rem; font-weight:800; color:#fff;
+}
+.section-subtitle {
+  font-size:1.1rem; color:rgba(255,255,255,.7);
+  margin-top:12px; max-width:600px;
+}
+
+/* Badges (inline labels in tables) */
+.badge {
+  display:inline-block; font-size:.72rem; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.5px;
+  color:#fff;
+}
+.badge-blue { background:var(--primary); }
+.badge-red { background:var(--danger); }
+.badge-green { background:var(--success); }
+.badge-gold, .badge-orange { background:var(--accent); }
+
+/* Text highlights */
+.highlight {
+  color:var(--primary); font-weight:700;
+}
+.highlight-green {
+  color:var(--success); font-weight:700;
+}
+
+/* Card sub-elements (when used as divs rather than h3/p) */
+.card-icon {
+  font-size:1.6rem; margin-bottom:8px;
+}
+.card-title {
+  font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px;
+}
+.card-text {
+  font-size:.88rem; color:var(--text-muted); line-height:1.6;
+}
+
+/* Quotation blocks */
+.quote {
+  background:var(--bg-card); border-left:4px solid var(--accent);
+  border-radius:10px; padding:16px 22px; width:100%;
+  font-size:.9rem; font-style:italic; color:var(--text);
+  line-height:1.6; margin-top:14px; box-shadow:var(--shadow);
+}
+.quote-source {
+  font-size:.78rem; color:var(--text-muted); margin-top:8px;
+  font-style:normal;
+}
+
+/* Flow diagrams */
+.flow {
+  display:flex; align-items:center; gap:0;
+  width:100%; margin:10px 0; flex-wrap:wrap;
+}
+.flow-step {
+  flex:1; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:12px 10px; text-align:center;
+  font-size:.82rem; font-weight:600; color:var(--text);
+  box-shadow:var(--shadow); min-width:100px;
+}
+.flow-arrow {
+  padding:0 6px; color:var(--primary); font-size:1.2rem;
+  font-weight:700;
+}
+
+/* Pill tags (strategy list) */
+.pill-row {
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;
+}
+.pill {
+  display:inline-block; font-size:.78rem; font-weight:600;
+  padding:5px 14px; border-radius:20px; color:#fff;
+  background:var(--primary);
+}
+.pill-blue { background:var(--primary); }
+.pill-green { background:var(--success); }
+.pill-orange { background:var(--accent); }
+
+/* KPI boxes */
+.kpi-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px; text-align:center;
+  box-shadow:var(--shadow);
+}
+.kpi-value {
+  font-size:1.8rem; font-weight:900; color:var(--primary);
+  margin-bottom:4px;
+}
+.kpi-label {
+  font-size:.82rem; font-weight:700; color:var(--text);
+  margin-bottom:4px;
+}
+.kpi-formula {
+  font-size:.72rem; color:var(--text-muted); font-style:italic;
+}
+
+/* Slide footer */
+.slide-footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.95); backdrop-filter:blur(6px); z-index:10;
+}
+
+/* Copyright & nav-hint (floating elements) */
+#copyright { display:none; }
+#nav-hint { display:none; }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+/* Animations for new elements */
+.slide.active .box,
+.slide.active .flow,
+.slide.active .kpi-box,
+.slide.active .quote,
+.slide.active .toc-item { animation:fadeUp .5s ease both; animation-delay:.15s; }
+.slide.active .slide-header { animation:fadeUp .5s ease both; animation-delay:.05s; }
+
+/* CSS variables referenced in inline styles but not defined */
+:root {
+  --red-light: #EF4444;
+  --blue-light: #3B82F6;
+  --green: #10B981;
+  --orange: #F59E0B;
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div id="copyright">&copy; Can Siebert &amp; Hamzah Meyer</div>
+<div id="nav-hint">&larr; &rarr; Pfeiltasten oder Klick zum Navigieren</div>
+<div class="slides-wrapper" id="slides">
+
+<!-- ======================== SLIDE 1: COVER ======================== -->
+<div class="slide slide-cover active" id="slide-1">
+  <div class="cover-badge">LERNFELD 1 &nbsp;·&nbsp; TAG 8</div>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs><linearGradient id="seoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+    <circle cx="50" cy="50" r="35" fill="none" stroke="url(#seoGrad)" stroke-width="6" opacity="0.9"/>
+    <line x1="75" y1="75" x2="105" y2="105" stroke="url(#seoGrad)" stroke-width="6" stroke-linecap="round"/>
+    <rect x="32" y="55" width="8" height="15" rx="2" fill="#3a7bd5" opacity="0.7" transform="rotate(180 36 62.5)"/>
+    <rect x="43" y="45" width="8" height="25" rx="2" fill="#2563eb" opacity="0.8" transform="rotate(180 47 57.5)"/>
+    <rect x="54" y="35" width="8" height="35" rx="2" fill="#1e4db7" opacity="0.9" transform="rotate(180 58 52.5)"/>
+  </svg>
+  <div class="cover-title">SEO &amp; Online-Marketing</div>
+  <div class="cover-subtitle">Webshop Name &amp; Adresse – Teil 2</div>
+  <div class="cover-divider"></div>
+  <div class="cover-tags">
+    <span class="cover-tag">🔍 Suchmaschinenoptimierung</span>
+    <span class="cover-tag">📣 Online-Marketing-Kanäle</span>
+    <span class="cover-tag">📊 Analytics &amp; KPIs</span>
+  </div>
+  <div class="cover-meta">Buchseiten 84–91 &nbsp;·&nbsp; Kaufmann/Kauffrau im E-Commerce</div>
+</div>
+
+<!-- ======================== SLIDE 2: INHALTSVERZEICHNIS ======================== -->
+<div class="slide slide-toc" id="slide-2">
+  <div class="slide-header">
+    <span class="slide-tag">ÜBERSICHT</span>
+    <span class="slide-title">Inhaltsverzeichnis</span>
+  </div>
+  <div class="toc-item" onclick="goToSlide(3)">
+    <div class="toc-num">1</div>
+    <div class="toc-text">Lernziele</div>
+    <div class="toc-page">Folie 3</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(4)">
+    <div class="toc-num">2</div>
+    <div class="toc-text">Was ist SEO? – Grundlagen &amp; drei Säulen</div>
+    <div class="toc-page">Folie 4–6</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(7)">
+    <div class="toc-num">3</div>
+    <div class="toc-text">On-Page-SEO – Elemente &amp; Checkliste</div>
+    <div class="toc-page">Folie 7–10</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(11)">
+    <div class="toc-num">4</div>
+    <div class="toc-text">Keyword-Recherche – Short, Mid &amp; Long-Tail</div>
+    <div class="toc-page">Folie 11–13</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(14)">
+    <div class="toc-num">5</div>
+    <div class="toc-text">Off-Page &amp; Technisches SEO</div>
+    <div class="toc-page">Folie 14–16</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(20)">
+    <div class="toc-num">6</div>
+    <div class="toc-text">Online-Marketing-Kanäle (SEA, E-Mail, Social, Content, Affiliate)</div>
+    <div class="toc-page">Folie 20–28</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(29)">
+    <div class="toc-num">7</div>
+    <div class="toc-text">Analytics &amp; KPIs (CR, Bounce, CAC, CLV, ROAS)</div>
+    <div class="toc-page">Folie 29–34</div>
+  </div>
+  <div class="toc-item" onclick="goToSlide(35)">
+    <div class="toc-num">8</div>
+    <div class="toc-text">Zusammenfassung &amp; Literaturverzeichnis</div>
+    <div class="toc-page">Folie 35–37</div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 3: LERNZIELE ======================== -->
+<div class="slide slide-content" id="slide-3">
+  <div class="slide-header">
+    <span class="slide-tag">LERNZIELE</span>
+    <span class="slide-title">Was lernst du heute?</span>
+  </div>
+  <div class="box box-blue">
+    <div class="box-title">Lernziele Tag 8</div>
+    <p style="margin:0;font-size:13px;">Am Ende dieser Unterrichtseinheit kannst du…</p>
+  </div>
+  <div class="lz-item"><div class="lz-check">✓</div><div class="lz-text"><strong>SEO-Grundlagen</strong> für Webshops erklären und On-Page-Maßnahmen (Title, Meta, H1, Alt-Text, URL) benennen.</div></div>
+  <div class="lz-item"><div class="lz-check">✓</div><div class="lz-text"><strong>Verschiedene Online-Marketing-Kanäle</strong> (SEA, E-Mail, Social Media, Content, Affiliate) unterscheiden und situationsgerecht einsetzen.</div></div>
+  <div class="lz-item"><div class="lz-check">✓</div><div class="lz-text"><strong>Wichtige KPIs</strong> im E-Commerce (Conversion Rate, Bounce Rate, CAC, CLV, ROAS) berechnen und interpretieren.</div></div>
+  <div class="lz-item"><div class="lz-check">✓</div><div class="lz-text">Den Unterschied zwischen <strong>SEO und SEA</strong> erläutern und beide strategisch einordnen.</div></div>
+  <div class="lz-item"><div class="lz-check">✓</div><div class="lz-text">Das <strong>PESO-Modell</strong> erklären und Medientypen zuordnen.</div></div>
+</div>
+
+<!-- ======================== SLIDE 4: SECTION BREAK SEO ======================== -->
+<div class="slide slide-section" id="slide-4">
+  <div class="section-number">2</div>
+  <div class="section-title-big">Suchmaschinenoptimierung</div>
+  <div class="section-subtitle">SEO – Search Engine Optimization</div>
+  <p style="color:rgba(0,0,0,0.7);max-width:600px;font-size:16px;margin-top:24px;">Wie bringt man einen Webshop dauerhaft und kostenlos nach oben bei Google?</p>
+</div>
+
+<!-- ======================== SLIDE 5: WAS IST SEO ======================== -->
+<div class="slide slide-content" id="slide-5">
+  <div class="slide-header">
+    <span class="slide-tag">SEO</span>
+    <span class="slide-title">Was ist SEO?</span>
+  </div>
+  <div class="box box-blue">
+    <div class="box-title">Definition</div>
+    <p style="margin:0;"><strong>SEO (Search Engine Optimization)</strong> bezeichnet alle Maßnahmen, die dazu dienen, eine Website in den <span class="highlight">organischen (nicht bezahlten)</span> Suchergebnissen von Suchmaschinen – vor allem Google – möglichst weit oben zu platzieren.</p>
+  </div>
+  <div class="grid-2" style="margin-top:16px;gap:14px;">
+    <div class="box box-red" style="margin:0;">
+      <div class="box-title">Warum SEO?</div>
+      <ul>
+        <li>Ca. <strong>40 %</strong> aller Webshop-Besuche kommen über organische Suche</li>
+        <li>Seite-1-Ergebnisse erhalten ca. <strong>90 % aller Klicks</strong></li>
+        <li>Seite 2 bei Google existiert für die meisten Nutzer nicht</li>
+        <li>Keine direkten Kosten pro Klick (im Gegensatz zu SEA)</li>
+      </ul>
+    </div>
+    <div class="box box-green" style="margin:0;">
+      <div class="box-title">SEO-Merksatz</div>
+      <p style="margin:0 0 10px;font-size:15px;font-weight:700;">"SEO = kostenlose Sichtbarkeit bei Google"</p>
+      <p style="margin:0;font-size:13px;">Lammenett (2021) definiert SEO als „die Gesamtheit aller Maßnahmen, die dazu beitragen, dass eine Website in den organischen Suchergebnissen eine höhere Platzierung erreicht" (S. 47).</p>
+    </div>
+  </div>
+  <div class="box box-orange" style="margin-top:14px;">
+    <div class="box-title">Eselsbrücke</div>
+    <p style="margin:0;"><strong>SEO = Sichtbarkeit, Ergebnisse, Optimierung</strong> – dauerhaft und ohne Klickkosten! Während SEA Geld kostet, arbeitet SEO für dich rund um die Uhr.</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 6: DIE DREI SÄULEN ======================== -->
+<div class="slide slide-content" id="slide-6">
+  <div class="slide-header">
+    <span class="slide-tag">SEO</span>
+    <span class="slide-title">Die drei SEO-Säulen</span>
+  </div>
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="card" style="border-top:3px solid var(--blue-light);">
+      <div class="card-icon">📄</div>
+      <div class="card-title" style="color:var(--blue-light);">On-Page-SEO</div>
+      <div class="card-text">Optimierungen <em>auf</em> der eigenen Website: Inhalte, Überschriften, Meta-Tags, URL-Struktur, interne Verlinkung</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div class="card-icon">🔗</div>
+      <div class="card-title" style="color:var(--orange);">Off-Page-SEO</div>
+      <div class="card-text">Maßnahmen <em>außerhalb</em> der eigenen Website: Backlinks von anderen Seiten, Online-PR, Brand Mentions</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title" style="color:var(--green);">Technisches SEO</div>
+      <div class="card-text">Ladegeschwindigkeit, Mobile-First, HTTPS, sitemap.xml, robots.txt, Core Web Vitals</div>
+    </div>
+  </div>
+  <svg width="100%" height="90" viewBox="0 0 700 90">
+    <defs>
+      <linearGradient id="pillGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#2980b9;stop-opacity:0.3"/>
+        <stop offset="50%" style="stop-color:#f39c12;stop-opacity:0.3"/>
+        <stop offset="100%" style="stop-color:#27ae60;stop-opacity:0.3"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="30" width="700" height="30" rx="15" fill="url(#pillGrad)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+    <text x="117" y="50" fill="#3498db" font-size="13" font-weight="700" text-anchor="middle">On-Page</text>
+    <text x="350" y="50" fill="#f39c12" font-size="13" font-weight="700" text-anchor="middle">Off-Page</text>
+    <text x="583" y="50" fill="#27ae60" font-size="13" font-weight="700" text-anchor="middle">Technisch</text>
+    <text x="350" y="82" fill="rgba(0,0,0,0.5)" font-size="12" text-anchor="middle">→ Alle drei Säulen zusammen ergeben eine starke SEO-Strategie</text>
+  </svg>
+  <div class="quote">
+    "SEO ist kein Sprint, sondern ein Marathon – wer langfristig investiert, erntet nachhaltige Sichtbarkeit."
+    <div class="quote-source">Kreutzer, R. T. (2021). Praxisorientiertes Online-Marketing (4. Aufl., S. 89). Springer Gabler.</div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 7: SECTION ON-PAGE ======================== -->
+<div class="slide slide-section" id="slide-7">
+  <div class="section-number">3</div>
+  <div class="section-title-big">On-Page-SEO</div>
+  <div class="section-subtitle">Was kann man direkt auf der eigenen Website optimieren?</div>
+</div>
+
+<!-- ======================== SLIDE 8: ON-PAGE ELEMENTE ======================== -->
+<div class="slide slide-content" id="slide-8">
+  <div class="slide-header">
+    <span class="slide-tag">ON-PAGE</span>
+    <span class="slide-title">Die wichtigsten On-Page-Elemente</span>
+  </div>
+  <table>
+    <tr><th>Element</th><th>Regel / Limit</th><th>Erläuterung & Beispiel</th></tr>
+    <tr><td><strong>Title-Tag</strong></td><td>max. 60 Zeichen</td><td>Titel im Browsertab und in Google. <em>„Nike Air Max 90 – Günstig kaufen | Shop.de"</em></td></tr>
+    <tr><td><strong>Meta-Description</strong></td><td>max. 160 Zeichen</td><td>Kurzbeschreibung unter Titel in Google. Kein direkter Rankingfaktor, aber erhöht Klickrate (CTR)</td></tr>
+    <tr><td><strong>H1-Überschrift</strong></td><td>Genau 1 pro Seite</td><td>Hauptüberschrift der Seite, enthält das Haupt-Keyword</td></tr>
+    <tr><td><strong>H2–H6</strong></td><td>Beliebig viele</td><td>Untergliederung des Inhalts, strukturiert den Text logisch</td></tr>
+    <tr><td><strong>Alt-Texte</strong></td><td>Beschreibend</td><td>Bildbeschreibung für Suchmaschinen &amp; Screenreader</td></tr>
+    <tr><td><strong>URL-Struktur</strong></td><td>Sprechende URLs</td><td><code>/damen/schuhe/sneaker</code> statt <code>/cat=23&amp;id=4512</code></td></tr>
+    <tr><td><strong>Seiteninhalt</strong></td><td>Einzigartig, min. 300 W.</td><td>Kein Duplicate Content! Mehrwert für den Nutzer schaffen</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SLIDE 9: TMHAU CHECKLISTE ======================== -->
+<div class="slide slide-content" id="slide-9">
+  <div class="slide-header">
+    <span class="slide-tag">ON-PAGE</span>
+    <span class="slide-title">Die T-M-H-A-U Checkliste</span>
+  </div>
+  <div class="box box-orange" style="margin-bottom:20px;">
+    <div class="box-title">Eselsbrücke</div>
+    <p style="margin:0;font-size:16px;"><strong>T-M-H-A-U</strong> = <span class="highlight">T</span>itle – <span class="highlight">M</span>eta – <span class="highlight">H</span>1 – <span class="highlight">A</span>lt-Text – <span class="highlight">U</span>RL</p>
+    <p style="margin:8px 0 0;font-size:14px;color:rgba(0,0,0,0.7);">Merke: „<em>Tolle Menschen Haben Alle Unternehmungen optimiert!</em>"</p>
+  </div>
+  <svg width="100%" height="230" viewBox="0 0 760 230">
+    <!-- Title -->
+    <rect x="10" y="10" width="740" height="36" rx="6" fill="rgba(52,152,219,0.25)" stroke="#3498db" stroke-width="1.5"/>
+    <text x="24" y="33" fill="#3498db" font-size="13" font-weight="700">T – Title-Tag:</text>
+    <text x="140" y="33" fill="rgba(0,0,0,0.8)" font-size="13">„Nike Air Max 90 Damen – Günstig online kaufen | Shop.de" (55 Zeichen ✓)</text>
+    <!-- Meta -->
+    <rect x="10" y="54" width="740" height="36" rx="6" fill="rgba(39,174,96,0.2)" stroke="#27ae60" stroke-width="1.5"/>
+    <text x="24" y="77" fill="#27ae60" font-size="13" font-weight="700">M – Meta-Description:</text>
+    <text x="180" y="77" fill="rgba(0,0,0,0.8)" font-size="13">„Entdecke den Nike Air Max 90 in Weiß für Damen. Jetzt bestellen &amp; gratis liefern lassen!" (90 Z. ✓)</text>
+    <!-- H1 -->
+    <rect x="10" y="98" width="740" height="36" rx="6" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="1.5"/>
+    <text x="24" y="121" fill="#f39c12" font-size="13" font-weight="700">H – H1-Überschrift:</text>
+    <text x="158" y="121" fill="rgba(0,0,0,0.8)" font-size="13">„Nike Air Max 90 Damen Sneaker in Weiß" (enthält Haupt-Keyword ✓)</text>
+    <!-- Alt -->
+    <rect x="10" y="142" width="740" height="36" rx="6" fill="rgba(192,57,43,0.2)" stroke="#e74c3c" stroke-width="1.5"/>
+    <text x="24" y="165" fill="#e74c3c" font-size="13" font-weight="700">A – Alt-Text:</text>
+    <text x="110" y="165" fill="rgba(0,0,0,0.8)" font-size="13">„Nike Air Max 90 Damen Sneaker Weiß Seitenansicht" (beschreibend, mit Keywords ✓)</text>
+    <!-- URL -->
+    <rect x="10" y="186" width="740" height="36" rx="6" fill="rgba(26,26,46,0.8)" stroke="rgba(0,0,0,0.2)" stroke-width="1.5"/>
+    <text x="24" y="209" fill="rgba(0,0,0,0.6)" font-size="13" font-weight="700">U – URL:</text>
+    <text x="90" y="209" fill="rgba(0,0,0,0.8)" font-size="13">/damen/sneaker/nike-air-max-90-weiss (lesbar, sprechend, kein Kauderwelsch ✓)</text>
+  </svg>
+</div>
+
+<!-- ======================== SLIDE 10: OPTIMIERTE PRODUKTSEITE ======================== -->
+<div class="slide slide-content" id="slide-10">
+  <div class="slide-header">
+    <span class="slide-tag">ON-PAGE</span>
+    <span class="slide-title">Praxisbeispiel: SEO-optimierte Produktseite</span>
+  </div>
+  <div class="grid-2" style="gap:16px;">
+    <div>
+      <div class="box box-red" style="margin-bottom:12px;">
+        <div class="box-title">❌ Schlecht optimiert</div>
+        <ul>
+          <li>Title: „Produkt 4512 Shop"</li>
+          <li>H1: „Willkommen auf unserer Seite"</li>
+          <li>URL: <code>/shop?cat=3&amp;pid=4512</code></li>
+          <li>Alt-Text: „img001.jpg"</li>
+          <li>Meta: leer oder automatisch</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="box box-green" style="margin-bottom:12px;">
+        <div class="box-title">✅ Gut optimiert</div>
+        <ul>
+          <li>Title: „Nike Air Max 90 Damen – kaufen | Shop.de"</li>
+          <li>H1: „Nike Air Max 90 Damen Sneaker Weiß"</li>
+          <li>URL: <code>/damen/sneaker/nike-air-max-90-weiss</code></li>
+          <li>Alt-Text: „Nike Air Max 90 Damen Weiß Seitenansicht"</li>
+          <li>Meta: 120 Zeichen, mit CTA und Keyword</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="box box-blue">
+    <div class="box-title">Wissenschaftlicher Kontext (APA 7)</div>
+    <p style="margin:0;font-size:13px;">Kollmann (2022) betont, dass die On-Page-Optimierung der „Grundstein für jede weitere SEO-Maßnahme" darstellt und ohne sie auch Off-Page-Maßnahmen keine nachhaltige Wirkung entfalten können (S. 312).</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 11: SECTION KEYWORDS ======================== -->
+<div class="slide slide-section" id="slide-11">
+  <div class="section-number">4</div>
+  <div class="section-title-big">Keyword-Recherche</div>
+  <div class="section-subtitle">Short-Tail, Mid-Tail &amp; Long-Tail Keywords</div>
+</div>
+
+<!-- ======================== SLIDE 12: KEYWORD TYPEN ======================== -->
+<div class="slide slide-content" id="slide-12">
+  <div class="slide-header">
+    <span class="slide-tag">KEYWORDS</span>
+    <span class="slide-title">Keyword-Typen im Vergleich</span>
+  </div>
+  <table style="margin-bottom:16px;">
+    <tr><th>Keyword-Typ</th><th>Beispiel</th><th>Suchvolumen</th><th>Wettbewerb</th><th>Conversion</th></tr>
+    <tr>
+      <td><strong>Short-Tail</strong> (1 Wort)</td>
+      <td>„Schuhe"</td>
+      <td>Sehr hoch (Mio./Monat)</td>
+      <td><span class="badge badge-red">Sehr hoch</span></td>
+      <td><span class="badge badge-red">Niedrig</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mid-Tail</strong> (2–3 Wörter)</td>
+      <td>„Nike Sneaker Damen"</td>
+      <td>Mittel (10.000+)</td>
+      <td><span class="badge badge-orange">Mittel</span></td>
+      <td><span class="badge badge-orange">Mittel</span></td>
+    </tr>
+    <tr>
+      <td><strong>Long-Tail</strong> (4+ Wörter)</td>
+      <td>„Nike Air Max 90 Damen Weiß 38 kaufen"</td>
+      <td>Gering (100–500)</td>
+      <td><span class="badge badge-green">Gering</span></td>
+      <td><span class="badge badge-green">Hoch</span></td>
+    </tr>
+  </table>
+  <div class="box box-red">
+    <div class="box-title">Merke! Long-Tail-Keywords für neue Shops</div>
+    <ul>
+      <li>Deutlich <strong>weniger Wettbewerb</strong> → leichter auf Seite 1 zu kommen</li>
+      <li>Hohe <strong>Kaufabsicht</strong> → der Nutzer weiß genau, was er sucht</li>
+      <li>Besonders geeignet für <strong>neue oder kleine Webshops</strong></li>
+    </ul>
+  </div>
+  <div class="box box-orange">
+    <div class="box-title">Eselsbrücke</div>
+    <p style="margin:0;"><strong>Lang = Wenig Wettbewerb = Mehr Conversions</strong><br>Je länger der Suchbegriff, desto konkreter der Kaufwunsch! Wer „Nike Air Max 90 Weiß 38 kaufen" googelt, ist kaufbereit.</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 13: KEYWORD RECHERCHE TOOLS ======================== -->
+<div class="slide slide-content" id="slide-13">
+  <div class="slide-header">
+    <span class="slide-tag">KEYWORDS</span>
+    <span class="slide-title">Keyword-Recherche: Tools &amp; Vorgehen</span>
+  </div>
+  <div class="grid-2" style="gap:16px;margin-bottom:16px;">
+    <div>
+      <h3>Kostenlose Tools</h3>
+      <ul>
+        <li><strong>Google Search Console</strong> – eigene Suchanfragen analysieren</li>
+        <li><strong>Google Autosuggest</strong> – Suchvorschläge von Google nutzen</li>
+        <li><strong>AnswerThePublic</strong> – W-Fragen zu Keywords finden</li>
+        <li><strong>Ubersuggest (Basis)</strong> – Suchvolumen &amp; Wettbewerb</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Kostenpflichtige Tools</h3>
+      <ul>
+        <li><strong>Semrush</strong> – umfassende SEO-Analyse</li>
+        <li><strong>Ahrefs</strong> – Backlink- &amp; Keyword-Analyse</li>
+        <li><strong>Google Ads Keyword Planner</strong> – offizielles Google-Tool</li>
+        <li><strong>Sistrix</strong> – Sichtbarkeitsindex (DE Standard)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="flow">
+    <div class="flow-step">1. Thema bestimmen</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">2. Seed-Keywords sammeln</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">3. Tool-Analyse</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">4. Long-Tails filtern</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">5. Content erstellen</div>
+  </div>
+  <div class="quote">
+    "Keywords sind die Brücke zwischen dem, was Menschen suchen, und dem, was du anbietest – wer die richtigen Keywords wählt, gewinnt den Kunden noch vor dem Klick."
+    <div class="quote-source">Lammenett, E. (2021). Praxiswissen Online-Marketing (8. Aufl., S. 53). Springer Gabler.</div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 14: SECTION OFF-PAGE / TECHNISCH ======================== -->
+<div class="slide slide-section" id="slide-14">
+  <div class="section-number">5</div>
+  <div class="section-title-big">Off-Page &amp; Technisches SEO</div>
+  <div class="section-subtitle">Backlinks, Core Web Vitals &amp; Mobile-First</div>
+</div>
+
+<!-- ======================== SLIDE 15: OFF-PAGE SEO ======================== -->
+<div class="slide slide-content" id="slide-15">
+  <div class="slide-header">
+    <span class="slide-tag">OFF-PAGE</span>
+    <span class="slide-title">Off-Page-SEO: Backlinks &amp; Autorität</span>
+  </div>
+  <div class="box box-blue" style="margin-bottom:16px;">
+    <div class="box-title">Was sind Backlinks?</div>
+    <p style="margin:0;">Backlinks sind Links von <strong>anderen Websites</strong> auf die eigene Seite. Google wertet sie als „Vertrauensvoten" – je mehr hochwertige Websites verlinken, desto <strong>höher die Domain Authority</strong> und das Ranking.</p>
+  </div>
+  <div class="grid-2" style="gap:14px;">
+    <div class="box box-green" style="margin:0;">
+      <div class="box-title">✅ Gute Backlinks</div>
+      <ul>
+        <li>Von themenrelevanten Websites</li>
+        <li>Von vertrauenswürdigen Domains (.de, Nachrichtenportale)</li>
+        <li>Natürlich entstanden (redaktionell)</li>
+        <li>Mit beschreibendem Ankertext</li>
+      </ul>
+    </div>
+    <div class="box box-red" style="margin:0;">
+      <div class="box-title">❌ Schlechte Backlinks</div>
+      <ul>
+        <li>Aus Linkfarmen oder Spam-Seiten</li>
+        <li>Massenhaft gekaufte Links</li>
+        <li>Von nicht-themenrelevanten Seiten</li>
+        <li>Können zu Google-Penalty führen!</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-orange" style="margin-top:14px;">
+    <div class="box-title">Backlinks aufbauen – Strategien</div>
+    <div class="pill-row">
+      <span class="pill pill-blue">Gastbeiträge schreiben</span>
+      <span class="pill pill-green">Infografiken teilen</span>
+      <span class="pill pill-orange">PR &amp; Pressemitteilungen</span>
+      <span class="pill pill-blue">Broken-Link-Building</span>
+      <span class="pill pill-green">Kooperationen</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 16: TECHNISCHES SEO ======================== -->
+<div class="slide slide-content" id="slide-16">
+  <div class="slide-header">
+    <span class="slide-tag">TECH SEO</span>
+    <span class="slide-title">Technisches SEO: Core Web Vitals &amp; Mobile-First</span>
+  </div>
+  <table style="margin-bottom:14px;">
+    <tr><th>Faktor</th><th>Was bedeutet das?</th><th>Google-Einfluss</th></tr>
+    <tr><td><strong>Core Web Vitals</strong></td><td>LCP (Ladezeit), FID (Interaktivität), CLS (Layoutstabilität)</td><td><span class="badge badge-red">Sehr hoch</span></td></tr>
+    <tr><td><strong>Mobile-First Index</strong></td><td>Google indexiert zuerst die mobile Version der Website (seit 2018)</td><td><span class="badge badge-red">Sehr hoch</span></td></tr>
+    <tr><td><strong>robots.txt</strong></td><td>Definiert, welche Seiten Suchmaschinen crawlen dürfen</td><td><span class="badge badge-orange">Mittel</span></td></tr>
+    <tr><td><strong>sitemap.xml</strong></td><td>Liste aller URLs – hilft Google beim Finden aller Seiten</td><td><span class="badge badge-orange">Mittel</span></td></tr>
+    <tr><td><strong>HTTPS</strong></td><td>Verschlüsseltes Protokoll (SSL-Zertifikat) – Sicherheitssignal</td><td><span class="badge badge-orange">Mittel</span></td></tr>
+    <tr><td><strong>Structured Data</strong></td><td>Schema.org-Markup für Rich Snippets (Bewertungssterne etc.)</td><td><span class="badge badge-green">Wachsend</span></td></tr>
+  </table>
+  <div class="box box-red">
+    <div class="box-title">Merke! Mobile-First seit 2018</div>
+    <p style="margin:0;">Seit 2018 bewertet Google <strong>zuerst die mobile Version</strong> einer Website. Webshops ohne Mobiloptimierung werden schlechter gerankt – unabhängig vom Inhalt! Test: <em>Google Mobile-Friendly Test</em> (kostenlos).</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 17: ZWISCHENQUIZ SEO ======================== -->
+<div class="slide slide-content" id="slide-17" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+  <div class="slide-header">
+    <span class="slide-tag" style="background:#2563EB;">QUIZ</span>
+    <span class="slide-title">🧠 Zwischenquiz: SEO</span>
+  </div>
+  <div style="width:100%">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">1. Was steht bei der SEO-Eselsbrücke "T-M-H-A-U" für das "M"?</p>
+      <div class="zq8a-q1-opts">
+        <button onclick="checkZQ8AQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Mobile-Optimierung</button>
+        <button onclick="checkZQ8AQ1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Meta-Description</button>
+        <button onclick="checkZQ8AQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Metatag-Keywords</button>
+      </div>
+      <p id="zq8a-q1-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">2. Welche Keyword-Art hat den HÖCHSTEN Wettbewerb, aber die NIEDRIGSTE Conversion?</p>
+      <div class="zq8a-q2-opts">
+        <button onclick="checkZQ8AQ2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Short-Tail Keywords (z.B. "Schuhe")</button>
+        <button onclick="checkZQ8AQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Mid-Tail Keywords (z.B. "Nike Sneaker Damen")</button>
+        <button onclick="checkZQ8AQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Long-Tail Keywords</button>
+      </div>
+      <p id="zq8a-q2-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">3. Wie viel Prozent aller Webshop-Besuche kommen über organische Suche (SEO)?</p>
+      <div class="zq8a-q3-opts">
+        <button onclick="checkZQ8AQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) ca. 20 %</button>
+        <button onclick="checkZQ8AQ3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) ca. 40 %</button>
+        <button onclick="checkZQ8AQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) ca. 70 %</button>
+      </div>
+      <p id="zq8a-q3-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ8AQ1(btn, correct) {
+    btn.closest('.zq8a-q1-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8a-q1-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! M = Meta-Description (max. 160 Zeichen)' : '❌ Falsch! M = Meta-Description';
+    if (!correct) btn.closest('.zq8a-q1-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8AQ2(btn, correct) {
+    btn.closest('.zq8a-q2-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8a-q2-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Short-Tail = höchster Wettbewerb, niedrigste Conversion.' : '❌ Falsch! Short-Tail-Keywords haben höchsten Wettbewerb und niedrigste Conversion.';
+    if (!correct) btn.closest('.zq8a-q2-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8AQ3(btn, correct) {
+    btn.closest('.zq8a-q3-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8a-q3-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! Ca. 40 % aller Shop-Besuche kommen über organische Suchergebnisse.' : '❌ Falsch! Richtig: Ca. 40 % über organische Suche.';
+    if (!correct) btn.closest('.zq8a-q3-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- SLIDE 18: QUIZ ONLINE MARKETING ======================== -->
+<div class="slide slide-content" id="slide-18" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+  <div class="slide-header">
+    <span class="slide-tag" style="background:#2563EB;">QUIZ</span>
+    <span class="slide-title">🧠 Zwischenquiz: Online-Marketing</span>
+  </div>
+  <div style="width:100%">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">1. Wofür steht das "E" im PESO-Modell?</p>
+      <div class="zq8b-q1-opts">
+        <button onclick="checkZQ8BQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Earned Media (z.B. PR, Presseartikel)</button>
+        <button onclick="checkZQ8BQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) External Media (z.B. Fremdwerbung)</button>
+        <button onclick="checkZQ8BQ1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Earned Media (z.B. SEO-Rankings, Social Shares)</button>
+        <button onclick="checkZQ8BQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">D) E-Mail Media (nur Newsletter)</button>
+      </div>
+      <p id="zq8b-q1-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">2. Welchen durchschnittlichen ROI erzielt E-Mail-Marketing laut Studien?</p>
+      <div class="zq8b-q2-opts">
+        <button onclick="checkZQ8BQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) 1 EUR Invest → 8 EUR Umsatz</button>
+        <button onclick="checkZQ8BQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) 1 EUR Invest → 15 EUR Umsatz</button>
+        <button onclick="checkZQ8BQ2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) 1 EUR Invest → 36 EUR Umsatz</button>
+        <button onclick="checkZQ8BQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">D) 1 EUR Invest → 100 EUR Umsatz</button>
+      </div>
+      <p id="zq8b-q2-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">3. Was ist der Hauptunterschied zwischen SEA und SEO?</p>
+      <div class="zq8b-q3-opts">
+        <button onclick="checkZQ8BQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) SEA nutzt Social Media, SEO nutzt Google</button>
+        <button onclick="checkZQ8BQ3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) SEA = bezahlte Anzeigen (sofort sichtbar), SEO = organische Rankings (langfristig)</button>
+        <button onclick="checkZQ8BQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) SEA ist kostenlos, SEO ist kostenpflichtig</button>
+      </div>
+      <p id="zq8b-q3-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ8BQ1(btn, correct) {
+    btn.closest('.zq8b-q1-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8b-q1-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! E = Earned Media: organisch verdiente Reichweite (SEO, Shares, Rezensionen).' : '❌ Falsch! E = Earned Media – Reichweite die man sich "verdient" (SEO, Empfehlungen, PR).';
+    if (!correct) btn.closest('.zq8b-q1-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8BQ2(btn, correct) {
+    btn.closest('.zq8b-q2-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8b-q2-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! E-Mail-Marketing erzielt durchschnittlich 36 EUR Umsatz pro 1 EUR Invest.' : '❌ Falsch! Der ROI beträgt ca. 36:1 – einer der höchsten im Online-Marketing.';
+    if (!correct) btn.closest('.zq8b-q2-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8BQ3(btn, correct) {
+    btn.closest('.zq8b-q3-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8b-q3-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! SEA (Search Engine Advertising) = bezahlte Klicks, sofort oben. SEO = langfristige organische Sichtbarkeit.' : '❌ Falsch! SEA = bezahlt & sofort, SEO = organisch & langfristig.';
+    if (!correct) btn.closest('.zq8b-q3-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- SLIDE 19: QUIZ KPIS ======================== -->
+<div class="slide slide-content" id="slide-19" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+  <div class="slide-header">
+    <span class="slide-tag" style="background:#2563EB;">QUIZ</span>
+    <span class="slide-title">🧠 Zwischenquiz: KPIs &amp; Kennzahlen</span>
+  </div>
+  <div style="width:100%">
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">1. Wie berechnet sich die Conversion Rate (CR)?</p>
+      <div class="zq8c-q1-opts">
+        <button onclick="checkZQ8CQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) (Umsatz / Besucher) × 100</button>
+        <button onclick="checkZQ8CQ1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) (Käufer / Besucher) × 100</button>
+        <button onclick="checkZQ8CQ1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) (Klicks / Impressionen) × 100</button>
+      </div>
+      <p id="zq8c-q1-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">2. Ein Unternehmen hat CLV = 240 EUR und CAC = 60 EUR. Was bedeutet das CLV:CAC-Verhältnis von 4:1?</p>
+      <div class="zq8c-q2-opts">
+        <button onclick="checkZQ8CQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) Schlecht – der CAC ist zu hoch</button>
+        <button onclick="checkZQ8CQ2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) Gut – Zielwert ist ≥ 3:1, hier werden 4 EUR pro 1 EUR Akquise-Kosten verdient</button>
+        <button onclick="checkZQ8CQ2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) Neutral – CLV und CAC sollten gleich sein</button>
+      </div>
+      <p id="zq8c-q2-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+    <div style="margin-bottom:16px;">
+      <p style="font-weight:bold;margin-bottom:8px;color:#ecf0f1;font-size:15px;">3. Ein Shop gibt 500 EUR für Google Ads aus und erzielt 3.000 EUR Umsatz. Wie hoch ist der ROAS?</p>
+      <div class="zq8c-q3-opts">
+        <button onclick="checkZQ8CQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">A) ROAS = 150 %</button>
+        <button onclick="checkZQ8CQ3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">B) ROAS = 3</button>
+        <button onclick="checkZQ8CQ3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:white;cursor:pointer;font-size:14px;">C) ROAS = 6 (3.000 ÷ 500)</button>
+      </div>
+      <p id="zq8c-q3-r" style="margin-top:5px;font-weight:bold;display:none;font-size:14px;"></p>
+    </div>
+  </div>
+  <script>
+  function checkZQ8CQ1(btn, correct) {
+    btn.closest('.zq8c-q1-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8c-q1-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! CR = (Anzahl Käufer / Anzahl Besucher) × 100. Typisch im E-Commerce: 1–3 %.' : '❌ Falsch! CR = (Käufer / Besucher) × 100 – misst den Anteil kaufender Besucher.';
+    if (!correct) btn.closest('.zq8c-q1-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8CQ2(btn, correct) {
+    btn.closest('.zq8c-q2-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8c-q2-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! CLV:CAC ≥ 3:1 gilt als gesund. 4:1 bedeutet: pro 1 EUR Akquise werden 4 EUR Kundenwert generiert.' : '❌ Falsch! CLV:CAC = 4:1 ist gut – Zielwert ist mindestens 3:1.';
+    if (!correct) btn.closest('.zq8c-q2-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  function checkZQ8CQ3(btn, correct) {
+    btn.closest('.zq8c-q3-opts').querySelectorAll('button').forEach(b => b.disabled=true);
+    btn.style.background = correct ? '#27ae60' : '#c0392b';
+    const r = document.getElementById('zq8c-q3-r');
+    r.style.display='block'; r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent = correct ? '✅ Richtig! ROAS = Umsatz ÷ Werbekosten = 3.000 ÷ 500 = 6. Für jeden investierten Euro wurden 6 EUR Umsatz erzielt.' : '❌ Falsch! ROAS = Umsatz / Werbeausgaben = 3.000 / 500 = 6.';
+    if (!correct) btn.closest('.zq8c-q3-opts').querySelectorAll('button').forEach(b=>{ if(b.onclick.toString().includes('true')) b.style.background='#27ae60'; });
+  }
+  </script>
+</div>
+
+<!-- Ehemals SLIDE 17: SECTION ONLINE MARKETING (jetzt 20) ======================== -->
+<div class="slide slide-section" id="slide-20">
+  <div class="section-number">6</div>
+  <div class="section-title-big">Online-Marketing-Kanäle</div>
+  <div class="section-subtitle">SEA · E-Mail · Social Media · Content · Affiliate</div>
+</div>
+
+<!-- ======================== SLIDE 18: PESO MODELL ======================== -->
+<div class="slide slide-content" id="slide-21">
+  <div class="slide-header">
+    <span class="slide-tag">MARKETING</span>
+    <span class="slide-title">Das PESO-Modell</span>
+  </div>
+  <div class="box box-blue" style="margin-bottom:16px;">
+    <div class="box-title">Was ist das PESO-Modell?</div>
+    <p style="margin:0;">Das PESO-Modell klassifiziert alle Marketing-Aktivitäten in vier Medientypen und hilft bei der strategischen Planung des Marketing-Mix (Dietrich, 2014).</p>
+  </div>
+  <div class="grid-2" style="gap:14px;">
+    <div class="card" style="border-top:3px solid var(--red-light);text-align:left;">
+      <div class="card-title" style="color:var(--red-light);">P – Paid Media</div>
+      <div class="card-text">Bezahlte Werbung: Google Ads (SEA), Social Ads, Display-Werbung, Influencer-Kooperationen (bezahlt)</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue-light);text-align:left;">
+      <div class="card-title" style="color:var(--blue-light);">E – Earned Media</div>
+      <div class="card-text">Verdiente Sichtbarkeit: Organische Suche (SEO), PR, Kundenbewertungen, Empfehlungen</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);text-align:left;">
+      <div class="card-title" style="color:var(--orange);">S – Shared Media</div>
+      <div class="card-text">Geteilte Inhalte: Social Media Posts, Virales Marketing, User-Generated Content (UGC)</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);text-align:left;">
+      <div class="card-title" style="color:var(--green);">O – Owned Media</div>
+      <div class="card-text">Eigene Kanäle: Webshop, Blog, Newsletter, App – volle Kontrolle über Content und Design</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 19: SEA GRUNDLAGEN ======================== -->
+<div class="slide slide-content" id="slide-22">
+  <div class="slide-header">
+    <span class="slide-tag">SEA</span>
+    <span class="slide-title">Google Ads – Search Engine Advertising</span>
+  </div>
+  <div class="box box-blue" style="margin-bottom:14px;">
+    <div class="box-title">Was ist SEA?</div>
+    <p style="margin:0;"><strong>SEA (Search Engine Advertising)</strong> bezeichnet bezahlte Anzeigen in Suchmaschinen. Bei Google Ads erscheinen diese oberhalb und unterhalb der organischen Suchergebnisse und sind mit „Gesponsert" gekennzeichnet.</p>
+  </div>
+  <div class="flow" style="margin-bottom:16px;">
+    <div class="flow-step">Nutzer sucht Keyword</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Google Auktion (Ad Rank)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Anzeige erscheint</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Nutzer klickt</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--red-light);color:var(--red-light);">Werbetreibender zahlt CPC</div>
+  </div>
+  <table>
+    <tr><th>Kriterium</th><th>🔍 SEO (organisch)</th><th>📣 SEA (bezahlt)</th></tr>
+    <tr><td>Kosten</td><td>Keine direkten Klickkosten</td><td>Kosten pro Klick (CPC): 0,20–5,00 EUR</td></tr>
+    <tr><td>Geschwindigkeit</td><td>Monate bis zur Wirkung</td><td><span class="highlight-green">Sofort sichtbar</span></td></tr>
+    <tr><td>Nachhaltigkeit</td><td><span class="highlight-green">Langfristig stabil</span></td><td>Endet mit dem Budget</td></tr>
+    <tr><td>Vertrauen der Nutzer</td><td>Höher (organisch)</td><td>Geringer (sichtbares „Anzeige"-Label)</td></tr>
+    <tr><td>Steuerbarkeit</td><td>Gering</td><td><span class="highlight-green">Sehr hoch</span></td></tr>
+    <tr><td>Empfehlung</td><td>Langfristige Strategie</td><td>Launches, Saisongeschäft, schnelle Ergebnisse</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SLIDE 20: SEA STRATEGIE ======================== -->
+<div class="slide slide-content" id="slide-23">
+  <div class="slide-header">
+    <span class="slide-tag">SEA</span>
+    <span class="slide-title">Google Ads: Kampagnentypen &amp; Strategie</span>
+  </div>
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="card" style="border-top:3px solid var(--blue-light);">
+      <div class="card-title" style="color:var(--blue-light);">Search Ads</div>
+      <div class="card-text">Textanzeigen in Suchergebnissen. Erscheinen bei passenden Keywords. Höchste Kaufabsicht.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div class="card-title" style="color:var(--orange);">Shopping Ads</div>
+      <div class="card-text">Produktanzeigen mit Bild und Preis. Ideal für E-Commerce. Direkte Produktdarstellung.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div class="card-title" style="color:var(--green);">Display Ads</div>
+      <div class="card-text">Bildbanner auf Partner-Websites. Gut für Remarketing und Brand Awareness.</div>
+    </div>
+  </div>
+  <div class="box box-red">
+    <div class="box-title">SEA-Grundsatz</div>
+    <p style="margin:0 0 8px;"><strong>SEA = schnelle Sichtbarkeit, aber kostet Geld pro Klick (PPC).</strong></p>
+    <p style="margin:0;font-size:13px;">Typische CPC-Kosten im E-Commerce: <strong>0,20 EUR bis 5,00 EUR</strong> pro Klick (abhängig von Branche und Wettbewerb). Strategie: SEA für schnelle Ergebnisse + SEO für nachhaltige Sichtbarkeit kombinieren.</p>
+  </div>
+  <div class="quote">
+    "Der Ad Rank bei Google Ads ergibt sich nicht allein aus dem Gebot, sondern auch aus dem Qualitätsfaktor – guter Content und relevante Landingpages senken den tatsächlichen CPC."
+    <div class="quote-source">Kreutzer, R. T. (2021). Praxisorientiertes Online-Marketing (4. Aufl., S. 134). Springer Gabler.</div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 21: E-MAIL MARKETING ======================== -->
+<div class="slide slide-content" id="slide-24">
+  <div class="slide-header">
+    <span class="slide-tag">E-MAIL</span>
+    <span class="slide-title">E-Mail-Marketing: Der ROI-König</span>
+  </div>
+  <div class="box box-red" style="margin-bottom:16px;">
+    <div class="box-title">Merke! E-Mail ROI</div>
+    <p style="margin:0;"><strong>E-Mail-Marketing hat den höchsten ROI aller Marketing-Kanäle:</strong> ca. <span class="highlight">36 EUR Ertrag pro 1 EUR Invest</span> (Statista, 2023). Trotz Social Media und anderen neuen Kanälen bleibt E-Mail ungeschlagen.</p>
+  </div>
+  <h3 style="margin-bottom:12px;">Aufbau eines effektiven Newsletters:</h3>
+  <svg width="100%" height="200" viewBox="0 0 700 200">
+    <rect x="0" y="0" width="700" height="30" rx="4" fill="rgba(26,26,46,0.9)" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+    <text x="12" y="20" fill="rgba(0,0,0,0.9)" font-size="12" font-weight="700">Betreffzeile:</text>
+    <text x="100" y="20" fill="rgba(0,0,0,0.7)" font-size="12">Klar, kurz, neugierig machend (max. 50 Zeichen) – „Dein Rabatt wartet – nur heute 20 %!"</text>
+    <rect x="0" y="34" width="700" height="28" rx="4" fill="rgba(52,152,219,0.2)" stroke="#3498db" stroke-width="1"/>
+    <text x="12" y="52" fill="#3498db" font-size="12" font-weight="700">Preheader:</text>
+    <text x="90" y="52" fill="rgba(0,0,0,0.7)" font-size="12">Erste sichtbare Zeile im Postfach – ergänzt die Betreffzeile und erhöht Öffnungsrate</text>
+    <rect x="0" y="66" width="700" height="28" rx="4" fill="rgba(192,57,43,0.2)" stroke="#e74c3c" stroke-width="1"/>
+    <text x="12" y="84" fill="#e74c3c" font-size="12" font-weight="700">Header:</text>
+    <text x="72" y="84" fill="rgba(0,0,0,0.7)" font-size="12">Logo, Branding, Wiedererkennungswert – erste Sekunden entscheiden über Weiterlesung</text>
+    <rect x="0" y="98" width="700" height="28" rx="4" fill="rgba(0,0,0,0.06)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+    <text x="12" y="116" fill="rgba(0,0,0,0.6)" font-size="12" font-weight="700">Hauptinhalt:</text>
+    <text x="110" y="116" fill="rgba(0,0,0,0.7)" font-size="12">Personalisierter Text, Bilder, Produktempfehlungen – kurz und prägnant</text>
+    <rect x="0" y="130" width="700" height="28" rx="4" fill="rgba(243,156,18,0.2)" stroke="#f39c12" stroke-width="1"/>
+    <text x="12" y="148" fill="#f39c12" font-size="12" font-weight="700">Call-to-Action (CTA):</text>
+    <text x="160" y="148" fill="rgba(0,0,0,0.7)" font-size="12">Klarer Button – „Jetzt shoppen", „Angebot sichern" – gut sichtbar, kontrastreich</text>
+    <rect x="0" y="163" width="700" height="28" rx="4" fill="rgba(39,174,96,0.15)" stroke="#27ae60" stroke-width="1"/>
+    <text x="12" y="181" fill="#27ae60" font-size="12" font-weight="700">Footer:</text>
+    <text x="68" y="181" fill="rgba(0,0,0,0.7)" font-size="12">Impressum, Abmelde-Link (DSGVO-Pflicht!), Social-Media-Links, AGB</text>
+  </svg>
+</div>
+
+<!-- ======================== SLIDE 22: EMAIL DSGVO ======================== -->
+<div class="slide slide-content" id="slide-25">
+  <div class="slide-header">
+    <span class="slide-tag">E-MAIL</span>
+    <span class="slide-title">E-Mail-Marketing: DSGVO &amp; Double-Opt-In</span>
+  </div>
+  <div class="box box-red" style="margin-bottom:16px;">
+    <div class="box-title">DSGVO-Pflicht!</div>
+    <p style="margin:0;">E-Mails dürfen <strong>nur mit ausdrücklicher Einwilligung</strong> versendet werden. Das <strong>Double-Opt-In-Verfahren</strong> ist die rechtssichere Methode in Deutschland.</p>
+  </div>
+  <div class="flow" style="margin-bottom:16px;">
+    <div class="flow-step">1. Nutzer trägt E-Mail ein</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">2. Bestätigungsmail gesendet</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">3. Nutzer klickt Bestätigung</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--green);color:var(--green);">4. ✅ Einwilligung gültig</div>
+  </div>
+  <div class="grid-2" style="gap:14px;">
+    <div class="box box-green" style="margin:0;">
+      <div class="box-title">Metriken im E-Mail-Marketing</div>
+      <ul>
+        <li><strong>Öffnungsrate:</strong> Ø 20–30 % (gut)</li>
+        <li><strong>Klickrate (CTR):</strong> Ø 2–5 %</li>
+        <li><strong>Abmelderate:</strong> unter 0,5 % (gut)</li>
+        <li><strong>Conversion Rate:</strong> 1–3 % (E-Commerce)</li>
+      </ul>
+    </div>
+    <div class="box box-orange" style="margin:0;">
+      <div class="box-title">Eselsbrücke</div>
+      <p style="margin:0;"><strong>E-Mail = „Alte aber Gold"</strong><br>36 EUR pro 1 EUR Einsatz – kein anderer Kanal schlägt das. E-Mail-Marketing ist alt, aber immer noch die goldene Nummer im Marketing!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 23: SOCIAL MEDIA ======================== -->
+<div class="slide slide-content" id="slide-26">
+  <div class="slide-header">
+    <span class="slide-tag">SOCIAL</span>
+    <span class="slide-title">Social Media Marketing im E-Commerce</span>
+  </div>
+  <table style="margin-bottom:14px;">
+    <tr><th>Plattform</th><th>Zielgruppe</th><th>E-Commerce-Einsatz</th><th>Format</th></tr>
+    <tr><td><strong>📸 Instagram</strong></td><td>18–35 J.</td><td>Produktbilder, Stories, Shopping-Tags, Reels</td><td>Bild, Video, Reel</td></tr>
+    <tr><td><strong>👥 Facebook</strong></td><td>25–55 J.</td><td>Ads, Marketplace, Gruppen, Retargeting</td><td>Bild, Video, Text</td></tr>
+    <tr><td><strong>🎵 TikTok</strong></td><td>13–30 J.</td><td>TikTok Shop, Viral-Content, Creator-Kooperationen</td><td>Kurzvideo</td></tr>
+    <tr><td><strong>📌 Pinterest</strong></td><td>25–45 J., Frauen</td><td>Produktpins, Shopping-Feature, Inspirationsboards</td><td>Bild, Infografik</td></tr>
+    <tr><td><strong>▶ YouTube</strong></td><td>Alle</td><td>Produktreviews, Tutorials, Unboxings</td><td>Langvideo, Shorts</td></tr>
+  </table>
+  <div class="box box-blue">
+    <div class="box-title">TikTok Shop – Social Commerce 2024</div>
+    <p style="margin:0;"><strong>TikTok Shop</strong> ermöglicht Käufe direkt im Video, ohne die App zu verlassen (<strong>Social Commerce</strong>). Seit 2024 in Deutschland verfügbar. Besonders geeignet für Mode, Beauty, Lifestyle. Laut Kollmann (2022) ist Social Commerce „die nächste Evolutionsstufe des E-Commerce" (S. 189).</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 24: CONTENT & AFFILIATE ======================== -->
+<div class="slide slide-content" id="slide-27">
+  <div class="slide-header">
+    <span class="slide-tag">MARKETING</span>
+    <span class="slide-title">Content-Marketing &amp; Affiliate-Marketing</span>
+  </div>
+  <div class="grid-2" style="gap:16px;">
+    <div>
+      <div class="box box-green" style="margin-bottom:12px;">
+        <div class="box-title">📝 Content-Marketing</div>
+        <p style="margin:0 0 8px;"><strong>Definition:</strong> Erstellung und Verbreitung wertvoller Inhalte, um Zielgruppen anzuziehen und zu binden (Pull-Marketing statt Push).</p>
+        <ul>
+          <li>Blogbeiträge &amp; Ratgeber</li>
+          <li>Videos &amp; Tutorials</li>
+          <li>Infografiken &amp; Podcasts</li>
+          <li>Produktvergleiche &amp; Tests</li>
+        </ul>
+      </div>
+      <div class="box box-orange" style="margin:0;">
+        <div class="box-title">Vorteil</div>
+        <p style="margin:0;font-size:13px;">Content-Marketing stärkt SEO (mehr indexierte Seiten), baut Vertrauen auf und generiert organischen Traffic ohne direkten Klickpreis.</p>
+      </div>
+    </div>
+    <div>
+      <div class="box box-blue" style="margin-bottom:12px;">
+        <div class="box-title">🤝 Affiliate-Marketing</div>
+        <p style="margin:0 0 8px;"><strong>Prinzip:</strong> Partner (Affiliates) bewerben Produkte und erhalten eine Provision pro Kauf/Klick (Performance-Marketing).</p>
+        <ul>
+          <li>Affiliate = Partner/Publisher</li>
+          <li>Advertiser = Shop-Betreiber</li>
+          <li>Provision: z.B. 5–15 % vom Verkaufspreis</li>
+          <li>Tracking via eindeutigem Affiliate-Link</li>
+        </ul>
+      </div>
+      <div class="box box-red" style="margin:0;">
+        <div class="box-title">Merke! Pay-per-Sale</div>
+        <p style="margin:0;font-size:13px;">Affiliate-Marketing ist <strong>risikoarm</strong> für den Shop – Kosten entstehen nur bei erfolgreichem Verkauf. Beispiele: Amazon Associates, AWIN, Tradedoubler.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 25: MARKETING ÜBERBLICK ======================== -->
+<div class="slide slide-content" id="slide-28">
+  <div class="slide-header">
+    <span class="slide-tag">MARKETING</span>
+    <span class="slide-title">Online-Marketing-Kanäle im Vergleich</span>
+  </div>
+  <table>
+    <tr><th>Kanal</th><th>Typ</th><th>Kosten</th><th>Geschwindigkeit</th><th>Ideal für</th></tr>
+    <tr><td><strong>SEO</strong></td><td>Earned</td><td>Zeitaufwand</td><td>Langsam (Monate)</td><td>Langfristige Sichtbarkeit</td></tr>
+    <tr><td><strong>SEA / Google Ads</strong></td><td>Paid</td><td>CPC: 0,20–5 EUR</td><td><span class="badge badge-green">Sofort</span></td><td>Launches, Saisonkampagnen</td></tr>
+    <tr><td><strong>E-Mail-Marketing</strong></td><td>Owned</td><td>Tool-Kosten</td><td>Mittel</td><td>Kundenbindung, ROI</td></tr>
+    <tr><td><strong>Social Media</strong></td><td>Shared/Paid</td><td>Zeit + ggf. Ads</td><td>Mittel-schnell</td><td>Awareness, junge Zielgruppen</td></tr>
+    <tr><td><strong>Content-Marketing</strong></td><td>Owned</td><td>Zeitaufwand</td><td>Langsam</td><td>SEO-Stärkung, Vertrauen</td></tr>
+    <tr><td><strong>Affiliate-Marketing</strong></td><td>Paid (pay-per-sale)</td><td>Provision</td><td>Mittel</td><td>Reichweitenerweiterung</td></tr>
+    <tr><td><strong>Influencer-Marketing</strong></td><td>Paid/Shared</td><td>Fix + variabel</td><td>Schnell</td><td>Brand Awareness, UGC</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SLIDE 26: SECTION ANALYTICS ======================== -->
+<div class="slide slide-section" id="slide-29">
+  <div class="section-number">7</div>
+  <div class="section-title-big">Analytics &amp; KPIs</div>
+  <div class="section-subtitle">Conversion Rate · Bounce Rate · CAC · CLV · ROAS</div>
+</div>
+
+<!-- ======================== SLIDE 27: KPI ÜBERSICHT ======================== -->
+<div class="slide slide-content" id="slide-30">
+  <div class="slide-header">
+    <span class="slide-tag">KPIs</span>
+    <span class="slide-title">Was sind KPIs?</span>
+  </div>
+  <div class="box box-blue" style="margin-bottom:16px;">
+    <div class="box-title">Definition KPI</div>
+    <p style="margin:0;"><strong>KPI (Key Performance Indicator)</strong> = Leistungskennzahl zur Messung des Unternehmenserfolgs. KPIs machen Erfolg messbar und ermöglichen datenbasierte Entscheidungen im E-Commerce.</p>
+  </div>
+  <div class="grid-3" style="gap:12px;">
+    <div class="kpi-box">
+      <div class="kpi-value">2,5 %</div>
+      <div class="kpi-label">Conversion Rate</div>
+      <div class="kpi-formula">Käufe / Besucher × 100</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-value">&lt; 60 %</div>
+      <div class="kpi-label">Bounce Rate (Ziel)</div>
+      <div class="kpi-formula">Absprünge / Besuche × 100</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-value">50 EUR</div>
+      <div class="kpi-label">AOV (Ø Bestellwert)</div>
+      <div class="kpi-formula">Umsatz / Bestellungen</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-value">25 EUR</div>
+      <div class="kpi-label">CAC (Akquisekosten)</div>
+      <div class="kpi-formula">Marketingkosten / Neukunden</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-value">150 EUR</div>
+      <div class="kpi-label">CLV (Customer Lifetime Value)</div>
+      <div class="kpi-formula">AOV × Käufe/J × Kundenjahre</div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-value">&gt; 4</div>
+      <div class="kpi-label">ROAS (Return on Ad Spend)</div>
+      <div class="kpi-formula">Umsatz aus Werbung / Werbekosten</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 28: CONVERSION RATE & BOUNCE RATE ======================== -->
+<div class="slide slide-content" id="slide-31">
+  <div class="slide-header">
+    <span class="slide-tag">KPIs</span>
+    <span class="slide-title">Conversion Rate &amp; Bounce Rate</span>
+  </div>
+  <div class="grid-2" style="gap:16px;">
+    <div>
+      <div class="box box-green" style="margin-bottom:14px;">
+        <div class="box-title">Conversion Rate (CR)</div>
+        <p style="margin:0 0 8px;font-size:20px;font-weight:900;color:var(--green);">CR = Käufe / Besucher × 100</p>
+        <ul>
+          <li>Benchmark E-Commerce: <strong>1–3 %</strong> (gut)</li>
+          <li>Unter 1 %: Optimierungsbedarf</li>
+          <li>Über 3 %: Sehr gut</li>
+        </ul>
+      </div>
+      <div class="box box-blue" style="margin:0;">
+        <div class="box-title">Einflussfaktoren auf CR</div>
+        <ul>
+          <li>Vertrauenssignale (Bewertungen, Siegel)</li>
+          <li>Ladegeschwindigkeit der Seite</li>
+          <li>Einfacher Checkout-Prozess</li>
+          <li>Produktbilder &amp; -beschreibungen</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="box box-orange" style="margin-bottom:14px;">
+        <div class="box-title">Bounce Rate (Absprungrate)</div>
+        <p style="margin:0 0 8px;font-size:20px;font-weight:900;color:var(--orange);">BR = Absprünge / Besuche × 100</p>
+        <ul>
+          <li>Ziel: <strong>unter 60 %</strong> (gut)</li>
+          <li>Über 80 %: kritisch, Handlungsbedarf</li>
+          <li>Bedeutet: Nutzer verlässt nach 1 Seite</li>
+        </ul>
+      </div>
+      <div class="box box-red" style="margin:0;">
+        <div class="box-title">Warum ist Bounce Rate hoch?</div>
+        <ul>
+          <li>Schlechte Ladezeit (&gt; 3 Sekunden)</li>
+          <li>Irrelevanter Inhalt für Suchanfrage</li>
+          <li>Schlechtes mobiles Design</li>
+          <li>Fehlende Vertrauenssignale</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 29: CAC & CLV ======================== -->
+<div class="slide slide-content" id="slide-32">
+  <div class="slide-header">
+    <span class="slide-tag">KPIs</span>
+    <span class="slide-title">CAC vs. CLV – Das wichtigste Verhältnis</span>
+  </div>
+  <div class="grid-2" style="gap:16px;margin-bottom:16px;">
+    <div class="box box-red" style="margin:0;">
+      <div class="box-title">CAC – Customer Acquisition Cost</div>
+      <p style="margin:0 0 8px;font-size:18px;font-weight:900;color:var(--red-light);">CAC = Marketingkosten / Neukunden</p>
+      <p style="margin:0;font-size:13px;">Beispiel: 2.000 EUR Marketingkosten ÷ 80 Neukunden = <strong>25 EUR CAC</strong></p>
+    </div>
+    <div class="box box-green" style="margin:0;">
+      <div class="box-title">CLV – Customer Lifetime Value</div>
+      <p style="margin:0 0 8px;font-size:18px;font-weight:900;color:var(--green);">CLV = AOV × Käufe/Jahr × Kundenjahre</p>
+      <p style="margin:0;font-size:13px;">Beispiel: 50 EUR × 3 × 2 Jahre = <strong>300 EUR CLV</strong></p>
+    </div>
+  </div>
+  <svg width="100%" height="80" viewBox="0 0 700 80">
+    <rect x="0" y="20" width="140" height="40" rx="6" fill="rgba(192,57,43,0.3)" stroke="#e74c3c" stroke-width="1.5"/>
+    <text x="70" y="44" fill="#e74c3c" font-size="14" font-weight="700" text-anchor="middle">CAC = 25 EUR</text>
+    <rect x="160" y="20" width="540" height="40" rx="6" fill="rgba(39,174,96,0.3)" stroke="#27ae60" stroke-width="1.5"/>
+    <text x="430" y="44" fill="#27ae60" font-size="14" font-weight="700" text-anchor="middle">CLV = 300 EUR (= 12× CAC ✓✓ sehr profitabel)</text>
+    <text x="350" y="14" fill="rgba(0,0,0,0.5)" font-size="11" text-anchor="middle">Ziel: CLV ≥ 3× CAC = profitables Geschäftsmodell</text>
+    <text x="70" y="72" fill="rgba(0,0,0,0.4)" font-size="11" text-anchor="middle">Kosten</text>
+    <text x="430" y="72" fill="rgba(0,0,0,0.4)" font-size="11" text-anchor="middle">Ertrag über gesamte Kundenbeziehung</text>
+  </svg>
+  <div class="box box-orange" style="margin-top:14px;">
+    <div class="box-title">Eselsbrücke</div>
+    <p style="margin:0;"><strong>CLV muss mindestens 3× den CAC übersteigen</strong>, sonst ist das Geschäftsmodell nicht nachhaltig profitable. Kollmann (2022): „Der CLV ist die entscheidende Kenngröße für die Bewertung der Kundenbeziehung" (S. 234).</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 30: ROAS & AOV ======================== -->
+<div class="slide slide-content" id="slide-33">
+  <div class="slide-header">
+    <span class="slide-tag">KPIs</span>
+    <span class="slide-title">ROAS &amp; AOV – Werbung messen</span>
+  </div>
+  <div class="grid-2" style="gap:16px;margin-bottom:16px;">
+    <div class="box box-blue" style="margin:0;">
+      <div class="box-title">ROAS – Return on Ad Spend</div>
+      <p style="margin:0 0 8px;font-size:18px;font-weight:900;color:var(--blue-light);">ROAS = Umsatz aus Werbung / Werbekosten</p>
+      <ul>
+        <li>ROAS &gt; 4 gilt als gut im E-Commerce</li>
+        <li>Beispiel: 8.000 EUR Umsatz / 2.000 EUR Kosten = <strong>ROAS 4</strong></li>
+        <li>ROAS unter 2 → Kampagne überdenken</li>
+      </ul>
+    </div>
+    <div class="box box-orange" style="margin:0;">
+      <div class="box-title">AOV – Average Order Value</div>
+      <p style="margin:0 0 8px;font-size:18px;font-weight:900;color:var(--orange);">AOV = Gesamtumsatz / Anzahl Bestellungen</p>
+      <ul>
+        <li>Höherer AOV = höherer Umsatz pro Bestellung</li>
+        <li>Strategien: Bundles, Upselling, Cross-Selling, kostenloser Versand ab X EUR</li>
+        <li>Wichtig für CLV-Berechnung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box box-gray">
+    <div class="box-title">5-KPI-Eselsbrücke: C-B-A-CC</div>
+    <p style="margin:0;"><strong>C-B-A-CC</strong> = <span class="highlight">C</span>onversion – <span class="highlight">B</span>ounce – <span class="highlight">A</span>OV – <span class="highlight">C</span>AC – <span class="highlight">C</span>LV<br>
+    Merke: <em>„Clevere Betreiber Analysieren Conversion Continuierlich"</em><br>
+    Das sind die 5 KPI-Riesen im E-Commerce!</p>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 31: PRAXISBEISPIEL KPI ======================== -->
+<div class="slide slide-content" id="slide-34">
+  <div class="slide-header">
+    <span class="slide-tag">KPIs</span>
+    <span class="slide-title">Praxisbeispiel: KPI-Berechnung</span>
+  </div>
+  <div class="box box-blue" style="margin-bottom:16px;">
+    <div class="box-title">Online-Shop „ModeWelt.de" – Monatsreport</div>
+    <div class="grid-2" style="margin-top:8px;gap:8px;">
+      <ul style="margin:0;">
+        <li>Besucher: <strong>10.000</strong></li>
+        <li>Käufe: <strong>250</strong></li>
+        <li>Umsatz: <strong>12.500 EUR</strong></li>
+      </ul>
+      <ul style="margin:0;">
+        <li>Marketingausgaben: <strong>2.000 EUR</strong></li>
+        <li>Neukunden: <strong>80</strong></li>
+        <li>Werbeeinnahmen: <strong>8.000 EUR</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid-3" style="gap:12px;">
+    <div class="kpi-box" style="border:1px solid var(--green);">
+      <div class="kpi-value" style="font-size:24px;color:var(--green);">2,5 %</div>
+      <div class="kpi-label">Conversion Rate</div>
+      <div class="kpi-formula">250 / 10.000 × 100 = 2,5 % ✓</div>
+    </div>
+    <div class="kpi-box" style="border:1px solid var(--orange);">
+      <div class="kpi-value" style="font-size:24px;color:var(--orange);">50 EUR</div>
+      <div class="kpi-label">AOV (Ø Bestellwert)</div>
+      <div class="kpi-formula">12.500 / 250 = 50 EUR</div>
+    </div>
+    <div class="kpi-box" style="border:1px solid var(--red-light);">
+      <div class="kpi-value" style="font-size:24px;color:var(--red-light);">25 EUR</div>
+      <div class="kpi-label">CAC</div>
+      <div class="kpi-formula">2.000 / 80 = 25 EUR</div>
+    </div>
+    <div class="kpi-box" style="border:1px solid var(--blue-light);">
+      <div class="kpi-value" style="font-size:24px;color:var(--blue-light);">4,0</div>
+      <div class="kpi-label">ROAS</div>
+      <div class="kpi-formula">8.000 / 2.000 = 4,0 ✓</div>
+    </div>
+    <div class="kpi-box" style="border:1px solid var(--green);grid-column:span 2;">
+      <div class="kpi-value" style="font-size:24px;color:var(--green);">CLV &gt; 3× CAC ✓</div>
+      <div class="kpi-label">Profitabilitätsprüfung</div>
+      <div class="kpi-formula">Annahme: CLV = 150 EUR = 6× CAC (25 EUR) → sehr profitabel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 32: SECTION ZUSAMMENFASSUNG ======================== -->
+<div class="slide slide-section" id="slide-35">
+  <div class="section-number">8</div>
+  <div class="section-title-big">Zusammenfassung</div>
+  <div class="section-subtitle">Die wichtigsten Kernaussagen von Tag 8</div>
+</div>
+
+<!-- ======================== SLIDE 33: ZUSAMMENFASSUNG ======================== -->
+<div class="slide slide-content" id="slide-36">
+  <div class="slide-header">
+    <span class="slide-tag">ZUSAMMENFASSUNG</span>
+    <span class="slide-title">Kernaussagen Tag 8</span>
+  </div>
+  <div class="grid-2" style="gap:12px;">
+    <div class="box box-blue" style="margin:0;">
+      <div class="box-title">SEO-Kernaussagen</div>
+      <ul>
+        <li><strong>SEO</strong> = kostenlose Sichtbarkeit, ca. 40 % aller Shop-Besuche</li>
+        <li><strong>On-Page-SEO</strong>: T-M-H-A-U – Title, Meta, H1, Alt-Text, URL</li>
+        <li><strong>Long-Tail-Keywords</strong>: Weniger Wettbewerb, höhere Kaufabsicht</li>
+        <li><strong>Mobile-First</strong>: Google indexiert zuerst die mobile Version</li>
+        <li><strong>Backlinks</strong>: Qualität vor Quantität</li>
+      </ul>
+    </div>
+    <div class="box box-green" style="margin:0;">
+      <div class="box-title">Marketing-Kernaussagen</div>
+      <ul>
+        <li><strong>PESO-Modell</strong>: Paid, Earned, Shared, Owned Media</li>
+        <li><strong>SEO vs. SEA</strong>: Nachhaltig vs. sofort – am besten kombinieren</li>
+        <li><strong>E-Mail-Marketing</strong>: Höchster ROI (~36 EUR pro 1 EUR)</li>
+        <li><strong>TikTok Shop</strong>: Neue Social-Commerce-Plattform</li>
+        <li><strong>Affiliate</strong>: Risikofrei – nur bei Erfolg zahlen</li>
+      </ul>
+    </div>
+    <div class="box box-red" style="margin:0;">
+      <div class="box-title">KPI-Kernaussagen</div>
+      <ul>
+        <li><strong>Conversion Rate</strong>: 1–3 % im E-Commerce = gut</li>
+        <li><strong>Bounce Rate</strong>: unter 60 % anstreben</li>
+        <li><strong>CAC &amp; CLV</strong>: CLV muss mindestens 3× den CAC übersteigen</li>
+        <li><strong>ROAS</strong>: über 4 gilt als erfolgreiche Werbekampagne</li>
+      </ul>
+    </div>
+    <div class="box box-orange" style="margin:0;">
+      <div class="box-title">Eselsbrücken-Zusammenfassung</div>
+      <ul>
+        <li><strong>T-M-H-A-U</strong>: On-Page-SEO-Checkliste</li>
+        <li><strong>Lang = Wenig Wettbewerb</strong>: Long-Tail-Keywords</li>
+        <li><strong>PESO</strong>: Marketing-Mix-Modell</li>
+        <li><strong>C-B-A-CC</strong>: Die 5 KPI-Riesen im E-Commerce</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 34: LITERATURVERZEICHNIS ======================== -->
+<div class="slide slide-content" id="slide-37">
+  <div class="slide-header">
+    <span class="slide-tag">LITERATUR</span>
+    <span class="slide-title">Literaturverzeichnis (APA 7)</span>
+  </div>
+  <div class="box box-gray" style="margin-bottom:10px;">
+    <p style="margin:0 0 10px;font-size:14px;">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-35546-2</p>
+    <p style="margin:0 0 10px;font-size:14px;">Kreutzer, R. T. (2021). <em>Praxisorientiertes Online-Marketing: Konzepte – Instrumente – Checklisten</em> (4. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-34281-3</p>
+    <p style="margin:0 0 10px;font-size:14px;">Lammenett, E. (2021). <em>Praxiswissen Online-Marketing: Affiliate-, Influencer-, Content- und E-Mail-Marketing, Google Ads, SEO, Social Media, Online-PR</em> (8. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-32557-1</p>
+    <p style="margin:0 0 10px;font-size:14px;">Google. (2023). <em>Core Web Vitals</em>. https://web.dev/vitals/</p>
+    <p style="margin:0;font-size:14px;">Statista Research Department. (2023). <em>E-Mail-Marketing: Return on Investment weltweit</em>. Statista. https://www.statista.com</p>
+  </div>
+  <div class="box box-blue" style="margin-bottom:10px;">
+    <div class="box-title">Weiterführende Literatur</div>
+    <p style="margin:0;font-size:13px;">Chaffey, D., &amp; Ellis-Chadwick, F. (2022). <em>Digital Marketing: Strategy, Implementation and Practice</em> (8th ed.). Pearson. &nbsp;|&nbsp; Moz. (2024). <em>The Beginner's Guide to SEO</em>. https://moz.com/beginners-guide-to-seo</p>
+  </div>
+  <div class="box box-orange">
+    <div class="box-title">Buchgrundlage</div>
+    <p style="margin:0;font-size:13px;">Diese Präsentation basiert auf den Buchseiten 84–91 des Lehrwerks für den Ausbildungsberuf Kaufmann/Kauffrau im E-Commerce (Lernfeld 1, Abschnitt 1.8).</p>
+  </div>
+</div>
+
+
+
+</div><!-- end slides-wrapper -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 37</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>SEO & Online-Marketing &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

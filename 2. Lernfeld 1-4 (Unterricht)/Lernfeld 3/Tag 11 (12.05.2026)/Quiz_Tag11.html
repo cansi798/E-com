@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 11 – LF3: Der Abschluss von Rechtsgeschäften</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 11: Der Abschluss von Rechtsgeschäften</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Wie viele übereinstimmende Willenserklärungen sind für den Abschluss eines Vertrags (mehrseitiges Rechtsgeschäft) notwendig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Mindestens zwei</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Drei</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Vier</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Mehrseitige Rechtsgeschäfte (Verträge) werden durch mindestens zwei übereinstimmende Willenserklärungen (Antrag und Annahme) rechtswirksam.</div>
+    <div class="feedback err">&#10007; Falsch. Für einen Vertrag sind mindestens zwei übereinstimmende Willenserklärungen erforderlich: Antrag (1. WE) und Annahme (2. WE).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was ist ein einseitiges Rechtsgeschäft?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Vertrag zwischen zwei Parteien</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Rechtsgeschäft, das durch eine einzige Willenserklärung rechtswirksam wird</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Rechtsgeschäft, das nur mündlich abgeschlossen werden kann</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Kaufvertrag zwischen Händler und Verbraucher</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Einseitige Rechtsgeschäfte werden durch eine einzige Willenserklärung rechtswirksam – z. B. Kündigung (empfangsbedürftig) oder Testament (nicht empfangsbedürftig).</div>
+    <div class="feedback err">&#10007; Falsch. Ein einseitiges Rechtsgeschäft wird durch eine einzige Willenserklärung rechtswirksam (z. B. Kündigung, Testament).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche der folgenden Vertragsarten verpflichtet zur Übereignung einer Sache gegen Kaufpreis?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Kaufvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Mietvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Dienstvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Leihvertrag</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Kaufvertrag wird eine Sache oder ein Recht gegen Kaufpreis übereignet – also das Eigentum dauerhaft übertragen.</div>
+    <div class="feedback err">&#10007; Falsch. Der Kaufvertrag regelt die Veräußerung (Übereignung) von Sachen und Rechten gegen Kaufpreis.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was unterscheidet den Werkvertrag vom Dienstvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Dienstvertrag erfordert Schriftform, der Werkvertrag nicht</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Beim Werkvertrag wird ein bestimmter Erfolg geschuldet, beim Dienstvertrag nur die Tätigkeit</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Der Werkvertrag gilt nur für Handwerker</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es gibt keinen wesentlichen Unterschied</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Der Kernunterschied: Beim Werkvertrag wird ein bestimmter Erfolg (das Werk) geschuldet. Beim Dienstvertrag wird nur die Tätigkeit selbst geschuldet – nicht deren Erfolg.</div>
+    <div class="feedback err">&#10007; Falsch. Der entscheidende Unterschied: Werkvertrag schuldet Erfolg (Abnahme erforderlich), Dienstvertrag schuldet nur die Tätigkeit.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was ist ein "Pachtvertrag" im Unterschied zum Mietvertrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Pacht ist immer kostenlos, Miete kostet Geld</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Beim Pachtvertrag wird die Sache zum Gebrauch UND zur Nutzziehung (Gewinn) überlassen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Pacht gilt nur für Grundstücke, Miete nur für Gebäude</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es gibt keinen rechtlichen Unterschied</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Pachtvertrag werden Sachen und Rechte zum Gebrauch UND zur Nutzung (Fruchtziehung) gegen Pachtzins überlassen. Beispiel: Landwirt pachtet Ackerland, um Ernte einzufahren.</div>
+    <div class="feedback err">&#10007; Falsch. Der Pachtvertrag umfasst Gebrauch UND Nutzziehung (z. B. Ernte einfahren), der Mietvertrag nur den Gebrauch.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was bedeutet "Abschlussfreiheit" im Rahmen der Vertragsfreiheit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Verträge können in jeder Form abgeschlossen werden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Jede Person steht es frei, einen Vertrag abzuschließen oder es zu lassen – niemand kann dazu gezwungen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Vertragsparteien können den Inhalt frei festlegen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Verträge kosten keine Gebühren</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Abschlussfreiheit bedeutet: Jeder kann frei entscheiden, ob er einen Vertrag abschließt. Niemand kann dazu gezwungen werden (Ausnahme: Kontrahierungszwang).</div>
+    <div class="feedback err">&#10007; Falsch. Abschlussfreiheit = freie Entscheidung über den Vertragsabschluss (Ausnahme: Kontrahierungszwang z. B. bei Stromanbietern).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Welcher Vertrag erfordert laut Präsentation ZWINGEND die Schriftform (Ausnahme von der Formfreiheit)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kaufvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Werkvertrag</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Darlehensvertrag und Ausbildungsvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Leihvertrag</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Darlehensverträge und Ausbildungsverträge erfordern Schriftform – sie sind Ausnahmen vom Grundsatz der Formfreiheit.</div>
+    <div class="feedback err">&#10007; Falsch. Ausnahmen von der Formfreiheit sind z. B. Darlehensverträge und Ausbildungsverträge, die Schriftform benötigen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was ist eine nichtige Willenserklärung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Erklärung, die nach Anfechtung ungültig wird</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Eine Erklärung, die von Anfang an ungültig ist und keine Rechtsfolgen hat</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine mündliche Erklärung ohne Zeugen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Erklärung, die nur durch ein Gericht für ungültig erklärt werden kann</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Nichtige Willenserklärungen sind von Anfang an ungültig und haben keine Rechtsfolgen – es ist, als wären sie nie abgegeben worden.</div>
+    <div class="feedback err">&#10007; Falsch. Nichtig = von Anfang an ungültig, keine Rechtsfolgen (anders als anfechtbar, das zunächst gültig ist).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welcher der folgenden Fälle führt zur NICHTIGKEIT einer Willenserklärung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Irrtum in der Erklärung (z. B. Verschreiben)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Arglistige Täuschung durch den Vertragspartner</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Hauskauf nur mündlich abgeschlossen (fehlende vorgeschriebene Form)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Widerrechtliche Drohung</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Das Fehlen der vorgeschriebenen Form (z. B. Hauskauf muss notariell beurkundet werden) führt zur Nichtigkeit. Irrtum, Täuschung und Drohung sind hingegen Anfechtungsgründe.</div>
+    <div class="feedback err">&#10007; Falsch. Fehlende vorgeschriebene Form führt zur Nichtigkeit. Irrtum, Täuschung und Drohung sind Anfechtungsgründe (zunächst gültig).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was sind die drei Anfechtungsgründe für Willenserklärungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Geisteskrankheit, Scherzgeschäft, Sittenwidrigkeit</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Irrtum (Erklärung/Eigenschaft/Übermittlung), widerrechtliche Drohung, arglistige Täuschung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Formfehler, Gesetzesverstoss, Minderjährigkeit</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bewusstlosigkeit, Scheingeschäft, Wucher</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Anfechtungsgründe sind: Irrtum (in der Erklärung, über eine Eigenschaft, in der Übermittlung), widerrechtliche Drohung und arglistige Täuschung.</div>
+    <div class="feedback err">&#10007; Falsch. Die drei Anfechtungsgründe sind: Irrtum (Erklärung/Eigenschaft/Übermittlung), widerrechtliche Drohung und arglistige Täuschung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was ist der Hauptunterschied zwischen nichtigen und anfechtbaren Rechtsgeschäften?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Nichtig = von Anfang an ungültig. Anfechtbar = zunächst gültig, wird erst nach Anfechtung rückwirkend nichtig</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Nichtig = nur für Kaufverträge. Anfechtbar = nur für Dienstverträge</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kein Unterschied – beide sind von Anfang an ungültig</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Anfechtbar = nichtig nach Ablauf einer Frist</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Nichtig = automatisch von Anfang an ungültig. Anfechtbar = zunächst gültig, aber nach erfolgreicher Anfechtung rückwirkend nichtig (ex tunc).</div>
+    <div class="feedback err">&#10007; Falsch. Der entscheidende Unterschied: Nichtig = von Anfang an ungültig. Anfechtbar = zunächst gültig, erst nach Anfechtung rückwirkend nichtig.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Innerhalb welcher Frist muss bei einer widerrechtlichen Drohung die Anfechtung erklärt werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Unverzüglich nach Bekanntwerden</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Innerhalb eines Jahres nach Ende der Drohung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Innerhalb von 10 Jahren</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es gibt keine Frist</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Bei widerrechtlicher Drohung muss die Anfechtung innerhalb eines Jahres nach Ende der Drohung erklärt werden.</div>
+    <div class="feedback err">&#10007; Falsch. Die Anfechtungsfrist bei widerrechtlicher Drohung beträgt 1 Jahr nach Ende der Drohung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Ein Händler hat den Preis einer Ware versehentlich um 1.500 € zu niedrig angesetzt (Berechnungsirrtum). Kann er den Vertrag anfechten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ja, immer – jeder Irrtum berechtigt zur Anfechtung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Nein – ein Berechnungsirrtum ist kein Anfechtungsgrund</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ja, aber nur wenn der Irrtum mehr als 10 % beträgt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ja, wenn der Käufer den Irrtum kannte</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ein Berechnungsirrtum ist kein Anfechtungsgrund. Nur wenn sich der Händler im Verkaufsgespräch versprochen oder beim Vertrag verschrieben hat, wäre eine Anfechtung möglich.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Berechnungsirrtum berechtigt nicht zur Anfechtung – der Vertrag ist wirksam.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was bedeutet "invitatio ad offerendum" im E-Commerce?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Das verbindliche Angebot des Webshops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die Warendarstellung im Webshop ist keine verbindliche Offerte, sondern eine Aufforderung zur Abgabe eines Angebots</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Der Kaufvertrag ist bereits mit dem Klick auf "In den Warenkorb" geschlossen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine spezielle Zahlungsart für Online-Händler</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! "Invitatio ad offerendum" = Aufforderung zur Abgabe eines Angebots. Die Warendarstellung im Webshop ist kein verbindliches Angebot – der Kaufvertrag kommt erst durch Bestellungsannahme des Händlers zustande.</div>
+    <div class="feedback err">&#10007; Falsch. Invitatio ad offerendum = Die Warendarstellung im Webshop ist nur eine Einladung zum Angebot, kein verbindliches Angebot des Händlers.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Wann gilt die automatische Eingangsbetätigungsmail im E-Commerce als verbindliche Vertragsannahme?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Immer – jede E-Mail ist eine Vertragsannahme</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Meist nicht – erst die Auftragsbestätigung oder Versandmitteilung gilt als Annahme</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Niemals – Verträge müssen immer schriftlich per Post bestätigt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Immer, wenn der Webshop ein großes Unternehmen ist</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die automatische Eingangsbetätigung ist meist noch keine Vertragsannahme. Erst die eigentliche Auftragsbestätigung oder Versandmitteilung gilt rechtlich als Annahme.</div>
+    <div class="feedback err">&#10007; Falsch. Die automatische Eingangsbetätigung ist meist keine Vertragsannahme – erst die Auftragsbestätigung oder Versandmitteilung gilt als Annahme.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Ein Scherzgeschäft ("Du kannst mein Haus geschenkt haben!") führt zu einer...</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Nichtigen Willenserklärung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Anfechtbaren Willenserklärung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Verbindlichen Schenkung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Formungültigen, aber wirksamen Erklärung</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Eine Scherzerkärung ist ein Nichtigkeitsgrund – die Willenserklärung ist von Anfang an ungültig.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Scherzgeschäft führt zur Nichtigkeit der Willenserklärung – von Anfang an ungültig.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was ist ein Scheingeschäft?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein online abgeschlossener Vertrag ohne schriftliche Bestätigung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Vertrag, der dem äußeren Anschein nach gilt, aber von beiden Parteien nicht wirklich gewollt ist</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Vertrag mit einem minderjährigen Vertragspartner</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Vertrag unter Kaufleuten ohne Handelsregistereintrag</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ein Scheingeschäft liegt vor, wenn beide Parteien den Vertrag nicht wirklich wollen, z. B. wenn ein Gast eine höhere Quittung ausstellen lässt, als er tatsächlich bezahlt hat.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Scheingeschäft ist ein Vertrag, der äußerlich geschlossen wird, aber von beiden Parteien nicht wirklich gewollt ist – nichtig.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche der folgenden Aussagen zur Vertragsfreiheit ist KORREKT?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Verträge müssen immer schriftlich sein</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Man kann jeden beliebigen Vertrag mit jedermann zu jedem Inhalt abschließen, ohne jede Einschränkung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Verträge dürfen nicht gegen Gesetze oder gute Sitten verstoßen (Grenze der Inhaltsfreiheit)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Jeder Vertrag muss von einem Notar beurkundet werden</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die Inhaltsfreiheit hat Grenzen: Verträge dürfen nicht gegen Gesetze oder gute Sitten verstoßen (z. B. kein Wucher).</div>
+    <div class="feedback err">&#10007; Falsch. Die Vertragsfreiheit hat Grenzen – Verträge dürfen nicht gegen Gesetze oder gute Sitten verstoßen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welche Vertragsart liegt vor, wenn ein Einzelhändler monatlich 1.200 € Gehalt für seine Arbeit erhält?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Werkvertrag</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kaufvertrag</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Dienstvertrag (Arbeitsvertrag)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Pachtvertrag</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ein Arbeitnehmer, der Dienste gegen Gehalt erbringt, hat einen Dienstvertrag (Sonderform: Arbeitsvertrag).</div>
+    <div class="feedback err">&#10007; Falsch. Arbeit gegen Gehalt ist ein Dienstvertrag – die Sonderform mit persönlicher Abhängigkeit heißt Arbeitsvertrag.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was bedeutet "Kontrahierungszwang" als Ausnahme von der Abschlussfreiheit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Händler können Kunden zwingen, Verträge abzuschließen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bestimmte Unternehmen (z. B. Stromversorger) sind verpflichtet, Verträge mit jedem anzubieten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Verträge können nur mit staatlicher Genehmigung abgeschlossen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Verbraucher müssen Verträge annehmen, die Unternehmen anbieten</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Kontrahierungszwang bedeutet, dass bestimmte Unternehmen (z. B. Stromversorger, Bahn) verpflichtet sind, mit jedem Verträge abzuschließen – eine Ausnahme von der Abschlussfreiheit.</div>
+    <div class="feedback err">&#10007; Falsch. Kontrahierungszwang = bestimmte Unternehmen (z. B. Stromversorger) müssen mit jedem Kunden Verträge abschließen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 11</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 11: Mitbestimmung &amp; Entgeltabrechnung – Lernfeld 1</title>
+<style>
+:root{--red:#e74c3c;--red-light:#fef0ef;--blue:#4a90d9;--blue-light:#eef4fc;--dark:#2d3748;--green:#38b2ac;--green-light:#e6fffa;--orange:#ed8936;--orange-light:#fffaf0;--purple:#9f7aea;--purple-light:#faf5ff;--teal:#38b2ac;--teal-light:#e6fffa;--navy:#4a5568;--bg:#fafbfe;--card:#fff;--border:#e8ecf1;--text:#2d3748;--text-light:#718096;--accent:#667eea}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:22px 28px;border-bottom:none;box-shadow:0 2px 12px rgba(102,126,234,.25)}
+header h1{font-size:1.3rem;margin-bottom:4px;font-weight:700;letter-spacing:-.3px}
+header p{color:rgba(255,255,255,.8);font-size:.85rem}
+.main{max-width:880px;margin:0 auto;padding:24px 16px 60px}
+.quiz-header{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.quiz-title{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.quiz-meta{font-size:.85rem;color:var(--text-light);margin-top:3px}
+.score-box{display:flex;gap:18px;flex-wrap:wrap}
+.score-item{text-align:center;min-width:65px}
+.score-item .val{font-size:1.6rem;font-weight:700}
+.score-item .lbl{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.val.correct{color:var(--green)}.val.wrong{color:var(--red)}.val.open{color:var(--blue)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .3s}
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;transition:all .15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;box-shadow:0 2px 8px rgba(102,126,234,.3)}
+.btn-secondary{background:var(--dark);color:#fff}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#fff}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;font-size:.8rem;font-weight:500;transition:all .15s}
+.filter-btn:hover{border-color:var(--blue)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.question-card{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--border);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.question-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.question-card.answered-correct{border-left:4px solid var(--green)}
+.question-card.answered-wrong{border-left:4px solid var(--red)}
+.question-card.answered-partial{border-left:4px solid var(--orange)}
+.q-number{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.q-category{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px}
+.cat-definition{background:var(--blue-light);color:var(--blue)}
+.cat-technik{background:var(--purple-light);color:var(--purple)}
+.cat-recht{background:var(--red-light);color:var(--red)}
+.cat-checkout{background:var(--orange-light);color:#b45309}
+.cat-produkt{background:var(--green-light);color:var(--green)}
+.cat-shopsystem{background:var(--teal-light);color:var(--teal)}
+.q-text{font-size:.98rem;line-height:1.55;margin-bottom:14px;font-weight:500;color:var(--dark)}
+.q-hint{font-size:.78rem;color:var(--orange);margin-bottom:10px;font-style:italic}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--bg);transition:all .15s;text-align:left;font-size:.9rem;line-height:1.45}
+.choice-btn:hover:not(:disabled){border-color:var(--blue);background:var(--blue-light)}
+.choice-btn .label{font-weight:700;min-width:22px;color:var(--accent);flex-shrink:0}
+.choice-btn.selected{border-color:var(--accent);background:#eef1fd}
+.choice-btn.correct-answer{border-color:var(--green);background:var(--green-light)}
+.choice-btn.wrong-selected{border-color:var(--red);background:var(--red-light)}
+.choice-btn.missed{border-color:var(--orange);background:var(--orange-light)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.q-feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.88rem;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:#1a5c30}
+.q-feedback.partial{background:var(--orange-light);color:#8a5c00}
+.q-feedback.fail{background:var(--red-light);color:#8a1a1a}
+.check-btn{margin-top:12px;padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .15s}
+.check-btn:hover:not(:disabled){background:#764ba2}
+.check-btn:disabled{opacity:.35;cursor:default}
+.final-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:32px;text-align:center;margin-bottom:20px;display:none;border:none;box-shadow:0 4px 20px rgba(102,126,234,.3)}
+.final-banner.show{display:block}
+.final-banner .grade{font-size:3rem;font-weight:900;margin:10px 0}
+.final-banner .sub{color:#adb5bd;font-size:.9rem}
+footer{text-align:center;padding:16px;font-size:.75rem;color:#999;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+<h1>&#128218; Quiz – Tag 11: Mitbestimmung &amp; Entgeltabrechnung</h1>
+<p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+<div class="main">
+<div class="quiz-header">
+<div><div class="quiz-title">Tag 11: Mitbestimmung &amp; Entgeltabrechnung</div><div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div></div>
+<div class="score-box">
+<div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+<div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+<div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+<div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">&ndash;</div><div class="lbl">Punkte</div></div>
+</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="final-banner" id="final-banner"><div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div><div class="grade" id="final-grade"></div><div class="sub" id="final-sub"></div></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+<button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+<button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+<button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+</div>
+<div class="filter-bar">
+<span style="font-size:.8rem;color:#666;">Filter:</span>
+<button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+<button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+<button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+<button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+</div>
+<div id="questions-container"></div>
+</div>
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 11</footer>
+<script>
+const TOTAL=60;
+const questions=[
+  {
+    num: 1, cat: "betriebsrat",
+    text: "Wie heißt das Gesetz, das die Mitbestimmung der Arbeitnehmer im Betrieb regelt?",
+    choices: [
+      {label: "A", text: "Tarifvertragsgesetz (TVG)"},
+      {label: "B", text: "Berufsbildungsgesetz (BBiG)"},
+      {label: "C", text: "Betriebsverfassungsgesetz (BetrVG)"},
+      {label: "D", text: "Arbeitsschutzgesetz (ArbSchG)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 2, cat: "betriebsrat",
+    text: "Ab wie vielen ständig beschäftigten, wahlberechtigten Arbeitnehmern kann ein Betriebsrat gewählt werden?",
+    choices: [
+      {label: "A", text: "3 Arbeitnehmer"},
+      {label: "B", text: "5 Arbeitnehmer"},
+      {label: "C", text: "10 Arbeitnehmer"},
+      {label: "D", text: "20 Arbeitnehmer"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 3, cat: "betriebsrat",
+    text: "Wie lange beträgt die Amtszeit eines Betriebsrats?",
+    choices: [
+      {label: "A", text: "2 Jahre"},
+      {label: "B", text: "3 Jahre"},
+      {label: "C", text: "4 Jahre"},
+      {label: "D", text: "5 Jahre"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 4, cat: "betriebsrat",
+    text: "Wie viele Betriebsratsmitglieder hat ein Betrieb mit 120 Arbeitnehmern?",
+    choices: [
+      {label: "A", text: "5"},
+      {label: "B", text: "7"},
+      {label: "C", text: "9"},
+      {label: "D", text: "11"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 5, cat: "betriebsrat",
+    text: "Ab welchem Alter sind Arbeitnehmer wahlberechtigt für den Betriebsrat?",
+    choices: [
+      {label: "A", text: "14 Jahre"},
+      {label: "B", text: "16 Jahre"},
+      {label: "C", text: "18 Jahre"},
+      {label: "D", text: "21 Jahre"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 6, cat: "betriebsrat",
+    text: "Ab welchem Alter und mit welcher Mindestbetriebszugehörigkeit ist man wählbar für den Betriebsrat? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Ab 16 Jahren"},
+      {label: "B", text: "Ab 18 Jahren"},
+      {label: "C", text: "Mindestens 3 Monate Betriebszugehörigkeit"},
+      {label: "D", text: "Mindestens 6 Monate Betriebszugehörigkeit"}
+    ],
+    multi: true, correct: ["B", "D"]
+  },
+  {
+    num: 7, cat: "betriebsrat",
+    text: "Welchen besonderen Schutz genießen Betriebsratsmitglieder?",
+    choices: [
+      {label: "A", text: "Sie erhalten automatisch eine Gehaltserhöhung"},
+      {label: "B", text: "Sie genießen besonderen Kündigungsschutz"},
+      {label: "C", text: "Sie dürfen nicht versetzt werden, solange sie wollen"},
+      {label: "D", text: "Sie sind von der Lohnsteuer befreit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 8, cat: "betriebsrat",
+    text: "Das Amt des Betriebsrats ist …",
+    choices: [
+      {label: "A", text: "bezahlt und hauptberuflich ausgeübt"},
+      {label: "B", text: "ehrenamtlich (ohne Lohnkürzung für BR-Tätigkeit)"},
+      {label: "C", text: "nur für gewerkschaftlich organisierte Mitarbeiter zugänglich"},
+      {label: "D", text: "auf Antrag des Arbeitgebers entzogen werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 9, cat: "betriebsrat",
+    text: "Wie heißen die drei Stufen der Betriebsratsrechte in aufsteigender Reihenfolge?",
+    choices: [
+      {label: "A", text: "Mitbestimmung – Anhörung – Information"},
+      {label: "B", text: "Information – Anhörung – Mitbestimmung"},
+      {label: "C", text: "Kontrolle – Planung – Entscheidung"},
+      {label: "D", text: "Streik – Verhandlung – Einigung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 10, cat: "betriebsrat",
+    text: "Was bedeutet das Informationsrecht des Betriebsrats?",
+    choices: [
+      {label: "A", text: "Der BR kann allein über Personalentscheidungen entscheiden"},
+      {label: "B", text: "Der BR muss informiert werden, kann aber nicht mitentscheiden"},
+      {label: "C", text: "Der BR muss gehört werden, bevor der AG handelt"},
+      {label: "D", text: "Der BR hat das Recht, alle Gehälter offenzulegen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 11, cat: "betriebsrat",
+    text: "Welche Situation ist ein Beispiel für das Informationsrecht?",
+    choices: [
+      {label: "A", text: "Der AG ordnet Überstunden an"},
+      {label: "B", text: "Der AG informiert den BR über den Jahresabschluss"},
+      {label: "C", text: "Der AG ändert die Pausenregelung"},
+      {label: "D", text: "Der AG installiert eine Videoüberwachung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "betriebsrat",
+    text: "Was bedeutet das Anhörungsrecht / Mitwirkungsrecht des Betriebsrats?",
+    choices: [
+      {label: "A", text: "Der BR muss gehört werden; der AG kann nach der Stellungnahme allein entscheiden"},
+      {label: "B", text: "Der BR entscheidet gemeinsam mit dem AG"},
+      {label: "C", text: "Der BR hat kein Recht, Stellung zu nehmen"},
+      {label: "D", text: "Der BR kann durch ein Veto die Entscheidung blockieren"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 13, cat: "betriebsrat",
+    text: "Welche Situation löst das Anhörungsrecht des Betriebsrats aus?",
+    choices: [
+      {label: "A", text: "Der AG informiert über wirtschaftliche Lage"},
+      {label: "B", text: "Der AG stellt eine neue Mitarbeiterin ein ( 99 BetrVG)"},
+      {label: "C", text: "Der AG ändert Lohngruppen"},
+      {label: "D", text: "Der AG will einen Urlaubsplan aufstellen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 14, cat: "betriebsrat",
+    text: "Was ist die höchste Stufe der Betriebsratsrechte?",
+    choices: [
+      {label: "A", text: "Informationsrecht"},
+      {label: "B", text: "Anhörungsrecht"},
+      {label: "C", text: "Mitbestimmungsrecht"},
+      {label: "D", text: "Vorschlagsrecht"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 15, cat: "betriebsrat",
+    text: "Welches Organ entscheidet, wenn BR und AG sich bei der echten Mitbestimmung nicht einigen können?",
+    choices: [
+      {label: "A", text: "Das Finanzamt"},
+      {label: "B", text: "Die Einigungsstelle"},
+      {label: "C", text: "Die Gewerkschaft"},
+      {label: "D", text: "Das Arbeitsgericht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 16, cat: "betriebsrat",
+    text: "Welcher Paragraph des BetrVG regelt die erzwingbare Mitbestimmung in sozialen Angelegenheiten?",
+    choices: [
+      {label: "A", text: "99 BetrVG"},
+      {label: "B", text: "102 BetrVG"},
+      {label: "C", text: "87 BetrVG"},
+      {label: "D", text: "60 BetrVG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 17, cat: "betriebsrat",
+    text: "Welche der folgenden Themen unterliegen nach 87 BetrVG der erzwingbaren Mitbestimmung? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Einführung einer Videoüberwachung zur Leistungskontrolle"},
+      {label: "B", text: "Jahresabschluss des Unternehmens"},
+      {label: "C", text: "Aufstellung des Urlaubsplans"},
+      {label: "D", text: "Entlassung eines Mitarbeiters"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 18, cat: "betriebsrat",
+    text: "Was ist die JAV?",
+    choices: [
+      {label: "A", text: "Jugend- und Auszubildendenvertretung"},
+      {label: "B", text: "Jahresabschlussvorlage"},
+      {label: "C", text: "Jugendarbeitsverordnung"},
+      {label: "D", text: "Jahres-Ausbildungsvertrag"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 19, cat: "betriebsrat",
+    text: "Welche Arbeitnehmer vertritt die JAV?",
+    choices: [
+      {label: "A", text: "Alle Auszubildenden unabhängig vom Alter"},
+      {label: "B", text: "Alle Auszubildenden und Jugendlichen unter 25 Jahren"},
+      {label: "C", text: "Nur Auszubildende im ersten Lehrjahr"},
+      {label: "D", text: "Alle Mitarbeiter unter 30 Jahren"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 20, cat: "betriebsrat",
+    text: "Wie oft wird die JAV gewählt?",
+    choices: [
+      {label: "A", text: "Alle 4 Jahre"},
+      {label: "B", text: "Alle 3 Jahre"},
+      {label: "C", text: "Alle 2 Jahre"},
+      {label: "D", text: "Jährlich"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 21, cat: "betriebsrat",
+    text: "Ab wie vielen wahlberechtigten Auszubildenden / Jugendlichen muss eine JAV gebildet werden?",
+    choices: [
+      {label: "A", text: "Ab 3"},
+      {label: "B", text: "Ab 5"},
+      {label: "C", text: "Ab 10"},
+      {label: "D", text: "Ab 20"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 22, cat: "betriebsrat",
+    text: "Welche Rechte hat die JAV gegenüber dem Betriebsrat?",
+    choices: [
+      {label: "A", text: "Die JAV kann dem Betriebsrat Weisungen erteilen"},
+      {label: "B", text: "Die JAV hat das Recht, Anträge an den Betriebsrat zu stellen"},
+      {label: "C", text: "Die JAV ersetzt den Betriebsrat vollständig"},
+      {label: "D", text: "Die JAV hat das alleinige Streikrecht"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 23, cat: "betriebsrat",
+    text: "Welche Paragraphen des BetrVG regeln die JAV?",
+    choices: [
+      {label: "A", text: "1–10 BetrVG"},
+      {label: "B", text: "60–73 BetrVG"},
+      {label: "C", text: "87–89 BetrVG"},
+      {label: "D", text: "99–103 BetrVG"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 24, cat: "betriebsrat",
+    text: "Was bedeutet Bruttogehalt?",
+    choices: [
+      {label: "A", text: "Der Auszahlungsbetrag auf dem Konto"},
+      {label: "B", text: "Das vereinbarte Gehalt laut Arbeitsvertrag vor allen Abzügen"},
+      {label: "C", text: "Das Gehalt nach Abzug der Sozialversicherungsbeiträge"},
+      {label: "D", text: "Der steuerfreie Anteil des Gehalts"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "betriebsrat",
+    text: "Wie lautet die Formel für das Nettogehalt?",
+    choices: [
+      {label: "A", text: "Brutto + Lohnsteuer + SV-Beiträge = Netto"},
+      {label: "B", text: "Brutto - Lohnsteuer - Solidaritätszuschlag - Kirchensteuer - SV-Beiträge = Netto"},
+      {label: "C", text: "Brutto - Kirchensteuer = Netto"},
+      {label: "D", text: "Netto = Brutto × 0,8"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "betriebsrat",
+    text: "Welche vier Sozialversicherungsarten werden vom Bruttogehalt abgezogen? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Krankenversicherung (KV) und Rentenversicherung (RV)"},
+      {label: "B", text: "Haftpflichtversicherung und Kfz-Versicherung"},
+      {label: "C", text: "Arbeitslosenversicherung (AV) und Pflegeversicherung (PV)"},
+      {label: "D", text: "Lebensversicherung und Berufsunfähigkeitsversicherung"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 27, cat: "betriebsrat",
+    text: "Wie hoch ist der AN-Anteil an der Rentenversicherung (2024)?",
+    choices: [
+      {label: "A", text: "7,3 %"},
+      {label: "B", text: "9,3 %"},
+      {label: "C", text: "11,0 %"},
+      {label: "D", text: "1,3 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "betriebsrat",
+    text: "Wie hoch ist der Gesamtbeitragssatz zur Rentenversicherung (AN + AG) 2024?",
+    choices: [
+      {label: "A", text: "14,6 %"},
+      {label: "B", text: "16,0 %"},
+      {label: "C", text: "18,6 %"},
+      {label: "D", text: "20,0 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 29, cat: "betriebsrat",
+    text: "Wie hoch ist der AN-Anteil zur Arbeitslosenversicherung (2024)?",
+    choices: [
+      {label: "A", text: "0,9 %"},
+      {label: "B", text: "1,3 %"},
+      {label: "C", text: "2,0 %"},
+      {label: "D", text: "2,6 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 30, cat: "betriebsrat",
+    text: "Wie werden Sozialversicherungsbeiträge grundsätzlich zwischen AG und AN aufgeteilt?",
+    choices: [
+      {label: "A", text: "Der AG zahlt alles"},
+      {label: "B", text: "Der AN zahlt alles"},
+      {label: "C", text: "Je zur Hälfte (mit Ausnahme Pflegeversicherung)"},
+      {label: "D", text: "70 % AG, 30 % AN"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 31, cat: "entgelt",
+    text: "Wie hoch ist der AN-Anteil an der Pflegeversicherung (2024, ohne Zuschlag)?",
+    choices: [
+      {label: "A", text: "0,9 %"},
+      {label: "B", text: "1,3 %"},
+      {label: "C", text: "1,7 %"},
+      {label: "D", text: "2,0 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 32, cat: "entgelt",
+    text: "Welchen Zusatzbeitrag zahlen kinderlose Arbeitnehmer ab 23 Jahren zur Pflegeversicherung?",
+    choices: [
+      {label: "A", text: "0,3 %"},
+      {label: "B", text: "0,6 %"},
+      {label: "C", text: "1,0 %"},
+      {label: "D", text: "1,5 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 33, cat: "entgelt",
+    text: "Wie hoch ist die Beitragsbemessungsgrenze für KV/PV im Jahr 2024?",
+    choices: [
+      {label: "A", text: "50.000 EUR/Jahr"},
+      {label: "B", text: "62.100 EUR/Jahr"},
+      {label: "C", text: "90.600 EUR/Jahr"},
+      {label: "D", text: "100.000 EUR/Jahr"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 34, cat: "entgelt",
+    text: "Wie hoch ist die Beitragsbemessungsgrenze für RV/AV (West) im Jahr 2024?",
+    choices: [
+      {label: "A", text: "62.100 EUR/Jahr"},
+      {label: "B", text: "75.000 EUR/Jahr"},
+      {label: "C", text: "90.600 EUR/Jahr"},
+      {label: "D", text: "120.000 EUR/Jahr"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 35, cat: "entgelt",
+    text: "Welche Eselsbrücke hilft, die vier Sozialversicherungsarten zu merken?",
+    choices: [
+      {label: "A", text: "G-A-T"},
+      {label: "B", text: "M-E-R-A"},
+      {label: "C", text: "K-R-A-P (Kranken – Renten – Arbeitslosen – Pflege)"},
+      {label: "D", text: "I-A-M"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 36, cat: "entgelt",
+    text: "Welche Steuerklasse gilt für ledige Arbeitnehmer ohne Kinder?",
+    choices: [
+      {label: "A", text: "Steuerklasse II"},
+      {label: "B", text: "Steuerklasse III"},
+      {label: "C", text: "Steuerklasse I"},
+      {label: "D", text: "Steuerklasse VI"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 37, cat: "entgelt",
+    text: "Welche Steuerklasse gilt für Alleinerziehende mit Kind im Haushalt?",
+    choices: [
+      {label: "A", text: "Steuerklasse I"},
+      {label: "B", text: "Steuerklasse II"},
+      {label: "C", text: "Steuerklasse III"},
+      {label: "D", text: "Steuerklasse IV"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 38, cat: "entgelt",
+    text: "Welche Steuerklasse gilt für einen Arbeitnehmer mit einem Nebenjob / zweiten Arbeitsverhältnis?",
+    choices: [
+      {label: "A", text: "Steuerklasse I"},
+      {label: "B", text: "Steuerklasse III"},
+      {label: "C", text: "Steuerklasse V"},
+      {label: "D", text: "Steuerklasse VI"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 39, cat: "entgelt",
+    text: "Welches Steuerklassenpaar wählen Verheiratete, bei denen ein Partner deutlich mehr verdient?",
+    choices: [
+      {label: "A", text: "I und I"},
+      {label: "B", text: "II und II"},
+      {label: "C", text: "III und V"},
+      {label: "D", text: "IV und IV"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 40, cat: "entgelt",
+    text: "Welche Steuerklasse hat die niedrigste Steuerbelastung?",
+    choices: [
+      {label: "A", text: "Steuerklasse I"},
+      {label: "B", text: "Steuerklasse III"},
+      {label: "C", text: "Steuerklasse V"},
+      {label: "D", text: "Steuerklasse VI"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 41, cat: "entgelt",
+    text: "Was passiert, wenn ein Arbeitnehmer in Steuerklasse V eingruppiert ist?",
+    choices: [
+      {label: "A", text: "Er zahlt sehr wenig Lohnsteuer"},
+      {label: "B", text: "Er zahlt die höchste Lohnsteuerbelastung unter den Klassen I–V"},
+      {label: "C", text: "Er erhält automatisch Kindergeld"},
+      {label: "D", text: "Er ist von der Kirchensteuer befreit"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 42, cat: "entgelt",
+    text: "Welche Positionen erscheinen typischerweise auf einer Gehaltsabrechnung? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Grundgehalt (Bruttogehalt)"},
+      {label: "B", text: "Urlaubsantragsformular"},
+      {label: "C", text: "Abzug für Krankenversicherung (AN-Anteil)"},
+      {label: "D", text: "Arbeitszeugnis"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 43, cat: "entgelt",
+    text: "Seit wann ist der Solidaritätszuschlag für die meisten Arbeitnehmer entfallen?",
+    choices: [
+      {label: "A", text: "Seit 2010"},
+      {label: "B", text: "Seit 2015"},
+      {label: "C", text: "Seit 2021"},
+      {label: "D", text: "Seit 2024"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 44, cat: "entgelt",
+    text: "Was ist die Kirchensteuer und wie hoch ist sie in den meisten Bundesländern?",
+    choices: [
+      {label: "A", text: "Eine staatliche Steuer für alle Arbeitnehmer; 5 %"},
+      {label: "B", text: "Eine Steuer nur für Kirchenmitglieder; 9 % der Lohnsteuer"},
+      {label: "C", text: "Eine freiwillige Abgabe; beliebige Höhe"},
+      {label: "D", text: "Eine Abgabe für Sozialeinrichtungen; 3 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 45, cat: "entgelt",
+    text: "Azubi Ben (18 Jahre, SKl. I, kein Kirchenmitglied) verdient 850 EUR brutto. Wie hoch ist sein SV-Beitrag annähernd?",
+    choices: [
+      {label: "A", text: "ca. 50 EUR"},
+      {label: "B", text: "ca. 170 EUR"},
+      {label: "C", text: "ca. 350 EUR"},
+      {label: "D", text: "ca. 500 EUR"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "entgelt",
+    text: "Wie viel Lohnsteuer zahlt ein Azubi mit einem Bruttogehalt unter ca. 1.300 EUR/Monat typischerweise?",
+    choices: [
+      {label: "A", text: "Sehr viel, da niedrige Einkommen stark besteuert werden"},
+      {label: "B", text: "Keine Lohnsteuer (Grundfreibetrag)"},
+      {label: "C", text: "Genau 19 % des Bruttogehalts"},
+      {label: "D", text: "Den vollen Steuersatz der Steuerklasse I"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "entgelt",
+    text: "Wie viele Betriebsratsmitglieder hat ein Betrieb mit 55 Arbeitnehmern?",
+    choices: [
+      {label: "A", text: "3"},
+      {label: "B", text: "5"},
+      {label: "C", text: "7"},
+      {label: "D", text: "9"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 48, cat: "entgelt",
+    text: "Wie viele Betriebsratsmitglieder hat ein Betrieb mit 21 bis 50 Arbeitnehmern?",
+    choices: [
+      {label: "A", text: "1"},
+      {label: "B", text: "3"},
+      {label: "C", text: "5"},
+      {label: "D", text: "7"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "entgelt",
+    text: "In welchem Monat findet die Betriebsratswahl typischerweise statt?",
+    choices: [
+      {label: "A", text: "Januar / Februar"},
+      {label: "B", text: "März / April"},
+      {label: "C", text: "Oktober / November"},
+      {label: "D", text: "Dezember"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "entgelt",
+    text: "Die JAV nimmt an Betriebsratssitzungen teil. Mit welchem Recht?",
+    choices: [
+      {label: "A", text: "Mit vollem Stimmrecht"},
+      {label: "B", text: "Ohne Stimmrecht"},
+      {label: "C", text: "Mit einem Vetorecht"},
+      {label: "D", text: "Nur wenn der Betriebsrat es erlaubt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 51, cat: "entgelt",
+    text: "Was ist der AN-Anteil an der Krankenversicherung (Grundbeitrag 2024)?",
+    choices: [
+      {label: "A", text: "5,0 %"},
+      {label: "B", text: "7,3 % zzgl. Zusatzbeitrag"},
+      {label: "C", text: "9,3 %"},
+      {label: "D", text: "14,6 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 52, cat: "entgelt",
+    text: "Welche Situation ist ein Beispiel für echte Mitbestimmung nach 87 BetrVG?",
+    choices: [
+      {label: "A", text: "Der AG informiert den BR über den Jahresabschluss"},
+      {label: "B", text: "Der AG stellt eine neue Kollegin ein"},
+      {label: "C", text: "Der AG möchte die tägliche Arbeitszeit für alle Mitarbeiter ändern"},
+      {label: "D", text: "Der AG informiert den BR über die wirtschaftliche Lage"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 53, cat: "entgelt",
+    text: "Wie hoch ist der geschätzte Gesamt-AN-Anteil aller Sozialversicherungsbeiträge (2024)?",
+    choices: [
+      {label: "A", text: "ca. 10 %"},
+      {label: "B", text: "ca. 15 %"},
+      {label: "C", text: "ca. 20 %"},
+      {label: "D", text: "ca. 30 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 54, cat: "entgelt",
+    text: "Was wird mit dem Begriff vermögenswirksame Leistungen (VWL) bezeichnet?",
+    choices: [
+      {label: "A", text: "Steuern, die vom Brutto abgezogen werden"},
+      {label: "B", text: "Freiwillige zusätzliche AG-Zulagen zur Vermögensbildung"},
+      {label: "C", text: "Der gesetzliche Mindestlohn"},
+      {label: "D", text: "Eine Art von Sozialversicherung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 55, cat: "entgelt",
+    text: "Welche Steuerklasse gilt für ein verheiratetes Paar, bei dem beide Partner ähnlich viel verdienen?",
+    choices: [
+      {label: "A", text: "Steuerklasse I"},
+      {label: "B", text: "Steuerklasse III"},
+      {label: "C", text: "Steuerklasse IV / IV"},
+      {label: "D", text: "Steuerklasse VI"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 56, cat: "entgelt",
+    text: "Was muss auf einer Gehaltsabrechnung besonders geprüft werden? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Korrekter Name und Steuerklasse"},
+      {label: "B", text: "Lieblingsurlaubsdestination"},
+      {label: "C", text: "Korrekte Krankenkasse und Beitragssätze"},
+      {label: "D", text: "Urlaubspläne des Vorgesetzten"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 57, cat: "entgelt",
+    text: "Welche Aussage zur Betriebsratswahl ist korrekt?",
+    choices: [
+      {label: "A", text: "Nur Gewerkschaftsmitglieder dürfen wählen"},
+      {label: "B", text: "Alle Arbeitnehmer ab 16 Jahren sind wahlberechtigt"},
+      {label: "C", text: "Die Wahl findet jährlich statt"},
+      {label: "D", text: "Nur Vollzeitkräfte dürfen kandidieren"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 58, cat: "entgelt",
+    text: "Was versteht man unter dem BetrVG als das „Grundgesetz” der betrieblichen Mitbestimmung?",
+    choices: [
+      {label: "A", text: "BBiG"},
+      {label: "B", text: "TVG"},
+      {label: "C", text: "BetrVG"},
+      {label: "D", text: "ArbSchG"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 59, cat: "entgelt",
+    text: "Was passiert mit dem Einkommen oberhalb der Beitragsbemessungsgrenze?",
+    choices: [
+      {label: "A", text: "Es wird doppelt mit SV-Beiträgen belastet"},
+      {label: "B", text: "Es fällt kein weiterer Sozialversicherungsbeitrag an"},
+      {label: "C", text: "Es wird an den Staat überwiesen"},
+      {label: "D", text: "Es wird vollständig besteuert"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 60, cat: "entgelt",
+    text: "Welche Eselsbrücke hilft, die drei Stufen der Betriebsratsrechte zu merken?",
+    choices: [
+      {label: "A", text: "K-R-A-P"},
+      {label: "B", text: "I-A-M (Information – Anhörung – Mitbestimmung)"},
+      {label: "C", text: "M-E-R-A"},
+      {label: "D", text: "G-A-T"}
+    ],
+    multi: false, correct: ["B"]
+  }
+];
+const catLabels={
+  betriebsrat: {label: "Betriebsrat", cls: "cat-definition"},
+  entgelt: {label: "Entgelt", cls: "cat-technik"}
+};
+let questionStates={};let currentFilter='all';
+function init(){questions.forEach(q=>{questionStates[q.num]='open'});const c=document.getElementById('questions-container');c.innerHTML='';questions.forEach((q,idx)=>{const ci=catLabels[q.cat]||{label:"",cls:""};const d=document.createElement('div');d.className='question-card';d.id='card_'+q.num;d.innerHTML=`<div class="q-number">Frage ${idx+1} / ${TOTAL} <span class="q-category ${ci.cls}">${ci.label}</span></div><div class="q-text">${q.text}</div>${q.multi?'<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>':''}<div class="choices" id="choices_${q.num}"></div><button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button><div class="q-feedback" id="feedback_${q.num}"></div>`;c.appendChild(d);const ch=document.getElementById('choices_'+q.num);q.choices.forEach(o=>{const b=document.createElement('button');b.className='choice-btn';b.id='choice_'+q.num+'_'+o.label;b.dataset.label=o.label;b.innerHTML='<span class="label">'+o.label+'</span><span>'+o.text+'</span>';b.addEventListener('click',()=>toggleChoice(q.num,o.label,q.multi));ch.appendChild(b)});document.getElementById('checkbtn_'+q.num).addEventListener('click',()=>checkQuestion(q.num,q.correct))});updateScoreboard()}
+function toggleChoice(n,l,m){const b=document.getElementById('choice_'+n+'_'+l);if(!b||b.disabled)return;if(!m){document.querySelectorAll('[id^="choice_'+n+'_"]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')}else{b.classList.toggle('selected');if(document.querySelectorAll('[id^="choice_'+n+'_"].selected').length>2)b.classList.remove('selected')}document.getElementById('checkbtn_'+n).disabled=document.querySelectorAll('[id^="choice_'+n+'_"].selected').length===0}
+function checkQuestion(n,cor){const all=document.querySelectorAll('[id^="choice_'+n+'_"]');const sel=[...all].filter(b=>b.classList.contains('selected')).map(b=>b.dataset.label);all.forEach(b=>b.disabled=true);document.getElementById('checkbtn_'+n).disabled=true;const cs=new Set(cor),ss=new Set(sel);all.forEach(b=>{const l=b.dataset.label;if(cs.has(l)&&ss.has(l))b.classList.add('correct-answer');else if(!cs.has(l)&&ss.has(l))b.classList.add('wrong-selected');else if(cs.has(l)&&!ss.has(l))b.classList.add('missed')});const ok=[...cs].every(l=>ss.has(l))&&[...ss].every(l=>cs.has(l));const partial=!ok&&[...ss].every(l=>cs.has(l))&&sel.length>0;const status=ok?'correct':partial?'partial':'wrong';questionStates[n]=status;const fb=document.getElementById('feedback_'+n),cd=document.getElementById('card_'+n);cd.classList.remove('answered-correct','answered-wrong','answered-partial');if(status==='correct'){fb.className='q-feedback show ok';fb.textContent='\u2713 Richtig! Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-correct')}else if(status==='partial'){fb.className='q-feedback show partial';fb.textContent='\u25D1 Teilweise richtig. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-partial')}else{fb.className='q-feedback show fail';fb.textContent='\u2717 Falsch. Korrekte Antwort: '+cor.join(', ');cd.classList.add('answered-wrong')}updateScoreboard();applyFilter(currentFilter)}
+function checkAll(){document.querySelectorAll('.check-btn:not(:disabled)').forEach(b=>b.click())}
+function resetAll(){document.getElementById('final-banner').classList.remove('show');currentFilter='all';document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.filter-btn')[0].classList.add('active');init()}
+function updateScoreboard(){const v=Object.values(questionStates),t=v.length,c=v.filter(x=>x==='correct').length,w=v.filter(x=>x==='wrong'||x==='partial').length,o=v.filter(x=>x==='open').length,a=c+w;document.getElementById('sc-correct').textContent=c;document.getElementById('sc-wrong').textContent=w;document.getElementById('sc-open').textContent=o;document.getElementById('sc-pct').textContent=a>0?Math.round(c/a*100)+'%':'\u2013';document.getElementById('progress-fill').style.width=(t>0?a/t*100:0)+'%';if(o===0&&t>0){const p=Math.round(c/t*100),g=p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6';document.getElementById('final-grade').textContent=p+'% \u00B7 Note '+g;document.getElementById('final-sub').textContent=c+' von '+t+' Fragen richtig';document.getElementById('final-banner').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})}}
+function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilter(f)}
+function applyFilter(f){document.querySelectorAll('.question-card').forEach(c=>{const n=parseInt(c.id.replace('card_','')),s=questionStates[n]||'open';c.style.display=f==='all'?'':f==='open'?(s==='open'?'':'none'):f==='correct'?(s==='correct'?'':'none'):(s==='wrong'||s==='partial'?'':'none')})}
+function showOnlyWrong(){const b=[...document.querySelectorAll('.filter-btn')].find(x=>x.textContent==='Falsch');if(b)setFilter('wrong',b)}
+function showAll(){setFilter('all',document.querySelectorAll('.filter-btn')[0])}
+init();
+</script>
+</body>
+</html>

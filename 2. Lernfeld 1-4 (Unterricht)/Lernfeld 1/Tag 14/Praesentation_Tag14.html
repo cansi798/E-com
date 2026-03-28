@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 14 – Rechtsformen Teil 1: Einzelunternehmen &amp; Personengesellschaften | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+#copyright{display:none} #nav-hint{display:none}
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+<style>
+/* ══════════════════════════════════════════════
+   SUPPLEMENTAL STYLES – Tag 14
+   Matching Tag 7 professional design language
+   ══════════════════════════════════════════════ */
+
+/* Progress bar container */
+#progress-bar-container {
+  position:fixed; top:0; left:0; right:0; height:4px;
+  background:var(--bg-alt); z-index:99;
+}
+
+/* Slide subtitle */
+.slide-subtitle {
+  font-size:.9rem; color:var(--text-muted); margin-bottom:20px;
+  align-self:flex-start;
+}
+
+/* Cover line decorator */
+.cover-line {
+  width:80px; height:4px; border-radius:2px;
+  background:linear-gradient(90deg, var(--primary), var(--accent));
+  margin:0 auto 20px;
+}
+
+/* TOC extended classes */
+.toc-text { font-size:.88rem; font-weight:600; color:var(--text); line-height:1.4; }
+.toc-page { font-size:.72rem; color:var(--text-muted); margin-top:2px; }
+
+/* Lernziel / Objective items */
+.lernziel-list { display:flex; flex-direction:column; gap:10px; width:100%; }
+.lernziel-item {
+  display:flex; align-items:flex-start; gap:14px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:14px 18px;
+  border-left:4px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+.lz-icon {
+  min-width:32px; height:32px; border-radius:50%;
+  background:var(--primary-light); color:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:700; flex-shrink:0;
+}
+.lz-text { font-size:.88rem; color:var(--text); line-height:1.6; }
+
+/* Objective items (Tag 7 style) */
+.obj-item {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:12px 16px; background:var(--success-light);
+  border-radius:10px; border:1px solid #A7F3D0;
+  margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.obj-icon {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700;
+}
+
+/* Citation / Reference */
+.citation {
+  font-size:.72rem; color:var(--text-muted); margin-top:14px;
+  font-style:italic; padding-top:8px;
+  border-top:1px solid var(--border); align-self:flex-start;
+}
+
+/* Section slides extras */
+.section-number {
+  font-size:6rem; font-weight:900; color:rgba(255,255,255,.12);
+  position:absolute; bottom:30px; right:60px; line-height:1;
+}
+.section-sub {
+  font-size:1rem; color:rgba(255,255,255,.7); margin-top:10px;
+}
+
+/* Definition box */
+.def-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.def-term {
+  font-size:1.1rem; font-weight:800; color:var(--primary); margin-bottom:8px;
+}
+.def-box p { font-size:.9rem; line-height:1.7; color:var(--text); }
+
+/* Main list */
+.main-list {
+  list-style:none; width:100%; padding:0; margin:0;
+  display:flex; flex-direction:column; gap:8px;
+}
+.main-list li {
+  font-size:.88rem; line-height:1.6; color:var(--text);
+  padding:8px 14px; padding-left:20px;
+  background:var(--bg-card); border-radius:8px;
+  border:1px solid var(--border); border-left:3px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+
+/* Col-card (two-column card style) */
+.col-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px;
+  box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.col-card::before {
+  content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+  background:var(--primary); border-radius:4px 0 0 4px;
+}
+.col-card h3 {
+  font-size:.95rem; font-weight:700; color:var(--primary);
+  margin-bottom:10px;
+}
+.col-card ul { padding-left:16px; }
+.col-card li {
+  font-size:.84rem; color:var(--text-muted); line-height:1.6;
+  margin-bottom:4px;
+}
+
+/* Color top-border variants */
+.col-card.red-top::before, .red-top::before { background:var(--danger) !important; }
+.col-card.gold-top::before, .gold-top::before { background:var(--accent) !important; }
+.col-card.red-top h3, .red-top h3 { color:var(--danger); }
+.col-card.gold-top h3, .gold-top h3 { color:var(--accent); }
+
+/* Info box */
+.info-box {
+  background:var(--primary-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--primary);
+  font-size:.85rem; line-height:1.6; color:var(--text);
+  box-shadow:var(--shadow); margin-top:10px;
+}
+.info-box.red {
+  background:var(--danger-light); border-left-color:var(--danger);
+}
+.info-box.gold {
+  background:var(--accent-light); border-left-color:var(--accent);
+}
+
+/* Haftung progress bar */
+.haftung-bar {
+  width:100%; margin-bottom:8px;
+}
+.haftung-label {
+  display:flex; justify-content:space-between; font-size:.78rem;
+  color:var(--text-muted); margin-bottom:4px; font-weight:600;
+}
+.haftung-track {
+  width:100%; height:24px; background:var(--bg-alt);
+  border-radius:12px; overflow:hidden; border:1px solid var(--border);
+}
+.haftung-fill {
+  height:100%; border-radius:12px; display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:white; font-weight:600;
+  transition:width 0.6s ease;
+}
+
+/* Data table (extended table styling) */
+.data-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.data-table th {
+  background:var(--primary); color:#fff; padding:10px 14px;
+  text-align:left; font-weight:700; font-size:.82rem;
+}
+.data-table td {
+  padding:9px 14px; color:var(--text);
+  border-bottom:1px solid var(--border);
+}
+.data-table tr:nth-child(even) td { background:var(--bg-alt); }
+.data-table tr:hover td { background:var(--primary-light); }
+.data-table thead th:first-child { border-radius:8px 0 0 0; }
+.data-table thead th:last-child { border-radius:0 8px 0 0; }
+
+/* Badge pills for tables */
+.badge {
+  display:inline-block; font-size:.7rem; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.3px;
+  color:#fff;
+}
+.badge-blue { background:var(--primary); }
+.badge-red { background:var(--danger); }
+.badge-green { background:var(--success); }
+.badge-gold { background:var(--accent); color:#fff; }
+
+/* Three-column layout */
+.three-col {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; width:100%;
+}
+
+/* Summary grid & cards */
+.summary-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; width:100%;
+}
+.summary-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:16px 18px;
+  border-left:4px solid var(--primary);
+  box-shadow:var(--shadow);
+}
+.summary-card h4 {
+  font-size:.9rem; font-weight:700; color:var(--primary); margin-bottom:8px;
+}
+.summary-card p {
+  font-size:.78rem; color:var(--text-muted); line-height:1.5;
+}
+.summary-card.red { border-left-color:var(--danger); }
+.summary-card.red h4 { color:var(--danger); }
+.summary-card.gold { border-left-color:var(--accent); }
+.summary-card.gold h4 { color:var(--accent); }
+
+/* Literature entry */
+.lit-entry {
+  font-size:.78rem; color:var(--text-muted); margin-bottom:10px;
+  line-height:1.6; padding-left:24px; text-indent:-24px;
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+/* Slide footer (in-slide) */
+.slide-footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.95); z-index:10;
+}
+
+/* Styled list (Tag 7 style) */
+.styled { list-style:none; padding:0; }
+.styled li {
+  font-size:.85rem; color:var(--text-muted); line-height:1.6;
+  padding:4px 0 4px 16px; position:relative;
+}
+.styled li::before {
+  content:''; position:absolute; left:0; top:11px;
+  width:6px; height:6px; border-radius:50%;
+  background:var(--primary);
+}
+
+/* Key term highlight */
+.kterm {
+  background:var(--primary-light); color:var(--primary);
+  padding:1px 6px; border-radius:4px; font-weight:600;
+  font-size:.85rem;
+}
+
+/* Card extended classes */
+.card-title {
+  font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px;
+}
+.card-body { font-size:.85rem; color:var(--text-muted); line-height:1.6; }
+
+/* SVG center helper */
+.svg-center { display:flex; justify-content:center; align-items:center; }
+
+/* Success box */
+.success-box {
+  background:var(--success-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--success);
+  font-size:.85rem; line-height:1.6; color:var(--text);
+  box-shadow:var(--shadow);
+}
+
+/* Step list */
+.step-list {
+  padding-left:20px; counter-reset:step;
+}
+.step-list li {
+  font-size:.85rem; color:var(--text); line-height:1.6;
+  margin-bottom:10px; padding-left:4px;
+}
+
+/* URL diagram (Tag 7 specific) */
+.url-diagram {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:12px; padding:18px 28px; margin:10px 0;
+  font-family:'Courier New', monospace; font-size:1.15rem;
+  text-align:center; box-shadow:var(--shadow);
+}
+.url-part { padding:4px 2px; border-radius:4px; }
+
+/* Legend items */
+.legend-row { display:flex; gap:16px; justify-content:center; margin:10px 0; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:.78rem; color:var(--text-muted); }
+.legend-dot { width:10px; height:10px; border-radius:50%; }
+
+/* Slide summary (Tag 7) */
+.slide-summary {
+  justify-content:flex-start; padding-top:70px; background:var(--bg);
+}
+
+/* Ref item (Tag 7 literature) */
+.ref-item {
+  font-size:.78rem; color:var(--text-muted); margin-bottom:10px;
+  line-height:1.6; padding-left:24px; text-indent:-24px;
+}
+
+/* Copyright element */
+#copyright {
+  position:fixed; bottom:8px; left:40px;
+  font-size:.68rem; color:var(--text-muted); z-index:10;
+}
+
+/* Animations for supplemental elements */
+.slide.active .lernziel-list,
+.slide.active .def-box,
+.slide.active .main-list,
+.slide.active .info-box,
+.slide.active .summary-grid,
+.slide.active .three-col,
+.slide.active .col-card,
+.slide.active .haftung-bar { animation:fadeUp .5s ease both; animation-delay:.15s; }
+
+/* Override nav buttons if standalone */
+#nav-prev, #nav-next {
+  position:fixed; z-index:50; background:none; border:none;
+  color:var(--text); font-size:1.4rem; cursor:pointer;
+  padding:8px 14px; border-radius:50%; transition:background .2s;
+}
+#nav-prev { bottom:24px; left:calc(50% - 80px); }
+#nav-next { bottom:24px; left:calc(50% + 50px); }
+#nav-prev:hover, #nav-next:hover { background:var(--primary-light); }
+
+/* Slides wrapper */
+.slides-wrapper { width:100vw; height:100vh; position:relative; overflow:hidden; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div class="slides-wrapper" id="slides">
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 1 – DECKBLATT
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-cover active" id="slide-1">
+  <svg width="320" height="80" viewBox="0 0 320 80" style="margin-bottom:20px;opacity:0.18">
+    <rect x="0" y="30" width="60" height="50" rx="4" fill="#2563EB"/>
+    <rect x="70" y="10" width="60" height="70" rx="4" fill="#2e6da4"/>
+    <rect x="140" y="20" width="60" height="60" rx="4" fill="#f0c040"/>
+    <rect x="210" y="5" width="60" height="75" rx="4" fill="#2563EB"/>
+    <rect x="280" y="25" width="40" height="55" rx="4" fill="#2e6da4"/>
+  </svg>
+  <div class="cover-tag">E-Commerce Ausbildung · Lernfeld 1 · Tag 14</div>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs><linearGradient id="bizGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+    <rect x="15" y="30" width="35" height="50" rx="6" fill="url(#bizGrad)" opacity="0.8"/>
+    <rect x="70" y="30" width="35" height="50" rx="6" fill="url(#bizGrad)" opacity="0.6"/>
+    <path d="M50 55 Q60 45 70 55" fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <path d="M42 55 L50 55 Q60 45 70 55 L78 55" fill="none" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="32" cy="45" r="6" fill="white" opacity="0.4"/>
+    <circle cx="88" cy="45" r="6" fill="white" opacity="0.4"/>
+    <text x="60" y="100" text-anchor="middle" fill="#1e4db7" font-size="13" font-weight="700" font-family="Segoe UI">GbR · OHG · KG</text>
+  </svg>
+  <div class="cover-title">Rechtsformen Teil 1</div>
+  <div class="cover-subtitle">Einzelunternehmen &amp; Personengesellschaften</div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    Abschnitt 1.19 · Buchseiten 142–149<br>
+    Schuljahr 2025/26 · E-Commerce Kaufleute<br>
+    <br>
+    <span style="color:var(--accent)">Can Siebert &amp; Hamzah Meyer</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 2 – INHALTSVERZEICHNIS
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-2">
+  <div class="slide-title">Inhaltsverzeichnis</div>
+  <div class="slide-subtitle">Abschnitt 1.19 · Rechtsformen Teil 1</div>
+  <div class="toc-grid">
+    <div class="toc-item">
+      <div class="toc-num">01</div>
+      <div><div class="toc-text">Lernziele</div><div class="toc-page">Folie 3</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">02</div>
+      <div><div class="toc-text">Überblick Rechtsformen</div><div class="toc-page">Folien 4–6</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">03</div>
+      <div><div class="toc-text">Einzelunternehmen</div><div class="toc-page">Folien 7–11</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">04</div>
+      <div><div class="toc-text">GbR – Gesellschaft bürgerlichen Rechts</div><div class="toc-page">Folien 12–16</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">05</div>
+      <div><div class="toc-text">OHG – Offene Handelsgesellschaft</div><div class="toc-page">Folien 17–21</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">06</div>
+      <div><div class="toc-text">KG – Kommanditgesellschaft</div><div class="toc-page">Folien 22–26</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">07</div>
+      <div><div class="toc-text">Stille Gesellschaft</div><div class="toc-page">Folien 27–30</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">08</div>
+      <div><div class="toc-text">Vergleich &amp; Zusammenfassung</div><div class="toc-page">Folien 31–35</div></div>
+    </div>
+    <div class="toc-item">
+      <div class="toc-num">09</div>
+      <div><div class="toc-text">Literaturverzeichnis</div><div class="toc-page">Folie 36</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 3 – LERNZIELE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-3">
+  <div class="slide-title">Lernziele</div>
+  <div class="slide-subtitle">Was du nach dieser Stunde weißt und kannst</div>
+  <div class="lernziel-list">
+    <div class="lernziel-item">
+      <div class="lz-icon">&#127919;</div>
+      <div class="lz-text">Du kannst die <strong>verschiedenen Rechtsformen</strong> eines Unternehmens benennen und in Personen- und Kapitalgesellschaften einteilen.</div>
+    </div>
+    <div class="lernziel-item">
+      <div class="lz-icon">&#128218;</div>
+      <div class="lz-text">Du kennst die rechtlichen Grundlagen des <strong>Einzelunternehmens</strong> (Kleingewerbetreibender, eingetragener Kaufmann) und kannst Vor- und Nachteile nennen.</div>
+    </div>
+    <div class="lernziel-item">
+      <div class="lz-icon">&#129309;</div>
+      <div class="lz-text">Du erklärst die Merkmale der <strong>GbR, OHG und KG</strong> hinsichtlich Gründung, Haftung, Geschäftsführung und Gewinnverteilung.</div>
+    </div>
+    <div class="lernziel-item">
+      <div class="lz-icon">&#128181;</div>
+      <div class="lz-text">Du verstehst das Konzept der <strong>stillen Gesellschaft</strong> und ihre Besonderheiten.</div>
+    </div>
+    <div class="lernziel-item">
+      <div class="lz-icon">&#9878;</div>
+      <div class="lz-text">Du kannst für ein konkretes Fallbeispiel die <strong>passende Rechtsform</strong> auswählen und deine Wahl begründen.</div>
+    </div>
+  </div>
+  <div class="citation">Vgl. Kultusministerkonferenz (2020). Rahmenlehrplan E-Commerce. S. 8–9.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 4 – ABSCHNITT: ÜBERBLICK RECHTSFORMEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-4">
+  <div class="section-number">01</div>
+  <div class="section-title">Überblick Rechtsformen</div>
+  <div class="section-sub">Was ist eine Rechtsform &amp; warum ist die Wahl entscheidend?</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 5 – DEFINITION RECHTSFORM
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-5">
+  <div class="slide-title">Was ist eine Rechtsform?</div>
+  <div class="slide-subtitle">Definition &amp; Bedeutung für Unternehmen</div>
+  <div class="def-box">
+    <div class="def-term">Rechtsform</div>
+    <p>Die <strong>Rechtsform</strong> eines Unternehmens legt die rechtliche Struktur fest, nach der das Unternehmen organisiert ist. Sie bestimmt u.&nbsp;a. Haftung, Finanzierungsmöglichkeiten, steuerliche Behandlung und die interne Organisation (Geschäftsführung, Gewinnverteilung).</p>
+  </div>
+  <ul class="main-list" style="margin-top:10px">
+    <li><strong>Haftung:</strong> Wer haftet mit welchem Vermögen bei Schulden?</li>
+    <li><strong>Kapitalbeschaffung:</strong> Wie kann das Unternehmen Kapital aufnehmen?</li>
+    <li><strong>Steuerrecht:</strong> Einkommensteuer, Körperschaftsteuer oder Gewerbesteuer?</li>
+    <li><strong>Leitungsbefugnis:</strong> Wer darf Entscheidungen treffen?</li>
+    <li><strong>Außenwirkung:</strong> Welchen Eindruck vermittelt die Rechtsform nach außen?</li>
+  </ul>
+  <div class="citation">Vgl. Wöhe, G. &amp; Döring, U. (2020). <em>Einführung in die Allgemeine Betriebswirtschaftslehre</em> (27. Aufl.). Vahlen. S. 195.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 6 – SYSTEMATIK DER RECHTSFORMEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-6">
+  <div class="slide-title">Systematik der Rechtsformen</div>
+  <div class="slide-subtitle">Überblick: Personen- vs. Kapitalgesellschaften</div>
+  <!-- SVG Tree -->
+  <svg width="820" height="270" viewBox="0 0 820 270" style="width:100%;max-width:820px">
+    <!-- Root -->
+    <rect x="310" y="5" width="200" height="44" rx="6" fill="#1b3a5c" stroke="#2e6da4" stroke-width="2"/>
+    <text x="410" y="32" text-anchor="middle" fill="#f5f7fa" font-size="14" font-weight="bold">Unternehmensrechtsformen</text>
+    <!-- Lines to level 2 -->
+    <line x1="410" y1="49" x2="200" y2="110" stroke="#2e6da4" stroke-width="1.5"/>
+    <line x1="410" y1="49" x2="620" y2="110" stroke="#2e6da4" stroke-width="1.5"/>
+    <!-- Personengesellschaften -->
+    <rect x="80" y="110" width="240" height="44" rx="6" fill="#2563EB" opacity="0.85"/>
+    <text x="200" y="137" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">Personengesellschaften</text>
+    <!-- Kapitalgesellschaften -->
+    <rect x="500" y="110" width="240" height="44" rx="6" fill="#2e6da4" opacity="0.85"/>
+    <text x="620" y="137" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">Kapitalgesellschaften</text>
+    <!-- Personen: children -->
+    <line x1="200" y1="154" x2="60" y2="210" stroke="#2563EB" stroke-width="1.2"/>
+    <line x1="200" y1="154" x2="140" y2="210" stroke="#2563EB" stroke-width="1.2"/>
+    <line x1="200" y1="154" x2="220" y2="210" stroke="#2563EB" stroke-width="1.2"/>
+    <line x1="200" y1="154" x2="300" y2="210" stroke="#2563EB" stroke-width="1.2"/>
+    <rect x="10" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2563EB" stroke-width="1.2"/>
+    <text x="60" y="234" text-anchor="middle" fill="#f0c040" font-size="11">Einzeluntern.</text>
+    <rect x="90" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2563EB" stroke-width="1.2"/>
+    <text x="140" y="234" text-anchor="middle" fill="#f0c040" font-size="11">GbR</text>
+    <rect x="170" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2563EB" stroke-width="1.2"/>
+    <text x="220" y="234" text-anchor="middle" fill="#f0c040" font-size="11">OHG</text>
+    <rect x="250" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2563EB" stroke-width="1.2"/>
+    <text x="300" y="234" text-anchor="middle" fill="#f0c040" font-size="11">KG</text>
+    <!-- Kapital: children -->
+    <line x1="620" y1="154" x2="520" y2="210" stroke="#2e6da4" stroke-width="1.2"/>
+    <line x1="620" y1="154" x2="620" y2="210" stroke="#2e6da4" stroke-width="1.2"/>
+    <line x1="620" y1="154" x2="720" y2="210" stroke="#2e6da4" stroke-width="1.2"/>
+    <rect x="470" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.2"/>
+    <text x="520" y="234" text-anchor="middle" fill="#f0c040" font-size="11">GmbH</text>
+    <rect x="570" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.2"/>
+    <text x="620" y="234" text-anchor="middle" fill="#f0c040" font-size="11">AG</text>
+    <rect x="670" y="210" width="100" height="36" rx="5" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.2"/>
+    <text x="720" y="234" text-anchor="middle" fill="#f0c040" font-size="11">UG / SE …</text>
+    <text x="410" y="265" text-anchor="middle" fill="#64748B" font-size="10">Thema heute: Personengesellschaften (grau hinterlegt = Teil 2)</text>
+  </svg>
+  <div class="info-box gold" style="margin-top:8px;font-size:0.82rem">
+    Heute: Einzelunternehmen · GbR · OHG · KG · Stille Gesellschaft — Kapitalgesellschaften folgen in Teil 2.
+  </div>
+  <div class="citation">Vgl. Olfert, K. (2022). <em>Unternehmensführung</em> (18. Aufl.). NWB Verlag. S. 62–65.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 6b – ENTSCHEIDUNGSKRITERIEN RECHTSFORMWAHL
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-6b">
+  <div class="slide-title">Entscheidungskriterien bei der Rechtsformwahl</div>
+  <div class="slide-subtitle">6 zentrale Kriterien – Abschnitt 1.19</div>
+  <table class="data-table">
+    <tr>
+      <th>#</th>
+      <th>Kriterium</th>
+      <th>Erläuterung</th>
+    </tr>
+    <tr>
+      <td><strong>1</strong></td>
+      <td><strong>Haftung</strong></td>
+      <td>Unbeschränkt (Privatvermögen) vs. beschränkt (Einlage / Gesellschaftsvermögen)</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td><strong>Mindestkapital</strong></td>
+      <td>Welches Startkapital ist gesetzlich erforderlich? (z.B. GmbH: 25.000 €)</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>Leitungsbefugnis</strong></td>
+      <td>Wer darf das Unternehmen führen und rechtlich verbindliche Entscheidungen treffen?</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td><strong>Gewinnverteilung</strong></td>
+      <td>Nach welchem Schlüssel wird der Gewinn aufgeteilt? (nach Köpfen, Einlage, Vertrag)</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>Steuerliche Behandlung</strong></td>
+      <td>Einkommensteuer (ESt) bei Personengesellschaften vs. Körperschaftsteuer (KSt) bei Kapitalgesellschaften</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>Veröffentlichungspflichten</strong></td>
+      <td>Handelsregistereintrag, Jahresabschlusspflicht – Publizität nach außen</td>
+    </tr>
+  </table>
+  <div class="info-box gold" style="margin-top:14px;">
+    <strong>Merke:</strong> Die Rechtsformwahl ist eine der wichtigsten strategischen Entscheidungen bei der Gründung. Falsche Wahl kann zur unbeschränkten Haftung mit dem Privatvermögen führen!
+  </div>
+  <div class="citation">Vgl. Wöhe, G. &amp; Döring, U. (2020). Einführung in die Allgemeine Betriebswirtschaftslehre (27. Aufl.). Vahlen. S. 197.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUIZ ZQ14A – RECHTSFORMWAHL GRUNDLAGEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-ZQ14A" style="background:linear-gradient(135deg,#FFFFFF,#1a2a40);padding:30px;overflow-y:auto;">
+  <div class="slide-title" style="border-left-color:#2563EB;">🧠 Zwischenquiz: Rechtsformwahl &amp; Einzelunternehmen</div>
+  <div style="margin-bottom:18px;margin-top:16px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">1. Welche Aussage zur Haftung beim Einzelunternehmen ist korrekt?</p>
+    <div id="q14a1opts">
+      <button onclick="chk14a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Der Inhaber haftet nur mit dem Betriebsvermögen</button>
+      <button onclick="chk14a1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Der Inhaber haftet mit seinem gesamten Privat- und Betriebsvermögen</button>
+      <button onclick="chk14a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Eine Haftungsbeschränkung ist per Vertrag möglich</button>
+      <button onclick="chk14a1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Der Staat übernimmt Schulden bei Insolvenz</button>
+    </div>
+    <p id="q14a1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">2. Welches Mindestkapital ist für die GbR gesetzlich vorgeschrieben?</p>
+    <div id="q14a2opts">
+      <button onclick="chk14a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) 10.000 €</button>
+      <button onclick="chk14a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) 25.000 €</button>
+      <button onclick="chk14a2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Kein gesetzliches Mindestkapital</button>
+      <button onclick="chk14a2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) 1 €</button>
+    </div>
+    <p id="q14a2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <script>
+  function chk14a1(btn,correct){
+    document.getElementById('q14a1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14a1r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Unbeschränkte Haftung = gesamtes Privat- und Betriebsvermögen.':'❌ Falsch! Beim Einzelunternehmen haftet der Inhaber unbeschränkt mit allem.';
+    if(!correct)document.getElementById('q14a1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk14a2(btn,correct){
+    document.getElementById('q14a2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14a2r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! GbR (wie alle Personengesellschaften) hat KEIN gesetzliches Mindestkapital.':'❌ Falsch! Personengesellschaften haben kein gesetzliches Mindestkapital – nur GmbH (25.000 €) und AG (50.000 €).';
+    if(!correct)document.getElementById('q14a2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 7 – ABSCHNITT: EINZELUNTERNEHMEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-7">
+  <div class="section-number">02</div>
+  <div class="section-title">Einzelunternehmen</div>
+  <div class="section-sub">Kleingewerbetreibender &amp; eingetragener Kaufmann (e.&nbsp;K.)</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 8 – EINZELUNTERNEHMEN: GRUNDLAGEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-8">
+  <div class="slide-title">Einzelunternehmen – Grundlagen</div>
+  <div class="slide-subtitle">Rechtliche Einordnung &amp; Arten</div>
+  <div class="def-box">
+    <div class="def-term">Einzelunternehmen</div>
+    <p>Ein Einzelunternehmen wird von einer <strong>natürlichen Person</strong> allein betrieben. Diese Person ist Eigentümer und Unternehmer in Personalunion. Es gibt keine gesetzlich vorgeschriebene Mindesteinlage.</p>
+  </div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Kleingewerbetreibender</h3>
+      <ul>
+        <li>Betrieb erfordert <strong>keinen kaufmännischen Betrieb</strong></li>
+        <li>Keine Pflicht zur Eintragung ins Handelsregister</li>
+        <li>Keine Firma (nur bürgerlicher Name)</li>
+        <li>Buchführung: einfache Einnahmen-Überschuss-Rechnung</li>
+        <li>Beispiel: kleiner Onlineshop, Marktstand</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>Eingetragener Kaufmann (e.&nbsp;K.)</h3>
+      <ul>
+        <li>Betrieb erfordert kaufmännische Einrichtung (§ 1 HGB)</li>
+        <li><strong>Pflicht zur Eintragung</strong> ins Handelsregister (Abt. A)</li>
+        <li>Darf eine <strong>Firma</strong> führen (z.&nbsp;B. „Müller e.&nbsp;K.")</li>
+        <li>Doppelte Buchführung (§ 238 HGB)</li>
+        <li>Prokura und Handlungsvollmacht möglich</li>
+      </ul>
+    </div>
+  </div>
+  <div class="citation">Vgl. Jung, H. (2021). <em>Allgemeine Betriebswirtschaftslehre</em> (14. Aufl.). De Gruyter Oldenbourg. S. 82.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 9 – EINZELUNTERNEHMEN: GRÜNDUNG & HAFTUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-9">
+  <div class="slide-title">Gründung &amp; Haftung</div>
+  <div class="slide-subtitle">Einzelunternehmen</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>Gründung</h3>
+      <ul>
+        <li>Anmeldung beim <strong>Gewerbeamt</strong> (Gewerbeschein)</li>
+        <li>e.&nbsp;K.: zusätzlich Eintragung ins <strong>Handelsregister</strong></li>
+        <li>Kein Mindestkapital erforderlich</li>
+        <li>Anmeldung beim Finanzamt (steuerliche Erfassung)</li>
+        <li>Ggf. Anmeldung bei der IHK / HWK</li>
+        <li>Bei bestimmten Berufen: Erlaubnis / Zulassung</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>Haftung</h3>
+      <ul>
+        <li><strong>Unbeschränkte persönliche Haftung</strong> des Inhabers</li>
+        <li>Haftung mit dem <strong>gesamten Privat- und Betriebsvermögen</strong></li>
+        <li>Keine Trennung zwischen Privat- und Firmenvermögen</li>
+        <li>Höchstes persönliches Risiko aller Rechtsformen</li>
+        <li>Gläubiger können auf Konto, Immobilien, Fahrzeuge etc. zugreifen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="haftung-bar">
+    <div class="haftung-label"><span>Haftungsrisiko Einzelunternehmen</span><span>100 %</span></div>
+    <div class="haftung-track">
+      <div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen</div>
+    </div>
+  </div>
+  <div class="citation">Vgl. Brox, H. &amp; Walker, W.-D. (2023). <em>Allgemeines Schuldrecht</em> (47. Aufl.). C.H. Beck. S. 12.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 10 – EINZELUNTERNEHMEN: GESCHÄFTSFÜHRUNG & GEWINN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-10">
+  <div class="slide-title">Geschäftsführung &amp; Gewinnverteilung</div>
+  <div class="slide-subtitle">Einzelunternehmen</div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Geschäftsführung</h3>
+      <ul>
+        <li>Alleinige Entscheidungsgewalt des Inhabers</li>
+        <li>Keine Abstimmungsprozesse erforderlich</li>
+        <li>Maximale unternehmerische Freiheit</li>
+        <li>Schnelle Reaktionsfähigkeit am Markt</li>
+        <li>Delegation durch Prokura oder Handlungsvollmacht möglich</li>
+      </ul>
+    </div>
+    <div class="col-card gold-top">
+      <h3>Gewinn &amp; Steuern</h3>
+      <ul>
+        <li>Inhaber erhält den <strong>gesamten Gewinn</strong></li>
+        <li>Versteuerung als <strong>Einkommensteuer</strong> (privat)</li>
+        <li>Gewerbesteuer (ab Gewerbeertrag &gt; 24.500 €)</li>
+        <li>Anrechenbarkeit der Gewerbesteuer auf ESt (§ 35 EStG)</li>
+        <li>Umsatzsteuer je nach Umsatz (Kleinunternehmerregelung § 19 UStG)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:12px">
+    <strong>Geeignet für:</strong> Selbstständige Einzelpersonen, Freiberufler, kleine Handels- und Handwerksbetriebe, Start-ups in der Anfangsphase mit geringem Kapital.
+  </div>
+  <div class="citation">Vgl. Schmalen, H. &amp; Pechtl, H. (2019). <em>Grundlagen und Probleme der Betriebswirtschaft</em> (15. Aufl.). Schäffer-Poeschel. S. 147.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 11 – EINZELUNTERNEHMEN: VOR- & NACHTEILE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-11">
+  <div class="slide-title">Vor- und Nachteile</div>
+  <div class="slide-subtitle">Einzelunternehmen – Gesamtbewertung</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>&#10003; Vorteile</h3>
+      <ul>
+        <li>Einfache und kostengünstige Gründung</li>
+        <li>Kein Mindestkapital</li>
+        <li>Volle Entscheidungsfreiheit</li>
+        <li>Geringer bürokratischer Aufwand</li>
+        <li>Gesamter Gewinn verbleibt beim Inhaber</li>
+        <li>Direkte Kundennähe möglich</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>&#10007; Nachteile</h3>
+      <ul>
+        <li>Unbeschränkte persönliche Haftung</li>
+        <li>Begrenzte Kapitalbeschaffung</li>
+        <li>Erfolg hängt stark von einer Person ab</li>
+        <li>Kein sozialer Schutz (Krankheit, Alter)</li>
+        <li>Hohe Arbeitsbelastung für den Inhaber</li>
+        <li>Geringere Außenwirkung als GmbH/AG</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box red" style="margin-top:12px">
+    <strong>Risiko im E-Commerce:</strong> Plattform-Sperren, Retourenkosten oder Produkthaftungsansprüche können schnell existenzbedrohend werden – ohne Haftungsbeschränkung!
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 12 – ABSCHNITT: GbR
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-12">
+  <div class="section-number">03</div>
+  <div class="section-title">GbR</div>
+  <div class="section-sub">Gesellschaft bürgerlichen Rechts · §§ 705–740 BGB</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 13 – GbR: DEFINITION & GRÜNDUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-13">
+  <div class="slide-title">GbR – Definition &amp; Gründung</div>
+  <div class="slide-subtitle">Gesellschaft bürgerlichen Rechts (§§ 705 ff. BGB)</div>
+  <div class="def-box">
+    <div class="def-term">Gesellschaft bürgerlichen Rechts (GbR)</div>
+    <p>Die GbR ist der <strong>Grundtypus der Personengesellschaft</strong>. Mindestens zwei natürliche oder juristische Personen schließen sich zusammen, um einen gemeinsamen Zweck zu verfolgen. Seit dem MoPeG (2024) ist die GbR teilrechtsfähig.</p>
+  </div>
+  <ul class="main-list">
+    <li><strong>Rechtsgrundlage:</strong> §§ 705–740 BGB (seit 01.01.2024: modernisiertes Personengesellschaftsrecht – MoPeG)</li>
+    <li><strong>Gründung:</strong> Formloser <strong>Gesellschaftsvertrag</strong> (mündlich, schriftlich oder konkludent); kein Handelsregistereintrag erforderlich</li>
+    <li><strong>Gesellschafter:</strong> Mindestens 2 Personen; keine Höchstzahl</li>
+    <li><strong>Kapital:</strong> Keine gesetzliche Mindesteinlage; Einlagen können Geld, Sachwerte oder Dienstleistungen sein</li>
+    <li><strong>Name:</strong> Keine Firma; Gesellschafter führen ihren bürgerlichen Namen</li>
+  </ul>
+  <div class="citation">Vgl. Bitter, G. &amp; Lutter, M. (2023). <em>Gesellschaftsrecht</em> (4. Aufl.). C.H. Beck. S. 31–34.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 14 – GbR: HAFTUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-14">
+  <div class="slide-title">GbR – Haftung</div>
+  <div class="slide-subtitle">Unbeschränkte gesamtschuldnerische Haftung</div>
+  <div class="info-box red">
+    <strong>Grundsatz:</strong> Jeder Gesellschafter haftet für Verbindlichkeiten der GbR <strong>unbeschränkt, gesamtschuldnerisch und persönlich</strong> mit seinem gesamten Privat- und Gesellschaftsvermögen (§ 721 BGB n.F.).
+  </div>
+  <ul class="main-list" style="margin-top:14px">
+    <li><strong>Gesamtschuldnerisch:</strong> Gläubiger können sich jeden Gesellschafter für den <em>vollen Betrag</em> heraussuchen (§ 421 BGB)</li>
+    <li><strong>Innenverhältnis:</strong> Der in Anspruch genommene Gesellschafter kann Ausgleich von den Mitgesellschaftern verlangen (§ 426 BGB)</li>
+    <li><strong>Akzessorietät:</strong> Gesellschaftsschuld und persönliche Haftung sind akzessorisch verknüpft</li>
+    <li><strong>Neu eintretende Gesellschafter:</strong> Haften seit MoPeG auch für Altverbindlichkeiten (§ 721a BGB n.F.)</li>
+  </ul>
+  <div class="haftung-bar" style="margin-top:14px">
+    <div class="haftung-label"><span>Haftungsrisiko GbR (jeder Gesellschafter)</span><span>100 %</span></div>
+    <div class="haftung-track">
+      <div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen jedes Gesellschafters</div>
+    </div>
+  </div>
+  <div class="citation">Vgl. Grunewald, B. (2022). <em>Gesellschaftsrecht</em> (11. Aufl.). Mohr Siebeck. S. 44–47.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 15 – GbR: GESCHÄFTSFÜHRUNG & GEWINN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-15">
+  <div class="slide-title">GbR – Geschäftsführung &amp; Gewinnverteilung</div>
+  <div class="slide-subtitle">Innenrecht der Gesellschaft</div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Geschäftsführung</h3>
+      <ul>
+        <li>Grundsatz: <strong>gemeinschaftliche Geschäftsführung</strong> aller Gesellschafter (§ 714 BGB)</li>
+        <li>Abweichung durch Gesellschaftsvertrag möglich</li>
+        <li>Jeder Gesellschafter kann Maßnahmen bei Gefahr im Verzug allein treffen</li>
+        <li>Widerspruchsrecht der anderen Gesellschafter</li>
+        <li>Vertretung nach außen: alle Gesellschafter gemeinsam (dispositiv)</li>
+      </ul>
+    </div>
+    <div class="col-card gold-top">
+      <h3>Gewinnverteilung</h3>
+      <ul>
+        <li>Gesetzlich: <strong>Kopfteilprinzip</strong> – gleiche Anteile (§ 722 BGB)</li>
+        <li>Abweichung per Gesellschaftsvertrag möglich (z.&nbsp;B. nach Einlagenhöhe)</li>
+        <li>Verluste werden ebenfalls nach Köpfen verteilt</li>
+        <li>Steuerlich: Gesellschafter versteuern Anteile als <strong>Einkünfte aus Gewerbebetrieb</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:12px">
+    <strong>Geeignet für:</strong> Freiberufler (Anwälte, Architekten), kleine Gemeinschaftsbetriebe, temporäre Projekte, Gelegenheitsgesellschaften.
+  </div>
+  <div class="citation">Vgl. Schäfer, C. (2023). <em>Gesellschaftsrecht</em> (6. Aufl.). C.H. Beck. S. 51–58.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 16 – GbR: VOR- & NACHTEILE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-16">
+  <div class="slide-title">GbR – Vor- und Nachteile</div>
+  <div class="slide-subtitle">Gesamtbewertung der Gesellschaft bürgerlichen Rechts</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>&#10003; Vorteile</h3>
+      <ul>
+        <li>Formfreie, einfache Gründung</li>
+        <li>Kein Mindestkapital</li>
+        <li>Flexible Vertragsgestaltung</li>
+        <li>Mehrere Personen bringen Kapital &amp; Know-how ein</li>
+        <li>Geringe Gründungskosten</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>&#10007; Nachteile</h3>
+      <ul>
+        <li>Volle persönliche Haftung aller Gesellschafter</li>
+        <li>Keine Firmierung möglich</li>
+        <li>Keine kaufmännischen Rechte (kein HGB-Kaufmann)</li>
+        <li>Einstimmigkeitsprinzip kann Entscheidungen blockieren</li>
+        <li>Keine beschränkte Haftung möglich</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 17 – ABSCHNITT: OHG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-17">
+  <div class="section-number">04</div>
+  <div class="section-title">OHG</div>
+  <div class="section-sub">Offene Handelsgesellschaft · §§ 105–160 HGB</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 18 – OHG: DEFINITION & GRÜNDUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-18">
+  <div class="slide-title">OHG – Definition &amp; Gründung</div>
+  <div class="slide-subtitle">Offene Handelsgesellschaft (§§ 105 ff. HGB)</div>
+  <div class="def-box">
+    <div class="def-term">Offene Handelsgesellschaft (OHG)</div>
+    <p>Die OHG ist eine Personengesellschaft, bei der sich <strong>mindestens zwei Vollkaufleute</strong> zum Betrieb eines Handelsgewerbes unter gemeinschaftlicher Firma zusammenschließen. Alle Gesellschafter haften unbeschränkt (§ 105 HGB).</p>
+  </div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Gründungsvoraussetzungen</h3>
+      <ul>
+        <li>Mindestens <strong>2 Gesellschafter</strong> (natürliche oder juristische Personen)</li>
+        <li>Schriftlicher Gesellschaftsvertrag empfohlen (§ 109 HGB)</li>
+        <li><strong>Pflicht zur Eintragung</strong> ins Handelsregister (Abt. A)</li>
+        <li>Betrieb eines <strong>Handelsgewerbes</strong> (§ 1 HGB)</li>
+        <li>Kein Mindestkapital vorgeschrieben</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>Firma &amp; Name</h3>
+      <ul>
+        <li>OHG darf eine <strong>Firma</strong> führen (§ 17 HGB)</li>
+        <li>Firmierung: Sachfirma, Personenfirma oder Fantasiefirma + Rechtsformzusatz „OHG"</li>
+        <li>Firma wird im Handelsregister eingetragen und geschützt</li>
+        <li>Beispiel: „Schmidt &amp; Partner OHG"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="citation">Vgl. Canaris, C.-W., Habersack, M. &amp; Schäfer, C. (2022). <em>Handelsgesetzbuch: Großkommentar</em> (Bd. 2, 6. Aufl.). De Gruyter. §§ 105–108.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 19 – OHG: HAFTUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-19">
+  <div class="slide-title">OHG – Haftung</div>
+  <div class="slide-subtitle">Unbeschränkte gesamtschuldnerische Haftung aller Gesellschafter</div>
+  <div class="info-box red">
+    <strong>§ 128 HGB:</strong> Die Gesellschafter haften für Verbindlichkeiten der Gesellschaft den Gläubigern als <strong>Gesamtschuldner persönlich und unbeschränkt</strong>.
+  </div>
+  <ul class="main-list" style="margin-top:12px">
+    <li><strong>Primäre Haftung:</strong> Zuerst haftet das Gesellschaftsvermögen</li>
+    <li><strong>Subsidiäre Haftung:</strong> Persönliche Haftung tritt hinzu – Gläubiger können aber direkt auf Gesellschafter zugreifen</li>
+    <li><strong>Neu eintretende Gesellschafter:</strong> Haften auch für Altschulden (§ 130 HGB)</li>
+    <li><strong>Ausgeschiedene Gesellschafter:</strong> Haften noch 5 Jahre für Altschulden (§ 160 HGB)</li>
+    <li><strong>Vertraglich:</strong> Haftungsbeschränkung gegenüber Dritten nicht möglich</li>
+  </ul>
+  <div class="haftung-bar" style="margin-top:14px">
+    <div class="haftung-label"><span>Haftungsrisiko OHG (jeder Gesellschafter)</span><span>100 %</span></div>
+    <div class="haftung-track">
+      <div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Unbeschränkt – gesamtes Privatvermögen</div>
+    </div>
+  </div>
+  <div class="citation">Vgl. Schmidt, K. (2020). <em>Gesellschaftsrecht</em> (5. Aufl.). Carl Heymanns. S. 412–419.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 20 – OHG: GESCHÄFTSFÜHRUNG & GEWINN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-20">
+  <div class="slide-title">OHG – Geschäftsführung &amp; Gewinnverteilung</div>
+  <div class="slide-subtitle">Innenrecht der OHG</div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Geschäftsführung</h3>
+      <ul>
+        <li>Grundsatz: <strong>jeder Gesellschafter allein</strong> geschäftsführungsbefugt (§ 115 HGB)</li>
+        <li>Widerspruchsrecht der übrigen Gesellschafter</li>
+        <li>Außergewöhnliche Maßnahmen: Zustimmung aller erforderlich</li>
+        <li>Entzug der Geschäftsführung durch gerichtliche Entscheidung möglich</li>
+        <li>Vertretung nach außen: jeder Gesellschafter einzeln (§ 125 HGB)</li>
+      </ul>
+    </div>
+    <div class="col-card gold-top">
+      <h3>Gewinnverteilung</h3>
+      <ul>
+        <li>Zunächst: <strong>4 % Verzinsung</strong> auf die Kapitaleinlage (§ 121 HGB)</li>
+        <li>Restgewinn: Verteilung nach <strong>Köpfen</strong></li>
+        <li>Verlust: ebenfalls nach Köpfen</li>
+        <li>Abweichende Regelungen im Gesellschaftsvertrag möglich</li>
+        <li>Steuerlich: Mitunternehmerschaft – Einkommensteuer</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:12px">
+    <strong>Geeignet für:</strong> Mittelständische Handels- und Handwerksbetriebe, bei denen alle Partner aktiv tätig sind und volles Vertrauen zueinander besteht.
+  </div>
+  <div class="citation">Vgl. Röhricht, V., Graf von Westphalen, F. &amp; Haas, U. (Hrsg.) (2023). <em>HGB Kommentar</em> (6. Aufl.). Otto Schmidt. § 121.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 21 – OHG: VOR- & NACHTEILE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-21">
+  <div class="slide-title">OHG – Vor- und Nachteile</div>
+  <div class="slide-subtitle">Gesamtbewertung der Offenen Handelsgesellschaft</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>&#10003; Vorteile</h3>
+      <ul>
+        <li>Kaufmännische Rechte und Firmierung möglich</li>
+        <li>Kein Mindestkapital</li>
+        <li>Hohes Vertrauen bei Geschäftspartnern (volle Haftung)</li>
+        <li>Flexibler Gesellschaftsvertrag</li>
+        <li>Jeder Gesellschafter kann die Gesellschaft vertreten</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>&#10007; Nachteile</h3>
+      <ul>
+        <li>Volle persönliche Haftung aller Gesellschafter</li>
+        <li>Handelsregisterpflicht (Kosten, Publizität)</li>
+        <li>Doppelte Buchführung (§ 238 HGB)</li>
+        <li>Konflikte durch Einzelgeschäftsführung möglich</li>
+        <li>Eintritt/Austritt komplex</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUIZ ZQ14B – GbR & OHG
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-ZQ14B" style="background:linear-gradient(135deg,#FFFFFF,#1a2a40);padding:30px;overflow-y:auto;">
+  <div class="slide-title" style="border-left-color:#2563EB;">🧠 Zwischenquiz: GbR &amp; OHG im Vergleich</div>
+  <div style="margin-bottom:18px;margin-top:16px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">1. Welcher Paragraph des HGB regelt die OHG?</p>
+    <div id="q14b1opts">
+      <button onclick="chk14b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) § 705 BGB</button>
+      <button onclick="chk14b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) § 161 HGB</button>
+      <button onclick="chk14b1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) § 105 HGB</button>
+      <button onclick="chk14b1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) § 230 HGB</button>
+    </div>
+    <p id="q14b1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">2. Was ist der wesentliche Unterschied zwischen GbR und OHG?</p>
+    <div id="q14b2opts">
+      <button onclick="chk14b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Bei der OHG haften die Gesellschafter beschränkt</button>
+      <button onclick="chk14b2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Die OHG erfordert Handelsregistereintrag und ist für kaufmännische Betriebe</button>
+      <button onclick="chk14b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Die GbR muss ins Handelsregister eingetragen werden</button>
+      <button onclick="chk14b2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Bei der GbR müssen alle Gesellschafter Kaufleute sein</button>
+    </div>
+    <p id="q14b2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div>
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">3. Wie wird der Gewinn in der OHG laut § 121 HGB verteilt, wenn kein Vertrag etwas anderes regelt?</p>
+    <div id="q14b3opts">
+      <button onclick="chk14b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Vollständig nach Einlagehöhe</button>
+      <button onclick="chk14b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Vollständig gleichmäßig nach Köpfen</button>
+      <button onclick="chk14b3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Zunächst 4 % auf Kapitalanteil, Rest nach Köpfen</button>
+      <button onclick="chk14b3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Alles an den Komplementär</button>
+    </div>
+    <p id="q14b3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <script>
+  function chk14b1(btn,correct){
+    document.getElementById('q14b1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14b1r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! OHG = § 105 HGB. GbR = § 705 BGB. KG = § 161 HGB.':'❌ Falsch! OHG ist in § 105 HGB geregelt.';
+    if(!correct)document.getElementById('q14b1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk14b2(btn,correct){
+    document.getElementById('q14b2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14b2r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! OHG = Handelsregisterpflicht + kaufmännisches Gewerbe. GbR = formlos, beliebiger Zweck.':'❌ Falsch! OHG erfordert Handelsregister, GbR nicht.';
+    if(!correct)document.getElementById('q14b2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk14b3(btn,correct){
+    document.getElementById('q14b3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14b3r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! § 121 HGB: Erst 4 % Verzinsung auf den Kapitalanteil, Rest nach Köpfen.':'❌ Falsch! Nach § 121 HGB: 4 % auf Kapitalanteil, Rest nach Köpfen.';
+    if(!correct)document.getElementById('q14b3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 22 – ABSCHNITT: KG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-22">
+  <div class="section-number">05</div>
+  <div class="section-title">KG</div>
+  <div class="section-sub">Kommanditgesellschaft · §§ 161–177a HGB</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 23 – KG: DEFINITION & GRÜNDUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-23">
+  <div class="slide-title">KG – Definition &amp; Gründung</div>
+  <div class="slide-subtitle">Kommanditgesellschaft (§§ 161 ff. HGB)</div>
+  <div class="def-box">
+    <div class="def-term">Kommanditgesellschaft (KG)</div>
+    <p>Die KG ist eine Sonderform der OHG mit <strong>zwei Gesellschafterklassen</strong>: mindestens ein Komplementär (voll haftend) und mindestens ein Kommanditist (haftungsbeschränkt auf seine Einlage).</p>
+  </div>
+  <!-- SVG showing KG structure -->
+  <svg width="600" height="130" viewBox="0 0 600 130" style="width:100%;max-width:600px;margin:10px 0">
+    <rect x="200" y="0" width="200" height="44" rx="6" fill="#1b3a5c" stroke="#2e6da4" stroke-width="2"/>
+    <text x="300" y="27" text-anchor="middle" fill="#f5f7fa" font-size="13" font-weight="bold">KG</text>
+    <line x1="200" y1="44" x2="120" y2="85" stroke="#2563EB" stroke-width="2"/>
+    <line x1="400" y1="44" x2="480" y2="85" stroke="#2e6da4" stroke-width="2"/>
+    <rect x="30" y="85" width="180" height="40" rx="6" fill="#2563EB" opacity="0.85"/>
+    <text x="120" y="100" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Komplementär</text>
+    <text x="120" y="116" text-anchor="middle" fill="#ffe" font-size="10">unbeschränkte Haftung</text>
+    <rect x="390" y="85" width="180" height="40" rx="6" fill="#2e6da4" opacity="0.85"/>
+    <text x="480" y="100" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Kommanditist</text>
+    <text x="480" y="116" text-anchor="middle" fill="#ffe" font-size="10">Haftung = Einlage</text>
+  </svg>
+  <ul class="main-list">
+    <li><strong>Gründung:</strong> Gesellschaftsvertrag + Eintragung ins Handelsregister (Abt. A) mit Angabe der Kommanditeinlage</li>
+    <li><strong>Mindestgesellschafter:</strong> 1 Komplementär + 1 Kommanditist</li>
+    <li><strong>Kapital:</strong> Kommanditeinlage muss im HR eingetragen sein; kein Mindestbetrag gesetzlich</li>
+  </ul>
+  <div class="citation">Vgl. Koller, I., Kindler, P., Roth, W.-H. &amp; Drüen, K.-D. (2023). <em>Handelsgesetzbuch: Kommentar</em> (10. Aufl.). C.H. Beck. §§ 161–162.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 24 – KG: HAFTUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-24">
+  <div class="slide-title">KG – Haftung</div>
+  <div class="slide-subtitle">Zweigeteilte Haftungsstruktur</div>
+  <div class="two-col">
+    <div class="col-card red-top">
+      <h3>Komplementär (Vollhafter)</h3>
+      <ul>
+        <li>Haftet <strong>unbeschränkt, persönlich und gesamtschuldnerisch</strong></li>
+        <li>Wie ein OHG-Gesellschafter</li>
+        <li>Mit gesamtem Privatvermögen</li>
+        <li>Keine Möglichkeit der vertraglichen Beschränkung gegenüber Dritten</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>Kommanditist (Teilhafter)</h3>
+      <ul>
+        <li>Haftet nur in Höhe seiner <strong>Kommanditeinlage</strong> (§ 171 HGB)</li>
+        <li>Nach vollständiger Einzahlung: <strong>keine persönliche Haftung</strong> mehr</li>
+        <li>Bei Rückzahlung der Einlage: Haftung lebt wieder auf</li>
+        <li>Im Außenverhältnis begrenzt auf eingetragene Haftsumme</li>
+      </ul>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>Komplementär</span><span>unbegrenzt</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Privatvermögen</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>Kommanditist</span><span>= Einlage</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:40%;background:linear-gradient(90deg,#2e6da4,#3498db)">Einlage</div></div>
+    </div>
+  </div>
+  <div class="citation">Vgl. Baumbach, A. &amp; Hopt, K.J. (2024). <em>Handelsgesetzbuch</em> (42. Aufl.). C.H. Beck. § 171 Rn. 1–12.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 25 – KG: GESCHÄFTSFÜHRUNG & GEWINN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-25">
+  <div class="slide-title">KG – Geschäftsführung &amp; Gewinnverteilung</div>
+  <div class="slide-subtitle">Trennung von Leitung und Kapital</div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Geschäftsführung</h3>
+      <ul>
+        <li>Ausschließlich <strong>Komplementär</strong> ist geschäftsführungs- und vertretungsbefugt (§ 164 HGB)</li>
+        <li>Kommanditist hat <strong>kein Recht</strong> zur Geschäftsführung</li>
+        <li>Kommanditist hat Kontrollrecht (§ 166 HGB): Einsicht in Bücher</li>
+        <li>Kommanditist kann Widerspruch bei außergewöhnlichen Maßnahmen einlegen</li>
+      </ul>
+    </div>
+    <div class="col-card gold-top">
+      <h3>Gewinnverteilung</h3>
+      <ul>
+        <li>Zunächst: <strong>4 % Verzinsung</strong> auf die Kapitaleinlage (§ 168 HGB i.V.m. § 121)</li>
+        <li>Restgewinn: <strong>angemessener Anteil</strong> nach Urteil aller Gesellschafter</li>
+        <li>Kommanditist: Gewinnentnahme auf 4&nbsp;% begrenzt (wenn keine abweichende Regelung)</li>
+        <li>Verluste: Kommanditist nur bis zur Einlage</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box" style="margin-top:12px">
+    <strong>Geeignet für:</strong> Unternehmen mit aktivem Unternehmer (Komplementär) und stillen Investoren (Kommanditisten), z.&nbsp;B. Familienbetriebe, Start-up-Finanzierung.
+  </div>
+  <div class="citation">Vgl. Emmerich, V. (2021). <em>Handels- und Gesellschaftsrecht</em> (9. Aufl.). C.H. Beck. S. 186–192.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 26 – KG: VOR- & NACHTEILE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-26">
+  <div class="slide-title">KG – Vor- und Nachteile</div>
+  <div class="slide-subtitle">Gesamtbewertung der Kommanditgesellschaft</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>&#10003; Vorteile</h3>
+      <ul>
+        <li>Kommanditist: <strong>beschränkte Haftung</strong> auf Einlage</li>
+        <li>Kapital ohne Einfluss auf Geschäftsführung möglich</li>
+        <li>Leichtere Kapitalbeschaffung als OHG</li>
+        <li>Flexible Vertragsgestaltung</li>
+        <li>Kaufmännische Rechte, Firmierung möglich</li>
+        <li>Beliebte Sonderform: GmbH &amp; Co. KG</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>&#10007; Nachteile</h3>
+      <ul>
+        <li>Komplementär: volles persönliches Haftungsrisiko</li>
+        <li>Handelsregisterpflicht</li>
+        <li>Doppelte Buchführung</li>
+        <li>Kommanditist hat begrenzten Einfluss</li>
+        <li>Komplexere Struktur als Einzelunternehmen/GbR</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box red" style="margin-top:12px">
+    <strong>Sonderform GmbH &amp; Co. KG:</strong> Der Komplementär ist eine GmbH – damit wird auch die persönliche Haftung des Komplementärs auf das GmbH-Vermögen begrenzt.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 27 – ABSCHNITT: STILLE GESELLSCHAFT
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-27">
+  <div class="section-number">06</div>
+  <div class="section-title">Stille Gesellschaft</div>
+  <div class="section-sub">§§ 230–237 HGB · Innengesellschaft ohne Außenwirkung</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 28 – STILLE GESELLSCHAFT: GRUNDLAGEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-28">
+  <div class="slide-title">Stille Gesellschaft – Grundlagen</div>
+  <div class="slide-subtitle">§§ 230–237 HGB</div>
+  <div class="def-box">
+    <div class="def-term">Stille Gesellschaft</div>
+    <p>Bei der stillen Gesellschaft beteiligt sich eine Person (stiller Gesellschafter) mit einer <strong>Vermögenseinlage</strong> an einem Handelsgewerbe eines anderen (Geschäftsinhaber), ohne nach außen in Erscheinung zu treten. Es handelt sich um eine <strong>reine Innengesellschaft</strong>.</p>
+  </div>
+  <div class="two-col">
+    <div class="col-card">
+      <h3>Typische stille Gesellschaft</h3>
+      <ul>
+        <li>Stiller Gesellschafter: nur Gewinn- und Verlustbeteiligung</li>
+        <li>Verlustbeteiligung: bis zur Einlage (kann ausgeschlossen werden)</li>
+        <li>Keine Haftung gegenüber Gläubigern des Geschäftsinhabers</li>
+        <li>Kontrollrecht (§ 233 HGB)</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>Atypische stille Gesellschaft</h3>
+      <ul>
+        <li>Zusätzlich: Beteiligung an <strong>stillen Reserven und Firmenwert</strong></li>
+        <li>Mitunternehmerstellung (steuerlich bedeutsam)</li>
+        <li>Erhöhte Mitwirkungsrechte vertraglich möglich</li>
+        <li>Steuerlich: Einkünfte aus Gewerbebetrieb</li>
+      </ul>
+    </div>
+  </div>
+  <div class="citation">Vgl. Kindler, P. (2022). <em>Grundkurs Handels- und Gesellschaftsrecht</em> (10. Aufl.). C.H. Beck. S. 239–244.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 29 – STILLE GESELLSCHAFT: MERKMALE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-29">
+  <div class="slide-title">Stille Gesellschaft – Merkmale im Überblick</div>
+  <div class="slide-subtitle">Gründung, Haftung, Gewinnverteilung</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Merkmal</th>
+        <th>Geschäftsinhaber</th>
+        <th>Stiller Gesellschafter</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Gründung</td>
+        <td colspan="2">Formloser Vertrag (mündlich oder schriftlich); kein HR-Eintrag</td>
+      </tr>
+      <tr>
+        <td>Außenwirkung</td>
+        <td>Tritt allein nach außen auf</td>
+        <td>Bleibt nach außen unsichtbar</td>
+      </tr>
+      <tr>
+        <td>Haftung gegenüber Gläubigern</td>
+        <td>Unbeschränkt persönlich</td>
+        <td>Keine direkte Haftung</td>
+      </tr>
+      <tr>
+        <td>Verlustbeteiligung</td>
+        <td>Voll</td>
+        <td>Bis zur Einlage (ausschließbar)</td>
+      </tr>
+      <tr>
+        <td>Gewinnbeteiligung</td>
+        <td>Vertraglich geregelt</td>
+        <td>Angemessener Anteil (§ 231 HGB)</td>
+      </tr>
+      <tr>
+        <td>Geschäftsführung</td>
+        <td>Allein</td>
+        <td>Kein Recht; nur Kontrollrecht</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:12px">
+    <strong>Geeignet für:</strong> Kapitalanleger, die diskret investieren wollen; Unternehmen, die zusätzliches Kapital benötigen, ohne Gesellschafterstruktur zu ändern.
+  </div>
+  <div class="citation">Vgl. Heymann, E. (Hrsg.) (2022). <em>Handelsgesetzbuch: Kommentar</em> (3. Aufl.). De Gruyter. §§ 230–237.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 30 – STILLE GESELLSCHAFT: VOR- & NACHTEILE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-30">
+  <div class="slide-title">Stille Gesellschaft – Vor- und Nachteile</div>
+  <div class="two-col">
+    <div class="col-card gold-top">
+      <h3>&#10003; Vorteile</h3>
+      <ul>
+        <li>Kapitalzufluss ohne Änderung der Außenstruktur</li>
+        <li>Stiller Gesellschafter: Anonymität gewahrt</li>
+        <li>Einfache, formlose Gründung</li>
+        <li>Kein Handelsregistereintrag</li>
+        <li>Flexible Vertragsgestaltung</li>
+        <li>Gute Alternative zu Bankkredit</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>&#10007; Nachteile</h3>
+      <ul>
+        <li>Stiller Gesellschafter: keine Mitsprache bei Geschäftsführung</li>
+        <li>Abhängigkeit vom Geschäftsinhaber</li>
+        <li>Verlustrisiko bis zur Einlagenhöhe</li>
+        <li>Kein Eigentumsrecht am Gesellschaftsvermögen</li>
+        <li>Insolvenz des Inhabers: Einlage weg</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 31 – ABSCHNITT: VERGLEICH
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-section" id="slide-31">
+  <div class="section-number">07</div>
+  <div class="section-title">Vergleich &amp; Zusammenfassung</div>
+  <div class="section-sub">Alle Rechtsformen auf einen Blick</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 32 – VERGLEICHSTABELLE
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-32">
+  <div class="slide-title">Vergleich der Personengesellschaften</div>
+  <div class="slide-subtitle">Überblick der wichtigsten Merkmale</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Merkmal</th>
+        <th>Einzeluntern.</th>
+        <th>GbR</th>
+        <th>OHG</th>
+        <th>KG (Kompl.)</th>
+        <th>KG (Komm.)</th>
+        <th>Stille Ges.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mindest-gesellschafter</td>
+        <td>1</td>
+        <td>2</td>
+        <td>2</td>
+        <td>2</td>
+        <td>–</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>Handelsregister</td>
+        <td>Ja (e.K.)</td>
+        <td>Nein</td>
+        <td>Ja</td>
+        <td>Ja</td>
+        <td>–</td>
+        <td>Nein</td>
+      </tr>
+      <tr>
+        <td>Mindestkapital</td>
+        <td>Nein</td>
+        <td>Nein</td>
+        <td>Nein</td>
+        <td>Nein</td>
+        <td>–</td>
+        <td>Nein</td>
+      </tr>
+      <tr>
+        <td>Haftung</td>
+        <td><span class="badge badge-red">Unbeschränkt</span></td>
+        <td><span class="badge badge-red">Unbeschränkt</span></td>
+        <td><span class="badge badge-red">Unbeschränkt</span></td>
+        <td><span class="badge badge-red">Unbeschränkt</span></td>
+        <td><span class="badge badge-blue">= Einlage</span></td>
+        <td><span class="badge badge-green">Keine</span></td>
+      </tr>
+      <tr>
+        <td>Geschäftsführung</td>
+        <td>Inhaber allein</td>
+        <td>Alle gemeinsam</td>
+        <td>Jeder allein</td>
+        <td>Komplementär</td>
+        <td>Kein Recht</td>
+        <td>Inhaber allein</td>
+      </tr>
+      <tr>
+        <td>Buchführung</td>
+        <td>EÜR / doppelt</td>
+        <td>EÜR</td>
+        <td>Doppelt</td>
+        <td>Doppelt</td>
+        <td>–</td>
+        <td>–</td>
+      </tr>
+      <tr>
+        <td>Steuer</td>
+        <td>ESt</td>
+        <td>ESt anteilig</td>
+        <td>ESt anteilig</td>
+        <td>ESt anteilig</td>
+        <td>ESt / KapESt</td>
+        <td>ESt / KapESt</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="citation">Vgl. Wöhe, G. &amp; Döring, U. (2020). <em>Einführung in die Allgemeine Betriebswirtschaftslehre</em> (27. Aufl.). Vahlen. S. 202–215.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 33 – HAFTUNGSVERGLEICH VISUELL
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-33">
+  <div class="slide-title">Haftungsvergleich – Visuell</div>
+  <div class="slide-subtitle">Von maximaler Haftung zu keiner Haftung</div>
+  <div style="width:100%;margin-top:8px">
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>Einzelunternehmen</span><span>Unbeschränkt (100 %)</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>GbR (je Gesellschafter)</span><span>Unbeschränkt (100 %)</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>OHG (je Gesellschafter)</span><span>Unbeschränkt (100 %)</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>KG – Komplementär</span><span>Unbeschränkt (100 %)</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:100%;background:linear-gradient(90deg,#2563EB,#e74c3c)">Gesamtes Privatvermögen</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>KG – Kommanditist</span><span>Begrenzt (= Einlage)</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:35%;background:linear-gradient(90deg,#2e6da4,#3498db)">Einlage</div></div>
+    </div>
+    <div class="haftung-bar">
+      <div class="haftung-label"><span>Stille Gesellschaft (still. Ges.)</span><span>Keine direkte Haftung</span></div>
+      <div class="haftung-track"><div class="haftung-fill" style="width:8%;background:linear-gradient(90deg,#27ae60,#2ecc71)">~</div></div>
+    </div>
+  </div>
+  <div class="info-box gold" style="margin-top:12px;font-size:0.82rem">
+    Je geringer die Haftung, desto geringer ist in der Regel der Einfluss auf die Unternehmensführung.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 34 – ENTSCHEIDUNGSHILFE: WELCHE RECHTSFORM?
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-34">
+  <div class="slide-title">Entscheidungshilfe: Welche Rechtsform passt?</div>
+  <div class="slide-subtitle">Kriterien für die Wahl der Rechtsform</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Situation / Priorität</th>
+        <th>Empfehlung</th>
+        <th>Begründung</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Soloselbstständig, kleiner Umsatz</td>
+        <td><span class="badge badge-gold">Einzelunternehmen</span></td>
+        <td>Einfach, kostengünstig</td>
+      </tr>
+      <tr>
+        <td>Zwei Freunde starten ein Projekt</td>
+        <td><span class="badge badge-blue">GbR</span></td>
+        <td>Formlos, schnell gegründet</td>
+      </tr>
+      <tr>
+        <td>Mehrere aktive Kaufleute mit Vertrauen</td>
+        <td><span class="badge badge-blue">OHG</span></td>
+        <td>Kaufmänische Rechte, Firma</td>
+      </tr>
+      <tr>
+        <td>Unternehmer + stiller Investor</td>
+        <td><span class="badge badge-blue">KG</span></td>
+        <td>Kommanditist haftet begrenzt</td>
+      </tr>
+      <tr>
+        <td>Kapital einbringen, anonym bleiben</td>
+        <td><span class="badge badge-green">Stille Gesellschaft</span></td>
+        <td>Keine Außenwirkung</td>
+      </tr>
+      <tr>
+        <td>Haftungsbeschränkung für alle</td>
+        <td><span class="badge badge-red">GmbH (Teil 2)</span></td>
+        <td>Kapitalgesellschaft</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="citation">Vgl. Olfert, K. (2022). <em>Unternehmensführung</em> (18. Aufl.). NWB Verlag. S. 78–85.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE VERGLEICH – VERGLEICHSTABELLE PERSONENGESELLSCHAFTEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-vergleich">
+  <div class="slide-title">Vergleichstabelle: Alle Personengesellschaften</div>
+  <div class="slide-subtitle">Überblick: Einzelunternehmen · GbR · OHG · KG</div>
+  <table class="data-table" style="font-size:0.78rem;">
+    <tr>
+      <th>Merkmal</th>
+      <th>Einzeluntern.</th>
+      <th>GbR</th>
+      <th>OHG</th>
+      <th>KG</th>
+    </tr>
+    <tr>
+      <td>Rechtsgrundlage</td>
+      <td>GewO, § 1 HGB</td>
+      <td>§ 705 BGB</td>
+      <td>§ 105 HGB</td>
+      <td>§ 161 HGB</td>
+    </tr>
+    <tr>
+      <td>Gründung</td>
+      <td>Formlos (Gewerbeanmeldung)</td>
+      <td>Formlos</td>
+      <td>Handelsregister (Pflicht)</td>
+      <td>Handelsregister (Pflicht)</td>
+    </tr>
+    <tr>
+      <td>Mindestkapital</td>
+      <td>Keines</td>
+      <td>Keines</td>
+      <td>Keines</td>
+      <td>Keines</td>
+    </tr>
+    <tr>
+      <td>Haftung</td>
+      <td>Inhaber: unbeschränkt</td>
+      <td>Alle: unbeschr., gesamtschuldnerisch</td>
+      <td>Alle: unbeschr., solidarisch</td>
+      <td>Komplementär: unbeschr.; Kommanditist: nur Einlage</td>
+    </tr>
+    <tr>
+      <td>Leitung</td>
+      <td>Inhaber allein</td>
+      <td>Alle gemeinsam</td>
+      <td>Alle (Einzelvertretung)</td>
+      <td>Nur Komplementär</td>
+    </tr>
+    <tr>
+      <td>Gewinnverteilung</td>
+      <td>Inhaber allein</td>
+      <td>Gleichmäßig (Köpfe)</td>
+      <td>4 % Kapital + Rest nach Köpfen (§ 121 HGB)</td>
+      <td>Vertraglich (Kapitalverzinsung f. Kommanditist)</td>
+    </tr>
+    <tr>
+      <td>Steuer</td>
+      <td>ESt</td>
+      <td>ESt (anteilig)</td>
+      <td>ESt (anteilig)</td>
+      <td>ESt (anteilig)</td>
+    </tr>
+    <tr>
+      <td>Juristische Person?</td>
+      <td>Nein</td>
+      <td>Nein</td>
+      <td>Nein</td>
+      <td>Nein</td>
+    </tr>
+  </table>
+  <div class="info-box gold" style="margin-top:10px;font-size:0.82rem;">
+    <strong>Kein Mindestkapital</strong> bei allen Personengesellschaften! | Stille Gesellschaft: § 230 HGB – unsichtbar, nur Einlage haftet
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE ENTSCHEIDUNGSBAUM – WELCHE RECHTSFORM?
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-entscheid">
+  <div class="slide-title">Entscheidungsbaum: Welche Rechtsform passt?</div>
+  <div class="slide-subtitle">Auswahlhilfe für die Praxis</div>
+  <svg viewBox="0 0 720 320" width="100%" style="max-height:270px;">
+    <!-- Startfrage -->
+    <rect x="280" y="10" width="160" height="40" rx="6" fill="#1b3a5c" stroke="#2e6da4" stroke-width="2"/>
+    <text x="360" y="35" text-anchor="middle" fill="#f0c040" font-size="12" font-weight="bold">Wie viele Gründer?</text>
+    <!-- 1 Person -->
+    <line x1="310" y1="50" x2="140" y2="100" stroke="#64748B" stroke-width="1.5"/>
+    <text x="220" y="85" fill="#64748B" font-size="10" text-anchor="middle">1 Person</text>
+    <!-- Mehrere -->
+    <line x1="410" y1="50" x2="580" y2="100" stroke="#64748B" stroke-width="1.5"/>
+    <text x="500" y="85" fill="#64748B" font-size="10" text-anchor="middle">mehrere</text>
+    <!-- Frage: Kleiner Umfang? -->
+    <rect x="60" y="100" width="160" height="40" rx="6" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="140" y="125" text-anchor="middle" fill="#f5f7fa" font-size="11">Kleiner Umfang?</text>
+    <!-- Frage: Beschränkte Haftung? -->
+    <rect x="500" y="100" width="180" height="40" rx="6" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="590" y="120" text-anchor="middle" fill="#f5f7fa" font-size="10">Beschränkte</text>
+    <text x="590" y="134" text-anchor="middle" fill="#f5f7fa" font-size="10">Haftung gewünscht?</text>
+    <!-- Kleingewerbe -->
+    <line x1="90" y1="140" x2="60" y2="190" stroke="#2563EB" stroke-width="1.5"/>
+    <text x="65" y="175" fill="#64748B" font-size="9">ja</text>
+    <rect x="10" y="190" width="120" height="36" rx="5" fill="#2563EB" fill-opacity="0.7"/>
+    <text x="70" y="213" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Kleingewerbe</text>
+    <!-- e.K. -->
+    <line x1="170" y1="140" x2="200" y2="190" stroke="#2563EB" stroke-width="1.5"/>
+    <text x="195" y="175" fill="#64748B" font-size="9">nein</text>
+    <rect x="140" y="190" width="100" height="36" rx="5" fill="#2563EB" fill-opacity="0.7"/>
+    <text x="190" y="213" text-anchor="middle" fill="white" font-size="11" font-weight="bold">e.K.</text>
+    <!-- Frage: Alle gleichgestellt? -->
+    <line x1="530" y1="140" x2="440" y2="190" stroke="#64748B" stroke-width="1.5"/>
+    <text x="475" y="175" fill="#64748B" font-size="9">nein</text>
+    <rect x="360" y="190" width="160" height="36" rx="5" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="440" y="208" text-anchor="middle" fill="#f5f7fa" font-size="10">Alle gleichgestellt?</text>
+    <text x="440" y="220" text-anchor="middle" fill="#64748B" font-size="8">(Haftung &amp; Leitung)</text>
+    <!-- Frage: Nur Kapitalgeber? -->
+    <line x1="650" y1="140" x2="660" y2="190" stroke="#64748B" stroke-width="1.5"/>
+    <text x="665" y="175" fill="#64748B" font-size="9">ja</text>
+    <rect x="600" y="190" width="120" height="36" rx="5" fill="#1b3a5c" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="660" y="208" text-anchor="middle" fill="#f5f7fa" font-size="10">Nur Kapital-</text>
+    <text x="660" y="220" text-anchor="middle" fill="#f5f7fa" font-size="10">geber?</text>
+    <!-- GbR/OHG -->
+    <line x1="400" y1="226" x2="350" y2="276" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="360" y="262" fill="#64748B" font-size="9">ja</text>
+    <rect x="280" y="276" width="120" height="36" rx="5" fill="#2e6da4" fill-opacity="0.7"/>
+    <text x="340" y="299" text-anchor="middle" fill="white" font-size="11" font-weight="bold">GbR / OHG</text>
+    <!-- KG -->
+    <line x1="480" y1="226" x2="510" y2="276" stroke="#2e6da4" stroke-width="1.5"/>
+    <text x="505" y="262" fill="#64748B" font-size="9">nein</text>
+    <rect x="450" y="276" width="100" height="36" rx="5" fill="#2e6da4" fill-opacity="0.7"/>
+    <text x="500" y="299" text-anchor="middle" fill="white" font-size="11" font-weight="bold">KG</text>
+    <!-- Stille Ges -->
+    <line x1="660" y1="226" x2="660" y2="276" stroke="#2e6da4" stroke-width="1.5"/>
+    <rect x="600" y="276" width="120" height="36" rx="5" fill="#2e6da4" fill-opacity="0.7"/>
+    <text x="660" y="294" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Stille</text>
+    <text x="660" y="306" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Gesellschaft</text>
+  </svg>
+  <div class="info-box" style="margin-top:8px;font-size:0.82rem">
+    <strong>Für Kapitalgesellschaften</strong> (GmbH, AG, UG) → Tag 15! Diese bieten beschränkte Haftung, erfordern aber Mindestkapital.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE PRAXIS – E-COMMERCE RECHTSFORMEN
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-praxis14">
+  <div class="slide-title">Praxisbeispiel: Rechtsformen im E-Commerce</div>
+  <div class="slide-subtitle">Typische Konstellationen beim Online-Handel</div>
+  <div class="three-col">
+    <div class="col-card">
+      <h3>🛒 Kleingewerbe / e.K.</h3>
+      <ul>
+        <li>Viele kleine Online-Shops starten auf eBay, Etsy, Amazon</li>
+        <li>Günstig und schnell gegründet</li>
+        <li><strong style="color:#f0c040">Risiko:</strong> Produkthaftung, Plattformsperren → unbeschränkte Haftung!</li>
+        <li>Geeignet für: Nebenberufler, Testphase</li>
+      </ul>
+    </div>
+    <div class="col-card red-top">
+      <h3>👥 GbR – Risiko Dropshipping</h3>
+      <ul>
+        <li>Zwei Freunde gründen gemeinsam einen Dropshipping-Shop</li>
+        <li>Kein Vertrag → GbR entsteht automatisch</li>
+        <li><strong style="color:#f0c040">Gefahr:</strong> Gesamtschuldnerische Haftung! Einer kauft Waren auf Kredit → beide haften vollständig</li>
+        <li>Empfehlung: schriftlichen Gesellschaftsvertrag aufsetzen!</li>
+      </ul>
+    </div>
+    <div class="col-card gold-top">
+      <h3>📦 KG – Investor-Modell</h3>
+      <ul>
+        <li>E-Commerce-Profi (Komplementär) + Investor (Kommanditist)</li>
+        <li>Profi führt das Tagesgeschäft, Investor stellt Kapital bereit</li>
+        <li>Kommanditist haftet nur bis zur Einlage</li>
+        <li>Häufig bei Shop-Skalierung mit externen Geldgebern</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box gold" style="margin-top:12px;">
+    <strong>Ausblick:</strong> Die GmbH (Tag 15) ist die häufigste Rechtsform für professionelle Online-Shops – beschränkte Haftung bei 25.000 € Mindestkapital.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     QUIZ ZQ14C – KG & VERGLEICH
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="slide-ZQ14C" style="background:linear-gradient(135deg,#FFFFFF,#1a2a40);padding:30px;overflow-y:auto;">
+  <div class="slide-title" style="border-left-color:#2563EB;">🧠 Zwischenquiz: KG, Stille Gesellschaft &amp; Vergleich</div>
+  <div style="margin-bottom:18px;margin-top:16px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">1. Wer führt die Geschäfte in der KG?</p>
+    <div id="q14c1opts">
+      <button onclick="chk14c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Alle Gesellschafter gemeinsam</button>
+      <button onclick="chk14c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Der Kommanditist</button>
+      <button onclick="chk14c1(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Der Komplementär</button>
+      <button onclick="chk14c1(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Der Aufsichtsrat</button>
+    </div>
+    <p id="q14c1r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:18px;">
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">2. Was charakterisiert die stille Gesellschaft (§ 230 HGB)?</p>
+    <div id="q14c2opts">
+      <button onclick="chk14c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) Der stille Gesellschafter erscheint im Handelsregister</button>
+      <button onclick="chk14c2(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) Der stille Gesellschafter ist nach außen unsichtbar und haftet nur mit der Einlage</button>
+      <button onclick="chk14c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Der stille Gesellschafter führt die Geschäfte im Hintergrund</button>
+      <button onclick="chk14c2(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Der stille Gesellschafter haftet wie ein Komplementär</button>
+    </div>
+    <p id="q14c2r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <div>
+    <p style="font-weight:bold;margin-bottom:8px;color:#f5f7fa;">3. Tabea möchte sich mit 20.000 € beteiligen, aber NICHT unbeschränkt haften. Welche Stellung empfehlen Sie ihr in einer Gesellschaft?</p>
+    <div id="q14c3opts">
+      <button onclick="chk14c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">A) OHG-Gesellschafterin</button>
+      <button onclick="chk14c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">B) GbR-Gesellschafterin</button>
+      <button onclick="chk14c3(this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">C) Kommanditistin in einer KG</button>
+      <button onclick="chk14c3(this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#1a3060;border:1px solid #3a5090;border-radius:6px;color:white;cursor:pointer;">D) Komplementärin in einer KG</button>
+    </div>
+    <p id="q14c3r" style="margin-top:5px;font-weight:bold;display:none;"></p>
+  </div>
+  <script>
+  function chk14c1(btn,correct){
+    document.getElementById('q14c1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14c1r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! In der KG führt der Komplementär die Geschäfte. Der Kommanditist hat keine Leitungsbefugnis.':'❌ Falsch! Nur der Komplementär führt die KG.';
+    if(!correct)document.getElementById('q14c1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk14c2(btn,correct){
+    document.getElementById('q14c2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14c2r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Der stille Gesellschafter ist Innengesellschafter – nach außen unsichtbar, Haftung auf Einlage beschränkt.':'❌ Falsch! Der stille Gesellschafter ist nach außen nicht sichtbar und haftet nur mit seiner Einlage.';
+    if(!correct)document.getElementById('q14c2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk14c3(btn,correct){
+    document.getElementById('q14c3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q14c3r');
+    r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Als Kommanditistin haftet Tabea nur bis zur Höhe ihrer Einlage (20.000 €) – kein persönliches Haftungsrisiko darüber hinaus.':'❌ Falsch! Als Kommanditistin in der KG haftet sie nur mit der Einlage. Als OHG/GbR-Gesellschafterin oder Komplementärin würde sie unbeschränkt haften.';
+    if(!correct)document.getElementById('q14c3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 35 – ZUSAMMENFASSUNG
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-35">
+  <div class="slide-title">Zusammenfassung</div>
+  <div class="slide-subtitle">Die wichtigsten Kernaussagen aus Abschnitt 1.19</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h4>Einzelunternehmen</h4>
+      <p>1 Person, formlos, keine Mindesteinlage. Volle persönliche Haftung. Gesamter Gewinn gehört dem Inhaber.</p>
+    </div>
+    <div class="summary-card red">
+      <h4>GbR</h4>
+      <p>&#8805; 2 Personen, kein HR, keine Firma. Alle haften gesamtschuldnerisch, unbeschränkt. Gewinn nach Köpfen.</p>
+    </div>
+    <div class="summary-card gold">
+      <h4>OHG</h4>
+      <p>&#8805; 2 Kaufleute, HR-Pflicht, Firma möglich. Alle haften unbeschränkt. Geschäftsführung: jeder allein.</p>
+    </div>
+    <div class="summary-card">
+      <h4>KG</h4>
+      <p>Komplementär (voll haftend) + Kommanditist (nur Einlage). HR-Pflicht. Nur Komplementär führt Geschäfte.</p>
+    </div>
+    <div class="summary-card red">
+      <h4>Stille Gesellschaft</h4>
+      <p>Innengesellschaft. Stiller Gesellschafter: unsichtbar, kein HR-Eintrag, kein Haftungsrisiko nach außen.</p>
+    </div>
+    <div class="summary-card gold">
+      <h4>Kernregel Haftung</h4>
+      <p>Mehr Haftung = mehr Einfluss. Weniger Haftung = weniger Mitspracherecht. KG als Kompromiss.</p>
+    </div>
+  </div>
+  <div class="info-box gold" style="margin-top:14px;font-size:0.82rem">
+    <strong>Prüfungshinweis:</strong> Die Unterschiede zwischen Komplementär und Kommanditist sowie zwischen GbR und OHG sind häufige Prüfungsthemen!
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIE 36 – LITERATURVERZEICHNIS
+═══════════════════════════════════════════════════════ -->
+<div class="slide slide-content" id="slide-36">
+  <div class="slide-title">Literaturverzeichnis</div>
+  <div class="slide-subtitle">APA 7 – Verwendete Quellen</div>
+  <div class="lit-entry">
+    <strong>Baumbach, A. &amp; Hopt, K. J.</strong> (2024). <em>Handelsgesetzbuch: Kommentar</em> (42. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Bitter, G. &amp; Lutter, M.</strong> (2023). <em>Gesellschaftsrecht</em> (4. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Brox, H. &amp; Walker, W.-D.</strong> (2023). <em>Allgemeines Schuldrecht</em> (47. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Canaris, C.-W., Habersack, M. &amp; Schäfer, C.</strong> (2022). <em>Handelsgesetzbuch: Großkommentar</em> (Bd. 2, 6. Aufl.). De Gruyter.
+  </div>
+  <div class="lit-entry">
+    <strong>Emmerich, V.</strong> (2021). <em>Handels- und Gesellschaftsrecht</em> (9. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Grunewald, B.</strong> (2022). <em>Gesellschaftsrecht</em> (11. Aufl.). Mohr Siebeck.
+  </div>
+  <div class="lit-entry">
+    <strong>Heymann, E. (Hrsg.)</strong> (2022). <em>Handelsgesetzbuch: Kommentar</em> (3. Aufl.). De Gruyter.
+  </div>
+  <div class="lit-entry">
+    <strong>Jung, H.</strong> (2021). <em>Allgemeine Betriebswirtschaftslehre</em> (14. Aufl.). De Gruyter Oldenbourg.
+  </div>
+  <div class="lit-entry">
+    <strong>Kindler, P.</strong> (2022). <em>Grundkurs Handels- und Gesellschaftsrecht</em> (10. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Koller, I., Kindler, P., Roth, W.-H. &amp; Drüen, K.-D.</strong> (2023). <em>Handelsgesetzbuch: Kommentar</em> (10. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Kultusministerkonferenz.</strong> (2020). <em>Rahmenlehrplan für den Ausbildungsberuf Kaufmann/Kauffrau im E-Commerce</em>. KMK.
+  </div>
+  <div class="lit-entry">
+    <strong>Olfert, K.</strong> (2022). <em>Unternehmensführung</em> (18. Aufl.). NWB Verlag.
+  </div>
+  <div class="lit-entry">
+    <strong>Röhricht, V., Graf von Westphalen, F. &amp; Haas, U. (Hrsg.)</strong> (2023). <em>HGB Kommentar</em> (6. Aufl.). Otto Schmidt.
+  </div>
+  <div class="lit-entry">
+    <strong>Schäfer, C.</strong> (2023). <em>Gesellschaftsrecht</em> (6. Aufl.). C.H. Beck.
+  </div>
+  <div class="lit-entry">
+    <strong>Schmidt, K.</strong> (2020). <em>Gesellschaftsrecht</em> (5. Aufl.). Carl Heymanns.
+  </div>
+  <div class="lit-entry">
+    <strong>Schmalen, H. &amp; Pechtl, H.</strong> (2019). <em>Grundlagen und Probleme der Betriebswirtschaft</em> (15. Aufl.). Schäffer-Poeschel.
+  </div>
+  <div class="lit-entry">
+    <strong>Wöhe, G. &amp; Döring, U.</strong> (2020). <em>Einführung in die Allgemeine Betriebswirtschaftslehre</em> (27. Aufl.). Vahlen.
+  </div>
+</div>
+
+</div><!-- end slides-wrapper -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 43</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Rechtsformen Teil 1: Einzelunternehmen & Personengesellschaften &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

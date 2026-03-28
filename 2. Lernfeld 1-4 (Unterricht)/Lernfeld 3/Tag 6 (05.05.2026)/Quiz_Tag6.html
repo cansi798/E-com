@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 6 – LF3: Die bargeldlose Zahlung</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128176; Quiz – Tag 6: Die bargeldlose Zahlung</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was versteht man unter einer Überweisung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Zahlung mit Kreditkarte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die Umbuchung eines Geldbetrags von einem Konto auf ein anderes Konto</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine Barzahlung über die Bank</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Einzug eines Betrags durch den Zahlungsempfänger</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei einer Überweisung wird ein Geldbetrag vom Konto des Zahlers abgezogen und dem Konto des Empfängers gutgeschrieben – also von Konto zu Konto umgebucht.</div>
+    <div class="feedback err">&#10008; Falsch. Eine Überweisung ist die Umbuchung eines Geldbetrags von einem Konto auf ein anderes. Der Zahler initiiert den Vorgang, der Betrag wird bei ihm als Lastschrift und beim Empfänger als Gutschrift verbucht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wofür steht die Abkürzung SEPA?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Secure European Payment Authorization</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Standard European Payment Agreement</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Single Euro Payments Area</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Standardized European Payment Administration</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! SEPA steht für „Single Euro Payments Area" – der einheitliche Euro-Zahlungsraum. SEPA-Überweisungen können ausschließlich in Euro abgewickelt werden.</div>
+    <div class="feedback err">&#10008; Falsch. SEPA steht für „Single Euro Payments Area" (Einheitlicher Euro-Zahlungsraum). Für Zahlungen in anderen Währungen ist eine Auslandsüberweisung erforderlich.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welche maximale Frist gilt laut § 675s BGB für eine elektronische Überweisung an eine andere Bank?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Gleicher Geschäftstag</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Maximal 1 Geschäftstag</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Maximal 2 Geschäftstage</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Maximal 3 Geschäftstage</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! § 675s BGB legt fest: Bei einer elektronischen Überweisung zu einer anderen Bank muss der Betrag spätestens am Ende des folgenden Geschäftstags beim Zahlungsdienstleister des Empfängers eingehen.</div>
+    <div class="feedback err">&#10008; Falsch. Für elektronische Überweisungen an eine andere Bank gilt laut § 675s BGB eine maximale Frist von 1 Geschäftstag. Bei Überweisungen in Papierform kann die Frist um einen weiteren Geschäftstag verlängert werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was kennzeichnet einen Sammelüberweisungsauftrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Überweisung an einen einzigen Empfänger mit sehr hohem Betrag</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Mehrere Überweisungsaufträge an verschiedene Empfänger werden in einem einzigen Auftrag zusammengefasst</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Mehrere Zahlungen desselben Betrags an einen Empfänger</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine Dauerauftrag an mehrere Empfänger</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Ein Sammelüberweisungsauftrag fasst viele Überweisungsaufträge an verschiedene Zahlungsempfänger zusammen. Nur die Gesamtsumme wird im Sammelauftrag eingetragen – für jeden Empfänger gibt es einen eigenen Überweisungsträger.</div>
+    <div class="feedback err">&#10008; Falsch. Beim Sammelüberweisungsauftrag werden mehrere Überweisungen an verschiedene Empfänger in einem Auftrag gebündelt. Dies spart Zeit und Kosten, z. B. bei monatlichen Lieferantenzahlungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welche drei Eigenschaften charakterisieren einen Dauerauftrag?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Variabler Betrag, variabler Rhythmus, variabler Empfänger</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Fester Betrag, einmalige Ausführung, fester Empfänger</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Fester Betrag, fester Rhythmus, fester Empfänger</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Variabler Betrag, fester Rhythmus, variabler Empfänger</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Ein Dauerauftrag hat drei feste Eigenschaften: fester Betrag, fester Rhythmus (z. B. monatlich) und fester Empfänger. Dadurch eignet er sich ideal für Mietzahlungen und Mitgliedsbeiträge.</div>
+    <div class="feedback err">&#10008; Falsch. Ein Dauerauftrag ist durch festen Betrag, festen Rhythmus und festen Empfänger gekennzeichnet. Für Zahlungen mit wechselnder Höhe (z. B. Stromrechnung) ist er nicht geeignet – dafür nutzt man das Lastschriftverfahren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Wer initiiert beim Lastschriftverfahren den Zahlungsvorgang?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Zahler (Schuldner)</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Der Zahlungsempfänger (Gläubiger)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Bank des Zahlers</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Deutsche Bundesbank</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Lastschriftverfahren initiiert der Zahlungsempfänger (Gläubiger) den Zahlungsvorgang – er zieht den Betrag vom Konto des Zahlungspflichtigen ein. Das unterscheidet die Lastschrift von der Überweisung.</div>
+    <div class="feedback err">&#10008; Falsch. Beim Lastschriftverfahren initiiert der Zahlungsempfänger die Zahlung. Er bucht den Betrag vom Konto des Zahlungspflichtigen ab. Der Zahler muss zuvor ein Mandat erteilen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Wie lange beträgt die Widerspruchsfrist bei einer SEPA-Basislastschrift?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 2 Wochen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 4 Wochen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 8 Wochen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 13 Monate</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! SEPA-Basislastschriften können innerhalb von 8 Wochen nach dem Belastungstag ohne Angabe von Gründen rückgängig gemacht werden. Bei nicht autorisierten Zahlungen beträgt die Frist sogar 13 Monate.</div>
+    <div class="feedback err">&#10008; Falsch. Die Widerspruchsfrist für SEPA-Basislastschriften beträgt 8 Wochen nach dem Belastungstag – ohne Angabe von Gründen. Dies ist ein wichtiger Verbraucherschutz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was ist das Besondere an der SEPA-Firmenlastschrift gegenüber der SEPA-Basislastschrift?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie gilt nur für Privatkunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Sie hat eine verlängerte Widerspruchsfrist von 16 Wochen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Sie gilt ausschließlich zwischen Geschäftskunden und bietet kein Widerspruchsrecht nach Belastung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie ist günstiger und daher für alle Kunden empfohlen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die SEPA-Firmenlastschrift (B2B) gilt ausschließlich für Zahlungen zwischen Geschäftskunden. Nach der Kontobelastung gibt es kein Widerspruchsrecht – das bietet dem Zahlungsempfänger mehr Sicherheit.</div>
+    <div class="feedback err">&#10008; Falsch. Die SEPA-Firmenlastschrift ist nur für B2B-Transaktionen. Nach Belastung besteht kein Widerspruchsrecht, was sie für Unternehmen als Zahlungsempfänger attraktiver macht als die Basislastschrift.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was ersetzt im SEPA-System die bisherige Kontonummer?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Kundennummer</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die IBAN (International Bank Account Number)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die BIC (Bank Identifier Code)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Clearing-Nummer</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Im SEPA-System ersetzt die IBAN die bisherige Kontonummer und der BIC ersetzt die Bankleitzahl. Die IBAN ermöglicht europaweit einheitliche Kontoidentifikation.</div>
+    <div class="feedback err">&#10008; Falsch. Im SEPA-System ersetzt die IBAN (International Bank Account Number) die Kontonummer. Die BIC (Bank Identifier Code) ersetzt die Bankleitzahl.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Für welche Zahlungsart ist ein Dauerauftrag NICHT geeignet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Monatliche Mietzahlungen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Vereinsmitgliedsbeiträge</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Monatliche Stromrechnung (variable Höhe)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Monatliche Versicherungsprämien (fester Betrag)</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Für die Stromrechnung ist der Dauerauftrag ungeeignet, da der Betrag monatlich variiert. Dafür eignet sich die Lastschrift, die variable Beträge verarbeiten kann.</div>
+    <div class="feedback err">&#10008; Falsch. Für Zahlungen mit wechselnder Höhe – wie die monatliche Stromrechnung – ist der Dauerauftrag ungeeignet. Er erfordert immer den gleichen Betrag. Für variable Beträge nutzt man das Lastschriftverfahren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was versteht man unter Electronic Banking?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bezahlen an der Kasse mit EC-Karte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Beleglose Auftragserteilung an die Bank auf elektronischem Weg, überwiegend über das Internet</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Abheben von Bargeld am Automaten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Das Bezahlen mit Kryptowährungen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Electronic Banking bezeichnet die beleglose Auftragserteilung durch den Kunden und Weiterleitung der Daten an die Bank auf elektronischem Weg – überwiegend über das Internet.</div>
+    <div class="feedback err">&#10008; Falsch. Electronic Banking ist die beleglose Übermittlung von Bankaufträgen über das Internet. Damit können u. a. Überweisungen, Daueraufträge und Kontostandsabfragen durchgeführt werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Wofür steht „TAN" im Online-Banking?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Technische Authentifizierungsnummer</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Transaktionsnummer – ein einmalig verwendbarer Sicherheitscode für Bankgeschäfte</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Transfer-Autorisierungs-Nummer</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Terminal-Autorisierungs-Nummer</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! TAN steht für Transaktionsnummer. Sie berechtigt als zusätzliches Sicherheitsmittel zu bestimmten Handlungen im Online-Banking und ist nur einmal verwendbar.</div>
+    <div class="feedback err">&#10008; Falsch. TAN steht für Transaktionsnummer. Jede TAN ist nur einmal verwendbar und dient als zweite Sicherheitsschicht neben der PIN für Transaktionen im Online-Banking.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Wie viel spart die Exclusiva GmbH laut Präsentation durch die Umstellung auf Electronic Banking monatlich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 200 €</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 600 €</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 800 €</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 950 €</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Exclusiva GmbH spart durch Electronic Banking monatlich 800 € – davon 600 € Buchungsersparnis (3.000 Buchungen × 0,20 € Differenz) und 200 € Zeitersparnis (4 Std. à 50 €).</div>
+    <div class="feedback err">&#10008; Falsch. Die Ersparnis beträgt 800 € monatlich: 600 € durch günstigere beleglose Buchungen (0,05 € statt 0,25 €) plus 200 € Zeitersparnis. Die beleghaften Gesamtkosten lagen bei 950 €, beleglos nur 150 €.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was kostet eine beleglose Buchung im Electronic Banking im Praxisbeispiel der Exclusiva GmbH?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 0,01 €</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> 0,05 €</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 0,25 €</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 1,00 €</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Eine beleglose Buchung im Electronic Banking kostet 0,05 €, während eine beleghafte Buchung 0,25 € kostet. Bei 3.000 monatlichen Buchungen ergibt das eine Ersparnis von 600 €.</div>
+    <div class="feedback err">&#10008; Falsch. Beleglose Buchungen kosten laut Praxisbeispiel 0,05 €, beleghafte Buchungen hingegen 0,25 €. Der Unterschied von 0,20 € pro Buchung ergibt bei 3.000 Buchungen eine monatliche Ersparnis von 600 €.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was ist ein wesentliches Merkmal von Kryptowährungen wie Bitcoin?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie werden von Zentralbanken ausgegeben und reguliert</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Sie sind nur in Euro verfügbar</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Sie werden kryptografisch gesichert und Transaktionen auf der Blockchain dezentral gespeichert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie haben einen stabilen, festgelegten Wechselkurs</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Kryptowährungen werden kryptografisch gesichert. Die Blockchain erfasst jede Transaktion und speichert die Daten verschlüsselt auf vielen Rechnern – manipulationssicher und dezentral.</div>
+    <div class="feedback err">&#10008; Falsch. Kryptowährungen sind dezentral und kryptografisch gesichert. Sie werden nicht von Zentralbanken kontrolliert, ihr Wert schwankt stark nach Angebot und Nachfrage.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Wer initiiert bei der Überweisung den Zahlungsvorgang?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Der Zahler (Schuldner) initiiert die Überweisung selbst</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Der Zahlungsempfänger zieht den Betrag ein</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Bank bucht automatisch ab</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Bundesbank gibt den Zahlungsauftrag frei</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei der Überweisung handelt der Zahler aktiv – er erteilt seiner Bank den Auftrag, einen Betrag auf das Konto des Empfängers zu überweisen. Das unterscheidet die Überweisung von der Lastschrift.</div>
+    <div class="feedback err">&#10008; Falsch. Bei der Überweisung ist der Zahler der Initiator. Er erteilt der Bank den Auftrag. Im Gegensatz dazu ist beim Lastschriftverfahren der Zahlungsempfänger der Initiator.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Wie lange gilt die Überweisungsfrist laut § 675s BGB bei Überweisungen in Papierform?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Gleicher Geschäftstag</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Maximal 1 Geschäftstag</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die Frist kann um einen weiteren Geschäftstag verlängert werden (bis zu 2 Tage)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Maximal 5 Geschäftstage</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Bei Überweisungen in Papierform kann die Frist um einen weiteren Geschäftstag verlängert werden. Das bedeutet in der Praxis eine mögliche Gesamtdauer von bis zu 2 Geschäftstagen.</div>
+    <div class="feedback err">&#10008; Falsch. Für Papierüberweisungen kann die 1-Tages-Frist um einen weiteren Geschäftstag verlängert werden – also maximal 2 Tage. Elektronische Überweisungen hingegen dürfen maximal 1 Geschäftstag dauern.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welches Sicherheitsverfahren beim Electronic Banking kombiniert eine PIN für den Zugang mit einer einmalig verwendbaren TAN für jede Transaktion?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> SSL/TLS-Verfahren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> PIN/TAN-Verfahren (Zwei-Faktor-Authentifizierung)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 3-D-Secure-Verfahren</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> PCI-DSS-Verfahren</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das PIN/TAN-Verfahren ist die Zwei-Faktor-Authentifizierung im Online-Banking: Die PIN ermöglicht den Kontozugang, die TAN autorisiert jede einzelne Transaktion und ist nur einmal verwendbar.</div>
+    <div class="feedback err">&#10008; Falsch. Das PIN/TAN-Verfahren kombiniert beide Sicherheitsstufen: PIN für den Login, TAN für jede Transaktion. Varianten sind mTAN (SMS), chipTAN (Kartenlesegerät) und pushTAN (Banking-App).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welchen Vorteil hat das Lastschriftverfahren für den Zahlungsempfänger im Vergleich zur Überweisung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Es ist sicherer, da die Bank eine Zahlungsgarantie gibt</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Es ist nur für Privatkunden nutzbar</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Der Zahlungsempfänger steuert aktiv den Zahlungseinzug, ohne auf die Handlung des Kunden warten zu müssen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Zahlung ist unwiderruflich und kann nicht storniert werden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Lastschriftverfahren initiiert der Empfänger (z. B. Stromanbieter) den Einzug selbst – er muss nicht darauf warten, dass der Kunde aktiv überweist. Das reduziert säumige Zahlungen erheblich.</div>
+    <div class="feedback err">&#10008; Falsch. Der Hauptvorteil für den Empfänger ist, dass er die Zahlung selbst einziehen kann. Bei der Basislastschrift besteht allerdings ein Widerspruchsrecht von 8 Wochen; die Firmenlastschrift bietet hier mehr Sicherheit.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welches Beispielunternehmen aus der Präsentation zahlt seine Lieferantenrechnungen per Sammelüberweisung, um Buchungskosten zu sparen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Franz Stallmann Fashion OHG</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Exclusiva GmbH</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Deutsche Bundesbank</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Bätje OHG</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Exclusiva GmbH ist das durchgehende Praxisbeispiel der Präsentation. Sie nutzt Sammelüberweisungen für monatliche Lieferantenzahlungen und spart durch Electronic Banking 800 € monatlich.</div>
+    <div class="feedback err">&#10008; Falsch. Die Exclusiva GmbH ist das Praxisbeispiel in der Präsentation. Jürgen Hoffmann von der Franz Stallmann Fashion OHG ist dagegen ein Kunde, der per Banküberweisung bei der Exclusiva GmbH zahlt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div id="result-card">
+    <div class="result-circle" id="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#8635; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>Tag 6 &nbsp;|&nbsp; Lernfeld 3: 3.6 Die bargeldlose Zahlung &nbsp;|&nbsp; &copy; Can Siebert &amp; Hamzah Meyer</footer>
+<script>
+const cards = document.querySelectorAll('.q-card');
+const dotsContainer = document.getElementById('q-dots');
+const progressFill = document.getElementById('progress-fill');
+const scoreDisplay = document.getElementById('score-display');
+let current = 0, correct = 0, answered = 0;
+const state = Array(cards.length).fill(null);
+
+cards.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.addEventListener('click', () => jumpTo(i));
+  dotsContainer.appendChild(d);
+});
+
+function getDots() { return dotsContainer.querySelectorAll('.dot'); }
+
+function jumpTo(n) {
+  cards[current].classList.remove('active');
+  getDots()[current].classList.remove('current');
+  current = n;
+  cards[current].classList.add('active');
+  getDots()[current].classList.add('current');
+}
+
+cards.forEach((card, idx) => {
+  card.querySelectorAll('.opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (state[idx] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      state[idx] = isCorrect;
+      if (isCorrect) { correct++; answered++; } else { answered++; }
+      card.querySelectorAll('.opt').forEach(o => {
+        if (o.dataset.correct === 'true') o.classList.add('correct');
+        else o.classList.add(o === opt ? 'wrong' : 'disabled');
+      });
+      card.querySelector('.feedback.ok').classList.toggle('show', isCorrect);
+      card.querySelector('.feedback.err').classList.toggle('show', !isCorrect);
+      const dot = getDots()[idx];
+      dot.classList.remove('current');
+      dot.classList.add(isCorrect ? 'answered-ok' : 'answered-err');
+      progressFill.style.width = (answered / cards.length * 100) + '%';
+      scoreDisplay.textContent = correct + ' / ' + answered;
+    });
+  });
+  card.querySelector('.btn-next').addEventListener('click', () => {
+    if (idx + 1 < cards.length) jumpTo(idx + 1);
+    else showResult();
+  });
+});
+
+function showResult() {
+  cards.forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round(correct / cards.length * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  let grade, msg;
+  if (pct >= 85) { grade = 'excellent'; msg = 'Hervorragend! Du kennst die bargeldlosen Zahlungsformen sehr gut.'; }
+  else if (pct >= 70) { grade = 'good'; msg = 'Gut gemacht! Einige Details kannst du noch festigen.'; }
+  else if (pct >= 50) { grade = 'ok'; msg = 'Nicht schlecht – wiederhole die Inhalte zur bargeldlosen Zahlung.'; }
+  else { grade = 'low'; msg = 'Noch Übungsbedarf – schau dir die Präsentation nochmals an.'; }
+  circle.className = 'result-circle ' + grade;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-sub').textContent = correct + ' von ' + cards.length + ' Fragen richtig beantwortet.';
+}
+
+function restartQuiz() {
+  correct = 0; answered = 0;
+  state.fill(null);
+  progressFill.style.width = '0%';
+  scoreDisplay.textContent = '0 / 0';
+  document.getElementById('result-card').classList.remove('show');
+  cards.forEach((card, i) => {
+    card.querySelectorAll('.opt').forEach(o => o.className = 'opt');
+    card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+    card.classList.remove('active');
+  });
+  getDots().forEach((d, i) => { d.className = 'dot' + (i === 0 ? ' current' : ''); });
+  current = 0;
+  cards[0].classList.add('active');
+}
+</script>
+</body>
+</html>

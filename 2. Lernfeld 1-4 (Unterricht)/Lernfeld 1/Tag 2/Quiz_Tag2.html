@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 2: Orientierung & Aktives Lesen – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #b41e1e;
+    --blue: #1e3c78;
+    --dark: #1a1a2e;
+    --green: #2d8a4e;
+    --orange: #d97706;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+  }
+  header h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  header p { color: #aaa; font-size: 0.85rem; }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: #666; margin-top: 3px; }
+
+  .score-box { display: flex; gap: 16px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 70px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--blue); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border: 1px solid var(--border);
+    border-radius: 16px; background: white; cursor: pointer; font-size: 0.8rem;
+  }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 1rem; line-height: 1.5; margin-bottom: 14px; font-weight: 500; }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.92rem; line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: #eef1f9; }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: #d4f0df; }
+  .choice-btn.wrong-selected { border-color: var(--red); background: #fde8e8; }
+  .choice-btn.missed { border-color: var(--orange); background: #fef3e2; }
+  .choice-btn:disabled { cursor: default; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #d4f0df; color: #1a5c30; }
+  .q-feedback.partial { background: #fef3e2; color: #8a5c00; }
+  .q-feedback.fail { background: #fde8e8; color: #8a0000; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--blue);
+    color: white; border: none; border-radius: 7px; cursor: pointer; font-size: 0.88rem;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: white; border-radius: 12px; padding: 24px;
+    text-align: center; margin-bottom: 20px; display: none;
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 8px 0; }
+  .final-banner .sub { color: #ccc; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#127891; Quiz – Tag 2: Orientierung & Aktives Lesen</h1>
+  <p>Kaufmann im E-Commerce &middot; Lernfeld 1 &middot; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 2: Orientierung & Aktives Lesen</div>
+      <div class="quiz-meta">59 Fragen &middot; Bei jeder Frage sind 1 oder 2 Antworten korrekt</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">59</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div>Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    num: 1,
+    text: `Was ist besonders wichtig in den ersten Tagen in einem neuen Betrieb?`,
+    choices: [
+    {"label": "A", "text": "Sofort die eigenen Ideen bei der Geschäftsleitung durchsetzen"},
+    {"label": "B", "text": "Pünktlichkeit und ein gepflegtes Erscheinungsbild zeigen"},
+    {"label": "C", "text": "Den Dresscode ignorieren, da man noch neu ist"},
+    {"label": "D", "text": "Sich möglichst unauffällig verhalten und nichts tun enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 2,
+    text: `Wie entsteht der erste Eindruck laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Erst nach einigen Wochen gemeinsamer Arbeit"},
+    {"label": "B", "text": "Nach dem ersten gemeinsamen Mittagessen"},
+    {"label": "C", "text": "In wenigen Sekunden -- und ist nur schwer korrigierbar"},
+    {"label": "D", "text": "Durch schriftliche Bewerbungsunterlagen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 3,
+    text: `Welche Verhaltensempfehlung gilt zur Pünktlichkeit am neuen Arbeitsplatz?`,
+    choices: [
+    {"label": "A", "text": "Es ist egal, ob man einige Minuten zu spät kommt"},
+    {"label": "B", "text": "Besser 10 Minuten früher als 1 Minute zu spät"},
+    {"label": "C", "text": "Man sollte exakt auf die Minute pünktlich sein, nicht früher"},
+    {"label": "D", "text": "Pünktlichkeit spielt in modernen Unternehmen kaum eine Rolle enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 4,
+    text: `Was empfiehlt das Handout zur Anrede von Kollegen am ersten Arbeitstag?`,
+    choices: [
+    {"label": "A", "text": "Alle sofort duzen -- das wirkt freundlich und modern"},
+    {"label": "B", "text": "Im Zweifel siezen und erst duzen, wenn es angeboten wird"},
+    {"label": "C", "text": "Nur Vorgesetzte siezen, Kollegen immer gleich duzen"},
+    {"label": "D", "text": "Die Anrede spielt keine Rolle enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 5,
+    text: `Welche zwei Informationen sind in den ersten Arbeitstagen besonders wichtig? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Ansprechpartner und Vorgesetzte kennenlernen"},
+    {"label": "B", "text": "Den Urlaubsplan für das gesamte Jahr vorab festlegen"},
+    {"label": "C", "text": "Betriebliche Abläufe und Prozesse verstehen"},
+    {"label": "D", "text": "Alle Kundendaten einsehen enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 6,
+    text: `Was gehört laut Handout zum aktiven Zuhören am ersten Arbeitstag?`,
+    choices: [
+    {"label": "A", "text": "Nur zuhören ohne etwas aufzuschreiben"},
+    {"label": "B", "text": "Notizen machen und nachfragen"},
+    {"label": "C", "text": "Das Gespräch möglichst schnell beenden"},
+    {"label": "D", "text": "Den Gesprächspartner unterbrechen, wenn man etwas nicht versteht enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 7,
+    text: `Was ist laut Handout im Bereich Kommunikation am Arbeitsplatz wichtig?`,
+    choices: [
+    {"label": "A", "text": "Möglichst viel mit Kollegen über private Dinge reden"},
+    {"label": "B", "text": "Höflich und respektvoll kommunizieren; keine privaten Telefonate am Arbeitsplatz"},
+    {"label": "C", "text": "Nur schriftlich kommunizieren, niemals mündlich"},
+    {"label": "D", "text": "Immer laut und bestimmt sprechen, um Kompetenz zu zeigen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 8,
+    text: `Was beschreibt der Begriff Aufbauorganisation?`,
+    choices: [
+    {"label": "A", "text": "Den zeitlichen Ablauf aller Geschäftsprozesse"},
+    {"label": "B", "text": "Die Planung von Bauvorhaben eines Unternehmens"},
+    {"label": "C", "text": "Die hierarchische Struktur eines Unternehmens (wer ist wem unterstellt, wer hat welche Aufgaben)"},
+    {"label": "D", "text": "Die Verfahrensanweisungen für einzelne Tätigkeiten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 9,
+    text: `Was zeigt ein Organigramm? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Hierarchieebenen und Über-/Unterordnungsverhältnisse"},
+    {"label": "B", "text": "Die Gehaltsstufen aller Mitarbeiter"},
+    {"label": "C", "text": "Kommunikationswege (Dienstwege) im Unternehmen"},
+    {"label": "D", "text": "Die Urlaubsplanung der einzelnen Abteilungen enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 10,
+    text: `Was ist ein Merkmal des Einliniensystems?`,
+    choices: [
+    {"label": "A", "text": "Jede Stelle hat mehrere Vorgesetzte gleichzeitig"},
+    {"label": "B", "text": "Stäbe beraten die Geschäftsleitung ohne Weisungsbefugnis"},
+    {"label": "C", "text": "Jede Stelle hat genau einen Vorgesetzten"},
+    {"label": "D", "text": "Mitarbeiter wählen ihre Vorgesetzten selbst enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 11,
+    text: `Welcher Vorteil wird dem Einliniensystem zugeschrieben?`,
+    choices: [
+    {"label": "A", "text": "Spezialisierung der Führung und kurze fachliche Wege"},
+    {"label": "B", "text": "Klare Zuständigkeiten und eindeutiger Dienstweg, keine Kompetenzkonflikte"},
+    {"label": "C", "text": "Günstige und einfache Stabsstrukturen"},
+    {"label": "D", "text": "Fachberatung ohne Kompetenzkonflikt enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 12,
+    text: `Welcher Nachteil ist typisch für das Einliniensystem?`,
+    choices: [
+    {"label": "A", "text": "Unklare Zuständigkeiten und mögliche Kompetenzkonflikte zwischen Vorgesetzten"},
+    {"label": "B", "text": "Langer Dienstweg, wenig flexibel, Überlastung der Führungsspitze"},
+    {"label": "C", "text": "Stäbe sind teuer und haben keinen direkten Einfluss"},
+    {"label": "D", "text": "Zu viele Vorgesetzte für jeden Mitarbeiter enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 13,
+    text: `Von wem wurde das Mehrliniensystem (Funktionsprinzip) entwickelt?`,
+    choices: [
+    {"label": "A", "text": "Max Weber"},
+    {"label": "B", "text": "Henri Fayol"},
+    {"label": "C", "text": "F. W. Taylor"},
+    {"label": "D", "text": "Peter Drucker enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 14,
+    text: `Was ist das charakteristische Merkmal des Mehrliniensystems?`,
+    choices: [
+    {"label": "A", "text": "Jeder Mitarbeiter hat genau einen Vorgesetzten"},
+    {"label": "B", "text": "Stäbe beraten ohne Weisungsbefugnis"},
+    {"label": "C", "text": "Jede Stelle kann mehrere Vorgesetzte haben (Funktionsprinzip)"},
+    {"label": "D", "text": "Alle Weisungen gehen nur von oben nach unten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 15,
+    text: `Welche Nachteile hat das Mehrliniensystem? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Sehr lange Dienstwege"},
+    {"label": "B", "text": "Unklare Zuständigkeiten"},
+    {"label": "C", "text": "Mögliche Kompetenzkonflikte und Widersprüche bei Weisungen"},
+    {"label": "D", "text": "Kein Spezialisierungsvorteil für die Führung enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "C"]
+  },
+  {
+    num: 16,
+    text: `Was sind Stäbe im Stabliniensystem?`,
+    choices: [
+    {"label": "A", "text": "Linieneinheiten mit voller Weisungsbefugnis gegenüber Mitarbeitern"},
+    {"label": "B", "text": "Beratende Einheiten ohne Weisungsbefugnis"},
+    {"label": "C", "text": "Abteilungen, die dem Betriebsrat unterstehen"},
+    {"label": "D", "text": "Externe Unternehmensberater, die im Auftrag der Mitarbeiter tätig sind enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 17,
+    text: `Was ist der Hauptvorteil des Stabliniensystems?`,
+    choices: [
+    {"label": "A", "text": "Jede Stelle hat mehrere Vorgesetzte, was die Flexibilität steigert"},
+    {"label": "B", "text": "Fachberatung möglich ohne Kompetenzkonflikt; klare Weisungswege bleiben erhalten"},
+    {"label": "C", "text": "Der Dienstweg ist sehr kurz und vollständig flexibel"},
+    {"label": "D", "text": "Stäbe können eigenständig Entscheidungen für die Abteilungen treffen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 18,
+    text: `Was ist ein Nachteil des Stabliniensystems?`,
+    choices: [
+    {"label": "A", "text": "Es gibt keine klaren Weisungswege mehr"},
+    {"label": "B", "text": "Stäbe können teuer sein und haben keinen direkten Einfluss auf die Linie"},
+    {"label": "C", "text": "Mitarbeiter haben zu viele Vorgesetzte"},
+    {"label": "D", "text": "Spezialisierung ist im Stabliniensystem grundsätzlich nicht möglich enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 19,
+    text: `Welche Organisationsform kombiniert ein Einliniensystem mit beratenden Einheiten?`,
+    choices: [
+    {"label": "A", "text": "Mehrliniensystem"},
+    {"label": "B", "text": "Matrixorganisation"},
+    {"label": "C", "text": "Stabliniensystem"},
+    {"label": "D", "text": "Projektorganisation enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 20,
+    text: `Welche Organisationsform hat eindeutige Weisungswege und genau einen Vorgesetzten pro Stelle?`,
+    choices: [
+    {"label": "A", "text": "Mehrliniensystem"},
+    {"label": "B", "text": "Stabliniensystem"},
+    {"label": "C", "text": "Einliniensystem"},
+    {"label": "D", "text": "Netzwerkorganisation enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 21,
+    text: `Frau Bauer erhält Weisungen von zwei verschiedenen Abteilungsleitern gleichzeitig. Welche Organisationsform liegt vor?`,
+    choices: [
+    {"label": "A", "text": "Einliniensystem"},
+    {"label": "B", "text": "Stabliniensystem"},
+    {"label": "C", "text": "Mehrliniensystem"},
+    {"label": "D", "text": "Projektorganisation enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 22,
+    text: `Herr Schmidt hat genau einen direkten Vorgesetzten und die Geschäftsführung nutzt einen Berater ohne Weisungsbefugnis. Welche Organisationsform ist das?`,
+    choices: [
+    {"label": "A", "text": "Mehrliniensystem"},
+    {"label": "B", "text": "Einliniensystem"},
+    {"label": "C", "text": "Stabliniensystem"},
+    {"label": "D", "text": "Projektorganisation enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 23,
+    text: `Was bedeutet Kundenorientierung als Unternehmensprinzip?`,
+    choices: [
+    {"label": "A", "text": "Alle Entscheidungen werden ausschließlich nach Gewinngesichtspunkten getroffen"},
+    {"label": "B", "text": "Alle Unternehmensprozesse werden konsequent auf die Bedürfnisse der Kunden ausgerichtet"},
+    {"label": "C", "text": "Der Kunde muss sich immer den Unternehmensprozessen anpassen"},
+    {"label": "D", "text": "Kundenzufriedenheit wird nur im Bereich Verkauf berücksichtigt enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 24,
+    text: `Warum ist Kundenorientierung im E-Commerce besonders wichtig?`,
+    choices: [
+    {"label": "A", "text": "Weil im E-Commerce keine Konkurrenz existiert"},
+    {"label": "B", "text": "Weil Onlineshops immer teurer sind als stationäre Händler"},
+    {"label": "C", "text": "Weil Kunden im E-Commerce jederzeit den Anbieter wechseln können"},
+    {"label": "D", "text": "Weil gesetzliche Vorschriften Kundenorientierung verlangen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 25,
+    text: `Welche zwei Maßnahmen dienen der Kundenbindung im E-Commerce? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Loyalitätsprogramme"},
+    {"label": "B", "text": "Regelmäßige Preiserhöhungen"},
+    {"label": "C", "text": "Personalisierte Angebote und Newsletter"},
+    {"label": "D", "text": "Reduzierung des Produktangebots enumerate"}
+    ],
+    multi: true,
+    correct: ["C"]
+  },
+  {
+    num: 26,
+    text: `Was ist ein Geschäftsprozess?`,
+    choices: [
+    {"label": "A", "text": "Eine einmalige, nicht wiederholbare Handlung"},
+    {"label": "B", "text": "Eine zufällige Abfolge von Tätigkeiten ohne festgelegtes Ziel"},
+    {"label": "C", "text": "Eine Folge von logisch zusammenhängenden Aktivitäten mit definiertem Anfang und Ende"},
+    {"label": "D", "text": "Nur die Tätigkeiten im Verkaufsbereich enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 27,
+    text: `Welche zwei Merkmale hat ein Geschäftsprozess? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Er läuft immer nur einmal ab"},
+    {"label": "B", "text": "Er hat einen definierten Anfang (Trigger) und ein definiertes Ende (Ergebnis)"},
+    {"label": "C", "text": "Er kann gemessen und optimiert werden"},
+    {"label": "D", "text": "Er darf nur von der Geschäftsführung initiiert werden enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "C"]
+  },
+  {
+    num: 28,
+    text: `Welche Reihenfolge beschreibt den Bestellprozess im Onlineshop korrekt?`,
+    choices: [
+    {"label": "A", "text": "Rechnung Versand Bestellung Kommissionierung"},
+    {"label": "B", "text": "Kommissionierung Kundenbestellung Versand Rechnung"},
+    {"label": "C", "text": "Auftragseingang Rechnung Bestellung Versand"},
+    {"label": "D", "text": "Kundenbestellung Auftragseingang Kommissionierung Verpackung Versand Zustellung Rechnung enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 29,
+    text: `Was bedeutet "Trigger" im Kontext eines Geschäftsprozesses?`,
+    choices: [
+    {"label": "A", "text": "Das Ergebnis (Ende) des Prozesses"},
+    {"label": "B", "text": "Der Auslöser (Anfang) des Prozesses"},
+    {"label": "C", "text": "Ein Mitarbeiter, der den Prozess überwacht"},
+    {"label": "D", "text": "Die Software, die den Prozess automatisiert enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 30,
+    text: `Wie viele Schritte hat die 5-Schritt-Methode des aktiven Lesens?`,
+    choices: [
+    {"label": "A", "text": "3 Schritte"},
+    {"label": "B", "text": "7 Schritte"},
+    {"label": "C", "text": "4 Schritte"},
+    {"label": "D", "text": "5 Schritte enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 31,
+    text: `Was ist Schritt 1 der 5-Schritt-Methode?`,
+    choices: [
+    {"label": "A", "text": "Gründlich lesen (Read)"},
+    {"label": "B", "text": "Wiederholen (Review)"},
+    {"label": "C", "text": "Überfliegen (Survey)"},
+    {"label": "D", "text": "Fragen stellen (Question) enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 32,
+    text: `Was macht man beim Überfliegen (Survey)?`,
+    choices: [
+    {"label": "A", "text": "Den Text komplett von vorne bis hinten durchlesen"},
+    {"label": "B", "text": "Sofort Notizen schreiben ohne den Text gelesen zu haben"},
+    {"label": "C", "text": "Nur Überschriften, Abbildungen und Zusammenfassungen lesen, um einen Überblick zu gewinnen"},
+    {"label": "D", "text": "Den Text mehrmals laut vorlesen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 33,
+    text: `Wie lange sollte das Überfliegen (Survey) dauern?`,
+    choices: [
+    {"label": "A", "text": "50% der Gesamtlesezeit"},
+    {"label": "B", "text": "Ca. 30% der Gesamtlesezeit"},
+    {"label": "C", "text": "Genauso lange wie das gründliche Lesen"},
+    {"label": "D", "text": "Ca. 5--10% der Gesamtlesezeit enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 34,
+    text: `Was passiert in Schritt 2 -- Fragen stellen (Question)?`,
+    choices: [
+    {"label": "A", "text": "Man liest den Text ein zweites Mal durch"},
+    {"label": "B", "text": "Man schreibt ausführliche Zusammenfassungen des Textes"},
+    {"label": "C", "text": "Man formuliert Fragen zu den Überschriften, die die Aufmerksamkeit beim Lesen lenken"},
+    {"label": "D", "text": "Man erstellt eine Mindmap zum Thema enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 35,
+    text: `Was ist Schritt 3 der 5-Schritt-Methode?`,
+    choices: [
+    {"label": "A", "text": "Fragen stellen (Question)"},
+    {"label": "B", "text": "Wiederholen (Review)"},
+    {"label": "C", "text": "Gründlich lesen (Read)"},
+    {"label": "D", "text": "Verkürzen (Recite) enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 36,
+    text: `Was soll man beim gründlichen Lesen (Read) tun?`,
+    choices: [
+    {"label": "A", "text": "Alles unterstreichen und bunt markieren"},
+    {"label": "B", "text": "Den Text abschnittweise konzentriert lesen und die selbst gestellten Fragen beantworten"},
+    {"label": "C", "text": "Den Text nur diagonal überfliegen"},
+    {"label": "D", "text": "Den Inhalt sofort auswendig lernen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 37,
+    text: `Was empfiehlt das Handout beim Markieren von Texten?`,
+    choices: [
+    {"label": "A", "text": "Möglichst alles bunt markieren"},
+    {"label": "B", "text": "Nur die erste Zeile jedes Abschnitts markieren"},
+    {"label": "C", "text": "Gar nicht markieren"},
+    {"label": "D", "text": "Sparsam markieren -- nur Schlüsselwörter und Kernaussagen enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 38,
+    text: `Was beschreibt Schritt 4 -- Verkürzen und Markieren (Recite)?`,
+    choices: [
+    {"label": "A", "text": "Den Text erneut von vorne lesen"},
+    {"label": "B", "text": "Buch weglegen und das Gelesene in eigenen Worten reproduzieren (Notizen, Mind Maps)"},
+    {"label": "C", "text": "Den Text an andere weitergeben"},
+    {"label": "D", "text": "Fragen an den Lehrer stellen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 39,
+    text: `Was ist Schritt 5 -- Wiederholen (Review)?`,
+    choices: [
+    {"label": "A", "text": "Den Text zum ersten Mal lesen"},
+    {"label": "B", "text": "Notizen ans Ende des Textes schreiben"},
+    {"label": "C", "text": "Den Text in eine andere Sprache übersetzen"},
+    {"label": "D", "text": "Über die Notizen gehen und das Gelernte regelmäßig wiederholen enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 40,
+    text: `Was bedeutet "Spaced Repetition" (verteiltes Lernen)?`,
+    choices: [
+    {"label": "A", "text": "Alle Inhalte am Abend vor dem Test lernen"},
+    {"label": "B", "text": "Inhalte in sehr kurzen, intensiven Phasen lernen"},
+    {"label": "C", "text": "Inhalte in zunehmenden Zeitabständen wiederholen (z.B. nach 1 Tag, 1 Woche, 1 Monat)"},
+    {"label": "D", "text": "Inhalte jeden Tag zur selben Zeit wiederholen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 41,
+    text: `Welche Eselsbrücke gilt für die 5-Schritt-Methode?`,
+    choices: [
+    {"label": "A", "text": "L -- F -- Ü -- K -- W"},
+    {"label": "B", "text": "F -- Ü -- L -- W -- K"},
+    {"label": "C", "text": "Ü -- F -- L -- K -- W"},
+    {"label": "D", "text": "L -- K -- F -- Ü -- W enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 42,
+    text: `Was bedeutet der Merksatz "Über Fragen lernt Klaus Wissen"?`,
+    choices: [
+    {"label": "A", "text": "Überfliegen -- Fragen -- Lesen -- Kürzen -- Wiederholen"},
+    {"label": "B", "text": "Übersicht -- Fragenkatalog -- Lernplan -- Kontrolle -- Wiederholung"},
+    {"label": "C", "text": "Überprüfen -- Formulieren -- Lernen -- Kontrollieren -- Wissen"},
+    {"label": "D", "text": "Überfliegen -- Formulieren -- Lernen -- Kennen -- Wissen enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 43,
+    text: `Welcher Schritt der 5-Schritt-Methode entspricht dem englischen Begriff "Recite"?`,
+    choices: [
+    {"label": "A", "text": "Überfliegen"},
+    {"label": "B", "text": "Fragen stellen"},
+    {"label": "C", "text": "Wiederholen"},
+    {"label": "D", "text": "Verkürzen und Reproduzieren enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 44,
+    text: `Was ist der wesentliche Unterschied zwischen passivem und aktivem Lesen?`,
+    choices: [
+    {"label": "A", "text": "Passives Lesen dauert länger als aktives Lesen"},
+    {"label": "B", "text": "Passives Lesen führt zu mehr Lernerfolg als aktives Lesen"},
+    {"label": "C", "text": "Es gibt keinen relevanten Unterschied"},
+    {"label": "D", "text": "Beim passiven Lesen wird der Text konsumiert; beim aktiven Lesen aktiv verarbeitet mit Fragen und Notizen enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 45,
+    text: `Was passiert beim passiven Lesen laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Der Text wird strukturiert angegangen und Fragen leiten das Lesen"},
+    {"label": "B", "text": "Notizen und Zusammenfassungen werden erstellt"},
+    {"label": "C", "text": "Text wird von vorne nach hinten gelesen; wenig wird langfristig behalten"},
+    {"label": "D", "text": "Deutlich mehr wird im Langzeitgedächtnis verankert enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 46,
+    text: `Was passiert beim aktiven Lesen mit dem Wissen laut Lernpsychologie?`,
+    choices: [
+    {"label": "A", "text": "Es wird schlechter behalten als beim passiven Lesen"},
+    {"label": "B", "text": "Es spielt keine Rolle, wie man liest"},
+    {"label": "C", "text": "Es wird nur kurzfristig gespeichert"},
+    {"label": "D", "text": "Es wird deutlich besser im Langzeitgedächtnis verankert enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 47,
+    text: `Warum wird aktiv erarbeitetes Wissen laut Handout besser behalten?`,
+    choices: [
+    {"label": "A", "text": "Weil man mehr Zeit damit verbringt"},
+    {"label": "B", "text": "Weil mehr kognitive Verknüpfungen hergestellt werden"},
+    {"label": "C", "text": "Weil aktives Lesen immer lauter ist"},
+    {"label": "D", "text": "Weil passive Lernende generell schlechter konzentriert sind enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 48,
+    text: `Welche zwei Aktivitäten im Berufsalltag eines E-Commerce-Kaufmanns erfordern aktives Lesen? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Gesetzestexte und Verordnungen (z.B. DSGVO) lesen und verstehen"},
+    {"label": "B", "text": "Handwerkliche Tätigkeiten in der Werkstatt durchführen"},
+    {"label": "C", "text": "Fachzeitschriften und Marktberichte auswerten"},
+    {"label": "D", "text": "Sportliche Aktivitäten im Pausenraum enumerate"}
+    ],
+    multi: true,
+    correct: ["A"]
+  },
+  {
+    num: 49,
+    text: `Welche zwei Wissenschaftler werden im Handout Tag 2 zur Begründung des aktiven Lesens genannt? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Ausubel (1968)"},
+    {"label": "B", "text": "Mertens (1974)"},
+    {"label": "C", "text": "Schulz von Thun (1977)"},
+    {"label": "D", "text": "Weidenmann (2002) enumerate"}
+    ],
+    multi: true,
+    correct: ["C"]
+  },
+  {
+    num: 50,
+    text: `Was ist laut Handout beim Schritt "Wiederholen" (Review) zu tun?`,
+    choices: [
+    {"label": "A", "text": "Die Fragen aus Schritt 2 nochmals im Text nachschlagen"},
+    {"label": "B", "text": "Den gesamten Text nochmals komplett lesen"},
+    {"label": "C", "text": "Neue Fragen zu einem anderen Thema formulieren"},
+    {"label": "D", "text": "Die Fragen aus Schritt 2 aus dem Gedächtnis beantworten enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 51,
+    text: `Was ist ein Organigramm?`,
+    choices: [
+    {"label": "A", "text": "Eine grafische Darstellung der Aufbauorganisation eines Unternehmens"},
+    {"label": "B", "text": "Eine Liste aller Produkte im Sortiment"},
+    {"label": "C", "text": "Ein Diagramm zur Umsatzentwicklung"},
+    {"label": "D", "text": "Eine Tabelle mit Mitarbeitergehältern enumerate"}
+    ],
+    multi: false,
+    correct: ["A"]
+  },
+  {
+    num: 52,
+    text: `Was ist ein wichtiger Grundsatz für den Arbeitsplatz laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Der Arbeitsplatz spielt keine Rolle, solange die Arbeit erledigt wird"},
+    {"label": "B", "text": "So viele Dekorationsgegenstände wie möglich aufstellen"},
+    {"label": "C", "text": "Sauberer Arbeitsplatz und sortierte Unterlagen"},
+    {"label": "D", "text": "Private Gegenstände möglichst viele mitbringen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 53,
+    text: `Welche Organisationsform wäre für ein Unternehmen geeignet, das klare Weisungswege UND Spezialberatung (z.B. Rechtsabteilung) benötigt?`,
+    choices: [
+    {"label": "A", "text": "Einliniensystem"},
+    {"label": "B", "text": "Mehrliniensystem"},
+    {"label": "C", "text": "Stabliniensystem"},
+    {"label": "D", "text": "Keine der genannten Formen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 54,
+    text: `Welche Eselsbrücke gilt für die drei Organisationsformen?`,
+    choices: [
+    {"label": "A", "text": "M -- E -- S (Mehrlinien -- Einlinien -- Stab)"},
+    {"label": "B", "text": "S -- E -- M (Stab -- Einlinien -- Mehrlinien)"},
+    {"label": "C", "text": "E -- S -- M (Einlinien -- Stab -- Mehrlinien)"},
+    {"label": "D", "text": "E -- M -- S (Einlinien -- Mehrlinien -- Stabliniensystem) enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 55,
+    text: `Was ist der Merksatz für die drei Organisationsformen laut Handout?`,
+    choices: [
+    {"label": "A", "text": "\"Stab, Einmal, Mehrmals\" -- von komplex zu einfach"},
+    {"label": "B", "text": "\"Mehrere Stäbe, einer leitet\" -- von komplex zu einfach"},
+    {"label": "C", "text": "\"Einheit, Mehrheit, Stärke\" -- von einfach zu komplex"},
+    {"label": "D", "text": "\"Einmal, Mehrmals, Stab berät\" -- von einfach zu komplex enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 56,
+    text: `Woran erkennt man laut Handout ein Mehrliniensystem im Organigramm?`,
+    choices: [
+    {"label": "A", "text": "Es gibt genau eine Verbindungslinie von oben nach unten pro Mitarbeiter"},
+    {"label": "B", "text": "Es gibt gestrichelte Linien zu beratenden Stäben"},
+    {"label": "C", "text": "Es gibt mehrere Linien (auch gestrichelte Funktionspfeile) zu einem Mitarbeiter"},
+    {"label": "D", "text": "Es gibt gar keine Verbindungslinien enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 57,
+    text: `Welche Verhaltensregel gilt am Arbeitsplatz bezüglich der Teamfähigkeit?`,
+    choices: [
+    {"label": "A", "text": "Jeder arbeitet nur für sich selbst"},
+    {"label": "B", "text": "Teamfähigkeit, Hilfsbereitschaft und Zuverlässigkeit sind wichtige Sozialkompetenzen"},
+    {"label": "C", "text": "Eigene Aufgaben immer Kollegen überlassen"},
+    {"label": "D", "text": "Konflikte im Team ansprechen ist unerwünscht enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 58,
+    text: `Was ist der Unterschied zwischen einem Geschäftsprozess und einer einzelnen Tätigkeit?`,
+    choices: [
+    {"label": "A", "text": "Es gibt keinen Unterschied"},
+    {"label": "B", "text": "Ein Geschäftsprozess umfasst mehrere logisch zusammenhängende Aktivitäten; eine Tätigkeit ist eine einzelne Handlung"},
+    {"label": "C", "text": "Geschäftsprozesse sind kürzer als einzelne Tätigkeiten"},
+    {"label": "D", "text": "Einzelne Tätigkeiten können immer optimiert werden, Geschäftsprozesse nicht enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 59,
+    text: `Welche Konsequenz zieht das Handout aus der Aussage "aktiv erarbeitetes Wissen wird besser behalten"?`,
+    choices: [
+    {"label": "A", "text": "Passives Lesen ist für die Ausbildung ausreichend"},
+    {"label": "B", "text": "Was wir selbst erarbeiten, behalten wir -- was wir nur lesen, vergessen wir schnell"},
+    {"label": "C", "text": "Das Lesen spielt keine Rolle für den Lernerfolg"},
+    {"label": "D", "text": "Nur Bilder und Diagramme führen zu echtem Lernerfolg enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+];
+
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">ℹ Mehrfachauswahl: 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '✓ Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '◑ Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '✗ Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% · Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 8 – LF3: Der Zahlungsverkehr beim Onlinekauf</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 8: Der Zahlungsverkehr beim Onlinekauf</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Welche zwei entgegengesetzten Zielsetzungen muss ein Webshop-Betreiber beim Zahlungsverkehr in Einklang bringen?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Möglichst viele Zahlungsarten vs. geringe Transaktionskosten</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Schnelle Lieferung vs. günstige Versandkosten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Hohe Sicherheit vs. möglichst viele Produkte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Hoher Umsatz vs. niedrige Lagerkosten</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Der Webshop-Betreiber muss möglichst viele Zahlungsarten (für Kundenkomfort) gegen geringe Transaktionskosten (für den Händler) abwägen.</div>
+    <div class="feedback err">&#10007; Falsch. Die zwei entgegengesetzten Zielsetzungen sind: möglichst viele Zahlungsarten für Kundenkomfort vs. geringe Transaktionskosten für den Händler.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wie viel Prozent der Kunden brechen den Checkout ab, wenn ihre bevorzugte Zahlungsart fehlt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 25 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 38 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 53 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 70 %</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! 53 % der Kunden brechen den Checkout ab, wenn ihre bevorzugte Zahlungsart nicht angeboten wird.</div>
+    <div class="feedback err">&#10007; Falsch. Laut Präsentation brechen 53 % der Kunden ab, wenn ihre bevorzugte Zahlungsart fehlt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welches Online-Zahlungsverfahren hat in Deutschland die höchste Nutzungsrate mit ca. 80 %?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kreditkarte</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> PayPal</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Rechnung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sofortüberweisung</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! PayPal wird von ca. 80 % der deutschen Online-Käufer genutzt und ist damit Marktführer.</div>
+    <div class="feedback err">&#10007; Falsch. PayPal ist mit ca. 80 % Nutzungsrate das beliebteste Online-Zahlungsverfahren in Deutschland.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was ist das Hauptmerkmal der Zahlung auf Vorkasse?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Der Käufer zahlt erst nach Erhalt der Ware</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Der Betrag wird automatisch vom Konto abgebucht</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Der Käufer überweist den Betrag, bevor die Ware versandt wird</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Zahlung erfolgt bei Übergabe der Ware</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Bei der Vorkasse überweist der Käufer den Rechnungsbetrag per Onlinebanking, bevor die Ware versandt wird.</div>
+    <div class="feedback err">&#10007; Falsch. Bei der Vorkasse überweist der Käufer den Betrag zuerst – erst nach Verbuchung des Zahlungseingangs wird geliefert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Welcher Vorteil hat die Zahlung auf Rechnung für den Käufer?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Keine Transaktionsgebühren</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bezahlung erst nach Warenerhalt – Ware kann geprüft werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kein Zahlungsausfallrisiko für den Verkäufer</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sofortige Kaufpreisrückerstattung bei Nichtgefallen</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Rechnungskauf kann der Käufer die Ware zuerst anprobieren/prüfen und erst dann bezahlen – ohne Risiko bei unbekanntem Verkäufer.</div>
+    <div class="feedback err">&#10007; Falsch. Der Hauptvorteil für den Käufer bei der Rechnung ist, dass er die Ware zuerst erhält, prüft und erst danach bezahlt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was ist ein Nachteil der Rechnung für den Verkäufer?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Hohe Transaktionskosten</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kunden müssen sich registrieren</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Risiko des vollständigen Zahlungsausfalls und höhere Retourenquote</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Komplizierte technische Integration</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Rechnungskauf trägt der Verkäufer das Risiko eines Zahlungsausfalls, und Kunden bestellen oft mehr als sie behalten möchten (höhere Retourenquote).</div>
+    <div class="feedback err">&#10007; Falsch. Der Hauptnachteil für den Verkäufer ist das vollständige Zahlungsausfallrisiko sowie die höhere Retourenquote.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Wie lange hat ein Kunde beim Bankeinzug (Lastschrift) das Recht auf Rückbuchung (Widerspruchsrecht)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 2 Wochen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 4 Wochen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 8 Wochen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 3 Monate</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Beim Bankeinzug (Lastschrift) hat der Kunde ein Widerspruchsrecht von 8 Wochen zur Rückbuchung.</div>
+    <div class="feedback err">&#10007; Falsch. Das Widerspruchsrecht beim Bankeinzug beträgt 8 Wochen für die Rückbuchung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Welches Zahlungsverfahren hat in der Beurteilungstabelle den besten Wert bei "Abwicklungsaufwand" (1 = bester Wert)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Vorkasse</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> PayPal</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Sofortüberweisung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Lastschrift</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die Sofortüberweisung hat mit 1,5 den besten Wert beim Abwicklungsaufwand und auch die beste Gesamtzufriedenheit (1,9).</div>
+    <div class="feedback err">&#10007; Falsch. Die Sofortüberweisung hat den besten Abwicklungsaufwandswert (1,5) und auch die höchste Gesamtzufriedenheit.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welche Art von elektronischem Bezahlsystem nutzt PayPal und Amazon Pay als Identifikation?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Wertkarten-basiert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> E-Mail-basiert</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Onlinebanking-orientiert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> NFC-basiert</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! PayPal und Amazon Pay sind E-Mail-basierte Bezahlsysteme – die Identifikation erfolgt per E-Mail, die Abrechnung über ein hinterlegtes Konto oder eine Kreditkarte.</div>
+    <div class="feedback err">&#10007; Falsch. PayPal und Amazon Pay gehören zu den E-Mail-basierten Bezahlsystemen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Welche Gebühren fallen laut Präsentation für Händler bei PayPal an?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Keine Gebühren</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Monatliche Fixgebühr</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Transaktionsgebühren und hohe Abwicklungsgebühren (ca. 3,5 %)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Einmalige Einrichtungsgebühr</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! PayPal berechnet Händlern Transaktionsgebühren pro Verkauf sowie hohe Abwicklungsgebühren von ca. 3,5 %.</div>
+    <div class="feedback err">&#10007; Falsch. Für Händler fallen bei PayPal Transaktionsgebühren und Abwicklungsgebühren von ca. 3,5 % an.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was ist das Besondere an giropay gegenüber anderen E-Payment-Verfahren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Es ist ein Prepaid-System ohne Bankverbindung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Es ist ein Online-Bezahlverfahren deutscher Banken ohne externen Zahlungsdienstleister</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Es funktioniert nur über eine App</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es bietet weltweite Transaktionen kostenlos an</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! giropay ist das Online-Bezahlverfahren deutscher Banken und Sparkassen – kein externer Zahlungsdienstleister ist eingeschaltet, nur Webshop und Bank sehen die Daten.</div>
+    <div class="feedback err">&#10007; Falsch. Das Besondere an giropay ist, dass kein externer Zahlungsdienstleister eingeschaltet wird – es ist ein Verfahren der deutschen Banken und Sparkassen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welches Unternehmen übernimmt beim "Buy Now Pay Later" das Betrugs- und Ausfallrisiko für den Händler und führt eine Bonitätsprüfung via SCHUFA durch?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> PayPal</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Klarna</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> giropay</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> paysafecard</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Klarna übernimmt das Betrugs- und Ausfallrisiko, prüft die Bonität über die SCHUFA und garantiert dem Händler die Zahlung (Factoring).</div>
+    <div class="feedback err">&#10007; Falsch. Klarna ist der Dienst, der Betrugs- und Ausfallrisiko übernimmt, SCHUFA-Bonitätsprüfung durchführt und dem Händler die Zahlung garantiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was ist eine Blockchain im Zusammenhang mit Kryptowährungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein spezielles Bankkonto für digitale Transaktionen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Eine App zum Verwalten von Bitcoins</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Ein dezentrales Verzeichnis, in dem alle Bitcoin-Transaktionen verzeichnet werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine staatliche Regulierungsbehörde für Kryptowährungen</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die Blockchain ist ein dezentrales Verzeichnis, in dem alle Bitcoin-Transaktionen gespeichert werden. Jeder Betrag kann nur einmal ausgegeben werden.</div>
+    <div class="feedback err">&#10007; Falsch. Die Blockchain ist das dezentrale Verzeichnis, in dem sämtliche Bitcoin-Transaktionen gespeichert werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Welche Technologie schützt die Datenübertragung im Onlineshop (z. B. Kreditkarteninformationen) vor Hackern?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> SET (Secure Electronic Transactions)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Digitale Signatur</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> SSL/TLS</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Zwei-Faktor-Authentifizierung</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! SSL/TLS ist das Verschlüsselungsprotokoll, das die Datenübertragung im Onlineshop absichert und Kreditkarteninformationen vor Hackern schützt.</div>
+    <div class="feedback err">&#10007; Falsch. SSL/TLS ist das Verschlüsselungsprotokoll, das Datenübertragungen im Onlineshop schützt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welche Möglichkeit hat ein Webshop-Betreiber, Kunden zur bevorzugten (günstigeren) Zahlungsart zu lenken?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Alle anderen Zahlungsarten verbieten</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bevorzugte Zahlungsart links/oben platzieren und vorauswählen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Für alle Zahlungsarten den gleichen Preis verlangen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kundendaten an Dritte weitergeben</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Webshops können die bevorzugte Zahlungsart links/oben platzieren (Leserichtung), vorauswählen (Standardaktivierung) und farblich hervorheben.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Webshop kann die bevorzugte Zahlungsart durch Positionierung (links/oben), Vorauswahl und farbliche Hervorhebung lenken.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Was schreibt die PSD2 (Payment Service Directive 2) für Online-Zahlungen vor?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kostenlose Transaktionen für Verbraucher</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Mindestens drei Zahlungsarten pro Webshop</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Zwei-Faktor-Authentifizierung zum Kundenschutz</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Maximale Transaktionsgebühren von 1 %</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die PSD2 verlangt für Online-Zahlungen eine Zwei-Faktor-Authentifizierung (2FA) zum verstärkten Kundenschutz und zur Betrugsreduktion.</div>
+    <div class="feedback err">&#10007; Falsch. Die PSD2 schreibt die Zwei-Faktor-Authentifizierung (2FA) für Online-Zahlungen vor.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche drei Faktoren werden bei der Zwei-Faktor-Authentifizierung (2FA) unterschieden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Name, Adresse, Geburtsdatum</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> E-Mail, Telefon, Personalausweis</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Wissen (Passwort/PIN), Besitz (Smartphone/Token), Biometrie (Fingerabdruck)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kundennummer, Kontonummer, Bankleitzahl</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die 2FA kombiniert mindestens zwei der drei Faktoren: Wissen (Passwort, PIN), Besitz (Smartphone, Token, Chipkarte) und Biometrie (Fingerabdruck, Stimme, Iris).</div>
+    <div class="feedback err">&#10007; Falsch. Die drei Faktoren der 2FA sind: Wissen (Passwort/PIN), Besitz (Smartphone/Token) und Biometrie (Fingerabdruck/Iris).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Für welche Zahlungen gilt laut PSD2 eine Ausnahme von der Zwei-Faktor-Authentifizierung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Zahlungen über 100 €</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Zahlungen unter 30 €, Abonnements und Whitelisting von Webshops</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Zahlungen mit Kreditkarte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Zahlungen ins Ausland</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ausnahmen von der 2FA gelten für Zahlungen unter 30 €, wiederkehrende Zahlungen (Abonnements) und Whitelisting (vertrauenswürdige Webshops).</div>
+    <div class="feedback err">&#10007; Falsch. Ausnahmen von der 2FA bestehen für Zahlungen unter 30 €, Abonnements und beim Whitelisting vertrauenswürdiger Webshops.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was ist ein Payment Service Provider (PSP)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine staatliche Behörde zur Regulierung von Online-Zahlungen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Dienstleistungsunternehmen, das die Anbindung verschiedener Zahlungsarten an den Webshop übernimmt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Verfahren zur Zwei-Faktor-Authentifizierung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine spezielle Kreditkarte für Webshops</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Ein PSP ist ein Dienstleister, der dem Händler ermöglicht, viele Zahlungsarten über eine einzige Schnittstelle anzubieten.</div>
+    <div class="feedback err">&#10007; Falsch. Ein Payment Service Provider (PSP) ist ein Dienstleister, der die Anbindung verschiedener Zahlungsarten über eine einzige Schnittstelle ermöglicht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche Kosten entstehen einem Händler bei der Nutzung eines Payment Service Providers (PSP)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Nur monatliche Grundgebühren</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Nur Transaktionsgebühren pro Kauf</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Einrichtungskosten (einmalig), monatliche Gebühr und Transaktionsgebühr je Kauf</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> PSP-Dienste sind immer kostenlos</div>
+    </div>
+    <div class="feedback ok">&#10003; Richtig! Die Kostenstruktur eines PSP umfasst: einmalige Einrichtungskosten je Zahlungsart, monatliche Bereitstellungsgebühr und Transaktionsgebühr je Kauf.</div>
+    <div class="feedback err">&#10007; Falsch. PSP-Kosten setzen sich zusammen aus: Einrichtungskosten (einmalig), monatlicher Gebühr und Transaktionsgebühr je Kauf.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 8</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

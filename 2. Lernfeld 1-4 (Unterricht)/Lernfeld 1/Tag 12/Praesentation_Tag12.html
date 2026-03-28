@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 12 – Fort- &amp; Weiterbildung + Unternehmensziele | Lernfeld 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; width:100%; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+#copyright{display:none} #nav-hint{display:none}
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ═══ Supplemental Styles – matching Tag 7 standard ═══ */
+#progress-bar-container { position:fixed; top:0; left:0; width:100%; height:4px; background:var(--bg-alt); z-index:101; }
+.slides-wrapper { width:100vw; height:100vh; position:relative; overflow:hidden; }
+
+/* Cover slide elements */
+.slide-cover .badge,
+.cover-badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:4px 14px;
+  border-radius:20px; margin:3px 4px; letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.cover-divider, .cover-line {
+  width:80px; height:3px; background:linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius:2px; margin:18px auto;
+}
+.cover-tags { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+
+/* Slide tag / header */
+.slide-tag, .slide-header {
+  font-size:.72rem; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--primary); margin-bottom:8px; align-self:flex-start;
+}
+.slide-section .slide-tag { color:rgba(255,255,255,.7); }
+
+/* TOC elements */
+.slide-toc { width:100%; }
+.toc-text { flex:1; font-size:.9rem; color:var(--text); }
+.toc-page { font-size:.82rem; color:var(--text-muted); min-width:30px; text-align:right; }
+.toc-item .num {
+  font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px;
+}
+.toc-item .title { flex:1; font-size:.9rem; color:var(--text); }
+
+/* Box variants (colored left-border cards) */
+.box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:16px 20px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.box::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.box-blue::before { background:var(--primary); }
+.box-green::before { background:var(--success); }
+.box-orange::before { background:var(--accent); }
+.box-red::before { background:var(--danger); }
+.box-title { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+
+/* Summary slide */
+.slide-summary { justify-content:flex-start; padding-top:70px; background:var(--bg); }
+
+/* Subtitle under slide-title */
+.slide-subtitle, .slide-cover .subtitle {
+  font-size:.88rem; color:var(--text-muted); margin-top:-16px; margin-bottom:20px; align-self:flex-start;
+}
+.slide-cover .subtitle { align-self:center; margin-top:0; }
+
+/* Meta info on cover */
+.slide-cover .meta {
+  display:flex; gap:24px; flex-wrap:wrap; justify-content:center;
+  font-size:.82rem; color:var(--text-muted); margin-top:16px;
+}
+.slide-cover .meta span { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.slide-cover .meta strong { font-weight:700; color:var(--text); font-size:.72rem; letter-spacing:1px; text-transform:uppercase; }
+
+/* Cover h1 styling */
+.slide-cover h1 {
+  font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:12px; text-align:center;
+}
+.slide-cover h1 span { color:var(--primary); }
+
+/* Columns layout */
+.cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.col { display:flex; flex-direction:column; gap:10px; }
+.col-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; padding:16px 20px; box-shadow:var(--shadow);
+}
+.col-box h4 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.col-box p { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+
+/* h2 as slide title when used without .slide-title class */
+.slide-content h2 {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:20px; position:relative; align-self:flex-start;
+}
+.slide-content h2::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+
+/* Section slide h2 override */
+.slide-section h2 {
+  font-size:2.8rem; font-weight:800; color:#fff; margin-bottom:12px;
+}
+.slide-section h2::after { display:none; }
+.slide-section p { font-size:1rem; color:rgba(255,255,255,.75); max-width:600px; text-align:center; }
+.section-number {
+  font-size:6rem; font-weight:900; color:rgba(255,255,255,.12);
+  position:absolute; bottom:30px; right:60px; line-height:1;
+}
+
+/* Cards grid for card-icon layouts */
+.cards, .card-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:14px; width:100%;
+}
+.card-icon {
+  font-size:1.6rem; margin-bottom:6px;
+}
+.card h4 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p { font-size:.85rem; color:var(--text-muted); line-height:1.6; }
+.card-title { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card-body { font-size:.85rem; color:var(--text-muted); line-height:1.6; }
+
+/* Styled lists and tables */
+ul.styled, ol.styled { list-style:none; padding-left:0; }
+ul.styled li, ol.styled li {
+  position:relative; padding-left:18px; margin-bottom:8px;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+ul.styled li::before {
+  content:''; position:absolute; left:0; top:9px;
+  width:7px; height:7px; border-radius:50%; background:var(--primary);
+}
+ol.styled { counter-reset:step; }
+ol.styled li { counter-increment:step; }
+ol.styled li::before {
+  content:counter(step)'.'; position:absolute; left:0; top:0;
+  font-weight:700; color:var(--primary); font-size:.82rem;
+  width:auto; height:auto; border-radius:0; background:none;
+}
+ol.step-list { counter-reset:step; list-style:none; padding-left:0; }
+ol.step-list li {
+  counter-increment:step; position:relative; padding-left:32px;
+  margin-bottom:12px; font-size:.88rem; line-height:1.6; color:var(--text);
+}
+ol.step-list li::before {
+  content:counter(step); position:absolute; left:0; top:0;
+  width:22px; height:22px; border-radius:50%; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; display:flex; align-items:center; justify-content:center;
+}
+table.styled { width:100%; border-collapse:collapse; font-size:.85rem; }
+table.styled th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; border-radius:0; }
+table.styled th:first-child { border-radius:8px 0 0 0; }
+table.styled th:last-child { border-radius:0 8px 0 0; }
+table.styled td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+table.styled tr:nth-child(even) td { background:var(--bg-alt); }
+table.styled tr:hover td { background:var(--primary-light); }
+.data-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.data-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.data-table td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.data-table tr:nth-child(even) td { background:var(--bg-alt); }
+.data-table tr:hover td { background:var(--primary-light); }
+
+/* Lernziel items */
+.lz-list { list-style:none; padding:0; width:100%; }
+.lz-list li {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.88rem; line-height:1.5;
+}
+.lz-list li::before {
+  content:'\\2713'; min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:.72rem; font-weight:700; flex-shrink:0;
+}
+.lernziel-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.88rem; line-height:1.5;
+}
+.lernziel-num {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700; flex-shrink:0;
+}
+.obj-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.88rem; line-height:1.5;
+}
+.obj-icon {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700; flex-shrink:0;
+}
+
+/* Highlight / info / success / citation boxes */
+.highlight {
+  background:var(--primary-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--primary); margin:14px 0;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+.info-box {
+  background:var(--accent-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--accent); margin:10px 0;
+  font-size:.85rem; line-height:1.6; color:var(--text);
+}
+.success-box {
+  background:var(--success-light); border-radius:10px; padding:14px 20px;
+  width:100%; border-left:4px solid var(--success); margin:10px 0;
+  font-size:.85rem; line-height:1.6; color:var(--text);
+}
+.citation, p.citation {
+  font-size:.72rem; color:var(--text-muted); margin-top:12px;
+  font-style:italic; align-self:flex-start;
+}
+
+/* Definition box */
+.def-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; width:100%;
+  border-left:4px solid var(--primary); box-shadow:var(--shadow); margin-bottom:12px;
+}
+.def-box p { font-size:.9rem; line-height:1.7; color:var(--text); }
+.def-label {
+  font-size:.72rem; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--primary); margin-bottom:8px;
+}
+.def-box cite { font-size:.72rem; color:var(--text-muted); font-style:italic; display:block; margin-top:8px; }
+
+/* Content list */
+.content-list { list-style:none; padding:0; }
+.content-list li {
+  position:relative; padding-left:16px; margin-bottom:8px;
+  font-size:.88rem; line-height:1.6; color:var(--text);
+}
+.content-list li::before {
+  content:''; position:absolute; left:0; top:9px;
+  width:6px; height:6px; border-radius:50%; background:var(--primary);
+}
+
+/* SMART grid */
+.smart-grid { display:flex; gap:12px; width:100%; }
+.smart-box {
+  flex:1; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 14px; text-align:center;
+  box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.smart-box::before {
+  content:''; position:absolute; top:0; left:0; width:100%; height:4px;
+  background:var(--primary);
+}
+.smart-box .letter {
+  font-size:2.2rem; font-weight:900; color:var(--primary); line-height:1;
+}
+.smart-box .word {
+  font-size:.88rem; font-weight:700; color:var(--text); margin:6px 0 4px;
+}
+.smart-box .desc {
+  font-size:.72rem; color:var(--text-muted); line-height:1.4;
+}
+
+/* BSC grid */
+.bsc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; }
+.bsc-box {
+  background:var(--bg-card); border-radius:12px; padding:18px 20px;
+  border:1px solid var(--border); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.bsc-box::before {
+  content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+  border-radius:4px 0 0 4px;
+}
+.bsc-box h4 { font-size:.95rem; font-weight:700; margin-bottom:8px; }
+.bsc-box ul { list-style:none; padding:0; }
+.bsc-box li { font-size:.82rem; color:var(--text-muted); margin-bottom:4px; padding-left:12px; position:relative; line-height:1.5; }
+.bsc-box li::before { content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; }
+.bsc-fin::before { background:#27ae60; }
+.bsc-fin h4 { color:#27ae60; }
+.bsc-fin li::before { background:#27ae60; }
+.bsc-cust::before { background:#3498db; }
+.bsc-cust h4 { color:#3498db; }
+.bsc-cust li::before { background:#3498db; }
+.bsc-proc::before { background:#e67e22; }
+.bsc-proc h4 { color:#e67e22; }
+.bsc-proc li::before { background:#e67e22; }
+.bsc-learn::before { background:#e74c3c; }
+.bsc-learn h4 { color:#e74c3c; }
+.bsc-learn li::before { background:#e74c3c; }
+
+/* Relation grid (Zielbeziehungen) */
+.rel-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; width:100%; }
+.rel-box {
+  border-radius:12px; padding:20px; text-align:center; box-shadow:var(--shadow);
+  border:2px solid var(--border);
+}
+.rel-box h4 { font-size:1rem; font-weight:700; margin-bottom:10px; }
+.rel-box p { font-size:.82rem; color:var(--text-muted); line-height:1.5; }
+.rel-kompl { background:rgba(16,185,129,.08); border-color:#10B981; }
+.rel-kompl h4 { color:#10B981; }
+.rel-konk { background:rgba(239,68,68,.08); border-color:#EF4444; }
+.rel-konk h4 { color:#EF4444; }
+.rel-neut { background:var(--bg-alt); border-color:var(--border); }
+.rel-neut h4 { color:var(--text-muted); }
+
+/* Summary grid */
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; }
+.sum-box, .summary-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 20px; box-shadow:var(--shadow);
+  position:relative; overflow:hidden;
+}
+.sum-box::before, .summary-card::before {
+  content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+  background:var(--primary); border-radius:4px 0 0 4px;
+}
+.sum-box h4, .summary-card h4 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.sum-box ul, .summary-card ul { list-style:none; padding:0; }
+.sum-box li, .summary-card li {
+  font-size:.82rem; color:var(--text-muted); margin-bottom:4px;
+  padding-left:14px; position:relative; line-height:1.5;
+}
+.sum-box li::before, .summary-card li::before {
+  content:''; position:absolute; left:0; top:7px;
+  width:5px; height:5px; border-radius:50%; background:var(--primary);
+}
+.summary-card p { font-size:.82rem; color:var(--text-muted); line-height:1.5; }
+
+/* Literature entries */
+.lit-entry, .ref-item {
+  font-size:.78rem; color:var(--text-muted); margin-bottom:10px;
+  line-height:1.6; padding-left:24px; text-indent:-24px;
+}
+.ref-list { list-style:none; padding:0; }
+.ref-list li {
+  font-size:.78rem; color:var(--text-muted); margin-bottom:10px;
+  line-height:1.6; padding-left:24px; text-indent:-24px;
+}
+
+/* Quiz slide styling */
+.quiz-slide {
+  background:linear-gradient(135deg, var(--primary-dark), #1E3A5F) !important;
+  color:#fff;
+}
+
+/* Badge variants */
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; letter-spacing:.5px; }
+.badge-blue { background:var(--primary); color:#fff; }
+.badge-gold { background:var(--accent); color:#fff; }
+.badge-green { background:var(--success); color:#fff; }
+.badge-red { background:var(--danger); color:#fff; }
+
+/* Keyword term styling */
+.kterm { font-weight:700; color:var(--primary); }
+
+/* SVG center */
+.svg-center { width:100%; display:flex; justify-content:center; margin:10px 0; }
+
+/* URL diagram elements */
+.url-diagram { display:flex; justify-content:center; margin:16px 0; font-family:'Courier New',monospace; font-size:1.1rem; }
+.url-part { padding:6px 2px; }
+.url-protocol { color:#ff8a80; background:rgba(255,138,128,.1); border-radius:4px 0 0 4px; }
+.url-subdomain { color:#a8e6cf; background:rgba(168,230,207,.1); }
+.url-domain { color:#82b1ff; background:rgba(130,177,255,.15); font-weight:700; }
+.url-tld { color:#ffe082; background:rgba(255,224,130,.1); }
+.url-path { color:var(--text-muted); background:rgba(0,0,0,.04); border-radius:0 4px 4px 0; }
+.legend-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:.75rem; color:var(--text-muted); }
+.legend-dot { width:10px; height:10px; border-radius:50%; }
+
+/* Slide footer (bottom bar) */
+.slide-footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.95); z-index:10;
+}
+
+/* h3 in content slides */
+.slide-content h3 { font-size:1rem; font-weight:700; color:var(--primary); margin:14px 0 8px; }
+
+/* Animations for supplemental elements */
+.slide.active .cards, .slide.active .card-grid,
+.slide.active .cols, .slide.active .two-col,
+.slide.active .smart-grid, .slide.active .bsc-grid,
+.slide.active .rel-grid, .slide.active .summary-grid,
+.slide.active .def-box, .slide.active .lz-list,
+.slide.active .lernziel-item, .slide.active .obj-item,
+.slide.active .toc-grid { animation:fadeUp .5s ease .15s both; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-container"><div id="progress-bar"></div></div>
+<div class="slides-wrapper" id="slides">
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 1: Cover -->
+<div class="slide slide-cover active">
+  <div class="badge">Lernfeld 1 &nbsp;|&nbsp; Tag 12</div>
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:18px;animation:fadeInDown 0.8s ease 0.1s both">
+    <defs><linearGradient id="eduGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e4db7"/><stop offset="100%" stop-color="#3a7bd5"/></linearGradient></defs>
+    <polygon points="60,20 15,45 60,70 105,45" fill="url(#eduGrad)" opacity="0.9"/>
+    <rect x="57" y="45" width="6" height="35" rx="2" fill="#3a7bd5" opacity="0.7"/>
+    <circle cx="60" cy="82" r="5" fill="#F59E0B"/>
+    <path d="M30 50 L30 72 Q60 90 90 72 L90 50" fill="none" stroke="#3a7bd5" stroke-width="2.5" opacity="0.6"/>
+    <path d="M95 30 L95 10 L85 20" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <h1>Fort- &amp; Weiterbildung<br><span>+ Unternehmensziele</span></h1>
+  <p class="subtitle">Abschnitte 1.16 &amp; 1.17 &nbsp;|&nbsp; Buchseiten 124–133</p>
+  <div class="meta">
+    <span><strong>Fach</strong>E-Commerce Ausbildung</span>
+    <span><strong>Datum</strong>2. März 2026</span>
+    <span><strong>Autoren</strong>Can Siebert &amp; Hamzah Meyer</span>
+  </div>
+  <svg width="500" height="4" style="margin-top:40px"><rect width="500" height="4" rx="2" fill="url(#lg)"/><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1a3272"/></linearGradient></defs></svg>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 2: Inhaltsverzeichnis -->
+<div class="slide slide-content">
+  <h2>Inhaltsverzeichnis</h2>
+  <div class="toc-grid">
+    <div class="toc-item"><div class="num">01</div><div class="title">Lernziele</div></div>
+    <div class="toc-item"><div class="num">02</div><div class="title">Was ist Fort- &amp; Weiterbildung?</div></div>
+    <div class="toc-item"><div class="num">03</div><div class="title">Arten der Weiterbildung</div></div>
+    <div class="toc-item"><div class="num">04</div><div class="title">IHK-Weiterbildungen im E-Commerce</div></div>
+    <div class="toc-item"><div class="num">05</div><div class="title">Fachwirt E-Commerce</div></div>
+    <div class="toc-item"><div class="num">06</div><div class="title">Förderungen &amp; Finanzierung</div></div>
+    <div class="toc-item"><div class="num">07</div><div class="title">Unternehmensziele – Überblick</div></div>
+    <div class="toc-item"><div class="num">08</div><div class="title">SMART-Ziele</div></div>
+    <div class="toc-item"><div class="num">09</div><div class="title">Balanced Scorecard</div></div>
+    <div class="toc-item"><div class="num">10</div><div class="title">Zielbeziehungen</div></div>
+    <div class="toc-item"><div class="num">11</div><div class="title">Zusammenfassung &amp; Literatur</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 3: Lernziele -->
+<div class="slide slide-content">
+  <h2>Lernziele</h2>
+  <ul class="lz-list">
+    <li>Ich kann den Unterschied zwischen Fortbildung und Weiterbildung erklären.</li>
+    <li>Ich kenne die wichtigsten IHK-Abschlüsse im E-Commerce-Bereich und deren Zugangsvoraussetzungen.</li>
+    <li>Ich kann staatliche und betriebliche Fördermöglichkeiten für Weiterbildungen benennen.</li>
+    <li>Ich unterscheide ökonomische, ökologische und soziale Unternehmensziele.</li>
+    <li>Ich kann Ziele nach dem SMART-Prinzip formulieren und bewerten.</li>
+    <li>Ich erkläre Aufbau und Nutzen der Balanced Scorecard.</li>
+    <li>Ich analysiere Zielbeziehungen (komplementär, konkurrierend, neutral) anhand von Beispielen.</li>
+  </ul>
+  <div class="highlight"><strong>Buchbezug:</strong> Abschnitte 1.16 Fort- und Weiterbildung &amp; 1.17 Unternehmensziele, S. 124–133</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 4: Section – Fortbildung -->
+<div class="slide slide-section">
+  <div class="section-num">1.16</div>
+  <h2>Fort- und Weiterbildung</h2>
+  <p>Lebenslanges Lernen als Schlüssel im digitalen Handel – Anforderungen, Wege und Förderungen.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 5: Begriffe -->
+<div class="slide slide-content">
+  <h2>Begriffsklärung</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Fortbildung</h3>
+      <ul class="styled">
+        <li>Vertiefung und Erweiterung <strong>beruflicher</strong> Kenntnisse</li>
+        <li>Ziel: Aufstieg oder Anpassung im erlernten Beruf</li>
+        <li>Geregelt in §§ 53–56 BBiG</li>
+        <li>Beispiel: IHK-geprüfter Fachwirt E-Commerce</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Weiterbildung</h3>
+      <ul class="styled">
+        <li>Oberbegriff: umfasst alle Bildungsmaßnahmen <strong>nach</strong> der Erstausbildung</li>
+        <li>Anpassungs- oder Aufstiegsweiterbildung</li>
+        <li>Auch berufsfremde Themen möglich</li>
+        <li>Beispiel: Zertifikatskurs Online-Marketing</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight"><strong>Merke:</strong> Jede Fortbildung ist Weiterbildung, aber nicht jede Weiterbildung ist Fortbildung.</div>
+  <p class="citation">Vgl. Bundesinstitut für Berufsbildung (BIBB), 2023, S. 12.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 6: Arten Weiterbildung -->
+<div class="slide slide-content">
+  <h2>Arten der Weiterbildung</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">📈</div>
+      <h4>Anpassungsfortbildung</h4>
+      <p>Aktualisierung vorhandener Kompetenzen an neue Technologien und Marktanforderungen (z. B. KI-Tools, neue Plattformen).</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏆</div>
+      <h4>Aufstiegsfortbildung</h4>
+      <p>Qualifikation für höhere berufliche Positionen; führt zu anerkannten IHK-Abschlüssen (Fachwirt, Meister, Betriebswirt).</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <h4>Umschulung</h4>
+      <p>Wechsel des Berufsfeldes; vollständige Neuqualifikation, oft durch Agentur für Arbeit gefördert.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📚</div>
+      <h4>Betriebliche WB</h4>
+      <p>Vom Arbeitgeber organisiert (intern/extern); dient der Personalentwicklung und Mitarbeiterbindung.</p>
+    </div>
+  </div>
+  <p class="citation">Vgl. Kauffeld, 2019, S. 74 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 7: IHK E-Commerce -->
+<div class="slide slide-content">
+  <h2>IHK-Weiterbildungen im E-Commerce</h2>
+  <table class="styled">
+    <tr>
+      <th>Abschluss</th>
+      <th>Niveau (DQR)</th>
+      <th>Voraussetzung</th>
+      <th>Dauer (ca.)</th>
+    </tr>
+    <tr>
+      <td>Geprüfter Fachwirt E-Commerce</td>
+      <td>DQR 6</td>
+      <td>Berufsabschluss + 1 J. Praxis</td>
+      <td>12–18 Monate</td>
+    </tr>
+    <tr>
+      <td>Geprüfter Kaufm. Fachwirt</td>
+      <td>DQR 6</td>
+      <td>Berufsabschluss + 1 J. Praxis</td>
+      <td>12–18 Monate</td>
+    </tr>
+    <tr>
+      <td>Geprüfter Betriebswirt</td>
+      <td>DQR 7</td>
+      <td>Fachwirt-Abschluss</td>
+      <td>18–24 Monate</td>
+    </tr>
+    <tr>
+      <td>Zertifikat Online-Marketing</td>
+      <td>DQR 4–5</td>
+      <td>keine formale Voraussetzung</td>
+      <td>3–6 Monate</td>
+    </tr>
+  </table>
+  <div class="info-box">DQR = Deutscher Qualifikationsrahmen &nbsp;|&nbsp; Entspricht europäischem EQR-Niveau</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 8: Fachwirt E-Commerce -->
+<div class="slide slide-content">
+  <h2>Fachwirt E-Commerce – Vertiefung</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Prüfungsbereiche</h3>
+      <ul class="styled">
+        <li>Handlungsbereich 1: Digitale Geschäftsmodelle</li>
+        <li>Handlungsbereich 2: Online-Marketing &amp; Vertrieb</li>
+        <li>Handlungsbereich 3: Logistik &amp; Fulfillment</li>
+        <li>Handlungsbereich 4: Controlling &amp; Finanzen</li>
+        <li>Handlungsbereich 5: Führung &amp; Personal</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Kompetenzprofil</h3>
+      <ul class="styled">
+        <li>Planung und Steuerung digitaler Verkaufsprozesse</li>
+        <li>Analyse von KPIs und Web-Analytics</li>
+        <li>Teamführung in digitalen Projekten</li>
+        <li>Rechtliche Grundlagen (DSGVO, UWG)</li>
+        <li>Projektmanagement agiler Teams</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight"><strong>Prüfung:</strong> Schriftliche Klausuren + mündliche Situationsaufgabe vor IHK-Prüfungsausschuss</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 9: SVG Karrierepfad -->
+<div class="slide slide-content">
+  <h2>Karrierepfad im E-Commerce</h2>
+  <svg viewBox="0 0 760 320" width="100%" style="max-height:280px">
+    <!-- Stufe 1 -->
+    <rect x="10" y="220" width="140" height="70" rx="10" fill="#1a3272" stroke="#2563EB" stroke-width="2"/>
+    <text x="80" y="252" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Ausbildung</text>
+    <text x="80" y="272" text-anchor="middle" fill="#bdc3c7" font-size="11">E-Commerce KfM</text>
+    <text x="80" y="288" text-anchor="middle" fill="#bdc3c7" font-size="10">DQR 4</text>
+    <!-- Arrow -->
+    <path d="M152 255 L190 255" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arr)"/>
+    <!-- Stufe 2 -->
+    <rect x="192" y="210" width="150" height="80" rx="10" fill="#1a3272" stroke="#2563EB" stroke-width="2"/>
+    <text x="267" y="245" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Fachwirt</text>
+    <text x="267" y="263" text-anchor="middle" fill="#e74c3c" font-size="11">E-Commerce</text>
+    <text x="267" y="279" text-anchor="middle" fill="#bdc3c7" font-size="10">DQR 6</text>
+    <!-- Arrow -->
+    <path d="M344 250 L382 250" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arr)"/>
+    <!-- Stufe 3 -->
+    <rect x="384" y="195" width="150" height="90" rx="10" fill="#1a3272" stroke="#e67e22" stroke-width="2"/>
+    <text x="459" y="233" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Betriebswirt</text>
+    <text x="459" y="251" text-anchor="middle" fill="#e67e22" font-size="11">IHK</text>
+    <text x="459" y="268" text-anchor="middle" fill="#bdc3c7" font-size="10">DQR 7</text>
+    <!-- Arrow -->
+    <path d="M536 240 L574 240" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arr)"/>
+    <!-- Stufe 4 -->
+    <rect x="576" y="170" width="160" height="110" rx="10" fill="#0a2550" stroke="#27ae60" stroke-width="2"/>
+    <text x="656" y="215" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Management</text>
+    <text x="656" y="233" text-anchor="middle" fill="#27ae60" font-size="11">Head of E-Commerce</text>
+    <text x="656" y="251" text-anchor="middle" fill="#bdc3c7" font-size="10">DQR 7–8</text>
+    <!-- Labels oben -->
+    <text x="80"  y="208" text-anchor="middle" fill="#bdc3c7" font-size="10">Start</text>
+    <text x="267" y="200" text-anchor="middle" fill="#e74c3c" font-size="10">+2–3 Jahre</text>
+    <text x="459" y="185" text-anchor="middle" fill="#e67e22" font-size="10">+3–5 Jahre</text>
+    <text x="656" y="160" text-anchor="middle" fill="#27ae60" font-size="10">+5+ Jahre</text>
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#e74c3c"/>
+      </marker>
+    </defs>
+  </svg>
+  <p class="citation">Eigene Darstellung in Anlehnung an IHK (2024) und BIBB (2023).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 10: Förderungen -->
+<div class="slide slide-content">
+  <h2>Förderungen &amp; Finanzierung</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🏛️</div>
+      <h4>Aufstiegs-BAföG</h4>
+      <p>Bis zu 15.000 € Zuschuss (nicht rückzahlbar) + zinsgünstiges Darlehen. Für Aufstiegsfortbildungen auf DQR 5–8.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">💼</div>
+      <h4>Qualifizierungs-chancengesetz</h4>
+      <p>Arbeitgeber kann Weiterbildungskosten und Lohnersatz bei der Agentur für Arbeit beantragen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎫</div>
+      <h4>Bildungsgutschein</h4>
+      <p>Agentur für Arbeit / Jobcenter finanziert Umschulungen und Anpassungsfortbildungen vollständig.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏢</div>
+      <h4>Betriebliche Förderung</h4>
+      <p>Kostenübernahme, Freistellung, Bildungsurlaub (5 Tage/Jahr per Gesetz in vielen Bundesländern).</p>
+    </div>
+  </div>
+  <p class="citation">Vgl. BMBF, 2024; Bundesagentur für Arbeit, 2024.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 11: Bedeutung LLL -->
+<div class="slide slide-content">
+  <h2>Warum ist Weiterbildung im E-Commerce so wichtig?</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Technologischer Wandel</h3>
+      <ul class="styled">
+        <li>KI, Automatisierung, neue Plattformen</li>
+        <li>Halbwertszeit von IT-Kenntnissen: ~2–3 Jahre</li>
+        <li>Rapid Commerce &amp; Social Commerce wachsen</li>
+      </ul>
+      <h3 style="margin-top:18px">Rechtliche Änderungen</h3>
+      <ul class="styled">
+        <li>DSGVO-Updates, EU-Digitalrechtsakte</li>
+        <li>Neue Verbraucherschutzrichtlinien</li>
+      </ul>
+    </div>
+    <div class="col">
+      <!-- SVG Wachstum E-Commerce -->
+      <svg viewBox="0 0 300 200" width="100%" style="background:rgba(0,0,0,.04);border-radius:10px;padding:10px">
+        <text x="150" y="20" text-anchor="middle" fill="#bdc3c7" font-size="11">E-Commerce Umsatz DE (Mrd. €)</text>
+        <polyline points="20,160 60,145 100,125 140,105 180,80 220,60 260,45" fill="none" stroke="#e74c3c" stroke-width="2.5"/>
+        <circle cx="20"  cy="160" r="4" fill="#e74c3c"/>
+        <circle cx="60"  cy="145" r="4" fill="#e74c3c"/>
+        <circle cx="100" cy="125" r="4" fill="#e74c3c"/>
+        <circle cx="140" cy="105" r="4" fill="#e74c3c"/>
+        <circle cx="180" cy="80"  r="4" fill="#e74c3c"/>
+        <circle cx="220" cy="60"  r="4" fill="#e74c3c"/>
+        <circle cx="260" cy="45"  r="4" fill="#e74c3c"/>
+        <text x="20"  y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2018</text>
+        <text x="60"  y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2019</text>
+        <text x="100" y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2020</text>
+        <text x="140" y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2021</text>
+        <text x="180" y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2022</text>
+        <text x="220" y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2023</text>
+        <text x="260" y="175" text-anchor="middle" fill="#bdc3c7" font-size="9">2024</text>
+        <text x="20"  y="155" text-anchor="middle" fill="#27ae60" font-size="9">53</text>
+        <text x="260" cy="40"  y="40"  text-anchor="middle" fill="#27ae60" font-size="9">97</text>
+      </svg>
+      <p class="citation" style="text-align:center;margin-top:6px">Bevh, 2024.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 12: Selbststudium -->
+<div class="slide slide-content">
+  <h2>Lernformen im Überblick</h2>
+  <table class="styled">
+    <tr>
+      <th>Lernform</th>
+      <th>Vorteile</th>
+      <th>Nachteile</th>
+      <th>Beispiel</th>
+    </tr>
+    <tr>
+      <td>Präsenzschulung</td>
+      <td>Interaktion, Netzwerk</td>
+      <td>Aufwand, Kosten</td>
+      <td>IHK-Kurs</td>
+    </tr>
+    <tr>
+      <td>E-Learning</td>
+      <td>Flexibel, ortsunabhängig</td>
+      <td>Selbstdisziplin nötig</td>
+      <td>Coursera, Udemy</td>
+    </tr>
+    <tr>
+      <td>Blended Learning</td>
+      <td>Kombination der Vorteile</td>
+      <td>Komplexe Planung</td>
+      <td>IHK Fernlehrgang</td>
+    </tr>
+    <tr>
+      <td>On-the-Job</td>
+      <td>Praxisnähe</td>
+      <td>Kein Zertifikat</td>
+      <td>Job-Rotation</td>
+    </tr>
+    <tr>
+      <td>Micro-Learning</td>
+      <td>Kurze Einheiten, mobil</td>
+      <td>Wenig Tiefe</td>
+      <td>LinkedIn Learning</td>
+    </tr>
+  </table>
+  <p class="citation">Vgl. Sauter &amp; Sauter, 2013, S. 44 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE: Digitale Zertifizierungen -->
+<div class="slide slide-content">
+  <h2>Digitale Zertifizierungen im E-Commerce</h2>
+  <table class="styled">
+    <tr>
+      <th>Anbieter</th>
+      <th>Zertifikat</th>
+      <th>Schwerpunkt</th>
+    </tr>
+    <tr><td><strong>Google</strong></td><td>Google Analytics Certification</td><td>Web-Analyse, Datenauswertung</td></tr>
+    <tr><td><strong>Google</strong></td><td>Google Ads Certification</td><td>Suchmaschinenwerbung (SEA)</td></tr>
+    <tr><td><strong>Meta</strong></td><td>Meta Blueprint</td><td>Social-Media-Werbung (Instagram/Facebook)</td></tr>
+    <tr><td><strong>HubSpot</strong></td><td>Inbound Marketing Certificate</td><td>Content-Marketing, E-Mail-Marketing</td></tr>
+    <tr><td><strong>Shopify</strong></td><td>Shopify Partner Certification</td><td>E-Commerce-Shop-Betrieb</td></tr>
+    <tr><td><strong>Amazon</strong></td><td>AWS Cloud Practitioner</td><td>Cloud-Grundlagen</td></tr>
+  </table>
+  <div class="highlight" style="margin-top:16px;">
+    <strong>Eselsbrücke G-M-H-S: „Das digitale Zertifizierungsviereck!"</strong><br>
+    <strong>G</strong>oogle – <strong>M</strong>eta – <strong>H</strong>ubSpot – <strong>S</strong>hopify = vier Plattformen, vier Karriereschritte!
+  </div>
+  <p class="citation">Vgl. IHK (2024); BIBB (2023).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE ZQ12A: ZWISCHENQUIZ – Weiterbildung -->
+<div class="slide quiz-slide" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:40px 80px 70px;overflow-y:auto;display:flex;flex-direction:column;align-items:flex-start;">
+  <h2 style="color:#2563EB;margin-bottom:20px;border-left:5px solid #2563EB;padding-left:16px;width:100%;">🧠 Zwischenquiz: Fort- &amp; Weiterbildung</h2>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">1. Welche IHK-Aufstiegsfortbildung ist direkt nach dem Abschluss als Kaufmann im E-Commerce möglich?</p>
+    <div id="q12a1opts">
+      <button onclick="chk12a1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Geprüfter Betriebswirt (DQR 7)</button>
+      <button onclick="chk12a1(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Geprüfter Fachwirt E-Commerce (DQR 6)</button>
+      <button onclick="chk12a1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Umschulung zum Fachinformatiker</button>
+    </div>
+    <p id="q12a1r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">2. Wie viel Förderung ist durch das Aufstiegs-BAföG maximal möglich?</p>
+    <div id="q12a2opts">
+      <button onclick="chk12a2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) 5.000 €</button>
+      <button onclick="chk12a2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) 10.000 €</button>
+      <button onclick="chk12a2(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) 15.000 € (75 % der Lehrgangskosten)</button>
+    </div>
+    <p id="q12a2r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">3. Was bedeutet die Eselsbrücke G-M-H-S im Kontext digitaler Zertifizierungen?</p>
+    <div id="q12a3opts">
+      <button onclick="chk12a3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Google, Microsoft, HubSpot, SAP</button>
+      <button onclick="chk12a3(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Google, Meta, HubSpot, Shopify</button>
+      <button onclick="chk12a3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Google, Meta, HubSpot, Squarespace</button>
+    </div>
+    <p id="q12a3r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <script>
+  function chk12a1(btn,correct){
+    document.getElementById('q12a1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12a1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Fachwirt E-Commerce (DQR 6) ist der direkte nächste Schritt.':'❌ Falsch! Richtig: Fachwirt E-Commerce (DQR 6).';
+    if(!correct)document.getElementById('q12a1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12a2(btn,correct){
+    document.getElementById('q12a2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12a2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Aufstiegs-BAföG: bis 15.000 € Gesamtförderung, 75 % der Lehrgangskosten.':'❌ Falsch! Richtig: bis 15.000 € (75 % der Lehrgangskosten).';
+    if(!correct)document.getElementById('q12a2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12a3(btn,correct){
+    document.getElementById('q12a3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12a3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! G-M-H-S = Google, Meta, HubSpot, Shopify.':'❌ Falsch! Richtig: Google, Meta, HubSpot, Shopify.';
+    if(!correct)document.getElementById('q12a3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 13: Section – Unternehmensziele -->
+<div class="slide slide-section">
+  <div class="section-num">1.17</div>
+  <h2>Unternehmensziele</h2>
+  <p>Ökonomische, ökologische und soziale Ziele – Formulierung, Steuerung und Beziehungen.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 14: Was sind Ziele? -->
+<div class="slide slide-content">
+  <h2>Was sind Unternehmensziele?</h2>
+  <div class="cols">
+    <div class="col">
+      <ul class="styled">
+        <li><strong>Definition:</strong> Angestrebte zukünftige Zustände, die ein Unternehmen durch Handlungen erreichen will</li>
+        <li>Geben Orientierung für Entscheidungen</li>
+        <li>Bilden Grundlage für Planung &amp; Kontrolle</li>
+        <li>Hierarchie: Oberziele → Teilziele → Maßnahmenziele</li>
+        <li>Unterscheidung: kurz-, mittel-, langfristig</li>
+      </ul>
+      <div class="highlight" style="margin-top:16px">
+        <strong>Zielhierarchie:</strong><br>
+        Vision → Mission → Strategische Ziele → Operative Ziele
+      </div>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 260 220" width="100%">
+        <!-- Pyramide -->
+        <polygon points="130,10 10,210 250,210" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>
+        <!-- Ebenen -->
+        <line x1="55" y1="110" x2="205" y2="110" stroke="rgba(0,0,0,.15)" stroke-width="1"/>
+        <line x1="82" y1="160" x2="178" y2="160" stroke="rgba(0,0,0,.15)" stroke-width="1"/>
+        <!-- Füllungen -->
+        <polygon points="130,10 55,110 205,110" fill="rgba(192,57,43,.3)"/>
+        <polygon points="55,110 82,160 178,160 205,110" fill="rgba(26,50,114,.5)"/>
+        <polygon points="82,160 10,210 250,210 178,160" fill="rgba(39,174,96,.2)"/>
+        <!-- Texte -->
+        <text x="130" y="72"  text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Vision</text>
+        <text x="130" y="140" text-anchor="middle" fill="#fff" font-size="11">Strategische Ziele</text>
+        <text x="130" y="190" text-anchor="middle" fill="#fff" font-size="11">Operative Ziele</text>
+      </svg>
+    </div>
+  </div>
+  <p class="citation">Vgl. Bea &amp; Haas, 2019, S. 63 f.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 15: Zielarten -->
+<div class="slide slide-content">
+  <h2>Arten von Unternehmenszielen</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">💰</div>
+      <h4>Ökonomische Ziele</h4>
+      <p>Gewinn, Umsatz, Marktanteil, Rentabilität, Liquidität, Produktivität. Primäres Ziel erwerbswirtschaftlicher Unternehmen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌿</div>
+      <h4>Ökologische Ziele</h4>
+      <p>Klimaneutralität, Ressourcenschonung, CO₂-Reduktion, Kreislaufwirtschaft. Gesetzlich (z. B. Lieferkettensorgfaltspflichten) und freiwillig.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤝</div>
+      <h4>Soziale Ziele</h4>
+      <p>Mitarbeiterzufriedenheit, faire Löhne, Chancengleichheit, gesellschaftliches Engagement (CSR), Work-Life-Balance.</p>
+    </div>
+  </div>
+  <div class="highlight"><strong>Magisches Dreieck:</strong> Ökonomie – Ökologie – Soziales müssen ausbalanciert werden (Triple Bottom Line, Elkington, 1997).</div>
+  <p class="citation">Vgl. Elkington, 1997; Meffert et al., 2019, S. 102.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 16: SVG Triple Bottom Line -->
+<div class="slide slide-content">
+  <h2>Triple Bottom Line – Visualisierung</h2>
+  <svg viewBox="0 0 600 350" width="100%" style="max-height:290px">
+    <!-- Kreis Ökonomie -->
+    <circle cx="300" cy="130" r="100" fill="rgba(192,57,43,.25)" stroke="#2563EB" stroke-width="2"/>
+    <text x="300" y="80" text-anchor="middle" fill="#e74c3c" font-size="14" font-weight="700">Ökonomie</text>
+    <text x="300" y="96" text-anchor="middle" fill="#bdc3c7" font-size="10">Gewinn, Wachstum</text>
+    <!-- Kreis Ökologie -->
+    <circle cx="210" cy="270" r="100" fill="rgba(39,174,96,.2)" stroke="#27ae60" stroke-width="2"/>
+    <text x="175" y="320" text-anchor="middle" fill="#27ae60" font-size="14" font-weight="700">Ökologie</text>
+    <text x="175" y="336" text-anchor="middle" fill="#bdc3c7" font-size="10">Umwelt, Ressourcen</text>
+    <!-- Kreis Soziales -->
+    <circle cx="390" cy="270" r="100" fill="rgba(52,152,219,.2)" stroke="#3498db" stroke-width="2"/>
+    <text x="430" y="320" text-anchor="middle" fill="#3498db" font-size="14" font-weight="700">Soziales</text>
+    <text x="430" y="336" text-anchor="middle" fill="#bdc3c7" font-size="10">Menschen, Gerechtigkeit</text>
+    <!-- Zentrum -->
+    <text x="300" y="224" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Nachhaltig-</text>
+    <text x="300" y="240" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">keit</text>
+  </svg>
+  <p class="citation">Eigene Darstellung nach Elkington (1997) – Triple Bottom Line.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 17: Ökonomische Ziele Detail -->
+<div class="slide slide-content">
+  <h2>Ökonomische Ziele – Details</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Erfolgsziele</h3>
+      <ul class="styled">
+        <li><strong>Gewinnmaximierung:</strong> möglichst hoher Jahresüberschuss</li>
+        <li><strong>Umsatzwachstum:</strong> z. B. +15 % p.a.</li>
+        <li><strong>Marktanteil:</strong> Anteil am relevanten Gesamtmarkt</li>
+        <li><strong>Rentabilität:</strong> Return on Investment (ROI)</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Finanzziele</h3>
+      <ul class="styled">
+        <li><strong>Liquidität:</strong> Zahlungsfähigkeit sicherstellen</li>
+        <li><strong>Eigenkapitalquote:</strong> Finanzielle Stabilität</li>
+        <li><strong>Kreditwürdigkeit:</strong> Bonität erhalten</li>
+        <li><strong>Investitionsplanung:</strong> Kapitalallokation</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box">
+    <strong>E-Commerce Beispiel:</strong> Zalando-Ziel 2024: GMV (Gross Merchandise Value) von 20 Mrd. € + adj. EBIT-Marge von 2–4 %.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 18: Ökologische Ziele -->
+<div class="slide slide-content">
+  <h2>Ökologische Ziele im E-Commerce</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🚚</div>
+      <h4>Grüne Logistik</h4>
+      <p>Elektro-Lieferfahrzeuge, optimierte Routenplanung, Depot-Sharing zur CO₂-Reduktion.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <h4>Nachhaltiges Packaging</h4>
+      <p>Recyclate statt Neukunststoff, Reduktion von Füllmaterial, Mehrwegverpackungen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h4>Green IT</h4>
+      <p>Rechenzentren mit Ökostrom, Serveroptimierung, Wärmerückgewinnung.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">↩️</div>
+      <h4>Retourenmanagement</h4>
+      <p>Reduktion von Retouren durch bessere Produktdarstellung; Reuse statt Vernichtung.</p>
+    </div>
+  </div>
+  <p class="citation">Vgl. Handelsverband Deutschland (HDE), 2023, S. 18 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 19: Soziale Ziele -->
+<div class="slide slide-content">
+  <h2>Soziale Ziele &amp; CSR</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Interne soziale Ziele</h3>
+      <ul class="styled">
+        <li>Mitarbeiterzufriedenheit steigern</li>
+        <li>Faire und marktgerechte Vergütung</li>
+        <li>Betriebliche Gesundheitsförderung</li>
+        <li>Chancengleichheit &amp; Diversität</li>
+        <li>Weiterbildungsangebote</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Externe soziale Ziele (CSR)</h3>
+      <ul class="styled">
+        <li>Faire Lieferkettenbedingungen</li>
+        <li>Regionale Förderung (Sponsoring)</li>
+        <li>Spendenaktionen &amp; NGO-Kooperationen</li>
+        <li>Barrierefreier Online-Shop</li>
+        <li>Datenschutz als gesellschaftliche Verantwortung</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight"><strong>CSR =</strong> Corporate Social Responsibility – freiwilliges, über gesetzliche Pflichten hinausgehendes Engagement.</div>
+  <p class="citation">Vgl. European Commission, 2011; Meffert et al., 2019, S. 106.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 20: Section – SMART -->
+<div class="slide slide-section">
+  <div class="section-num">SMART</div>
+  <h2>Ziele richtig formulieren</h2>
+  <p>Das SMART-Prinzip als Werkzeug zur präzisen Zielformulierung in der Unternehmenspraxis.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 21: SMART Erklärung -->
+<div class="slide slide-content">
+  <h2>Das SMART-Prinzip</h2>
+  <div class="smart-grid">
+    <div class="smart-box">
+      <div class="letter">S</div>
+      <div class="word">Spezifisch</div>
+      <div class="desc">Klare, eindeutige Formulierung – kein Interpretationsspielraum</div>
+    </div>
+    <div class="smart-box">
+      <div class="letter">M</div>
+      <div class="word">Messbar</div>
+      <div class="desc">Quantifizierbare Kriterien zur Erfolgsmessung (KPIs)</div>
+    </div>
+    <div class="smart-box">
+      <div class="letter">A</div>
+      <div class="word">Attraktiv</div>
+      <div class="desc">Realistisch und motivierend für alle Beteiligten</div>
+    </div>
+    <div class="smart-box">
+      <div class="letter">R</div>
+      <div class="word">Realistisch</div>
+      <div class="desc">Mit vorhandenen Ressourcen erreichbar</div>
+    </div>
+    <div class="smart-box">
+      <div class="letter">T</div>
+      <div class="word">Terminiert</div>
+      <div class="desc">Klarer Zeitrahmen mit Start- und Enddatum</div>
+    </div>
+  </div>
+  <p class="citation">Vgl. Doran, 1981; Locke &amp; Latham, 2002, S. 705.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 22: SMART Beispiele -->
+<div class="slide slide-content">
+  <h2>SMART – Praxisbeispiele E-Commerce</h2>
+  <table class="styled">
+    <tr><th>Nicht SMART</th><th>SMART formuliert</th></tr>
+    <tr>
+      <td>„Wir wollen mehr verkaufen."</td>
+      <td>„Wir steigern den Online-Umsatz bis 31.12.2026 um 20 % gegenüber Vorjahr."</td>
+    </tr>
+    <tr>
+      <td>„Der Newsletter soll besser werden."</td>
+      <td>„Die E-Mail-Öffnungsrate wird bis Q3/2026 von 18 % auf 25 % erhöht."</td>
+    </tr>
+    <tr>
+      <td>„Wir bauen eine App."</td>
+      <td>„Die Shopping-App wird bis 30.06.2026 in iOS &amp; Android-Stores gelauncht, mit mind. 10.000 Downloads im ersten Monat."</td>
+    </tr>
+    <tr>
+      <td>„Kundenzufriedenheit verbessern."</td>
+      <td>„Der NPS (Net Promoter Score) steigt bis Ende 2026 von 32 auf 45 Punkte."</td>
+    </tr>
+  </table>
+  <div class="highlight">Tipp: Immer KPIs (Key Performance Indicators) definieren, mit denen die Zielerreichung gemessen wird.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE: Unternehmensplanung Zeithorizonte -->
+<div class="slide slide-content">
+  <h2>Unternehmensplanung – Zeithorizonte</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h4>Kurzfristig – operativ</h4>
+      <p>Bis 1 Jahr. Tagesgeschäft, Werbekampagnen, Bestandsmanagement, monatliche Budgetkontrolle.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>Mittelfristig – taktisch</h4>
+      <p>1–5 Jahre. Neue Produktlinien einführen, Marktanteile ausbauen, Systeme ausrollen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔭</div>
+      <h4>Langfristig – strategisch</h4>
+      <p>Über 5 Jahre. Neue Märkte erschließen, CO₂-Neutralität, Unternehmensausrichtung, M&amp;A.</p>
+    </div>
+  </div>
+  <div class="highlight" style="margin-top:16px;">
+    <strong>Merke:</strong> Strategisch = Unternehmensausrichtung (wo wollen wir hin?)<br>
+    Operativ = Tagesgeschäft (was tun wir heute/diese Woche?)
+  </div>
+  <p class="citation">Vgl. Bea &amp; Haas, 2019, S. 55 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE: SMART Praxisbeispiel Exclusiva -->
+<div class="slide slide-content">
+  <h2>SMART-Praxisbeispiel – Exclusiva GmbH</h2>
+  <div class="highlight" style="margin-bottom:18px;">
+    <strong>Nicht SMART:</strong> „Wir wollen mehr Umsatz machen."
+  </div>
+  <div style="background:rgba(39,174,96,.15);border:1px solid #27ae60;border-radius:10px;padding:16px 20px;margin-bottom:18px;">
+    <strong style="color:#27ae60;">SMART-Ziel:</strong> „Die Exclusiva GmbH steigert den Online-Umsatz im Bereich <em>Sneakers</em> bis zum <strong>31.12.2025</strong> um <strong>20 %</strong> gegenüber dem Vorjahr, gemessen am monatlichen Shop-Umsatz-Report (Google Analytics)."
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h4>S – Spezifisch</h4>
+      <p>Sneaker-Umsatz konkret benannt – kein „mehr Umsatz" allgemein</p>
+    </div>
+    <div class="card">
+      <h4>M – Messbar</h4>
+      <p>20 % Steigerung, messbar via Google Analytics</p>
+    </div>
+    <div class="card">
+      <h4>A – Attraktiv</h4>
+      <p>Motivierendes Wachstumsziel für das Team</p>
+    </div>
+    <div class="card">
+      <h4>R – Realistisch</h4>
+      <p>Erreichbar bei gezielten Marketing-Maßnahmen</p>
+    </div>
+    <div class="card">
+      <h4>T – Terminiert</h4>
+      <p>Klares Enddatum: 31.12.2025</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE ZQ12B: ZWISCHENQUIZ – Unternehmensziele & SMART -->
+<div class="slide quiz-slide" style="background:linear-gradient(135deg,#0d1b3e,#1a2a50);padding:40px 80px 70px;overflow-y:auto;display:flex;flex-direction:column;align-items:flex-start;">
+  <h2 style="color:#2563EB;margin-bottom:20px;border-left:5px solid #2563EB;padding-left:16px;width:100%;">🧠 Zwischenquiz: Unternehmensziele &amp; SMART</h2>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">1. Welche drei Kategorien von Unternehmenszielen gibt es? (Magisches Dreieck)</p>
+    <div id="q12b1opts">
+      <button onclick="chk12b1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Ökonomisch, technisch, rechtlich</button>
+      <button onclick="chk12b1(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Ökonomisch, ökologisch, sozial</button>
+      <button onclick="chk12b1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Finanziell, personell, technisch</button>
+    </div>
+    <p id="q12b1r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">2. Ist „Wir wollen mehr Instagram-Follower" ein SMART-Ziel?</p>
+    <div id="q12b2opts">
+      <button onclick="chk12b2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Ja, es ist klar und spezifisch</button>
+      <button onclick="chk12b2(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Nein – nicht messbar, nicht terminiert</button>
+      <button onclick="chk12b2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Nein – nur wenn es realistisch ist</button>
+    </div>
+    <p id="q12b2r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <div style="margin-bottom:20px;width:100%;">
+    <p style="font-weight:bold;margin-bottom:10px;color:#ecf0f1;">3. „Gewinnmaximierung" und „Lohnerhöhung für Mitarbeiter" – welche Zielbeziehung liegt vor?</p>
+    <div id="q12b3opts">
+      <button onclick="chk12b3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Komplementär (+/+)</button>
+      <button onclick="chk12b3(this,true)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Konkurrierend (+/–)</button>
+      <button onclick="chk12b3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Neutral (0/0)</button>
+    </div>
+    <p id="q12b3r" style="margin-top:8px;font-weight:bold;display:none;"></p>
+  </div>
+  <script>
+  function chk12b1(btn,correct){
+    document.getElementById('q12b1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12b1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Ökonomisch, ökologisch, sozial = Magisches Dreieck (Triple Bottom Line).':'❌ Falsch! Richtig: ökonomisch, ökologisch, sozial.';
+    if(!correct)document.getElementById('q12b1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12b2(btn,correct){
+    document.getElementById('q12b2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12b2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Kein SMART-Ziel: nicht messbar (wie viele Follower?) und kein Datum.':'❌ Falsch! Das Ziel ist nicht messbar und nicht terminiert – kein SMART!';
+    if(!correct)document.getElementById('q12b2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12b3(btn,correct){
+    document.getElementById('q12b3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12b3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Konkurrierend: Höhere Löhne senken den Gewinn.':'❌ Falsch! Konkurrierend: Mehr Lohn = weniger Gewinn.';
+    if(!correct)document.getElementById('q12b3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 23: Section – BSC -->
+<div class="slide slide-section">
+  <div class="section-num">BSC</div>
+  <h2>Balanced Scorecard</h2>
+  <p>Ganzheitliches Steuerungsinstrument zur Umsetzung von Strategien in messbare Ziele.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 24: BSC Überblick -->
+<div class="slide slide-content">
+  <h2>Balanced Scorecard – Überblick</h2>
+  <div class="cols">
+    <div class="col">
+      <ul class="styled">
+        <li>Entwickelt von <strong>Kaplan &amp; Norton (1992)</strong></li>
+        <li>Verbindet Vision, Strategie und operative Kennzahlen</li>
+        <li>Betrachtet 4 Perspektiven gleichzeitig</li>
+        <li>Vermeidet einseitige Fokussierung auf Finanzkennzahlen</li>
+        <li>Wird als Management-Cockpit eingesetzt</li>
+      </ul>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Kernidee:</strong> Strategie muss in allen Unternehmensbereichen messbar werden.
+      </div>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 260 240" width="100%">
+        <!-- Zentrales Feld -->
+        <rect x="90" y="90" width="80" height="60" rx="8" fill="#1a3272" stroke="#2563EB" stroke-width="2"/>
+        <text x="130" y="117" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Vision &amp;</text>
+        <text x="130" y="131" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Strategie</text>
+        <!-- Oben: Finanzen -->
+        <rect x="90" y="10" width="80" height="45" rx="6" fill="rgba(39,174,96,.3)" stroke="#27ae60" stroke-width="1.5"/>
+        <text x="130" y="30" text-anchor="middle" fill="#27ae60" font-size="10" font-weight="700">Finanzen</text>
+        <text x="130" y="44" text-anchor="middle" fill="#bdc3c7" font-size="9">ROI, Gewinn</text>
+        <line x1="130" y1="55" x2="130" y2="90" stroke="#27ae60" stroke-width="1.5"/>
+        <!-- Unten: Lernen -->
+        <rect x="90" y="185" width="80" height="45" rx="6" fill="rgba(192,57,43,.3)" stroke="#2563EB" stroke-width="1.5"/>
+        <text x="130" y="205" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="700">Lernen</text>
+        <text x="130" y="219" text-anchor="middle" fill="#bdc3c7" font-size="9">Kompetenz, WB</text>
+        <line x1="130" y1="150" x2="130" y2="185" stroke="#2563EB" stroke-width="1.5"/>
+        <!-- Links: Kunden -->
+        <rect x="5" y="97" width="76" height="45" rx="6" fill="rgba(52,152,219,.3)" stroke="#3498db" stroke-width="1.5"/>
+        <text x="43" y="117" text-anchor="middle" fill="#3498db" font-size="10" font-weight="700">Kunden</text>
+        <text x="43" y="131" text-anchor="middle" fill="#bdc3c7" font-size="9">Zufriedenheit</text>
+        <line x1="81" y1="120" x2="90" y2="120" stroke="#3498db" stroke-width="1.5"/>
+        <!-- Rechts: Prozesse -->
+        <rect x="179" y="97" width="76" height="45" rx="6" fill="rgba(230,126,34,.3)" stroke="#e67e22" stroke-width="1.5"/>
+        <text x="217" y="117" text-anchor="middle" fill="#e67e22" font-size="10" font-weight="700">Prozesse</text>
+        <text x="217" y="131" text-anchor="middle" fill="#bdc3c7" font-size="9">Effizienz</text>
+        <line x1="170" y1="120" x2="179" y2="120" stroke="#e67e22" stroke-width="1.5"/>
+      </svg>
+    </div>
+  </div>
+  <p class="citation">Kaplan &amp; Norton, 1992, S. 71–79.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 25: BSC 4 Perspektiven -->
+<div class="slide slide-content">
+  <h2>BSC – Die 4 Perspektiven</h2>
+  <div class="bsc-grid">
+    <div class="bsc-box bsc-fin">
+      <h4>1. Finanzperspektive</h4>
+      <ul>
+        <li>Wie sehen uns unsere Anteilseigner?</li>
+        <li>KPIs: ROI, Umsatzrendite, EBIT</li>
+        <li>Ziel: Wertsteigerung für Investoren</li>
+      </ul>
+    </div>
+    <div class="bsc-box bsc-cust">
+      <h4>2. Kundenperspektive</h4>
+      <ul>
+        <li>Wie sehen uns unsere Kunden?</li>
+        <li>KPIs: NPS, CLV, Wiederkaufrate</li>
+        <li>Ziel: Kundenbindung und -zufriedenheit</li>
+      </ul>
+    </div>
+    <div class="bsc-box bsc-proc">
+      <h4>3. Prozessperspektive</h4>
+      <ul>
+        <li>Welche Prozesse müssen wir optimieren?</li>
+        <li>KPIs: Durchlaufzeiten, Fehlerquoten</li>
+        <li>Ziel: Exzellente interne Abläufe</li>
+      </ul>
+    </div>
+    <div class="bsc-box bsc-learn">
+      <h4>4. Lern- &amp; Entwicklungsperspektive</h4>
+      <ul>
+        <li>Wie können wir uns verbessern?</li>
+        <li>KPIs: Weiterbildungsstunden, Mitarbeiterzufriedenheit</li>
+        <li>Ziel: Innovations- und Lernfähigkeit</li>
+      </ul>
+    </div>
+  </div>
+  <p class="citation">Vgl. Kaplan &amp; Norton, 1996, S. 24 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 26: BSC E-Commerce Beispiel -->
+<div class="slide slide-content">
+  <h2>BSC – Beispiel Online-Shop</h2>
+  <table class="styled">
+    <tr><th>Perspektive</th><th>Strategisches Ziel</th><th>KPI</th><th>Zielwert</th></tr>
+    <tr>
+      <td style="color:#27ae60">Finanzen</td>
+      <td>Profitables Wachstum</td>
+      <td>EBIT-Marge</td>
+      <td>≥ 8 %</td>
+    </tr>
+    <tr>
+      <td style="color:#3498db">Kunden</td>
+      <td>Beste Kauferfahrung</td>
+      <td>NPS</td>
+      <td>≥ 50</td>
+    </tr>
+    <tr>
+      <td style="color:#3498db">Kunden</td>
+      <td>Retourenquote senken</td>
+      <td>Retourenquote</td>
+      <td>&lt; 15 %</td>
+    </tr>
+    <tr>
+      <td style="color:#e67e22">Prozesse</td>
+      <td>Lieferzeit verkürzen</td>
+      <td>Ø Liefertage</td>
+      <td>&lt; 2 Tage</td>
+    </tr>
+    <tr>
+      <td style="color:#e74c3c">Lernen</td>
+      <td>Digitale Kompetenzen stärken</td>
+      <td>WB-Stunden/MA</td>
+      <td>≥ 40 h/Jahr</td>
+    </tr>
+  </table>
+  <p class="citation">Eigene Darstellung in Anlehnung an Kaplan &amp; Norton (1996).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 27: Section – Zielbeziehungen -->
+<div class="slide slide-section">
+  <div class="section-num">1.17</div>
+  <h2>Zielbeziehungen</h2>
+  <p>Unternehmensziele stehen nicht isoliert nebeneinander – sie beeinflussen sich gegenseitig.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 28: Zielbeziehungen Überblick -->
+<div class="slide slide-content">
+  <h2>Arten von Zielbeziehungen</h2>
+  <div class="rel-grid">
+    <div class="rel-box rel-kompl">
+      <h4>Komplementär</h4>
+      <p>Beide Ziele fördern sich gegenseitig. Die Erreichung des einen unterstützt das andere.</p>
+      <br>
+      <p><strong>Symbol: +/+</strong></p>
+    </div>
+    <div class="rel-box rel-konk">
+      <h4>Konkurrierend (Konfliktär)</h4>
+      <p>Beide Ziele behindern sich gegenseitig. Die Erreichung des einen geht auf Kosten des anderen.</p>
+      <br>
+      <p><strong>Symbol: +/–</strong></p>
+    </div>
+    <div class="rel-box rel-neut">
+      <h4>Neutral (Indifferent)</h4>
+      <p>Beide Ziele beeinflussen sich nicht. Unabhängige Verfolgung ist möglich.</p>
+      <br>
+      <p><strong>Symbol: 0/0</strong></p>
+    </div>
+  </div>
+  <p class="citation">Vgl. Bea &amp; Haas, 2019, S. 70 f.; Jung, 2016, S. 95.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 29: Zielbeziehungen Beispiele -->
+<div class="slide slide-content">
+  <h2>Zielbeziehungen – Praxisbeispiele</h2>
+  <table class="styled">
+    <tr><th>Ziel 1</th><th>Ziel 2</th><th>Beziehung</th><th>Begründung</th></tr>
+    <tr>
+      <td>Umsatzsteigerung</td>
+      <td>Marktanteil erhöhen</td>
+      <td style="color:#27ae60">Komplementär</td>
+      <td>Mehr Umsatz → mehr Marktanteil</td>
+    </tr>
+    <tr>
+      <td>Niedrige Preise</td>
+      <td>Hohe Gewinnmarge</td>
+      <td style="color:#e74c3c">Konkurrierend</td>
+      <td>Preissenkung mindert Marge</td>
+    </tr>
+    <tr>
+      <td>Schnelle Lieferung</td>
+      <td>CO₂-Reduktion</td>
+      <td style="color:#e74c3c">Konkurrierend</td>
+      <td>Express = mehr Fahrten = mehr CO₂</td>
+    </tr>
+    <tr>
+      <td>Mitarbeiterzufriedenheit</td>
+      <td>Produktivität</td>
+      <td style="color:#27ae60">Komplementär</td>
+      <td>Zufriedene MA arbeiten effektiver</td>
+    </tr>
+    <tr>
+      <td>Neue Website-Domain</td>
+      <td>Gehaltszahlungen</td>
+      <td style="color:#bdc3c7">Neutral</td>
+      <td>Kaum gegenseitiger Einfluss</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 30: SVG Zielbeziehungen -->
+<div class="slide slide-content">
+  <h2>Zielbeziehungen – Visualisierung</h2>
+  <svg viewBox="0 0 700 300" width="100%" style="max-height:260px">
+    <!-- Komplementär -->
+    <rect x="10" y="40" width="200" height="230" rx="12" fill="rgba(39,174,96,.1)" stroke="#27ae60" stroke-width="2"/>
+    <text x="110" y="65" text-anchor="middle" fill="#27ae60" font-size="13" font-weight="700">Komplementär</text>
+    <circle cx="80"  cy="130" r="45" fill="rgba(39,174,96,.3)" stroke="#27ae60" stroke-width="1.5"/>
+    <circle cx="140" cy="130" r="45" fill="rgba(39,174,96,.3)" stroke="#27ae60" stroke-width="1.5"/>
+    <text x="80"  cy="125" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel A</text>
+    <text x="140" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel B</text>
+    <text x="110" y="218" text-anchor="middle" fill="#bdc3c7" font-size="10">Beide profitieren</text>
+    <text x="110" y="234" text-anchor="middle" fill="#bdc3c7" font-size="10">voneinander ↑↑</text>
+    <!-- Konkurrierend -->
+    <rect x="250" y="40" width="200" height="230" rx="12" fill="rgba(192,57,43,.1)" stroke="#2563EB" stroke-width="2"/>
+    <text x="350" y="65" text-anchor="middle" fill="#e74c3c" font-size="13" font-weight="700">Konkurrierend</text>
+    <circle cx="315" cy="130" r="45" fill="rgba(192,57,43,.3)" stroke="#2563EB" stroke-width="1.5"/>
+    <circle cx="385" cy="130" r="45" fill="rgba(192,57,43,.3)" stroke="#2563EB" stroke-width="1.5"/>
+    <text x="315" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel A</text>
+    <text x="385" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel B</text>
+    <line x1="320" y1="105" x2="380" y2="155" stroke="#fff" stroke-width="2"/>
+    <line x1="380" y1="105" x2="320" y2="155" stroke="#fff" stroke-width="2"/>
+    <text x="350" y="218" text-anchor="middle" fill="#bdc3c7" font-size="10">Ziel A behindert Ziel B</text>
+    <text x="350" y="234" text-anchor="middle" fill="#bdc3c7" font-size="10">↑↓ Tradeoff</text>
+    <!-- Neutral -->
+    <rect x="490" y="40" width="200" height="230" rx="12" fill="rgba(0,0,0,.05)" stroke="#7f8c8d" stroke-width="2"/>
+    <text x="590" y="65" text-anchor="middle" fill="#bdc3c7" font-size="13" font-weight="700">Neutral</text>
+    <circle cx="545" cy="130" r="45" fill="rgba(0,0,0,.1)" stroke="#7f8c8d" stroke-width="1.5"/>
+    <circle cx="635" cy="130" r="45" fill="rgba(0,0,0,.1)" stroke="#7f8c8d" stroke-width="1.5"/>
+    <text x="545" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel A</text>
+    <text x="635" y="128" text-anchor="middle" fill="#fff" font-size="11">Ziel B</text>
+    <text x="590" y="218" text-anchor="middle" fill="#bdc3c7" font-size="10">Kein gegenseitiger</text>
+    <text x="590" y="234" text-anchor="middle" fill="#bdc3c7" font-size="10">Einfluss ↔ 0</text>
+  </svg>
+  <p class="citation">Eigene Darstellung nach Bea &amp; Haas (2019, S. 70).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 31: Zielkonflikte lösen -->
+<div class="slide slide-content">
+  <h2>Umgang mit Zielkonflikten</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">⚖️</div>
+      <h4>Priorisierung</h4>
+      <p>Ziele werden nach Wichtigkeit geordnet. Konfligierende Ziele werden hierarchisch priorisiert (z. B. Liquidität vor Wachstum).</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>Satisficing</h4>
+      <p>Statt Optimierung eines Ziels: Mindestanforderungen für alle Ziele festlegen (Simon, 1955) und einen akzeptablen Kompromiss suchen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📅</div>
+      <h4>Zeitliche Staffelung</h4>
+      <p>Ziele werden sequenziell verfolgt: kurzfristig Kostensenkung, mittelfristig Wachstum, langfristig Nachhaltigkeit.</p>
+    </div>
+  </div>
+  <div class="highlight"><strong>E-Commerce Beispiel:</strong> Zalando verfolgt „More for Less" – höhere Effizienz ermöglicht gleichzeitig Kostensenkung UND Qualitätssteigerung (komplementäre Wirkung).</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 32: Zielsystem -->
+<div class="slide slide-content">
+  <h2>Zielsystem eines E-Commerce-Unternehmens</h2>
+  <svg viewBox="0 0 700 310" width="100%" style="max-height:270px">
+    <!-- Oberziel -->
+    <rect x="250" y="10" width="200" height="50" rx="10" fill="#2563EB"/>
+    <text x="350" y="32" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Oberziel</text>
+    <text x="350" y="48" text-anchor="middle" fill="#fff" font-size="11">Nachhaltiger Unternehmenserfolg</text>
+    <!-- Verbindungen -->
+    <line x1="200" y1="60" x2="150" y2="110" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
+    <line x1="350" y1="60" x2="350" y2="110" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
+    <line x1="500" y1="60" x2="550" y2="110" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>
+    <!-- Teilziele -->
+    <rect x="50"  y="110" width="190" height="45" rx="8" fill="#1a3272"/>
+    <text x="145" y="130" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="700">Ökonomische Ziele</text>
+    <text x="145" y="146" text-anchor="middle" fill="#bdc3c7" font-size="10">Gewinn, Umsatz, ROI</text>
+    <rect x="255" y="110" width="190" height="45" rx="8" fill="#1a3272"/>
+    <text x="350" y="130" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="700">Ökologische Ziele</text>
+    <text x="350" y="146" text-anchor="middle" fill="#bdc3c7" font-size="10">CO₂-neutral bis 2030</text>
+    <rect x="460" y="110" width="190" height="45" rx="8" fill="#1a3272"/>
+    <text x="555" y="130" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="700">Soziale Ziele</text>
+    <text x="555" y="146" text-anchor="middle" fill="#bdc3c7" font-size="10">MA-Zufriedenheit, CSR</text>
+    <!-- Verbindungen zu Maßnahmen -->
+    <line x1="145" y1="155" x2="90"  y2="205" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <line x1="145" y1="155" x2="210" y2="205" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <line x1="350" y1="155" x2="350" y2="205" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <line x1="555" y1="155" x2="490" y2="205" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <line x1="555" y1="155" x2="620" y2="205" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <!-- Maßnahmenziele -->
+    <rect x="30"  y="205" width="110" height="40" rx="6" fill="rgba(0,0,0,.08)"/>
+    <text x="85"  y="221" text-anchor="middle" fill="#bdc3c7" font-size="10">Conversion</text>
+    <text x="85"  y="236" text-anchor="middle" fill="#bdc3c7" font-size="10">+10 %</text>
+    <rect x="155" y="205" width="110" height="40" rx="6" fill="rgba(0,0,0,.08)"/>
+    <text x="210" y="221" text-anchor="middle" fill="#bdc3c7" font-size="10">Kosten</text>
+    <text x="210" y="236" text-anchor="middle" fill="#bdc3c7" font-size="10">–5 %</text>
+    <rect x="295" y="205" width="110" height="40" rx="6" fill="rgba(0,0,0,.08)"/>
+    <text x="350" y="221" text-anchor="middle" fill="#bdc3c7" font-size="10">E-Fahrzeuge</text>
+    <text x="350" y="236" text-anchor="middle" fill="#bdc3c7" font-size="10">100 % bis 2027</text>
+    <rect x="430" y="205" width="110" height="40" rx="6" fill="rgba(0,0,0,.08)"/>
+    <text x="485" y="221" text-anchor="middle" fill="#bdc3c7" font-size="10">WB-Angebot</text>
+    <text x="485" y="236" text-anchor="middle" fill="#bdc3c7" font-size="10">ausbauen</text>
+    <rect x="565" y="205" width="110" height="40" rx="6" fill="rgba(0,0,0,.08)"/>
+    <text x="620" y="221" text-anchor="middle" fill="#bdc3c7" font-size="10">Diversität</text>
+    <text x="620" y="236" text-anchor="middle" fill="#bdc3c7" font-size="10">fördern</text>
+  </svg>
+  <p class="citation">Eigene Darstellung; vgl. Bea &amp; Haas, 2019, S. 65 ff.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 33: Weitere Messinstrumente -->
+<div class="slide slide-content">
+  <h2>Weitere Instrumente der Zielsteuerung</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>OKR (Objectives &amp; Key Results)</h3>
+      <ul class="styled">
+        <li>Entwickelt bei Intel, popularisiert durch Google</li>
+        <li>Objective: qualitatives, inspirierendes Ziel</li>
+        <li>Key Results: 2–5 messbare Ergebnisse je Objective</li>
+        <li>Quartalsweise Review und Anpassung</li>
+        <li>Vorteil: flexibler als BSC, agiler</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>MbO (Management by Objectives)</h3>
+      <ul class="styled">
+        <li>Entwickelt von Drucker (1954)</li>
+        <li>Zielvereinbarung zwischen Führungskraft und MA</li>
+        <li>Regelmäßige Zielüberprüfung</li>
+        <li>Leistungsbezogene Vergütung verknüpft</li>
+        <li>Basis für Mitarbeitergespräche</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight"><strong>Trend:</strong> Viele E-Commerce-Unternehmen (Amazon, Zalando, About You) nutzen OKRs wegen ihrer Agilität und transparenten Kommunikation.</div>
+  <p class="citation">Vgl. Drucker, 1954; Doerr, 2018.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 34: BSC Praxisbeispiel Exclusiva -->
+<div class="slide slide-content" style="align-items:flex-start;padding:40px 80px 70px">
+  <h2 style="margin-bottom:20px">BSC-Praxisbeispiel – Exclusiva GmbH</h2>
+  <p style="color:var(--text-muted);font-size:.95rem;margin-bottom:18px">Die Exclusiva GmbH leitet aus ihrer Strategie konkrete BSC-Ziele ab:</p>
+  <table style="width:100%;border-collapse:collapse;font-size:.9rem">
+    <thead>
+      <tr style="background:var(--mid-blue)">
+        <th style="padding:10px 14px;text-align:left;border-bottom:2px solid var(--accent)">Perspektive</th>
+        <th style="padding:10px 14px;text-align:left;border-bottom:2px solid var(--accent)">Strategisches Ziel</th>
+        <th style="padding:10px 14px;text-align:left;border-bottom:2px solid var(--accent)">Kennzahl (KPI)</th>
+        <th style="padding:10px 14px;text-align:left;border-bottom:2px solid var(--accent)">Zielwert</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:rgba(0,0,0,.05)">
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1);color:#f39c12;font-weight:600">💰 Finanzen</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">Umsatz steigern</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">Umsatzwachstum %</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">+15 % bis Q4/2025</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1);color:#3498db;font-weight:600">👥 Kunden</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">Kundenzufriedenheit erhöhen</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">NPS-Score</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">≥ 65 Punkte</td>
+      </tr>
+      <tr style="background:rgba(0,0,0,.05)">
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1);color:#27ae60;font-weight:600">⚙️ Prozesse</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">Lieferzeit verkürzen</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">Ø Lieferzeit (Tage)</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.1)">max. 2 Werktage</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 14px;color:#9b59b6;font-weight:600">📚 Lernen &amp; Wachstum</td>
+        <td style="padding:9px 14px">Mitarbeiter weiterbilden</td>
+        <td style="padding:9px 14px">Weiterbildungsstunden/MA</td>
+        <td style="padding:9px 14px">≥ 20 h/Jahr</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:16px;padding:12px 16px;background:rgba(192,57,43,.15);border-left:4px solid var(--accent);border-radius:4px;font-size:.9rem">
+    <strong>Merkregel:</strong> Die BSC verbindet <em>Vision &amp; Strategie</em> mit messbaren Zielen in allen 4 Perspektiven → kein einseitiges Finanzdenken!
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 35: Eselsbrücke F-K-P-L -->
+<div class="slide slide-content" style="align-items:flex-start;padding:40px 80px 70px">
+  <h2 style="margin-bottom:20px">Eselsbrücke – Die 4 BSC-Perspektiven</h2>
+  <p style="color:var(--text-muted);margin-bottom:24px;font-size:.95rem">Merkformel: <strong style="color:var(--accent);font-size:1.1rem">F – K – P – L</strong></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%">
+    <div style="background:rgba(243,156,18,.15);border:2px solid #f39c12;border-radius:10px;padding:20px 24px">
+      <div style="font-size:2.5rem;font-weight:900;color:#f39c12;margin-bottom:6px">F</div>
+      <div style="font-size:1.15rem;font-weight:700;margin-bottom:6px">Finanzen</div>
+      <div style="font-size:.88rem;color:var(--text-muted)">Umsatz, Rendite, Kosten – der wirtschaftliche Erfolg des Unternehmens</div>
+    </div>
+    <div style="background:rgba(52,152,219,.15);border:2px solid #3498db;border-radius:10px;padding:20px 24px">
+      <div style="font-size:2.5rem;font-weight:900;color:#3498db;margin-bottom:6px">K</div>
+      <div style="font-size:1.15rem;font-weight:700;margin-bottom:6px">Kunden</div>
+      <div style="font-size:.88rem;color:var(--text-muted)">Kundenzufriedenheit, Marktanteil, Kundenbindung</div>
+    </div>
+    <div style="background:rgba(39,174,96,.15);border:2px solid #27ae60;border-radius:10px;padding:20px 24px">
+      <div style="font-size:2.5rem;font-weight:900;color:#27ae60;margin-bottom:6px">P</div>
+      <div style="font-size:1.15rem;font-weight:700;margin-bottom:6px">Prozesse</div>
+      <div style="font-size:.88rem;color:var(--text-muted)">Interne Abläufe, Qualität, Lieferzeit, Effizienz</div>
+    </div>
+    <div style="background:rgba(155,89,182,.15);border:2px solid #9b59b6;border-radius:10px;padding:20px 24px">
+      <div style="font-size:2.5rem;font-weight:900;color:#9b59b6;margin-bottom:6px">L</div>
+      <div style="font-size:1.15rem;font-weight:700;margin-bottom:6px">Lernen &amp; Wachstum</div>
+      <div style="font-size:.88rem;color:var(--text-muted)">Mitarbeiterzufriedenheit, Weiterbildung, Innovation</div>
+    </div>
+  </div>
+  <p style="margin-top:18px;font-size:.9rem;color:var(--text-muted)">Kaplan &amp; Norton (1992): <em>"Was du nicht messen kannst, kannst du nicht steuern."</em></p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE ZQ12C: ZWISCHENQUIZ – Balanced Scorecard -->
+<div class="slide slide-content" style="align-items:flex-start;padding:40px 80px 70px">
+  <h2 style="margin-bottom:4px">Zwischenquiz C – Balanced Scorecard</h2>
+  <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:20px">Teste dein Wissen – klicke auf die richtige Antwort!</p>
+
+  <p style="font-weight:600;margin-bottom:6px">Frage 1: Wie viele Perspektiven hat die Balanced Scorecard?</p>
+  <div id="q12c1opts">
+    <button onclick="chk12c1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) 3 (Finanzen, Kunden, Prozesse)</button>
+    <button onclick="chk12c1(this,true)"  style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) 4 (Finanzen, Kunden, Prozesse, Lernen &amp; Wachstum)</button>
+    <button onclick="chk12c1(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) 5 (inkl. Nachhaltigkeit)</button>
+  </div>
+  <div id="q12c1r" style="display:none;margin:4px 0 12px;font-weight:600"></div>
+
+  <p style="font-weight:600;margin-bottom:6px">Frage 2: Was beschreibt die Perspektive „Lernen &amp; Wachstum"?</p>
+  <div id="q12c2opts">
+    <button onclick="chk12c2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Umsatz- und Renditeziele</button>
+    <button onclick="chk12c2(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Kundenzufriedenheit und Marktanteil</button>
+    <button onclick="chk12c2(this,true)"  style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Mitarbeiterentwicklung und Innovation</button>
+  </div>
+  <div id="q12c2r" style="display:none;margin:4px 0 12px;font-weight:600"></div>
+
+  <p style="font-weight:600;margin-bottom:6px">Frage 3: Was ist ein typischer KPI der Finanzperspektive?</p>
+  <div id="q12c3opts">
+    <button onclick="chk12c3(this,true)"  style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">A) Umsatzrendite (Return on Sales)</button>
+    <button onclick="chk12c3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">B) Net Promoter Score (NPS)</button>
+    <button onclick="chk12c3(this,false)" style="display:block;width:100%;text-align:left;padding:10px 14px;margin:5px 0;background:#1a3272;border:1px solid rgba(0,0,0,.2);border-radius:8px;color:white;cursor:pointer;">C) Weiterbildungsstunden je Mitarbeiter</button>
+  </div>
+  <div id="q12c3r" style="display:none;margin:4px 0 12px;font-weight:600"></div>
+
+  <script>
+  function chk12c1(btn,correct){
+    document.getElementById('q12c1opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12c1r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Die BSC hat genau 4 Perspektiven.':'❌ Falsch! Richtig: 4 Perspektiven (F-K-P-L).';
+    if(!correct)document.getElementById('q12c1opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12c2(btn,correct){
+    document.getElementById('q12c2opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12c2r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Lernen & Wachstum = Mitarbeiterentwicklung & Innovation.':'❌ Falsch! Richtig: Mitarbeiterentwicklung und Innovation.';
+    if(!correct)document.getElementById('q12c2opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  function chk12c3(btn,correct){
+    document.getElementById('q12c3opts').querySelectorAll('button').forEach(b=>b.disabled=true);
+    btn.style.background=correct?'#27ae60':'#c0392b';
+    const r=document.getElementById('q12c3r');r.style.display='block';r.style.color=correct?'#2ecc71':'#e74c3c';
+    r.textContent=correct?'✅ Richtig! Umsatzrendite ist ein klassischer Finanz-KPI.':'❌ Falsch! Richtig: Umsatzrendite (Return on Sales).';
+    if(!correct)document.getElementById('q12c3opts').querySelectorAll('button').forEach(b=>{if(b.onclick.toString().includes('true'))b.style.background='#27ae60';});
+  }
+  </script>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 36 (ehem. 34): Zusammenfassung -->
+<div class="slide slide-content">
+  <h2>Zusammenfassung Tag 12</h2>
+  <div class="summary-grid">
+    <div class="sum-box">
+      <h4>Fort- &amp; Weiterbildung</h4>
+      <ul>
+        <li>Fortbildung = berufliche Vertiefung (BBiG)</li>
+        <li>Aufstieg via IHK-Abschlüsse (DQR 6–7)</li>
+        <li>Fachwirt E-Commerce: 5 Handlungsbereiche</li>
+        <li>Förderung: Aufstiegs-BAföG, Bildungsgutschein</li>
+      </ul>
+    </div>
+    <div class="sum-box">
+      <h4>Unternehmensziele</h4>
+      <ul>
+        <li>Ökonomisch / Ökologisch / Sozial</li>
+        <li>Triple Bottom Line (Elkington, 1997)</li>
+        <li>Zielhierarchie: Vision → Operative Ziele</li>
+      </ul>
+    </div>
+    <div class="sum-box">
+      <h4>SMART-Prinzip</h4>
+      <ul>
+        <li>Spezifisch – Messbar – Attraktiv</li>
+        <li>Realistisch – Terminiert</li>
+        <li>KPIs als Messinstrument</li>
+      </ul>
+    </div>
+    <div class="sum-box">
+      <h4>BSC &amp; Zielbeziehungen</h4>
+      <ul>
+        <li>BSC: 4 Perspektiven (Kaplan &amp; Norton)</li>
+        <li>Komplementär / Konkurrierend / Neutral</li>
+        <li>Zielkonflikte: Priorisierung, Satisficing</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SLIDE 35: Literaturverzeichnis -->
+<div class="slide slide-content" style="justify-content:flex-start;padding-top:55px">
+  <h2>Literaturverzeichnis</h2>
+  <div style="width:100%;overflow-y:auto;max-height:75vh">
+    <div class="lit-entry">Bea, F. X., &amp; Haas, J. (2019). <em>Strategisches Management</em> (10. Aufl.). UTB.</div>
+    <div class="lit-entry">Bundesagentur für Arbeit. (2024). <em>Weiterbildungsförderung für Beschäftigte</em>. https://www.arbeitsagentur.de</div>
+    <div class="lit-entry">Bundesinstitut für Berufsbildung (BIBB). (2023). <em>Datenreport zum Berufsbildungsbericht 2023</em>. BIBB.</div>
+    <div class="lit-entry">Bundesministerium für Bildung und Forschung (BMBF). (2024). <em>Aufstiegs-BAföG: Höher hinaus mit Förderung</em>. https://www.aufstiegs-bafoeg.de</div>
+    <div class="lit-entry">bevh – Bundesverband E-Commerce und Versandhandel. (2024). <em>bevh-Studie: Interaktiver Handel in Deutschland 2024</em>. bevh.</div>
+    <div class="lit-entry">Doerr, J. (2018). <em>Measure what matters: OKRs – The simple idea that drives 10x growth</em>. Portfolio/Penguin.</div>
+    <div class="lit-entry">Doran, G. T. (1981). There's a S.M.A.R.T. way to write management's goals and objectives. <em>Management Review, 70</em>(11), 35–36.</div>
+    <div class="lit-entry">Drucker, P. F. (1954). <em>The practice of management</em>. Harper &amp; Row.</div>
+    <div class="lit-entry">Elkington, J. (1997). <em>Cannibals with forks: The triple bottom line of 21st century business</em>. Capstone.</div>
+    <div class="lit-entry">European Commission. (2011). <em>A renewed EU strategy 2011–14 for Corporate Social Responsibility</em>. COM(2011) 681 final.</div>
+    <div class="lit-entry">Handelsverband Deutschland (HDE). (2023). <em>Nachhaltigkeitsbericht Handel 2023</em>. HDE.</div>
+    <div class="lit-entry">IHK. (2024). <em>Fortbildungsordnung: Geprüfter Fachwirt für E-Commerce</em>. Deutscher Industrie- und Handelskammertag.</div>
+    <div class="lit-entry">Jung, H. (2016). <em>Allgemeine Betriebswirtschaftslehre</em> (13. Aufl.). De Gruyter Oldenbourg.</div>
+    <div class="lit-entry">Kaplan, R. S., &amp; Norton, D. P. (1992). The balanced scorecard – Measures that drive performance. <em>Harvard Business Review, 70</em>(1), 71–79.</div>
+    <div class="lit-entry">Kaplan, R. S., &amp; Norton, D. P. (1996). <em>The balanced scorecard: Translating strategy into action</em>. Harvard Business School Press.</div>
+    <div class="lit-entry">Kauffeld, S. (Hrsg.). (2019). <em>Arbeits-, Organisations- und Personalpsychologie für Bachelor</em> (3. Aufl.). Springer.</div>
+    <div class="lit-entry">Locke, E. A., &amp; Latham, G. P. (2002). Building a practically useful theory of goal setting and task motivation. <em>American Psychologist, 57</em>(9), 705–717. https://doi.org/10.1037/0003-066X.57.9.705</div>
+    <div class="lit-entry">Meffert, H., Burmann, C., Kirchgeorg, M., &amp; Eisenbeiß, M. (2019). <em>Marketing: Grundlagen marktorientierter Unternehmensführung</em> (13. Aufl.). Springer Gabler.</div>
+    <div class="lit-entry">Sauter, W., &amp; Sauter, A. M. (2013). <em>Workplace Learning: Integrierte Kompetenzentwicklung mit kooperativen und kollaborativen Lernsystemen</em>. Springer Gabler.</div>
+    <div class="lit-entry">Simon, H. A. (1955). A behavioral model of rational choice. <em>The Quarterly Journal of Economics, 69</em>(1), 99–118.</div>
+  </div>
+  <p class="citation" style="margin-top:8px">Alle Quellen gemäß APA 7. Auflage zitiert.</p>
+</div>
+
+</div><!-- end slides-wrapper -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 43</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Fort- &amp; Weiterbildung | Unternehmensziele &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

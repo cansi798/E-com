@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 2 – LF2: Webshop-Layout & Seitentypen</title>
+<style>
+:root {
+  --primary: #2980B9; --primary-light: #D6EAF8; --primary-dark: #1A5276;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box {
+  background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center;
+}
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+
+/* Progress */
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+
+/* Main */
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+
+/* Question card */
+.q-card {
+  background:var(--bg-card); border-radius:16px; border:1px solid var(--border);
+  box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px;
+  display:none;
+}
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.q-hint { font-size:.82rem; color:var(--text-muted); font-style:italic; margin-bottom:16px; }
+
+/* Options */
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt {
+  background:var(--bg); border:2px solid var(--border); border-radius:12px;
+  padding:14px 18px; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4;
+}
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary-light);
+  color:var(--primary); font-weight:700; font-size:.82rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+
+/* Feedback */
+.feedback {
+  margin-top:16px; padding:14px 18px; border-radius:10px;
+  font-size:.88rem; line-height:1.6; display:none;
+}
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+
+/* Nav buttons */
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn {
+  padding:10px 24px; border-radius:30px; border:none; cursor:pointer;
+  font-size:.88rem; font-weight:700; transition:all .2s;
+}
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+.btn-skip { background:var(--bg); color:var(--text-muted); border:1px solid var(--border); }
+.btn-skip:hover { background:var(--bg);}
+.btn:disabled { opacity:.4; cursor:default; }
+
+/* Results */
+#result-card {
+  display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border);
+  box-shadow:var(--shadow); padding:40px 32px; text-align:center;
+}
+#result-card.show { display:block; }
+.result-circle {
+  width:120px; height:120px; border-radius:50%; margin:0 auto 20px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.4rem; font-weight:800;
+}
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+
+/* Question overview dots */
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot {
+  width:12px; height:12px; border-radius:50%; background:var(--border);
+  cursor:pointer; transition:all .2s;
+}
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+
+footer {
+  text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px;
+  border-top:1px solid var(--border); margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 2: Webshop-Layout &amp; Seitentypen</h1>
+    <div class="meta">Lernfeld 2 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+
+<main>
+  <div id="q-dots"></div>
+
+  <!-- ===== FRAGEN ===== -->
+
+  <div class="q-card active" data-q="1">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Warum haben viele Webshops eine <strong>ähnliche Grundstruktur</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Weil es Gesetze gibt, die das Layout von Webshops vorschreiben</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Weil Kunden durch frühere Internetnutzung ein gelerntes Verhalten entwickelt haben und schnelle Orientierung erwarten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Weil alle Webshops von denselben Shopsystem-Anbietern erstellt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Weil einheitliches Design günstiger in der Entwicklung ist</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Kunden kennen durch frühere Internetnutzung typische Positionen von Logo, Navigation und Warenkorb. Ein bekanntes Layout ermöglicht schnelle Orientierung und reduziert die Kaufabbruchquote.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die ähnliche Grundstruktur hat sich aufgrund des <em>gelernten Verhaltens</em> der Besucher entwickelt (Antwort B). Kunden erwarten bestimmte Elemente an bestimmten Stellen – abweichendes Layout führt zu Verwirrung und Kaufabbrüchen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="2">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Welches Element befindet sich typischerweise <strong>rechts oben</strong> auf jeder Webshopseite?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Das Logo des Unternehmens</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Das Impressum</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Der Warenkorb</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Suchfunktion</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Der Warenkorb befindet sich rechts oben auf jeder Seite eines Webshops – das ist der gelernte Standard, den Kunden erwarten.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Der <em>Warenkorb</em> ist rechts oben zu finden (Antwort C). Das Logo ist links oben, die Suchfunktion häufig mittig oder rechts, aber der Warenkorb immer rechts oben.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="3">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was ist die Hauptaufgabe des <strong>Footers</strong> eines Webshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Produktdarstellung mit Bildern und Preisen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bereitstellung rechtlicher Pflichtangaben wie Impressum, AGB und Datenschutz sowie Vertrauensaufbau</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Hauptnavigation zu den Produktkategorien</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Warenkorb und Bestellabwicklung</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Der Footer enthält rechtlich verpflichtende Angaben (Impressum, AGB, Datenschutz, Widerrufsbelehrung) sowie vertrauensaufbauende Elemente (Gütesiegel, Newsletter etc.).</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Der Footer ist für <em>rechtliche Pflichtangaben und Vertrauensaufbau</em> zuständig (Antwort B). Die Hauptnavigation gehört in den Header, der Warenkorb ebenfalls.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="4">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Aus maximal wie vielen Bereichen besteht der <strong>Body</strong> einer Webshopseite?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Einem Bereich (nur Inhaltsbereich)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Zwei Bereichen (zweite Navigation + Inhaltsbereich)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Drei Bereichen (zweite Navigation + Inhaltsbereich + dritte Spalte)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Vier Bereichen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Der Body besteht aus maximal drei Spalten: zweite Navigation (links), Inhaltsbereich (Mitte, breit) und optionale dritte Spalte (rechts, z.B. für Werbeanzeigen).</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Der Body besteht aus <em>zwei oder drei Spalten</em> (Antwort C): zweite Navigation + Inhaltsbereich + optionale dritte Spalte. Nicht jeder Webshop nutzt alle drei.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="5">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was bedeutet <strong>Barrierefreiheit im engeren Sinn</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Website ist ohne Registrierung zugänglich</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die Umwelt ist so gestaltet, dass Menschen mit Behinderung sie ebenso nutzen können wie ohne Behinderung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Website lädt in weniger als 3 Sekunden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Navigation hat maximal 5 Menüpunkte</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Barrierefreiheit im engeren Sinn bedeutet, dass die Umwelt so gestaltet ist, dass Menschen MIT Behinderung sie ebenso nutzen können wie Menschen OHNE Behinderung. Verankert im Behindertengleichstellungsgesetz.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Im engeren Sinn bedeutet Barrierefreiheit (Antwort B): Die Umwelt ist so gestaltet, dass <em>Menschen mit Behinderung</em> sie ebenso nutzen können wie ohne. Im weiteren Sinn geht es um alle Personengruppen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="6">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Welches Gesetz verpflichtet Webshops grundsätzlich zur <strong>Barrierefreiheit</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Handelsgesetzbuch (HGB)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Bundesdatenschutzgesetz (BDSG)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Behindertengleichstellungsgesetz</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Produktsicherheitsgesetz (ProdSG)</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Das Behindertengleichstellungsgesetz verpflichtet grundsätzlich zur Barrierefreiheit. Zusätzlich ist Barrierefreiheit aus Eigeninteresse sinnvoll: neue Kundengruppen, besseres SEO-Ranking.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das <em>Behindertengleichstellungsgesetz</em> (Antwort C) ist das relevante Gesetz für Barrierefreiheit. Das HGB regelt das Handelsrecht, das BDSG den Datenschutz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="7">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Was beschreibt <strong>Responsives Webdesign</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Design, das besonders schnell auf Mausklicks reagiert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein Design, das sich je nach Bildschirmgröße und Endgerät dynamisch anpasst</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Design mit vielen interaktiven Animationen und Übergängen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Design, das sich nach der Tageszeit des Besuchs ändert</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Responsives Webdesign passt den grafischen Aufbau dynamisch dem verwendeten Endgerät an. So wird auf Desktop, Tablet und Smartphone jeweils eine optimale Darstellung gewährleistet.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Responsives Webdesign (Antwort B) bedeutet, dass sich das Layout <em>dynamisch an Bildschirmgröße und Endgerät</em> anpasst. Eselsbrücke: Die Website <strong>reagiert</strong> auf den Bildschirm.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="8">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Welche <strong>drei Aufgaben</strong> erfüllt ein Slider auf der Startseite?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Produktbilder anzeigen, Preise vergleichen, Bestellungen aufnehmen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Alleinstellungsmerkmale (USP) vorstellen, über Warengruppen/Themenwelten informieren, über Aktionen informieren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Navigation, Suchfunktion und Produktfilter bereitstellen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> SEO, SEA und Social Media Marketing koordinieren</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Ein Slider erfüllt mindestens eine dieser drei Aufgaben: (1) USP vorstellen, (2) über wichtige Warengruppen/Themenwelten informieren, (3) über Aktionen informieren. Er wechselt automatisch alle 3–5 Bilder.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die drei Slider-Aufgaben sind (Antwort B): <em>USP vorstellen · über Warengruppen informieren · über Aktionen informieren</em>. Ein Slider enthält je: großes Bild, Überschrift, kurzen Teaser und Link.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="9">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Was ist ein <strong>Teaser</strong> im Kontext eines Webshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine detaillierte Produktbeschreibung auf der Produktdetailseite</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Ein kurzes Text- oder Bildelement, das Besucher neugierig macht und zum Weiterlesen oder -klicken animiert</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Bestellformular, das direkt auf der Startseite angezeigt wird</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Kontaktformular im Footer des Webshops</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Teaser (vom engl. <em>to tease</em> = anlocken, necken) sind kurze Text- oder Bildelemente, die Interesse wecken und zum Weiterlesen/-klicken verleiten. Sie stehen häufig auf der Startseite und weisen auf andere Seiten hin.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Ein Teaser (Antwort B) ist ein <em>kurzes Text- oder Bildelement</em>, das neugierig macht und zum Weiterlesen/-klicken animiert. Der Begriff stammt vom engl. <em>to tease</em> = anlocken.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="10">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was zeigen <strong>„Topseller"-Produktboxen</strong> auf der Startseite?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Neue Artikel, die gerade ins Sortiment aufgenommen wurden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Ausverkaufte Artikel mit voraussichtlichem Liefertermin</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Häufig verkaufte Artikel, die als Qualitätssignal für Kunden dienen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sonderangebote mit stark reduzierten Preisen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Topseller-Produktboxen zeigen häufig verkaufte Artikel. Viele Kunden empfinden dies als gute Empfehlung, da häufig gekaufte Produkte als qualitativ hochwertig gelten.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Topseller zeigen <em>häufig verkaufte Artikel</em> als Qualitätssignal (Antwort C). Neue Artikel wären eine eigene Produktbox-Kategorie.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="11">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was ist das <strong>zentrale Problem</strong> bei der Gestaltung der Navigation eines Webshops?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Das vollständige Sortiment darstellen zu wollen, obwohl jeder zusätzliche Punkt die Konversionsrate verschlechtert</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Zu viele verschiedene Farben in der Navigationsleiste</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Langsame Ladezeiten der Navigationsleiste</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Fehlende Suchfunktion neben der Navigation</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Das zentrale Navigationsproblem: Das Unternehmen möchte das komplette Sortiment vorstellen, aber jeder zusätzliche Navigationspunkt verschlechtert die Konversionsrate. Studien zeigen: Ab 5 Begriffen werden Kunden vom Kauf abgehalten.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das zentrale Problem (Antwort A) ist der Konflikt zwischen <em>vollständigem Sortiment</em> und <em>optimaler Konversionsrate</em>. Lösung: Wenige, kundenverständliche Kategorien.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="12">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Was sind <strong>Null-Treffer-Meldungen</strong> in einem Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bestellungen, bei denen kein Zahlungseingang registriert wurde</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Suchanfragen, die keine passenden Artikel im Webshop liefern</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Produkte mit null Kundenbewertungen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Warenkörbe ohne enthaltene Artikel</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Null-Treffer-Meldungen entstehen, wenn Suchanfragen keine Ergebnisse liefern – oft durch Rechtschreibfehler. Gegenmaßnahmen: fehlertolerante Suche, „Meinten Sie?"-Funktion, Autocomplete.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Null-Treffer-Meldungen (Antwort B) sind <em>Suchanfragen ohne passende Ergebnisse</em>. Eine hohe Null-Treffer-Quote deutet auf Qualitätsprobleme der internen Suchmaschine hin.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="13">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was sind <strong>Vertrauenssiegel</strong> (Trust Signals) in einem Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kundenbewertungen in Form von Sternen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Zertifikate anerkannter Stellen, die die Seriosität und Sicherheit des Webshops belegen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Logos von Zahlungsarten (PayPal, Visa etc.)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Impressum und Datenschutzerklärung</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Vertrauenssiegel (z.B. Trusted Shops, TÜV, EHI, Google-zertifizierter Händler) sind Zertifikate, die Seriosität signalisieren. Vorteile: mehr Umsatz, Gewinn an Seriosität. Nachteile: Kosten und ggf. Neuzertifizierung.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Vertrauenssiegel (Antwort B) sind <em>Zertifikate anerkannter Stellen</em>, die Seriosität und Sicherheit belegen. Bekannte Beispiele: Trusted Shops, TÜV, EHI.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="14">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Was ist das <strong>Hauptziel</strong> einer Produktkategorienseite?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den Kunden zur sofortigen Anmeldung im Webshop auffordern</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Den Kunden einen umfassenden Überblick über die Artikel geben und ihn zu einer Produktdetailseite führen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Den Kunden direkt zur Kasse und Bezahlung leiten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Werbeanzeigen für externe Partnerunternehmen schalten</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Die Produktkategorienseite soll dem Kunden einen umfassenden Überblick über das Sortiment geben und alle Artikel schnell vergleichen lassen. Das Hauptziel: Den Kunden zu einer <strong>Produktdetailseite</strong> führen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Das Hauptziel (Antwort B) ist es, Kunden einen Überblick zu geben und sie zur <em>Produktdetailseite</em> zu führen. Alle Wege führen letztlich zur Produktdetailseite, wo die Kaufentscheidung getroffen wird.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="15">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was versteht man unter <strong>Paginierung</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Sortierung von Produkten nach Preis oder Beliebtheit</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Filterfunktion in Produktlisten nach Produkteigenschaften</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die Aufteilung zu umfangreicher Produktlisten auf mehrere Seiten mit Blätterfunktion</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Anzahl der Produktfotos pro Artikel auf der Produktdetailseite</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Paginierung teilt zu viele Produkte auf mehrere Seiten auf. Kunden können mithilfe einer Blätterfunktion navigieren. Optional: View-All-Seite, auf der alle Produkte auf einer einzigen Seite angezeigt werden.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Paginierung (Antwort C) ist die <em>Aufteilung auf mehrere Seiten mit Blätterfunktion</em>. Sortierung und Filter sind separate Hilfsmittel auf Produktkategorienseiten.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="16">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Was ist eine <strong>Landing Page</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Hauptstartseite eines Webshops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Eine speziell gestaltete Seite, auf die ein Besucher durch Klick auf eine Anzeige oder ein Suchmaschinenergebnis gelangt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine spezielle Seite mit Sonderpreisen für treue Stammkunden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Bestellbestätigungsseite nach einem Kauf</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Eine Landing Page ist eine speziell gestaltete Internetseite, auf die Besucher von Suchmaschinen, Anzeigen, Newslettern oder Social Media gelangen. Ziel: den Besucher zu einer bestimmten Handlung (Conversion) zu bewegen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Eine Landing Page (Antwort B) ist eine <em>spezielle Seite bei Klick auf Anzeige oder Suchergebnis</em>. Ausgangspunkte: Suchmaschinen, Newsletter, Werbeanzeigen, soziale Medien, traditionelle Medien.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="17">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was ist die Funktion des <strong>Call-to-action-Buttons</strong> auf einer Landing Page?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den Besucher mit ausführlichen Produktinformationen zu versorgen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Das Corporate Design des Unternehmens darzustellen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Den Besucher zu einer bestimmten Handlung zu bewegen (z.B. Kauf, Anmeldung, Anfrage)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Vertrauenssiegel und Zertifikate anzuzeigen</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Der Call-to-action-Button ist optisch hervorgehoben und fordert den Besucher zur Handlung auf. Wichtig: Zu viele Datenabfragen im Zusammenhang mit dem Button erhöhen die Abbruchrate.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Der Call-to-action-Button (Antwort C) soll den Besucher zu einer <em>konkreten Handlung bewegen</em>. Er muss optisch hervorgehoben sein und darf nicht durch zu viele Datenabfragen abschrecken.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="18">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Was ist die <strong>Produktdetailseite</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine Übersichtsseite mit allen Produktkategorien des Webshops</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die eigentliche Verkaufsseite mit allen Informationen, die der Kunde für die Kaufentscheidung benötigt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Eine spezielle Landing Page für wiederkehrende Stammkunden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Startseite des Webshops für mobile Nutzer</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Die Produktdetailseite ist die eigentliche Verkaufsseite – sie enthält Produktbeschreibung, Fotos, Videos, Buy-Box, Bewertungen, Cross-Selling-Hinweise, Trust-Elemente und Vorteilselemente.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Die Produktdetailseite (Antwort B) ist die <em>eigentliche Verkaufsseite</em>. Hier trifft der Kunde die Kaufentscheidung. Sie übernimmt die Rolle von Warenpräsentation und Verkäufer im stationären Handel.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="19">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Wofür steht die Abkürzung <strong>SEO</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sales and E-Commerce Operations</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Search Engine Optimization (Suchmaschinenoptimierung)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Secure Electronic Orders</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Social Engagement Online</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> SEO = Search Engine Optimization (Suchmaschinenoptimierung). Im Gegensatz zu SEA (bezahlte Anzeigen) ist SEO organisch: relevante Inhalte, Keywords, Links → langfristig und kostenlos.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> SEO steht für <em>Search Engine Optimization</em> (Antwort B). Merke: SEA = bezahlt (Search Engine Advertising) | SEO = organisch (kostenlos, langfristig).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <div class="q-card" data-q="20">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was versteht man unter <strong>Category Management</strong>?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Verwaltung von Mitarbeiter- und Abteilungskategorien im Unternehmen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die technische Wartung und Pflege von Webshop-Kategorienseiten</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die zielgerichtete Definition und Präsentation von Produktkategorien zur Absatz- und Ertragssteigerung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Analyse von Kundenbewertungen in verschiedenen Produktkategorien</div>
+    </div>
+    <div class="feedback ok">&#9989; <strong>Richtig!</strong> Category Management hat das Ziel, Produktkategorien zu definieren, optimal im Markt zu platzieren und zu präsentieren. Auf Grundlage einer gezielt kundenorientierten Sortimentspolitik kann es zur Absatz- und Ertragssteigerung beitragen.</div>
+    <div class="feedback err">&#10060; <strong>Falsch.</strong> Category Management (Antwort C) ist die <em>zielgerichtete Definition und Präsentation von Produktkategorien zur Absatz- und Ertragssteigerung</em>. Es geht um die Zusammenstellung und Präsentation des Sortiments aus Kundenperspektive.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Ergebnis-Karte -->
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+
+</main>
+
+<footer>
+  &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 2 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 2: Webshop-Layout &amp; Seitentypen
+</footer>
+
+<script>
+const TOTAL = 20;
+let correct = 0;
+let answered = 0;
+let currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+
+// Build dots
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) {
+    if (results[i] === null) { next = i; break; }
+  }
+  if (next === -1) {
+    for (let i = 0; i < currentQ; i++) {
+      if (results[i] === null) { next = i; break; }
+    }
+  }
+  if (next === -1) showResult();
+  else jumpTo(next);
+}
+
+// Attach option click handlers
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+
+      opts.forEach(o => {
+        if (o.dataset.correct === 'true') o.classList.add('correct');
+        else o.classList.add('disabled');
+      });
+      if (!isCorrect) opt.classList.add('wrong');
+
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+
+      updateDots();
+      updateProgress();
+    });
+  });
+
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => {
+    if (qi === TOTAL - 1) showResult();
+    else nextQuestion();
+  });
+});
+
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  correct = 0; answered = 0;
+  results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('correct','wrong','disabled');
+  });
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0);
+  updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+
+updateDots();
+updateProgress();
+</script>
+</body>
+</html>

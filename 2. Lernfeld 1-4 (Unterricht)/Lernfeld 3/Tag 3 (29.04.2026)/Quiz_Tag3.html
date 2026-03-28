@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 3 – LF3: Anmeldung bzw. Registrierung durch den Kunden</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128100; Quiz – Tag 3: Anmeldung und Registrierung</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Welche drei Zugangswege stehen einem Kunden beim Einstieg in den Checkout zur Verfügung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> PIN-Login, Fingerabdruck und Social-Login</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bestandskundenkonto (Login), Neuregistrierung und Gastzugang</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> E-Mail-Login, Telefon-Login und anonymer Zugang</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur Kundenkonto oder Gastzugang – keine Neuregistrierung</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die drei Zugangswege sind: (1) Login mit vorhandenem Kundenkonto, (2) Neuregistrierung als neuer Kunde und (3) Gastzugang ohne Kontoerstellung.</div>
+    <div class="feedback err">&#10008; Falsch. Es gibt drei Zugangswege: Bestandskunde mit Login, Neukunde mit Registrierung und Gastzugang ohne Konto.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wie viel Prozent der Warenkorbabbrüche entstehen durch den Zwang zur Kontoerstellung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 57 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 25 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 39 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 10 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! 39 % der Warenkorbabbrüche entstehen durch den Zwang zur Kontoerstellung. Der Gastzugang ist daher ein wichtiger Conversion-Faktor.</div>
+    <div class="feedback err">&#10008; Falsch. 39 % der Warenkorbabbrüche entstehen durch den Kundenkonto-Zwang. Deshalb ist ein Gastzugang so wichtig.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Was ist ein wesentlicher Vorteil des Kundenkontos für das Unternehmen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Kunden müssen keine Passwörter mehr verwalten</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Kundendaten können für personalisiertes Marketing genutzt und das Kaufverhalten analysiert werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Unternehmen spart Serverkosten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die DSGVO-Anforderungen entfallen beim Kundenkonto</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das Kundenkonto ermöglicht dem Unternehmen: Kundendaten für Marketing nutzen, personalisierte Angebote erstellen, Kaufverhalten analysieren und höhere Kundenbindung erzielen.</div>
+    <div class="feedback err">&#10008; Falsch. Für das Unternehmen bietet das Kundenkonto: Kundendaten für Marketing, personalisierte Angebote, Kaufverhaltensanalyse und höhere Kundenbindung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Was passiert mit den Daten eines Gastkunden nach Erfüllung des Kaufvertrags?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie werden automatisch in ein Kundenkonto umgewandelt</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Sie werden dauerhaft für Marketingzwecke gespeichert</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Sie dürfen nur im Rahmen der handels- und steuerrechtlichen Pflichten aufbewahrt werden und müssen danach gelöscht werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie werden automatisch dem nächsten Kundenkonto zugewiesen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Gastzugang dürfen Daten nur im Rahmen der handels- und steuerrechtlichen Pflichten aufbewahrt werden. Nach Erfüllung des Kaufvertrags müssen die Daten gelöscht werden.</div>
+    <div class="feedback err">&#10008; Falsch. Gastkundendaten dürfen nur für handels- und steuerrechtliche Pflichten aufbewahrt werden. Nach Vertragserfüllung müssen sie gelöscht werden – keine dauerhafte Speicherung für Marketing.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was versteht man unter einem „Lead" im Kontext der Webshop-Registrierung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Ein Stammkunde, der bereits mehrfach bestellt hat</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Jeder potenzielle Kunde, der sein Interesse am Webshop zeigt und seine Kontaktdaten hinterlässt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein Mitarbeiter des Unternehmens mit Sonderzugang</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Ein Produkt mit besonders hoher Nachfrage</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Ein Lead ist jeder potenzielle Kunde, der sein Interesse am Webshop zeigt und seine Kontaktdaten hinterlässt. Die Registrierung erzeugt einen Lead (vgl. Kreutzer, 2021).</div>
+    <div class="feedback err">&#10008; Falsch. Ein Lead ist ein Datensatz eines potenziellen Kunden, der aus eigenem Antrieb seine Kontaktdaten hinterlegt hat – z. B. durch die Registrierung im Shop.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Was ist die Plausibilitätskontrolle bei der Adresseingabe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine manuelle Prüfung durch Mitarbeiter nach der Bestellung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Eine automatische Prüfung der Kundeneingaben bereits während des Eingebens auf sinnvolle und korrekte Eingaben</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ein postalischer Abgleich der Adressdaten nach dem Kauf</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Eine stichprobenartige Kontrolle aller Kundendaten einmal im Monat</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Plausibilitätskontrolle prüft Kundeneingaben bereits während des Eingebens automatisch – z. B. E-Mail muss @-Zeichen enthalten, PLZ muss 5 Ziffern haben, Name darf keine Ziffern enthalten.</div>
+    <div class="feedback err">&#10008; Falsch. Die Plausibilitätskontrolle ist eine automatische Echtzeit-Prüfung während der Eingabe. Fehler werden sofort durch roten Hintergrund oder Ausrufezeichen signalisiert.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Wie werden Pflichtfelder im Registrierungsformular typischerweise gekennzeichnet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Mit einem grünen Häkchen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Mit einem Sternchen (*)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Mit einem Ausrufezeichen (!)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Mit fetter Schrift</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Pflichtfelder werden typischerweise mit einem Sternchen (*) gekennzeichnet, damit der Kunde weiß, welche Angaben unbedingt erforderlich sind.</div>
+    <div class="feedback err">&#10008; Falsch. Pflichtfelder werden mit einem Sternchen (*) markiert – so weiß der Kunde auf einen Blick, welche Felder für die Geschäftsabwicklung unbedingt benötigt werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Auf welche drei Arten kann ein Kunde seine Adresse im Webshop eingeben?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Per Handschrift, Spracheingabe und QR-Code</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bestandskunde (gespeicherte Daten laden), Neukunde (manuelle Eingabe) und Gastkunde (Eingabe ohne Passwort)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Per API, Webformular und Telefon</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Nur über das Kundenkonto oder per E-Mail</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die drei Wege der Adresseingabe: (1) Bestandskunde – gespeicherte Daten werden automatisch geladen nach Passworteingabe, (2) Neukunde – manuelle Eingabe und Passwort festlegen, (3) Gastkunde – Eingabe ohne Passwort.</div>
+    <div class="feedback err">&#10008; Falsch. Die drei Wege der Adresseingabe sind: Bestandskunde (Daten aus Konto laden), Neukunde (Daten eingeben + neues Passwort) und Gastkunde (Daten eingeben ohne Passwort).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welches Datenschutzgesetz regelt den Umgang mit personenbezogenen Daten bei der Registrierung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bundesdatenschutzgesetz (BDSG) von 1990</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Datenschutz-Grundverordnung (DSGVO)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Telemediengesetz (TMG)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Urheberrechtsgesetz (UrhG)</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die DSGVO (Datenschutz-Grundverordnung) regelt den Umgang mit personenbezogenen Daten streng. Bei jeder Registrierung muss der Kunde der Datenverarbeitung zustimmen.</div>
+    <div class="feedback err">&#10008; Falsch. Die DSGVO (Datenschutz-Grundverordnung) regelt den Umgang mit personenbezogenen Daten. Sie verlangt u. a. Einwilligung, Zweckbindung und Datenminimierung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was ist der Hauptvorteil des Gastzugangs für den Kunden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bestellhistorie ist dauerhaft verfügbar</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Personalisierte Angebote werden angezeigt</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Schnellerer Bestellprozess ohne Passwortverwaltung und datenschutzfreundlich</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kostenlose Lieferung für Gastkunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der Gastzugang ist schneller (kein Passwort), datenschutzfreundlich (Daten werden nach dem Kauf gelöscht) und reduziert Warenkorbabbrüche um bis zu 39 %.</div>
+    <div class="feedback err">&#10008; Falsch. Der Gastzugang ermöglicht schnelles Bestellen ohne Passwort, ist datenschutzfreundlich und reduziert Abbrüche. Nachteile: keine Bestellhistorie, kein personalisiertes Marketing.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Welche DSGVO-Anforderung gilt für die Datenerhebung bei der Registrierung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Möglichst viele Daten erheben, um bessere Analysen zu ermöglichen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Datenminimierung: nur notwendige Daten erheben und nur für den angegebenen Zweck verwenden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kundendaten dürfen ohne Einwilligung für Werbezwecke genutzt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Kundendaten dürfen beliebig lange gespeichert werden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die DSGVO verlangt Datenminimierung: Nur notwendige Daten erheben, Zweckbindung einhalten, Einwilligung einholen und das Recht auf Löschung gewährleisten.</div>
+    <div class="feedback err">&#10008; Falsch. Die DSGVO verlangt Datenminimierung (nur notwendige Daten), Zweckbindung (Daten nur für angegebenen Zweck), Einwilligung des Kunden und Recht auf Löschung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Welches Eingabefeld-Grundprinzip sollte beim Hausnummernfeld beachtet werden?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Das Feld darf nur Zahlen akzeptieren (rein numerisch)</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Das Feld muss sowohl numerische als auch alphanumerische Eingaben erlauben (z. B. „17 A")</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Feld ist optional und kann weggelassen werden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Das Feld darf maximal 3 Zeichen enthalten</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Das Hausnummernfeld muss sowohl numerische (17, 23) als auch alphanumerische Eingaben (17 A, 23 B) erlauben – viele Kunden haben Hausnummern mit Buchstaben.</div>
+    <div class="feedback err">&#10008; Falsch. Das Hausnummernfeld muss alphanumerische Eingaben erlauben (z. B. „17 A"). Ein rein numerisches Feld würde viele Kunden blockieren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was ist die Funktion der „Passwort vergessen?"-Funktion im Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Sie löscht das Kundenkonto automatisch</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Der Kunde bekommt per E-Mail ein neues Passwort oder einen Link zum Ändern des Passworts zugesandt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Sie verlangt ein Bild-CAPTCHA zur Verifizierung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Sie sendet das alte Passwort im Klartext an den Kunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die „Passwort vergessen?"-Funktion sendet dem Kunden per E-Mail ein neues Passwort oder einen Link zum Ändern des Passworts – so kann er sich wieder einloggen.</div>
+    <div class="feedback err">&#10008; Falsch. Die „Passwort vergessen?"-Funktion schickt dem Kunden per E-Mail entweder ein neues Passwort oder einen Reset-Link. Das alte Passwort wird nie im Klartext verschickt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Welche Daten gehören zur Kategorie „Kundenadresse" bei der Adresseingabe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Vorname, Nachname und E-Mail-Adresse</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Land/Bundesland, Postleitzahl/Ort und Straße/Hausnummer</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Geburtsdatum, Telefonnummer und Firma</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Anrede, Titel und USt-IdNr.</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Zur Kategorie „Kundenadresse" gehören: Land/Bundesland, Postleitzahl/Ort und Straße/Hausnummer.</div>
+    <div class="feedback err">&#10008; Falsch. Die Kundenadresse umfasst: Land/Bundesland, Postleitzahl/Ort und Straße/Hausnummer. Name und E-Mail sind andere Datenkategorien.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Was versteht man unter dem Interessen-Konflikt bei der Adresseingabe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Käufer wollen mehr Daten eingeben als Unternehmen sammeln möchten</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Käufer wollen möglichst wenig Angaben machen, während Unternehmen möglichst viele Informationen haben möchten</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Es gibt keinen Konflikt – beide Seiten wollen dasselbe</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Unternehmen wollen weniger Daten, um die DSGVO einzuhalten</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Käufer wollen möglichst wenige Angaben machen (Datenschutz, Komfort), während Unternehmen möglichst viele Informationen sammeln möchten (Marketing, Analyse).</div>
+    <div class="feedback err">&#10008; Falsch. Der Interessen-Konflikt: Käufer wollen wenig Daten angeben, Unternehmen wollen viele Informationen sammeln. Ein guter Webshop balanciert diese Interessen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche Best Practice gilt für Pflichtfelder im Registrierungsformular?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Möglichst viele Felder als Pflichtfelder markieren, um alle Daten zu sammeln</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Nur Daten als Pflichtfeld markieren, die für die Geschäftsabwicklung unbedingt erforderlich sind</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Alle Felder als Pflichtfelder markieren, da sonst die DSGVO verletzt wird</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Keine Pflichtfelder verwenden, um den Kunden nicht zu zwingen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Nur wirklich notwendige Daten als Pflichtfeld markieren. Jedes zusätzliche Pflichtfeld erhöht das Risiko eines Kaufabbruchs. Beispiel: Wenn kein Fax gesendet wird, muss keine Faxnummer abgefragt werden.</div>
+    <div class="feedback err">&#10008; Falsch. Der Grundsatz lautet: Nur notwendige Daten als Pflichtfeld. Unnötige Pflichtfelder sind „Konversion-Killer" und erhöhen die Abbruchrate.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Was sind Alternativen zum klassischen Passwort-Login im Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Nur Kassenbon-Scan und Briefpost-Verifizierung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Social Login (Google/Facebook), Single Sign-On (SSO), Zwei-Faktor-Authentifizierung (2FA) und biometrische Verfahren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Nur QR-Code und Fingerabdruck, keine anderen Optionen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Telefonverifizierung und Personalausweis-Upload als einzige Alternativen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Alternativen zum Passwort-Login: Social Login (Google, Facebook, Apple), Single Sign-On (SSO), Zwei-Faktor-Authentifizierung (2FA) und biometrische Verfahren wie Fingerabdruck.</div>
+    <div class="feedback err">&#10008; Falsch. Moderne Alternativen zum Passwort-Login sind: Social Login (Google, Facebook, Apple), Single Sign-On (SSO), 2FA und biometrische Verfahren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welches technische Problem kann dazu führen, dass ein Kunde sich nicht im Webshop einloggen kann?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Eine zu hohe Internetgeschwindigkeit</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Cookies sind im Browser nicht aktiviert oder die Sicherheitseinstellungen des Browsers sind zu hoch</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Das Kundenkonto hat zu viele Bestellungen gespeichert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Bestellwert überschreitet ein bestimmtes Limit</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Häufige technische Probleme beim Login: Cookies nicht aktiviert, Sicherheitseinstellungen zu hoch, Browser mit fehlerhaften Einstellungen oder veraltete Browser-Version.</div>
+    <div class="feedback err">&#10008; Falsch. Typische technische Probleme sind: Cookies nicht aktiviert, Sicherheitseinstellungen zu hoch, fehlerhafte Browser-Einstellungen oder veralteter Browser.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Was ist die empfohlene Best Practice nach einem Kauf als Gast?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den Kunden zwingen, ein Kundenkonto anzulegen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Dem Kunden nach dem Kauf optional anbieten, aus dem Gastkonto ein vollwertiges Kundenkonto zu erstellen</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Gastdaten sofort löschen und den Kunden über keine weiteren Angebote informieren</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Den Kunden niemals über weitere Angebote kontaktieren</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Best Practice: Nach dem Kauf als Gast dem Kunden optional anbieten, aus dem Gastkonto ein Kundenkonto zu erstellen. So wird die Registrierungshürde umgangen.</div>
+    <div class="feedback err">&#10008; Falsch. Die Best Practice ist: Nach dem Gastkauf dem Kunden optional anbieten, ein Kundenkonto zu erstellen – so wird die Hürde der Registrierung elegant umgangen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Was ist ein Beispiel für eine korrekte Plausibilitätsprüfung bei der E-Mail-Eingabe?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die E-Mail wird erst nach dem Absenden des Formulars geprüft</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Länge der E-Mail-Adresse muss mindestens 10 Zeichen haben</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die E-Mail muss ein @-Zeichen enthalten – fehlt es, wird sofort ein roter Hintergrund oder Ausrufezeichen angezeigt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die E-Mail darf keine Großbuchstaben enthalten</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Plausibilitätsprüfung: E-Mail muss @-Zeichen enthalten. Fehlt es, erscheint sofort ein roter Hintergrund oder Ausrufezeichen (Echtzeit-Validierung, keine Wartezeit bis zum Absenden).</div>
+    <div class="feedback err">&#10008; Falsch. Die Plausibilitätskontrolle prüft bereits während der Eingabe: E-Mail muss @-Zeichen enthalten, PLZ braucht 5 Ziffern, Name darf keine Ziffern enthalten.</div>
+    <div class="q-nav"><button class="btn btn-next">Ergebnis anzeigen &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 3: Anmeldung und Registrierung</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

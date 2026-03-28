@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 3: Handlungskompetenz und Feedback – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #b41e1e;
+    --blue: #1e3c78;
+    --dark: #1a1a2e;
+    --green: #2d8a4e;
+    --orange: #d97706;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+  }
+  header h1 { font-size: 1.2rem; margin-bottom: 2px; }
+  header p { color: #aaa; font-size: 0.85rem; }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: #666; margin-top: 3px; }
+
+  .score-box { display: flex; gap: 16px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 70px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--blue); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border: 1px solid var(--border);
+    border-radius: 16px; background: white; cursor: pointer; font-size: 0.8rem;
+  }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number { font-size: 0.75rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .q-text { font-size: 1rem; line-height: 1.5; margin-bottom: 14px; font-weight: 500; }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.92rem; line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: #eef1f9; }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: #d4f0df; }
+  .choice-btn.wrong-selected { border-color: var(--red); background: #fde8e8; }
+  .choice-btn.missed { border-color: var(--orange); background: #fef3e2; }
+  .choice-btn:disabled { cursor: default; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: #d4f0df; color: #1a5c30; }
+  .q-feedback.partial { background: #fef3e2; color: #8a5c00; }
+  .q-feedback.fail { background: #fde8e8; color: #8a0000; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--blue);
+    color: white; border: none; border-radius: 7px; cursor: pointer; font-size: 0.88rem;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--blue));
+    color: white; border-radius: 12px; padding: 24px;
+    text-align: center; margin-bottom: 20px; display: none;
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 8px 0; }
+  .final-banner .sub { color: #ccc; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#127891; Quiz – Tag 3: Handlungskompetenz und Feedback</h1>
+  <p>Kaufmann im E-Commerce &middot; Lernfeld 1 &middot; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 3: Handlungskompetenz und Feedback</div>
+      <div class="quiz-meta">62 Fragen &middot; Bei jeder Frage sind 1 oder 2 Antworten korrekt</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">62</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div>Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    num: 1,
+    text: `Welche Anforderung an kaufmännische Angestellte hat laut Handout den höchsten Stellenwert (93%)?`,
+    choices: [
+    {"label": "A", "text": "Fachkenntnisse"},
+    {"label": "B", "text": "Teamfähigkeit"},
+    {"label": "C", "text": "Selbstständigkeit"},
+    {"label": "D", "text": "EDV-Kenntnisse enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 2,
+    text: `Welche Anforderung steht laut Handout mit 81% an zweiter Stelle?`,
+    choices: [
+    {"label": "A", "text": "Kommunikationsfähigkeit"},
+    {"label": "B", "text": "Flexibilität"},
+    {"label": "C", "text": "Eigeninitiative"},
+    {"label": "D", "text": "Fachkenntnisse enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 3,
+    text: `Welchen Stellenwert haben reine Fachkenntnisse in der Anforderungsliste des Handouts?`,
+    choices: [
+    {"label": "A", "text": "93%"},
+    {"label": "B", "text": "81%"},
+    {"label": "C", "text": "70%"},
+    {"label": "D", "text": "58% enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 4,
+    text: `Was verdeutlicht die Tabelle der Anforderungen an kaufmännische Angestellte?`,
+    choices: [
+    {"label": "A", "text": "Reine Fachkenntnisse sind wichtiger als alles andere"},
+    {"label": "B", "text": "Selbstständigkeit und Flexibilität sind gefragter als reine Fachkenntnisse"},
+    {"label": "C", "text": "EDV-Kenntnisse sind die wichtigste Anforderung"},
+    {"label": "D", "text": "Kommunikationsfähigkeit hat den höchsten Stellenwert enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 5,
+    text: `Welche zwei Anforderungen haben laut Handout einen höheren Stellenwert als Fachkenntnisse? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Selbstständigkeit (93%)"},
+    {"label": "B", "text": "Teamfähigkeit (68%)"},
+    {"label": "C", "text": "Flexibilität (81%)"},
+    {"label": "D", "text": "EDV-Kenntnisse (62%) enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 6,
+    text: `Wie lautet die Definition von Handlungskompetenz laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Die Fähigkeit, in allen Situationen schnell zu reagieren"},
+    {"label": "B", "text": "Die Fähigkeit und Bereitschaft, in beruflichen, gesellschaftlichen und privaten Situationen sachgerecht, durchdacht und verantwortungsbewusst zu handeln"},
+    {"label": "C", "text": "Nur das berufliche Fachwissen eines Mitarbeiters"},
+    {"label": "D", "text": "Die Fähigkeit, technische Geräte zu bedienen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 7,
+    text: `Aus welchen drei Elementen besteht Handlungskompetenz laut der Formel im Handout?`,
+    choices: [
+    {"label": "A", "text": "Lesen + Schreiben + Rechnen"},
+    {"label": "B", "text": "Wissen + Können + Wollen"},
+    {"label": "C", "text": "Planen + Durchführen + Kontrollieren"},
+    {"label": "D", "text": "Fachkenntnisse + EDV + Sprache enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 8,
+    text: `Was bedeutet die Komponente "Wollen" in der Formel der Handlungskompetenz?`,
+    choices: [
+    {"label": "A", "text": "Technische Fertigkeiten"},
+    {"label": "B", "text": "Fachliches Wissen"},
+    {"label": "C", "text": "Motivation und Haltung -- will ich es auch tun?"},
+    {"label": "D", "text": "Körperliche Stärke enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 9,
+    text: `Wie viele Komponenten hat Handlungskompetenz?`,
+    choices: [
+    {"label": "A", "text": "2"},
+    {"label": "B", "text": "3"},
+    {"label": "C", "text": "5"},
+    {"label": "D", "text": "4 enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 10,
+    text: `Welche vier Komponenten der Handlungskompetenz werden im Handout genannt? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Fachkompetenz"},
+    {"label": "B", "text": "Kreativkompetenz"},
+    {"label": "C", "text": "Methodenkompetenz"},
+    {"label": "D", "text": "Führungskompetenz enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 11,
+    text: `Was ist Fachkompetenz?`,
+    choices: [
+    {"label": "A", "text": "Die Fähigkeit zur Teamarbeit und Kommunikation"},
+    {"label": "B", "text": "Berufliches Wissen und Können (z.B. Buchführung, Rechtskenntnisse, IT-Skills)"},
+    {"label": "C", "text": "Eigenverantwortung, Motivation, Lernbereitschaft"},
+    {"label": "D", "text": "Strategien zur Problemlösung und Informationsverarbeitung enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 12,
+    text: `Welches Beispiel beschreibt Methodenkompetenz?`,
+    choices: [
+    {"label": "A", "text": "Eine Mitarbeiterin führt Buchführung korrekt durch"},
+    {"label": "B", "text": "Ein Mitarbeiter vermittelt bei Konflikten zwischen Kollegen"},
+    {"label": "C", "text": "Ein Auszubildender erstellt eine Mindmap zur Prüfungsvorbereitung (5-Schritt-Methode)"},
+    {"label": "D", "text": "Ein Mitarbeiter kommt immer pünktlich zur Arbeit enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 13,
+    text: `Was beschreibt Sozialkompetenz?`,
+    choices: [
+    {"label": "A", "text": "Fachwissen und technische Fähigkeiten"},
+    {"label": "B", "text": "Selbstreflexion und Eigenverantwortung"},
+    {"label": "C", "text": "Fähigkeit zur Zusammenarbeit und Kommunikation (Teamarbeit, Konfliktlösung, Empathie)"},
+    {"label": "D", "text": "Strategien zur Informationsverarbeitung enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 14,
+    text: `Was ist ein Beispiel für Personalkompetenz?`,
+    choices: [
+    {"label": "A", "text": "Eine Excel-Tabelle für die Lagerverwaltung erstellen"},
+    {"label": "B", "text": "Eine Mindmap zur Prüfungsvorbereitung erstellen"},
+    {"label": "C", "text": "Zwischen zwei streitenden Kollegen vermitteln"},
+    {"label": "D", "text": "Pünktlich sein und sich gut auf Besprechungen vorbereiten enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 15,
+    text: `Welche zwei Kompetenzen werden dem Bereich Personalkompetenz zugeordnet? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Projektmanagement"},
+    {"label": "B", "text": "Eigenverantwortung"},
+    {"label": "C", "text": "Empathie und Teamarbeit"},
+    {"label": "D", "text": "Motivation und Lernbereitschaft enumerate"}
+    ],
+    multi: true,
+    correct: ["B", "D"]
+  },
+  {
+    num: 16,
+    text: `Welche Eselsbrücke gilt für die vier Kompetenzen der Handlungskompetenz?`,
+    choices: [
+    {"label": "A", "text": "FaSoMePe"},
+    {"label": "B", "text": "SoFaMePe"},
+    {"label": "C", "text": "FaMeSoPe"},
+    {"label": "D", "text": "MeFaSoPe enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 17,
+    text: `Was bedeutet der Merksatz "Fachleute mit Methode sind soziale Persönlichkeiten!"?`,
+    choices: [
+    {"label": "A", "text": "Sozialkompetenz -- Fachkompetenz -- Methodenkompetenz -- Personalkompetenz"},
+    {"label": "B", "text": "Fachkompetenz -- Methodenkompetenz -- Sozialkompetenz -- Personalkompetenz"},
+    {"label": "C", "text": "Personalkompetenz -- Fachkompetenz -- Sozialkompetenz -- Methodenkompetenz"},
+    {"label": "D", "text": "Methodenkompetenz -- Fachkompetenz -- Personalkompetenz -- Sozialkompetenz enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 18,
+    text: `Wer prägte den Begriff "Schlüsselqualifikationen" und in welchem Jahr?`,
+    choices: [
+    {"label": "A", "text": "Schulz von Thun, 1977"},
+    {"label": "B", "text": "Ausubel, 1968"},
+    {"label": "C", "text": "Dieter Mertens, 1974"},
+    {"label": "D", "text": "Albert Mehrabian, 1971 enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 19,
+    text: `Was sind Schlüsselqualifikationen?`,
+    choices: [
+    {"label": "A", "text": "Rein berufsspezifische Kenntnisse für einen einzigen Berufsbereich"},
+    {"label": "B", "text": "Kompetenzen, die in vielen verschiedenen Berufen und Situationen anwendbar sind"},
+    {"label": "C", "text": "Ausschließlich technische EDV-Fähigkeiten"},
+    {"label": "D", "text": "Nur formale Schul- und Ausbildungsabschlüsse enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 20,
+    text: `Was macht Schlüsselqualifikationen laut Handout besonders wertvoll?`,
+    choices: [
+    {"label": "A", "text": "Sie sind nur in einem Beruf anwendbar"},
+    {"label": "B", "text": "Sie ersetzen alle Fachkenntnisse vollständig"},
+    {"label": "C", "text": "Sie sind breit übertragbar und in vielen Berufen gefragt"},
+    {"label": "D", "text": "Sie werden nur in der Ausbildung vermittelt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 21,
+    text: `Welche Kategorie nach Mertens beschreibt grundlegende kognitive Fähigkeiten wie logisches Denken und kritisches Urteilen?`,
+    choices: [
+    {"label": "A", "text": "Horizontqualifikationen"},
+    {"label": "B", "text": "Breitenelemente"},
+    {"label": "C", "text": "Vintage-Qualifikationen"},
+    {"label": "D", "text": "Basisqualifikationen enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 22,
+    text: `Was sind Horizontqualifikationen nach Mertens?`,
+    choices: [
+    {"label": "A", "text": "Grundlegende kognitive Fähigkeiten wie logisches Denken"},
+    {"label": "B", "text": "Die Fähigkeit, neue Informationen zu beschaffen, zu verarbeiten und zu nutzen (Lernfähigkeit)"},
+    {"label": "C", "text": "Konkrete Kenntnisse in vielen Berufen (z.B. Fremdsprachen, EDV)"},
+    {"label": "D", "text": "Ausgleich von Wissensunterschieden zwischen Generationen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 23,
+    text: `Was beschreibt die Kategorie "Breitenelemente" nach Mertens?`,
+    choices: [
+    {"label": "A", "text": "Grundlegende kognitive Fähigkeiten"},
+    {"label": "B", "text": "Ausgleich von Wissensunterschieden zwischen Generationen"},
+    {"label": "C", "text": "Konkrete Kenntnisse, die in vielen Berufen gebraucht werden (z.B. Fremdsprachen, EDV-Kenntnisse)"},
+    {"label": "D", "text": "Fähigkeit, neue Informationen zu verarbeiten enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 24,
+    text: `Was sind Vintage-Qualifikationen nach Mertens?`,
+    choices: [
+    {"label": "A", "text": "Sprachkenntnisse in seltenen Sprachen"},
+    {"label": "B", "text": "Ausgleich von Wissensunterschieden zwischen Generationen (z.B. digitale Kompetenz für ältere Mitarbeiter)"},
+    {"label": "C", "text": "Grundlegende kognitive Fähigkeiten"},
+    {"label": "D", "text": "Konkrete berufliche Fachkenntnisse enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 25,
+    text: `Welche zwei Schlüsselqualifikationen braucht ein E-Commerce-Kaufmann besonders im fachübergreifenden Bereich? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Analytisches Denken (KPI-Auswertung)"},
+    {"label": "B", "text": "Handwerkliche Fähigkeiten"},
+    {"label": "C", "text": "Lernbereitschaft (ständige Technologieänderungen)"},
+    {"label": "D", "text": "Kochen und Haushaltsführung enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 26,
+    text: `Welche zwei Breitenelemente werden im Handout für E-Commerce-Kaufleute genannt? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "IT- und Digitalkompetenzen"},
+    {"label": "B", "text": "Metallverarbeitungskenntnisse"},
+    {"label": "C", "text": "Englischkenntnisse (internationale Plattformen)"},
+    {"label": "D", "text": "Medizinische Grundkenntnisse enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 27,
+    text: `Was ist Feedback laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Eine Kritik, die immer negativ formuliert sein soll"},
+    {"label": "B", "text": "Die Rückmeldung über das Verhalten oder die Leistung einer Person"},
+    {"label": "C", "text": "Eine Bestrafung für Fehler"},
+    {"label": "D", "text": "Nur positives Lob ohne kritische Anmerkungen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 28,
+    text: `Wie beschreibt das Handout Feedback metaphorisch?`,
+    choices: [
+    {"label": "A", "text": "Als notwendiges Übel"},
+    {"label": "B", "text": "Als Lerngeschenk"},
+    {"label": "C", "text": "Als Bestrafung"},
+    {"label": "D", "text": "Als Formalie ohne echten Nutzen enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 29,
+    text: `Was ist Regel 1 für gutes Feedback laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Du-Botschaften statt Ich-Botschaften"},
+    {"label": "B", "text": "Feedback immer schriftlich formulieren"},
+    {"label": "C", "text": "Ich-Botschaften statt Du-Botschaften"},
+    {"label": "D", "text": "Feedback erst nach mehreren Wochen geben enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 30,
+    text: `Welches Beispiel zeigt eine korrekte Ich-Botschaft laut Handout?`,
+    choices: [
+    {"label": "A", "text": "\"Du bist immer unpünktlich!\""},
+    {"label": "B", "text": "\"Du machst immer alles falsch.\""},
+    {"label": "C", "text": "\"Ich fühle mich gestört, wenn wir nicht pünktlich beginnen.\""},
+    {"label": "D", "text": "\"Du solltest mal über dein Verhalten nachdenken.\" enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 31,
+    text: `Was bedeutet "konstruktives Feedback" laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Feedback, das nur auf positive Aspekte eingeht"},
+    {"label": "B", "text": "Feedback, das helfen und verbessern soll -- nicht verletzen"},
+    {"label": "C", "text": "Feedback, das ausschließlich sachliche Fakten enthält"},
+    {"label": "D", "text": "Feedback, das möglichst harsch formuliert ist enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 32,
+    text: `Wann wirkt Feedback am besten laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Erst nach mindestens einer Woche"},
+    {"label": "B", "text": "Wenn es kurz nach dem Ereignis gegeben wird (zeitnah)"},
+    {"label": "C", "text": "Nur in formellen Mitarbeitergesprächen"},
+    {"label": "D", "text": "Kurz vor dem Jahresende enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 33,
+    text: `Was sind die drei Schichten der Sandwich-Methode in der richtigen Reihenfolge?`,
+    choices: [
+    {"label": "A", "text": "Kritik -- Lob -- Kritik"},
+    {"label": "B", "text": "Lob -- Kritik -- Lob (positives Feedback -- konstruktive Kritik -- positiver Abschluss)"},
+    {"label": "C", "text": "Lob -- Lob -- Kritik"},
+    {"label": "D", "text": "Kritik -- Lob -- neutrale Aussage enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 34,
+    text: `Was beschreibt die erste Schicht (oben) des Feedback-Sandwichs?`,
+    choices: [
+    {"label": "A", "text": "Konstruktive Kritik und Verbesserungsvorschläge"},
+    {"label": "B", "text": "Positiver Abschluss und Ermutigung"},
+    {"label": "C", "text": "Positives Feedback (Lob)"},
+    {"label": "D", "text": "Sachliche Beschreibung des Problems enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 35,
+    text: `Was steht in der Mitte des Sandwich-Feedbacks?`,
+    choices: [
+    {"label": "A", "text": "Positives Lob"},
+    {"label": "B", "text": "Konstruktive Kritik / Verbesserungspotenzial"},
+    {"label": "C", "text": "Der positive Abschluss"},
+    {"label": "D", "text": "Die Leistungsbewertung enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 36,
+    text: `Was sollte man beim professionellen Entgegennehmen von Feedback tun? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Sofort mit Gegenargumenten antworten"},
+    {"label": "B", "text": "Zuhören ohne zu unterbrechen"},
+    {"label": "C", "text": "Feedback als Lernchance begreifen, nicht als Angriff"},
+    {"label": "D", "text": "Das Feedback ignorieren, wenn es unangenehm ist enumerate"}
+    ],
+    multi: true,
+    correct: ["B"]
+  },
+  {
+    num: 37,
+    text: `Was ist laut Handout beim Feedback-Nehmen angemessen, wenn etwas unklar ist?`,
+    choices: [
+    {"label": "A", "text": "Das Gespräch sofort beenden"},
+    {"label": "B", "text": "Nachfragen: \"Kannst du das konkretisieren?\""},
+    {"label": "C", "text": "Das Feedback schriftlich zurückweisen"},
+    {"label": "D", "text": "Den Feedbackgeber ignorieren enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 38,
+    text: `Was ist die Eselsbrücke zur Sandwich-Methode laut Handout?`,
+    choices: [
+    {"label": "A", "text": "\"Kritik -- Lob -- Kritik = das faire Urteil\""},
+    {"label": "B", "text": "\"Lob -- Kritik -- Lob = das Sandwich macht satt!\""},
+    {"label": "C", "text": "\"Erst kritisieren, dann loben\""},
+    {"label": "D", "text": "\"Immer erst sachlich, dann emotional\" enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 39,
+    text: `Wer entwickelte das Vier-Seiten-Modell (Kommunikationsquadrat)?`,
+    choices: [
+    {"label": "A", "text": "Albert Mehrabian"},
+    {"label": "B", "text": "Dieter Mertens"},
+    {"label": "C", "text": "Guy Kawasaki"},
+    {"label": "D", "text": "Friedemann Schulz von Thun enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 40,
+    text: `In welchem Jahr wurde das Vier-Seiten-Modell entwickelt?`,
+    choices: [
+    {"label": "A", "text": "1968"},
+    {"label": "B", "text": "1971"},
+    {"label": "C", "text": "1977"},
+    {"label": "D", "text": "1974 enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 41,
+    text: `Was besagt das Vier-Seiten-Modell?`,
+    choices: [
+    {"label": "A", "text": "Jede Aussage enthält genau eine klare Botschaft"},
+    {"label": "B", "text": "Jede Aussage enthält vier Botschaften gleichzeitig"},
+    {"label": "C", "text": "Kommunikation läuft immer nur in eine Richtung"},
+    {"label": "D", "text": "Nur der Sachinhalt einer Nachricht ist wichtig enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 42,
+    text: `Welche vier Seiten hat eine Nachricht laut dem Vier-Seiten-Modell? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Sachinhalt"},
+    {"label": "B", "text": "Preis"},
+    {"label": "C", "text": "Selbstoffenbarung"},
+    {"label": "D", "text": "Lieferbedingungen enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 43,
+    text: `Was ist der Sachinhalt einer Nachricht?`,
+    choices: [
+    {"label": "A", "text": "Was der Sender über sich selbst verrät"},
+    {"label": "B", "text": "Was der Empfänger tun soll"},
+    {"label": "C", "text": "Die sachliche Information der Aussage"},
+    {"label": "D", "text": "Was der Sender über den Empfänger denkt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 44,
+    text: `Was versteht man unter Selbstoffenbarung im Vier-Seiten-Modell?`,
+    choices: [
+    {"label": "A", "text": "Was der Sender möchte, dass der Empfänger tut"},
+    {"label": "B", "text": "Die sachliche Informationsseite der Nachricht"},
+    {"label": "C", "text": "Was der Sender (bewusst oder unbewusst) über sich selbst preisgibt"},
+    {"label": "D", "text": "Die Beziehungsaussage des Senders enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 45,
+    text: `Was ist die Appellseite einer Nachricht?`,
+    choices: [
+    {"label": "A", "text": "Was der Sender über den Empfänger denkt"},
+    {"label": "B", "text": "Was der Empfänger tun oder denken soll"},
+    {"label": "C", "text": "Die sachliche Information der Aussage"},
+    {"label": "D", "text": "Was der Sender über sich selbst verrät enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 46,
+    text: `Beim Beispielsatz "Die Ampel ist grün!" -- was ist die Beziehungsseite laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Die Ampel zeigt grünes Licht (sachliche Info)"},
+    {"label": "B", "text": "Fahr los! (Handlungsaufforderung)"},
+    {"label": "C", "text": "Ich bin ungeduldig (Selbstoffenbarung)"},
+    {"label": "D", "text": "Ich vertraue dir nicht, dass du es selbst siehst enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 47,
+    text: `Beim Satz "Die Ampel ist grün!" -- was ist der Appell laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Die Ampel zeigt grünes Licht"},
+    {"label": "B", "text": "Ich bin ungeduldig und möchte weiterfahren"},
+    {"label": "C", "text": "Fahr los!"},
+    {"label": "D", "text": "Ich vertraue dir nicht, dass du es selbst siehst enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 48,
+    text: `Was ist die Eselsbrücke für das Vier-Seiten-Modell?`,
+    choices: [
+    {"label": "A", "text": "BSSA (Beziehung -- Selbstoffenbarung -- Sachinhalt -- Appell)"},
+    {"label": "B", "text": "SSBA (Sachinhalt -- Selbstoffenbarung -- Beziehung -- Appell)"},
+    {"label": "C", "text": "ABSS (Appell -- Beziehung -- Selbstoffenbarung -- Sachinhalt)"},
+    {"label": "D", "text": "SBAS (Selbstoffenbarung -- Beziehung -- Appell -- Sachinhalt) enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 49,
+    text: `Was ist laut Handout eine wichtige Grundregel für Präsentationen bezüglich der Struktur?`,
+    choices: [
+    {"label": "A", "text": "Keine feste Struktur -- alles spontan vortragen"},
+    {"label": "B", "text": "Einleitung -- Hauptteil -- Schluss (klarer roter Faden)"},
+    {"label": "C", "text": "Erst den Schluss, dann den Hauptteil, dann die Einleitung"},
+    {"label": "D", "text": "Nur Hauptteil, ohne Einleitung und Schluss enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 50,
+    text: `Was empfiehlt das Handout bezüglich des Blickkontakts bei Präsentationen?`,
+    choices: [
+    {"label": "A", "text": "Immer auf die Folien schauen, nie in die Runde"},
+    {"label": "B", "text": "Augenkontakt mit dem Publikum halten"},
+    {"label": "C", "text": "Blickkontakt ist bei Präsentationen unwichtig"},
+    {"label": "D", "text": "Nur den Vorgesetzten anschauen enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 51,
+    text: `Wer entwickelte die 10-20-30-Regel für Präsentationen?`,
+    choices: [
+    {"label": "A", "text": "Albert Mehrabian"},
+    {"label": "B", "text": "Dieter Mertens"},
+    {"label": "C", "text": "Friedemann Schulz von Thun"},
+    {"label": "D", "text": "Guy Kawasaki enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 52,
+    text: `Was besagt die "10" in der 10-20-30-Regel?`,
+    choices: [
+    {"label": "A", "text": "Maximal 10 Minuten Präsentationsdauer"},
+    {"label": "B", "text": "Mindestens 10 Punkt Schriftgröße"},
+    {"label": "C", "text": "Maximal 10 Folien"},
+    {"label": "D", "text": "Maximal 10 Stichpunkte pro Folie enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 53,
+    text: `Was besagt die "20" in der 10-20-30-Regel?`,
+    choices: [
+    {"label": "A", "text": "Maximal 20 Folien"},
+    {"label": "B", "text": "Maximal 20 Minuten Präsentationsdauer"},
+    {"label": "C", "text": "Mindestens 20 Punkt Schriftgröße"},
+    {"label": "D", "text": "Maximal 20 Stichpunkte enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 54,
+    text: `Was besagt die "30" in der 10-20-30-Regel?`,
+    choices: [
+    {"label": "A", "text": "Maximal 30 Folien"},
+    {"label": "B", "text": "Maximal 30 Minuten Präsentationsdauer"},
+    {"label": "C", "text": "Mindestens 30 Punkt Schriftgröße auf den Folien"},
+    {"label": "D", "text": "Maximal 30 Stichpunkte insgesamt enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 55,
+    text: `Was erforschte Albert Mehrabian laut Handout?`,
+    choices: [
+    {"label": "A", "text": "Die vier Seiten einer Nachricht"},
+    {"label": "B", "text": "Die Wirkung von Kommunikation (Körpersprache, Stimme, Worte)"},
+    {"label": "C", "text": "Schlüsselqualifikationen in der Berufswelt"},
+    {"label": "D", "text": "Lernstrategien für Schüler enumerate"}
+    ],
+    multi: false,
+    correct: ["B"]
+  },
+  {
+    num: 56,
+    text: `Welchen Anteil macht Körpersprache laut Mehrabian (1971) bei der Kommunikationswirkung aus?`,
+    choices: [
+    {"label": "A", "text": "7%"},
+    {"label": "B", "text": "38%"},
+    {"label": "C", "text": "55%"},
+    {"label": "D", "text": "93% enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 57,
+    text: `Welchen Anteil hat Stimme/Tonfall laut Mehrabian bei der Kommunikationswirkung?`,
+    choices: [
+    {"label": "A", "text": "55%"},
+    {"label": "B", "text": "7%"},
+    {"label": "C", "text": "93%"},
+    {"label": "D", "text": "38% enumerate"}
+    ],
+    multi: false,
+    correct: ["D"]
+  },
+  {
+    num: 58,
+    text: `Welchen Anteil haben Worte/Inhalt laut Mehrabian bei der Kommunikationswirkung?`,
+    choices: [
+    {"label": "A", "text": "38%"},
+    {"label": "B", "text": "55%"},
+    {"label": "C", "text": "7%"},
+    {"label": "D", "text": "93% enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 59,
+    text: `Was ist die Schlussfolgerung aus der Mehrabian-Studie für Präsentationen?`,
+    choices: [
+    {"label": "A", "text": "Der Inhalt (Worte) ist bei Weitem der wichtigste Faktor"},
+    {"label": "B", "text": "Die Stimme ist unwichtig, nur der Inhalt zählt"},
+    {"label": "C", "text": "Wie man etwas sagt (Körpersprache, Stimme) ist oft wichtiger als was man sagt"},
+    {"label": "D", "text": "Körpersprache und Worte sind gleich wichtig enumerate"}
+    ],
+    multi: false,
+    correct: ["C"]
+  },
+  {
+    num: 60,
+    text: `Welche zwei Punkte empfiehlt das Handout für gute Folien? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Wenig Text auf den Folien"},
+    {"label": "B", "text": "Möglichst viel Text zum Ablesen"},
+    {"label": "C", "text": "Aussagekräftige Bilder und einheitliches Design"},
+    {"label": "D", "text": "Jede Folie in einer anderen Farbe gestalten enumerate"}
+    ],
+    multi: true,
+    correct: ["A", "C"]
+  },
+  {
+    num: 61,
+    text: `Welche zwei Grundregeln für Präsentationen werden im Handout bezüglich der Sprache genannt? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Einfach und klar formulieren"},
+    {"label": "B", "text": "Möglichst viele Fachbegriffe verwenden"},
+    {"label": "C", "text": "Verständlich sprechen -- keine langen Schachtelsätze"},
+    {"label": "D", "text": "Nur in Fachsprache sprechen, damit man kompetent wirkt enumerate"}
+    ],
+    multi: true,
+    correct: []
+  },
+  {
+    num: 62,
+    text: `Was empfiehlt das Handout bezüglich der Körpersprache bei Präsentationen? (2 richtige Antworten)`,
+    choices: [
+    {"label": "A", "text": "Aufrecht stehen"},
+    {"label": "B", "text": "Die Arme vor der Brust verschränken"},
+    {"label": "C", "text": "Ruhige Gestik und lächeln"},
+    {"label": "D", "text": "Möglichst wenig Bewegung, am besten sitzen enumerate"}
+    ],
+    multi: true,
+    correct: []
+  },
+];
+
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">ℹ Mehrfachauswahl: 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '✓ Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '◑ Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '✗ Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '–';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% · Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

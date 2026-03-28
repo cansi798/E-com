@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.21 Die Arbeit in Teams – Tag 21</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none}#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100}#viewport{width:100vw;height:100vh;position:relative;overflow:hidden}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg)}.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit-left{opacity:0;transform:translateX(-60px)}.slide.cover{justify-content:center;text-align:center}.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px}.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px}.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8}.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start}.slide-header .icon{font-size:1.6rem}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap}.content{width:100%;flex:1;overflow:hidden}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px}.cards{display:grid;gap:14px;width:100%}.cols2{grid-template-columns:1fr 1fr}.cols3{grid-template-columns:1fr 1fr 1fr}.cols4{grid-template-columns:1fr 1fr 1fr 1fr}.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow)}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px}.card.gold::before{background:var(--accent)}.card.green::before{background:var(--success)}.card.red::before{background:var(--danger)}.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6}.card ul{padding-left:16px}.card li{margin-bottom:3px}.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px}.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent)}.highlight.green{background:var(--success-light);border-left-color:var(--success)}.highlight.red{background:var(--danger-light);border-left-color:var(--danger)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}.step-flow{display:flex;align-items:stretch;gap:0;width:100%;margin-top:8px}.step-box{flex:1;background:var(--bg-card);border-radius:10px;padding:14px 12px;text-align:center;position:relative;font-size:.8rem;border:1px solid var(--border);box-shadow:var(--shadow)}.step-box h4{color:var(--primary);font-size:.82rem;margin-bottom:4px}.step-box p{color:var(--text-muted);font-size:.72rem;line-height:1.4}.step-arrow{display:flex;align-items:center;color:var(--primary);font-size:1.2rem;padding:0 4px}table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border)}.sum-table tr:nth-child(even) td{background:var(--bg-alt)}.sum-table tr:hover td{background:var(--primary-light)}.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px}.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem}.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow)}#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg)}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s}#nav button:hover{background:var(--primary-light)}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center}#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both}.slide.active .slide-header{animation-delay:.05s}.slide.active .content{animation-delay:.15s}#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px}#grid-overlay.visible{display:block}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary)}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px}#grid-header button:hover{background:var(--bg-alt)}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px)}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light)}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 21</div>
+    <h1>3.21 Die Arbeit in Teams</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 573 – 577</div>
+    <div class="cover-meta">Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>29. Mai 2026<br><br><strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong></div>
+  </section>
+
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 18</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Teambegriff definieren</strong> – den Unterschied zwischen einer Gruppe und einem Team erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Vorteile und Nachteile von Teamarbeit</strong> – Chancen und Risiken der Zusammenarbeit im Team benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Teamentwicklung nach Tuckman</strong> – die vier Phasen (Forming, Storming, Norming, Performing) beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Teamrollen nach Belbin</strong> – die drei Hauptgruppen und neun Rollen kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Erfolgsfaktoren für Teams</strong> – Faktoren erfolgreicher Teamarbeit benennen und anwenden.</div></div>
+      <div class="highlight" style="margin-top:12px"><strong>Leitfrage:</strong> Was macht ein Team erfolgreich und welche Phasen durchläuft es auf dem Weg dorthin?</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#128101;</div><h2>Was ist ein Team?</h2><span class="tag">Folie 3 / 18</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green"><strong>Definition:</strong> Ein <strong>Team</strong> ist eine Gruppe von Menschen, die unter koordinierter Anwendung ihres fachlichen Wissens und ihrer Fähigkeiten eine gemeinsame Aufgabe/ein Problem über einen gewissen Zeitraum bearbeitet/löst.</div>
+        <div class="info-box" style="margin-top:12px"><strong>Unterschied Gruppe vs. Team:</strong> In einer Gruppe bearbeitet jede Person die gleiche Aufgabe einzeln. Im Team arbeiten mehrere Personen <strong>gemeinsam auf ein Ziel</strong> hin – mit koordinierter Rollenverteilung.</div>
+      </div>
+      <div>
+        <div class="card"><h3>&#128101; Merkmale eines Teams</h3><ul><li>Gemeinsames Ziel</li><li>Koordinierte Zusammenarbeit</li><li>Gemeinsame Verantwortung für das Ergebnis</li><li>Rollen- und Aufgabenverteilung</li><li>Nutzung individueller Stärken</li><li>Auffangen individueller Schwächen</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#9989;</div><h2>Vorteile und Nachteile von Teamarbeit</h2><span class="tag">Folie 4 / 18</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Vorteile</h3>
+          <ul>
+            <li>Stärken aller Mitglieder nutzen</li>
+            <li>Schwächen einzelner auffangen</li>
+            <li>Effiziente Rollen- und Aufgabenverteilung</li>
+            <li>Aufgaben schneller bearbeiten</li>
+            <li>Fehler frühzeitig erkennen und verhindern</li>
+            <li>Unterschiedliche Sicht- und Arbeitsweisen</li>
+            <li>Höhere Qualität des Arbeitsergebnisses</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#10060; Nachteile/Risiken</h3>
+          <ul>
+            <li>Einzelne lehnen sich zurück („TEAM = Toll, ein anderer macht's")</li>
+            <li>Nicht alle haben gleiches Interesse am Ergebnis</li>
+            <li>Konflikte und Machtkämpfe möglich</li>
+            <li>Koordinationsaufwand</li>
+            <li>Längere Entscheidungsprozesse</li>
+            <li>Gruppendruck kann Kreativität hemmen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px"><strong>Gegenmaßnahme:</strong> Ineffiziente Teamarbeit kann verhindert werden, indem das geforderte Ergebnis für alle von großer Bedeutung ist oder Leistungsdruck auf das Team ausgeübt wird.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#128336;</div><h2>Das Tuckman-Modell der Teamentwicklung</h2><span class="tag">Folie 5 / 18</span></div>
+    <div class="content">
+      <div class="highlight">Im Jahr 1965 entwickelte <strong>Bruce Tuckman</strong> ein Modell, welches beschreibt, wie sich Teams im Laufe ihrer Zusammenarbeit entwickeln. Es definiert <strong>vier Phasen</strong> der Teamentwicklung.</div>
+      <div class="step-flow" style="margin-top:16px">
+        <div class="step-box" style="background:var(--primary-light)"><h4>1. Forming</h4><p>Orientierungsphase</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--danger-light)"><h4>2. Storming</h4><p>Konfliktphase</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>3. Norming</h4><p>Normierungsphase</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>4. Performing</h4><p>Integrationsphase</p></div>
+      </div>
+      <div class="info-box" style="margin-top:14px"><strong>Hinweis:</strong> Teamentwicklungsprozesse laufen nicht immer nach einem starren Schema ab. Phasen können sich überlappen oder parallel ablaufen.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#128075;</div><h2>Phase 1: Forming (Orientierung)</h2><span class="tag">Folie 6 / 18</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Forming</strong> – In dieser Phase trifft das Team neu zusammen. Die Mitglieder sind zunächst noch unsicher.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Die Mitglieder lernen sich kennen</li>
+          <li>Höflicher und distanzierter Umgang</li>
+          <li>Motivation ist hoch</li>
+          <li>Noch keine Beziehung zwischen den Einzelnen</li>
+          <li>Stärken und Schwächen sind noch nicht bekannt</li>
+          <li>Erste Vorstellungen und Ziele werden gesammelt</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128336; Typische Verhaltensweisen</h3>
+          <ul>
+            <li>Nett und höflich</li>
+            <li>Vorsichtig und unpersönlich</li>
+            <li>Gegenseitiges „Abtasten"</li>
+            <li>Abwartende Haltung</li>
+            <li>Wunsch nach Orientierung</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#9889;</div><h2>Phase 2: Storming (Konflikt)</h2><span class="tag">Folie 7 / 18</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red"><strong>Storming</strong> – Die Mitglieder tauschen ihre Vorstellungen über Herangehensweise und Arbeitsergebnis aus. Es entstehen <strong>Machtkämpfe</strong>.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Cliquenbildung</li>
+          <li>Mühsames Vorwärtskommen</li>
+          <li>Konfrontation der Personen</li>
+          <li>Unterschwellige Konflikte</li>
+          <li>Jedes Mitglied möchte seine Vorstellungen durchsetzen</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card red"><h3>&#9888; Risiko</h3><p>In dieser Phase können Teams <strong>scheitern</strong>, wenn die auftretenden Konflikte zu stark sind. Nimmt ein Mitglied die Rolle des <strong>Moderators</strong> ein, können Machtkämpfe eingegrenzt und Konflikte vermieden werden.</p></div>
+        <div class="highlight gold" style="margin-top:12px"><strong>Wichtig:</strong> Die Storming-Phase ist ein natürlicher und notwendiger Bestandteil jeder Teamentwicklung. Sie muss durchlaufen werden, um zu einer produktiven Zusammenarbeit zu gelangen.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Phase 3: Norming (Normierung)</h2><span class="tag">Folie 8 / 18</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight gold"><strong>Norming</strong> – Das Team entscheidet sich für eine gemeinsame Vorgehensweise und legt sich Regeln auf.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Entwicklung neuer Umgangsformen und Verhaltensweisen</li>
+          <li>Konfrontation der Standpunkte</li>
+          <li>Feedback wird gegeben und angenommen</li>
+          <li>Rollen, Arbeitspakete und Arbeitsschritte werden verteilt</li>
+          <li>Konflikte werden thematisiert und beseitigt</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green"><h3>&#9989; Ergebnis der Phase</h3><ul><li>Offene Diskussion über gegensätzliche Standpunkte</li><li>Machtkämpfe sind beseitigt</li><li>Gemeinsame Spielregeln vereinbart</li><li>Team widmet sich verstärkt der gemeinsamen Aufgabe</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#127942;</div><h2>Phase 4: Performing (Integration)</h2><span class="tag">Folie 9 / 18</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green"><strong>Performing</strong> – Dies ist die Phase mit der <strong>höchsten Produktivität und Effektivität</strong>. Die Stärken der einzelnen Teammitglieder werden optimal genutzt.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Offen und flexibel</li>
+          <li>Ideenreich und leistungsfähig</li>
+          <li>Solidarisch und hilfsbereit</li>
+          <li>Team kooperiert und harmoniert</li>
+          <li>Rollenkonformes Arbeiten</li>
+          <li>Zielstrebig auf ein gutes Arbeitsergebnis hin</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card"><h3>&#127942; Kennzeichen</h3><p>Die Mitglieder helfen sich gegenseitig und arbeiten zielstrebig auf ein möglichst gutes Arbeitsergebnis hin. Die Rollenverteilung aus der Norming-Phase wird gelebt.</p></div>
+        <div class="info-box" style="margin-top:12px"><strong>Idealfall:</strong> Auch ohne äußeren Druck sollten alle Teammitglieder Spaß an der Teamarbeit haben und Interesse an einem guten Arbeitsergebnis zeigen.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#128101;</div><h2>Teamrollen nach Belbin</h2><span class="tag">Folie 10 / 18</span></div>
+    <div class="content">
+      <div class="highlight">Der englische Sozialwissenschaftler <strong>Meredith Belbin</strong> kam zu dem Ergebnis, dass Teams am besten zusammenarbeiten, wenn sie aus einer <strong>Vielzahl unterschiedlicher Charaktere</strong> bestehen. Er unterteilt die Teammitglieder in <strong>drei Hauptgruppierungen</strong> mit jeweils drei Charakteren.</div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128170; Handlungsorientierte Personen</h3>
+          <ul><li>Macher</li><li>Perfektionist</li><li>Umsetzer</li></ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128172; Kommunikationsorientierte Personen</h3>
+          <ul><li>Wegbereiter</li><li>Koordinator</li><li>Teamarbeiter</li></ul>
+        </div>
+        <div class="card green">
+          <h3>&#128218; Wissensorientierte Personen</h3>
+          <ul><li>Spezialist</li><li>Beobachter</li><li>Erfinder</li></ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:12px"><strong>Belbin-Prinzip:</strong> Ein Team arbeitet am effektivsten, wenn alle Rollen vertreten sind. Die Verschiedenheit der Teammitglieder ist die große <strong>Stärke</strong> eines Teams.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#128170;</div><h2>Die 9 Teamrollen im Detail (I)</h2><span class="tag">Folie 11 / 18</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#9889; Macher</h3>
+          <p>Energisch, dynamisch, arbeitet unter Druck. Treibt das Team an und überwindet Hindernisse.</p>
+        </div>
+        <div class="card">
+          <h3>&#128269; Perfektionist</h3>
+          <p>Gewissenhaft, detailorientiert. Liefert termingerecht und achtet auf Fehler. Kann Aufgaben nur schwer delegieren.</p>
+        </div>
+        <div class="card">
+          <h3>&#128736; Umsetzer</h3>
+          <p>Diszipliniert, zuverlässig, konservativ. Setzt Pläne in die Tat um und organisiert, was getan werden muss.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127760; Wegbereiter</h3>
+          <p>Extrovertiert, begeistert, kommunikativ. Bringt neue Kontakte und Ideen von außen ins Team.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128101; Koordinator</h3>
+          <p>Reif, selbstsicher, delegiert gut. Erkennt Talente und klärt Ziele. Natürlicher Teamleiter.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#129309; Teamarbeiter</h3>
+          <p>Kooperativ, diplomatisch, aufmerksam. Verbessert das Teamklima und vermeidet Konflikte.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Die 9 Teamrollen im Detail (II)</h2><span class="tag">Folie 12 / 18</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#128300; Spezialist</h3>
+          <p>Selbstbezogen, engagiert, Fachexperte. Bringt tiefes Fachwissen in einem bestimmten Bereich ein.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128064; Beobachter</h3>
+          <p>Nüchtern, strategisch, analytisch. Sieht alle Optionen und beurteilt Ideen objektiv.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128161; Erfinder</h3>
+          <p>Kreativ, unorthodox, phantasievoll. Generiert neue Ideen und löst schwierige Probleme.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px"><strong>Toleranz ist entscheidend:</strong> Jedes Teammitglied hat eine eigene Strategie und nimmt eine eigene Rolle ein. Unterschiedliche Sicht- und Arbeitsweisen fließen in die Teamarbeit ein und steigern bei richtiger Vorgehensweise die Qualität des Arbeitsergebnisses.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#127942;</div><h2>Erfolgsfaktoren für Teams</h2><span class="tag">Folie 13 / 18</span></div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Erfolgsfaktor</th><th>Inhalt</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Regeln einhalten</strong></td><td>Kommunikationsregeln aufstellen, die effiziente und vielseitige Diskussion ermöglichen.</td></tr>
+          <tr><td><strong>Zielstrebigkeit und Engagement</strong></td><td>Teammitglieder sollten stets das gemeinsame Ziel vor Augen haben und engagiert darauf hinarbeiten.</td></tr>
+          <tr><td><strong>Offene Kommunikation</strong></td><td>Persönliche und sachliche Probleme müssen sofort angesprochen und diskutiert werden, um Konflikte zu vermeiden.</td></tr>
+          <tr><td><strong>Verantwortung übernehmen</strong></td><td>Im Rahmen ihrer Aufgabengebiete müssen Teammitglieder den Mut haben, Verantwortung zu übernehmen.</td></tr>
+          <tr><td><strong>Kritikfähigkeit</strong></td><td>Berechtigte Kritik muss jederzeit erlaubt sein und professionell entgegengenommen werden.</td></tr>
+          <tr><td><strong>Ideen aufnehmen</strong></td><td>Die Ideen von sämtlichen Teammitgliedern müssen gehört werden, um ein optimales Arbeitsergebnis zu erzielen.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Übungsaufgaben</h2><span class="tag">Folie 14 / 18</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128209; Aufgabe 1</h3><p>Benennen Sie mit eigenen Worten, worin der Unterschied zwischen einer Gruppe und einem Team liegt.</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 2</h3><p>Erstellen Sie einen Überblick über die Vorteile und die möglichen Nachteile von Teamarbeit.</p></div>
+        <div class="card green"><h3>&#128209; Aufgabe 3</h3><p>Finden Sie aus Ihrem beruflichen Arbeitsalltag ein Beispiel für erfolgreiche Teamarbeit. Beschreiben Sie die Abläufe und warum die Teamarbeit sinnvoll und erfolgreich war.</p></div>
+        <div class="card red"><h3>&#128209; Aufgabe 4</h3><p>Beschreiben Sie ein Beispiel aus Ihrer Erfahrung, aus welchem die Probleme der Storming-Phase deutlich werden.</p></div>
+        <div class="card"><h3>&#128209; Aufgabe 5</h3><p>Erinnern Sie sich an Situationen, in denen Sie in Teams gearbeitet haben. Warum ist die Teamarbeit nicht optimal verlaufen? Entwickeln Sie Vorschläge, wie das Scheitern verhindert werden kann.</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 6</h3><p>Beschreiben Sie mit eigenen Worten, warum ein Team erfolgreicher wird, wenn es sich aus vielen unterschiedlichen Charakteren zusammensetzt.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Zusammenfassung</h2><span class="tag">Folie 15 / 18</span></div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <div class="highlight"><strong>Phasen der Teamentwicklung</strong> (nach Tuckman, 1965)</div>
+          <div class="step-flow" style="margin-top:12px">
+            <div class="step-box" style="background:var(--primary-light)"><h4>Forming</h4></div>
+            <div class="step-arrow">&#10140;</div>
+            <div class="step-box" style="background:var(--danger-light)"><h4>Storming</h4></div>
+            <div class="step-arrow">&#10140;</div>
+            <div class="step-box" style="background:var(--accent-light)"><h4>Norming</h4></div>
+            <div class="step-arrow">&#10140;</div>
+            <div class="step-box" style="background:var(--success-light)"><h4>Performing</h4></div>
+          </div>
+        </div>
+        <div>
+          <div class="highlight gold"><strong>Rollen in Teams</strong> (nach Belbin, 2010)</div>
+          <div class="cards" style="margin-top:12px;gap:8px">
+            <div class="card"><h3>Handlungsorientiert</h3><p>Macher, Perfektionist, Umsetzer</p></div>
+            <div class="card gold"><h3>Kommunikationsorientiert</h3><p>Koordinator, Wegbereiter, Teamarbeiter</p></div>
+            <div class="card green"><h3>Wissensorientiert</h3><p>Spezialist, Erfinder, Beobachter</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128172;</div><h2>Diskussionsfragen</h2><span class="tag">Folie 16 / 18</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Eigene Teamrolle</h3><p>Welche der neun Belbin-Rollen beschreibt Sie am besten? Begründen Sie Ihre Einschätzung.</p></div>
+        <div class="card gold"><h3>2. Storming-Phase</h3><p>Wie kann ein Team die Storming-Phase möglichst konstruktiv durchlaufen? Welche Rolle spielt ein Moderator?</p></div>
+        <div class="card green"><h3>3. Agile Methoden</h3><p>In vielen E-Commerce-Unternehmen werden agile Methoden (Scrum, Kanban) eingesetzt. Inwiefern unterstützen diese die Teamarbeit?</p></div>
+        <div class="card red"><h3>4. Remote-Teams</h3><p>Welche besonderen Herausforderungen haben Teams, die nicht am selben Ort arbeiten (Homeoffice, verteilte Standorte)?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 17 / 18</span></div>
+    <div class="content">
+      <div class="ref-entry">Belbin, R. M. (2010). <em>Team Roles at Work</em> (2. Aufl.). Routledge.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Tuckman, B. W. (1965). Developmental Sequence in Small Groups. <em>Psychological Bulletin</em>, 63(6), 384–399.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide cover" data-index="18">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 21</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.21 Die Arbeit in Teams</div>
+    <div class="cover-meta">Ende von Lernfeld 3<br><br>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten</div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folienübersicht</span><button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev" title="Vorherige Folie">&#8592;</button><span id="slide-counter">1 / 18</span><button id="btn-next" title="Nächste Folie">&#8594;</button><button id="btn-grid" title="Folienübersicht (G)">&#8862;</button></div>
+<div id="footer"><span>Tag 21 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%'}document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid()});let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1)}});function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible')}function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid()};c.appendChild(d)})}document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

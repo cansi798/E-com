@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 16 – LF3: Das Widerrufsrecht des Käufers</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 16: Das Widerrufsrecht des Käufers</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- Frage 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Wie lange beträgt die gesetzliche Widerrufsfrist bei einem Online-Kauf (Fernabsatzvertrag)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>7 Tage ab Kaufdatum</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>14 Tage ab Erhalt der Ware</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>30 Tage ab Kaufdatum</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>6 Monate ab Erhalt der Ware</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei einem Online-Kauf (Fernabsatzvertrag) hat der Verbraucher grundsätzlich ein Widerrufsrecht von 14 Tagen ab dem Erhalt der Ware. Der Widerruf kann ohne Angabe von Gründen erfolgen.</div>
+    <div class="feedback err">Falsch. Die gesetzliche Widerrufsfrist beträgt 14 Tage ab Erhalt der Ware – nicht 7 oder 30 Tage.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Was passiert mit der Widerrufsfrist, wenn der Händler keine oder eine fehlerhafte Widerrufsbelehrung erteilt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Die Frist beginnt trotzdem nach 14 Tagen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Das Widerrufsrecht erlischt nach 3 Monaten</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Die Frist verlängert sich auf maximal 1 Jahr und 14 Tage</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Widerrufsrecht entfällt komplett</div>
+    </div>
+    <div class="feedback ok">Richtig! Falls die Widerrufsbelehrung fehlerhaft oder gar nicht mitgeteilt wurde, verlängert sich die Widerrufsfrist auf maximal 1 Jahr und 14 Tage. Dies soll Händler zur ordnungsgemäßen Belehrung anhalten.</div>
+    <div class="feedback err">Falsch. Wenn der Händler keine oder eine fehlerhafte Widerrufsbelehrung erteilt, verlängert sich die Frist auf maximal 1 Jahr und 14 Tage – als Sanktion für den Händler.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Für welche Produkte gilt das 14-tägige Widerrufsrecht NICHT?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Neue Smartphones und Tablets</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Frische Blumen und Gemüse (verderbliche Waren)</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Kleidung und Schuhe</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Bücher und Zeitschriften</div>
+    </div>
+    <div class="feedback ok">Richtig! Für verderbliche Waren wie frische Blumen und Gemüse gilt kein Widerrufsrecht, da diese schnell verderben würden. Weitere Ausnahmen sind individuell angefertigte Produkte, versiegelte Datenträger (wenn geöffnet) und Hygieneartikel.</div>
+    <div class="feedback err">Falsch. Frische Blumen und Gemüse sind verderbliche Waren – hier gilt kein Widerrufsrecht. Smartphones, Kleidung und Bücher hingegen können zurückgegeben werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Wie oft muss der Webshopbetreiber den Käufer mindestens über das Widerrufsrecht informieren?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Einmal, beim Kaufabschluss</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Mindestens zweimal: im Webshop und bei der Lieferung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Dreimal: im Warenkorb, beim Kaufabschluss und per Post</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Das Widerrufsrecht muss nicht aktiv kommuniziert werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Webshopbetreiber muss den Käufer mindestens zweimal informieren: (1) im Webshop im Rahmen der Kaufabwicklung und (2) bei der Lieferung (z. B. per E-Mail oder als Beilage zur Rechnung).</div>
+    <div class="feedback err">Falsch. Der Händler muss mindestens zweimal informieren: einmal im Webshop (spätestens auf der Bestellseite) und einmal bei der Lieferung.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Wie muss der Käufer den Widerruf erklären?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Durch kommentarloses Zurücksenden der Ware</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Durch eine eindeutige Erklärung (z. B. Brief, Fax, E-Mail) mit Namen, Adresse, Bestellnummer und Vertragsdatum</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur durch schriftliche Erklärung per eingeschriebenem Brief</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Mündlich per Telefon ist ausreichend</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Verbraucher muss den Widerruf eindeutig erklären – z. B. per Brief, Fax oder E-Mail. Die Angaben Name, Adresse, Bestellnummer und Vertragsdatum sind erforderlich. Kommentarloses Zurücksenden reicht nach neuer Rechtslage nicht mehr aus.</div>
+    <div class="feedback err">Falsch. Nach der neuen Rechtslage reicht kommentarloses Zurücksenden nicht aus. Der Käufer muss den Widerruf eindeutig erklären und mindestens Name, Adresse, Bestellnummer und Vertragsdatum angeben.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Innerhalb welcher Frist muss der Händler nach einem wirksamen Widerruf den Kaufpreis zurückzahlen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Sofort, spätestens 3 Tage nach Widerruf</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Innerhalb von 30 Tagen</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Unverzüglich, spätestens 14 Tage nach der Widerrufsmitteilung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Innerhalb von 6 Wochen nach Erhalt der zurückgesendeten Ware</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Händler muss alle Zahlungen (inkl. Lieferkosten) unverzüglich, spätestens 14 Tage nach Eingang der Widerrufsmitteilung zurückzahlen – mit demselben Zahlungsmittel wie die ursprüngliche Transaktion.</div>
+    <div class="feedback err">Falsch. Der Händler muss unverzüglich, spätestens innerhalb von 14 Tagen nach der Widerrufsmitteilung den Kaufpreis zurückzahlen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Wer muss generell die Kosten der Rücksendung übernehmen?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span>Grundsätzlich der Käufer – es sei denn, der Händler übernimmt die Kosten freiwillig</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Immer der Händler, egal was in den AGB steht</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Staat trägt die Rücksendekosten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Die Kosten werden immer geteilt</div>
+    </div>
+    <div class="feedback ok">Richtig! Gesetzlich müssen grundsätzlich die Käufer die Kosten der Rücksendung übernehmen, sofern der Händler in der Widerrufsbelehrung darauf hingewiesen hat. In der Praxis übernehmen jedoch 88 % der Onlineshops die Kosten freiwillig.</div>
+    <div class="feedback err">Falsch. Gesetzlich trägt der Käufer die Rücksendekosten (sofern der Händler darauf hingewiesen hat). Dass 88 % der Händler sie trotzdem übernehmen, ist freiwillig aus Kulanz oder Marketinggründen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was muss der Käufer zurücksenden, wenn er widerruft?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur die Originalverpackung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Nur die Rechnung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Die Ware, innerhalb von 14 Tagen nach der Widerrufserklärung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Nichts – der Händler holt die Ware selbst ab</div>
+    </div>
+    <div class="feedback ok">Richtig! Nach einem wirksamen Widerruf muss der Käufer die Ware unverzüglich, spätestens 14 Tage nach seiner Widerrufserklärung zurücksenden. Die Frist ist gewahrt, wenn die Absendung rechtzeitig erfolgt.</div>
+    <div class="feedback err">Falsch. Der Käufer muss die Ware selbst zurücksenden, und zwar innerhalb von 14 Tagen nach der Widerrufserklärung. Der Händler darf die Rückzahlung verweigern, bis die Ware zurück ist.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welche Versandkosten muss der Händler bei einem Widerruf zurückerstatten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Alle Versandkosten, inklusive teurer Express-Optionen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Nur die Kosten der günstigsten Standardversandart</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Keine Versandkosten – diese sind nie zu erstatten</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>50 % der tatsächlich entstandenen Versandkosten</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Händler muss nur die Kosten der günstigsten Standardversandart erstatten. Hat der Käufer eine teurere Versandoption gewählt (z. B. Express), wird nur der Standard-Versandpreis erstattet.</div>
+    <div class="feedback err">Falsch. Der Händler muss nur die Kosten der günstigsten Standardversandart zurückerstatten. Teurere Versandoptionen sind von der Erstattungspflicht ausgenommen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Wann muss ein Käufer Wertersatz leisten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Immer, wenn die Ware zurückgegeben wird</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Wenn die Ware beschädigt war, bevor der Käufer sie erhalten hat</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Wenn der Wertverlust darauf beruht, dass der Käufer die Ware über die bloße Prüfung hinaus benutzt hat</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Wertersatz ist gesetzlich verboten und darf nie verlangt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Wertersatz ist zu leisten, wenn der Käufer mit der Ware anders umgegangen ist, als es für die bloße Prüfung der Beschaffenheit, Eigenschaften und Funktionsweise notwendig war. Beispiel: Schuhe mehrfach draußen tragen statt nur anzuprobieren.</div>
+    <div class="feedback err">Falsch. Wertersatz ist nur fällig, wenn der Käufer die Ware über die bloße Prüfung hinaus benutzt hat. Anprobieren oder einfaches Testen löst keinen Wertersatz aus.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Haben gewerbliche Kunden (B2B) gesetzlich ein Widerrufsrecht?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ja, gewerbliche Kunden haben dasselbe Widerrufsrecht wie Verbraucher</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Grundsätzlich nein – es sei denn, der Webshop bietet es freiwillig an</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nein, und ein freiwilliges Widerrufsrecht ist auch nicht erlaubt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ja, aber nur für Bestellungen unter 500 Euro</div>
+    </div>
+    <div class="feedback ok">Richtig! Gewerbliche Kunden haben gegenüber Webshops grundsätzlich kein gesetzliches Widerrufsrecht. Allerdings räumen viele Shops aus Kulanz- oder Marketinggründen ein freiwilliges Widerrufsrecht ein.</div>
+    <div class="feedback err">Falsch. Im B2B-Bereich gibt es kein gesetzliches Widerrufsrecht. Webshops können es jedoch freiwillig anbieten – und viele tun das auch.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Für welches Produkt besteht kein Widerrufsrecht, wenn es nach Lieferung geöffnet wurde?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Neuwertige Herrenhosen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Ein Buch in Originalverpackung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Eine versiegelte Blu-Ray-Disc, deren Versiegelung nach Lieferung geöffnet wurde</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ein neuer Laptop</div>
+    </div>
+    <div class="feedback ok">Richtig! Für versiegelte Datenträger (CD, DVD, Blu-Ray) gilt kein Widerrufsrecht mehr, sobald die Versiegelung nach der Lieferung geöffnet wurde. Dies soll verhindern, dass Käufer digitale Inhalte kopieren und dann zurückgeben.</div>
+    <div class="feedback err">Falsch. Bei versiegelten Datenträgern (wie Blu-Ray) erlischt das Widerrufsrecht, sobald die Versiegelung nach Lieferung entfernt wurde. Kleidung und Laptops hingegen können weiterhin zurückgegeben werden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was muss ein Widerrufsformular mindestens enthalten?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Nur Name und Unterschrift des Käufers</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Widerrufsempfänger, Widerrufsinhalt, Verbraucherdaten, Datum und Unterschrift</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Nur die Bestellnummer und den Widerrufsgrund</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Bankverbindung für die Rückerstattung</div>
+    </div>
+    <div class="feedback ok">Richtig! Das Widerrufsformular muss enthalten: Widerrufsempfänger (Name, Adresse des Händlers), Widerrufsinhalt (Waren, Bestellnummer, Erhaltsdatum), Verbraucherdaten (Name, Adresse) sowie Datum und Unterschrift.</div>
+    <div class="feedback err">Falsch. Ein vollständiges Widerrufsformular benötigt: Angaben zum Händler (Widerrufsempfänger), Informationen zur Bestellung (Widerrufsinhalt), Kundendaten sowie Datum und Unterschrift.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Wie schnell muss der Händler den Eingang eines Online-Widerrufs bestätigen, wenn er ein Online-Formular anbietet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Innerhalb von 7 Tagen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Unverzüglich, innerhalb von 24 Stunden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Innerhalb von 3 Werktagen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Eine Bestätigung ist nicht erforderlich</div>
+    </div>
+    <div class="feedback ok">Richtig! Bietet der Händler ein Online-Widerrufsformular an, muss er den Zugang des Widerrufs unverzüglich (innerhalb von 24 Stunden) bestätigen.</div>
+    <div class="feedback err">Falsch. Bei einem Online-Widerrufsformular muss der Händler den Zugang unverzüglich, d. h. innerhalb von 24 Stunden, bestätigen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Wann erlischt das Widerrufsrecht bei Downloads (z. B. Apps, E-Books)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Automatisch nach 14 Tagen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Downloads haben nie ein Widerrufsrecht</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Wenn der Käufer ausdrücklich zustimmt, dass der Download vor Ablauf der Widerrufsfrist beginnt und er damit sein Widerrufsrecht verliert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Wenn der Käufer das Produkt mehr als einmal heruntergeladen hat</div>
+    </div>
+    <div class="feedback ok">Richtig! Bei Downloads muss prinzipiell ein Widerrufsrecht angeboten werden. Es erlischt nur, wenn der Käufer ausdrücklich zustimmt, dass die Vertragsausführung vor Ablauf der Widerrufsfrist beginnt, und bestätigt, dass er damit sein Widerrufsrecht verliert.</div>
+    <div class="feedback err">Falsch. Downloads haben grundsätzlich ein Widerrufsrecht. Es erlischt nur durch ausdrückliche Zustimmung des Käufers vor Beginn des Downloads.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">Welche Aussage zu den Folgen des Widerrufs ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Der Händler darf eine Bearbeitungsgebühr von 10 % des Kaufpreises einbehalten</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Der Händler muss die Rückzahlung mit demselben Zahlungsmittel leisten wie die ursprüngliche Transaktion</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Der Händler darf auf ein Gutschein-Modell umstellen statt Geld zurückzuzahlen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Der Händler muss nur zahlen, wenn der Kunde die Ware bereits zurückgeschickt hat</div>
+    </div>
+    <div class="feedback ok">Richtig! Der Händler muss die Rückzahlung mit demselben Zahlungsmittel vornehmen, das bei der ursprünglichen Transaktion verwendet wurde. Keine Entgelte für die Rückzahlung sind erlaubt.</div>
+    <div class="feedback err">Falsch. Der Händler muss mit demselben Zahlungsmittel zurückzahlen wie bei der ursprünglichen Zahlung. Bearbeitungsgebühren oder Gutschein-Umstellungen sind nicht erlaubt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Wie viel Prozent der deutschen Verbraucher halten die einfache Warenrücksendung für sehr oder ziemlich wichtig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>ca. 30 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>ca. 50 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>ca. 79 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>ca. 95 %</div>
+    </div>
+    <div class="feedback ok">Richtig! Laut Umfrage halten fast 79 % der Verbraucher (40,8 % „sehr wichtig" + 38,1 % „ziemlich wichtig") die einfache Warenrücksendung für sehr oder ziemlich wichtig. Ein gutes Retourenmanagement ist damit ein wichtiger Wettbewerbsvorteil.</div>
+    <div class="feedback err">Falsch. Laut Umfrage halten ca. 79 % der Verbraucher die einfache Rücksendung für sehr oder ziemlich wichtig (40,8 % sehr + 38,1 % ziemlich wichtig).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Welche modernen Funktionen stellt Shopsoftware für das Widerrufsrecht bereit?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Automatische Ablehnung aller Widerrufe</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Einbindung der Widerrufsbelehrung in den Checkout-Prozess, E-Mail-Templates und automatisches Retourenmanagement</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Verlängerung der Widerrufsfrist auf 30 Tage</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Verhinderung von Rücksendungen durch technische Sperren</div>
+    </div>
+    <div class="feedback ok">Richtig! Moderne Shopsoftware stellt für das Widerrufsrecht bereit: automatische Einbindung der Widerrufsbelehrung in den Checkout-Prozess, E-Mail-Templates für Widerrufseingangs-Bestätigungen und automatisches Retourenmanagement mit Rückerstattung.</div>
+    <div class="feedback err">Falsch. Moderne Shopsoftware unterstützt das Widerrufsrecht aktiv durch: Einbindung in den Checkout, E-Mail-Templates und automatisches Retourenmanagement.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Silke Henkel schickt Waren kommentarlos an den Händler zurück ohne einen Widerruf zu erklären. Ist das ein wirksamer Widerruf?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ja, kommentarloses Zurücksenden ist immer ein wirksamer Widerruf</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span>Nein, nach neuer Rechtslage muss der Widerruf eindeutig erklärt werden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span>Ja, wenn die Ware original verpackt ist</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Es kommt darauf an, ob die AGB das erlauben</div>
+    </div>
+    <div class="feedback ok">Richtig! Nach neuer Rechtslage reicht kommentarloses Zurücksenden der Ware NICHT als wirksamer Widerruf aus. Der Verbraucher muss den Widerspruch eindeutig mitteilen und mindestens Name, Adresse, Bestellnummer und Vertragsdatum angeben.</div>
+    <div class="feedback err">Falsch. Nach der neuen Rechtslage ist kommentarloses Zurücksenden kein wirksamer Widerruf. Die Widerrufserklärung muss eindeutig und mit Pflichtangaben (Name, Adresse, Bestellnummer) erfolgen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Ab wann beginnt die 14-tägige Widerrufsfrist zu laufen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span>Ab dem Tag der Bestellung</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span>Ab dem Tag der Bezahlung</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span>Ab dem Tag, an dem der Käufer (oder ein beauftragter Dritter) die Ware in Besitz nimmt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span>Ab dem Tag der Bestell-E-Mail</div>
+    </div>
+    <div class="feedback ok">Richtig! Die 14-tägige Widerrufsfrist beginnt ab dem Tag, an dem der Käufer oder ein von ihm benannter Dritter die Waren in Besitz genommen hat – also ab dem tatsächlichen Empfang der Ware, nicht ab der Bestellung.</div>
+    <div class="feedback err">Falsch. Die Widerrufsfrist beginnt nicht ab der Bestellung, sondern ab dem Tag, an dem der Käufer (oder ein beauftragter Dritter) die Ware tatsächlich in Besitz nimmt.</div>
+    <div class="q-nav"><button class="btn btn-next">Quiz beenden &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 16</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  document.getElementById('result-card').classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.17 Datensicherheit – Tag 17</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 17</div>
+    <h1>3.17 Datensicherheit</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 528 – 539</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      22. Mai 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Datensicherheit vs. Datensicherung</strong> – die Begriffe abgrenzen und deren Zusammenhang erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Gefährdungspotenziale kennen</strong> – Bedrohungen für Hardware, Software, Menschen und Versorgungseinrichtungen benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Sicherungsverfahren unterscheiden</strong> – technische, personelle, programmtechnische und organisatorische Verfahren beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Backup-Strategien anwenden</strong> – vollständige und inkrementelle Datensicherung gegenüberstellen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Webshop-Sicherheit bewerten</strong> – Maßnahmen wie SSL/TLS, Firewalls und sichere Passwörter einordnen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Wie schützt ein E-Commerce-Unternehmen seine Daten vor Verlust, Zerstörung und Manipulation?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Datensicherheit vs. Datensicherung -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Datensicherheit vs. Datensicherung</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128737; Datensicherheit</h3>
+          <ul>
+            <li>Ziel: <strong>alle Daten</strong> eines Unternehmens gegen Bedrohungen absichern</li>
+            <li>Schutz vor Verlust, Manipulation und unbefugtem Zugriff</li>
+            <li>Bezieht sich auf die <strong>technischen Aspekte</strong> der Datenverarbeitung</li>
+            <li>Sicherstellung der störungsfreien Arbeit</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128190; Datensicherung</h3>
+          <ul>
+            <li>Ziel: die <strong>grundlegenden Maßnahmen</strong> zur Herstellung von Datensicherheit</li>
+            <li>Kopieren vorhandener Daten auf ein Speichermedium</li>
+            <li>Wiederherstellung verlorener Dateien</li>
+            <li>Beispiel: regelmäßige Backups</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight green" style="margin-top:14px">
+        <strong>Merke:</strong> Datensicherheit ist das übergeordnete Ziel, Datensicherung ist eine konkrete Maßnahme dafür. Beide Begriffe werden in der Praxis oft synonym verwendet, unterscheiden sich aber im Umfang.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Gefährdungspotenzial bei PCs -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#9888;</div>
+      <h2>Gefährdungspotenzial bei PCs</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Komponente</th><th>Bedrohung</th><th>Mögliche Ursachen</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Hardware</strong></td><td>Beschädigung, Zerstörung, Verlust</td><td>Unkenntnis, Schlampigkeit, Sabotage, Raub</td></tr>
+          <tr><td><strong>Arbeitsmittel</strong></td><td>Unbrauchbarkeit, Verderblichkeit, Fehler</td><td>Wie Hardware</td></tr>
+          <tr><td><strong>Versorgungseinrichtungen</strong></td><td>Störung, Unterbrechung, Ausfall</td><td>Nicht beeinflussbare Außeneinwirkungen</td></tr>
+          <tr><td><strong>Software</strong></td><td>Verfälschung, Löschung, Übermittlung</td><td>Manipulation, Ausspähung, Verrat</td></tr>
+          <tr><td><strong>Menschen</strong></td><td>Versagen, Ausfall, Veruntreuung</td><td>Überforderung, Gleichgültigkeit, Böswilligkeit</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight red" style="margin-top:12px">
+        <strong>Praxis:</strong> Ein Unternehmen kann durch einen Hardwarefehler, einen Brand oder vorsätzliches Löschen seine gesamten Daten verlieren – mit existenzbedrohenden Folgen.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Zu sichernde Daten im Onlineshop -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128451;</div>
+      <h2>Zu sichernde Daten im Onlineshop</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card"><h3>&#128451; Datenbank</h3><p>Kundendaten, Bestelldaten, Produktdaten, Buchhaltungsdaten</p></div>
+        <div class="card gold"><h3>&#128187; Shopsystem</h3><p>Texte, Bilder, Templates, Konfigurationen</p></div>
+        <div class="card green"><h3>&#128231; E-Mails</h3><p>Geschäftskorrespondenz, Bestellbestätigungen</p></div>
+        <div class="card"><h3>&#128101; Lieferanten</h3><p>Kontaktdaten, Konditionen, Verträge</p></div>
+        <div class="card gold"><h3>&#128176; Warenwirtschaft</h3><p>Lagerbestände, Artikelstammdaten</p></div>
+        <div class="card red"><h3>&#128272; Zugangsdaten</h3><p>Passwörter, Admin-Zugänge, API-Keys</p></div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Wichtig:</strong> Die Datenbank ist das Herzstück des Webshops. Wenn sie verloren geht, sind alle Kundendaten, Bestellungen und Einstellungen unwiderruflich weg.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Technische Verfahren -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128736;</div>
+      <h2>Technische Verfahren der Datensicherung</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#9889; Notstromaggregate</h3>
+          <p>Erzeugen bei Stromausfall die notwendige Energie, um den Datenverarbeitungsbetrieb aufrechtzuerhalten.</p>
+        </div>
+        <div class="card">
+          <h3>&#128187; Parallelrechner</h3>
+          <p>Zusätzlicher Computer, der bei Ausfall der EDV-Anlage automatisch deren Aufgaben übernimmt.</p>
+        </div>
+        <div class="card">
+          <h3>&#128190; Streamer</h3>
+          <p>Spezielle Magnetbandeinheit zur schnellen Sicherung großer Datenmengen auf Magnetbändern.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128190; Hardware-Schreibschutz</h3>
+          <p>Datenträger mit Schreibschutzschalter (z. B. SD-Karten) verhindern versehentliches Überschreiben.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128274; Mechanische Sicherungen</h3>
+          <p>Schlösser an Computern, damit nur Schlüsselbesitzer die Inbetriebnahme durchführen können.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; Räumliche Sicherungen</h3>
+          <p>Sicherheitsschlösser, Sicherheitsverglasungen und Alarmanlagen für EDV-Räume.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Personelle Verfahren -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128101;</div>
+      <h2>Personelle Verfahren</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#127891; Schulungen</h3>
+          <p>Mitarbeiter werden geschult, damit sie fehlerfrei und ordnungsgemäß die EDV bedienen können.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128101; Doppelbesetzungen</h3>
+          <p>Alle Aufgaben in der Datenverarbeitung können von mehr als einer Person durchgeführt werden.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128064; Vier-Augen-Prinzip</h3>
+          <p>Kritische Vorgänge werden durch eine zweite Person geprüft und bestätigt.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Weitere Maßnahmen:</strong> Anfordern von Führungszeugnissen, Kontrollen des Werkschutzes und die Bestellung eines betrieblichen Datenschutzbeauftragten gehören ebenfalls zu den personellen Verfahren.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Programmtechnische Verfahren -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128187;</div>
+      <h2>Programmtechnische Verfahren</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#9989; Plausibilitätskontrollen</h3>
+          <p>Prüfen, ob eingegebene Daten in der Wirklichkeit vorkommen können (z. B. 32. als Tageszahl).</p>
+        </div>
+        <div class="card">
+          <h3>&#128272; Passwortverfahren</h3>
+          <p>Zugang zu Programmen und Betriebssystem durch Kennwörter gesichert. Passwörter verdeckt eingeben.</p>
+        </div>
+        <div class="card">
+          <h3>&#128100; Berechtigungscodes</h3>
+          <p>Mitarbeiter erhalten unterschiedliche Autorisationsgrade – nicht jeder darf alles.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128196; Software-Schreibschutz</h3>
+          <p>Dateien verstecken oder als „read only" setzen – nur lesbar, nicht veränderbar.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128274; Verschlüsselung</h3>
+          <p>Wichtige Daten auf externen Speichern werden verschlüsselt, um unbefugten Zugriff zu erschweren.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128290; Prüfziffernverfahren</h3>
+          <p>Dienen dazu, fehlerhafte Angaben bei der Erfassung oder Übermittlung numerischer Daten zu entdecken.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Organisatorische Verfahren -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Organisatorische Verfahren</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="card">
+          <h3>&#128190; Periodische Sicherheitskopien</h3>
+          <p>Drei Generationen von Datenträgern aufbewahren: das <strong>Großvater-Vater-Sohn-Prinzip</strong> gewährleistet, dass bei täglicher Verarbeitung die Daten der beiden vorhergehenden Tage als Sicherheit zur Verfügung stehen.</p>
+        </div>
+        <div class="highlight" style="margin-top:12px">
+          <strong>Empfehlung:</strong> In Netzen mit mehreren Benutzern ist wenigstens eine wöchentliche, besser eine <strong>tägliche Datensicherung</strong> erforderlich.
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128203; Überwachungsprotokolle</h3>
+          <p>Sämtliche Vorgänge der EDV-Anlage werden in einer besonderen Datei gespeichert. So können alle Tätigkeiten überwacht werden.</p>
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Datenarchivierung:</strong> Durch die kurzfristige Aufbewahrung (3–6 Monate) unterscheidet sich die Datensicherung von der längerfristigen Datenarchivierung, die anderen Gesetzmäßigkeiten unterliegt.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Arten der Datensicherung -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128190;</div>
+      <h2>Arten der Datensicherung</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#128230; Vollständige Datensicherung</h3>
+          <ul>
+            <li>Sämtliche Dateien werden zu einem bestimmten Zeitpunkt komplett gespeichert</li>
+            <li><strong>Vorteil:</strong> Alle Daten liegen komplett vor, schnelle Wiederherstellung</li>
+            <li><strong>Nachteil:</strong> Zeitaufwendig, viel Speicherplatz nötig</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128194; Inkrementelle Datensicherung</h3>
+          <ul>
+            <li>Nur die seit der letzten Sicherung <strong>veränderten Daten</strong> werden gespeichert</li>
+            <li><strong>Vorteil:</strong> Spart Speicherplatz, weniger Zeit für die Sicherung</li>
+            <li><strong>Nachteil:</strong> Wiederherstellung erfordert erheblich größeren Zeitaufwand</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:14px">
+        <strong>Praxistipp:</strong> Vor jedem Softwareupdate und vor größeren Datenimporten (z. B. CSV-Import neuer Artikel) sollte immer ein vollständiges Backup erstellt werden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Datenträger für die Datensicherung -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128191;</div>
+      <h2>Datenträger für die Datensicherung</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Datenträger</th><th>Lebensdauer</th><th>Mögliche Gefahren</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Blu-ray</td><td>50–100 Jahre</td><td>Wärme</td></tr>
+          <tr><td>DVD</td><td>30–50 Jahre</td><td>Licht</td></tr>
+          <tr><td>CD</td><td>5–30 Jahre</td><td>Wärme, Licht, Feuchtigkeit, Kratzer</td></tr>
+          <tr><td>Festplatte extern</td><td>10 Jahre</td><td>Feuchtigkeit, Stöße, Magnetismus</td></tr>
+          <tr><td>SSD-Festplatte</td><td>10–30 Jahre</td><td>Begrenzte Schreibzyklen</td></tr>
+          <tr><td>USB-Stick</td><td>30 Jahre</td><td>Begrenzte Schreibzyklen</td></tr>
+          <tr><td>Cloud-Speicher</td><td>Theoretisch unbegrenzt</td><td>Zugriff durch Dritte, Pleite des Anbieters</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Lagerort:</strong> Der Aufbewahrungsort sollte dunkel und trocken sein. Unbefugte dürfen keinen Zugang haben.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Herausforderungen für Webshops -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#127760;</div>
+      <h2>Besondere Herausforderungen für Webshops</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <ul class="bullets">
+          <li><strong>Regelmäßige Updates</strong> – Sicherheitslücken in Betriebssystemen, Bürosoftware und Browsern schließen.</li>
+          <li><strong>Patches</strong> – Spezielle Korrekturen der Software, um Sicherheitslücken gezielt zu schließen.</li>
+          <li><strong>Antivirensoftware</strong> – Muss automatisch aktualisiert werden und ständig im Hintergrund laufen.</li>
+          <li><strong>Firewall</strong> – Verhindert ungewollten ein- und ausgehenden Datenverkehr.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card red">
+          <h3>&#9888; Störfaktoren vermeiden</h3>
+          <ul>
+            <li>Warenkorbabbrüche durch Ladezeiten</li>
+            <li>Seitenfehler</li>
+            <li>Schlechte Internetverbindungen</li>
+            <li>Mangelnde Anbindung an Server</li>
+            <li>Schnittstellenprobleme</li>
+            <li>Störungen der E-Mail-Kommunikation</li>
+          </ul>
+        </div>
+        <div class="highlight green" style="margin-top:10px">
+          <strong>Zugriffsregelung:</strong> Netzintern darf jeder nur auf die Daten zugreifen, mit denen er auch arbeiten soll.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: SSL/TLS und HTTPS -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>SSL/TLS und HTTPS</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="card green">
+          <h3>&#128274; HTTPS</h3>
+          <p><strong>Hypertext Transfer Protocol Secure</strong> – signalisiert beim Aufruf eines Webshops einen verschlüsselten und sicheren Datenaustausch. Es liegt ein digitales SSL-Zertifikat vor.</p>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128272; SSL (Secure Socket Layers)</h3>
+          <p>Die meisten Shopsysteme enthalten standardmäßig dieses Zertifikat. Es <strong>verschlüsselt und authentifiziert</strong> den Datenverkehr im Internet, sodass die Kommunikation nicht mitgelesen oder manipuliert werden kann.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128737; TLS (Transport Layer Security)</h3>
+          <p>Die <strong>Weiterentwicklung</strong> des SSL-Zertifikats. Bietet verbesserte Verschlüsselungsalgorithmen und ist der aktuelle Standard für sichere Datenübertragung.</p>
+        </div>
+        <div class="highlight" style="margin-top:12px">
+          <strong>Praxis:</strong> Ein Webshop ohne HTTPS wirkt unseriös und wird von Suchmaschinen abgestraft. Die Verschlüsselung ist Pflicht für jeden professionellen Onlineshop.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Sichere Passwörter -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128272;</div>
+      <h2>Sichere Passwörter und Zugangsdaten</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          <strong>Anforderungen an sichere Passwörter:</strong>
+        </div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Mindestens <strong>zwölf Zeichen</strong> lang</li>
+          <li>Mix aus <strong>Großbuchstaben, Kleinbuchstaben, Sonderzeichen und Ziffern</strong></li>
+          <li>Keine persönlichen Daten (Geburtstag, Name)</li>
+          <li>Regelmäßig ändern</li>
+          <li>Für jeden Dienst ein eigenes Passwort</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card red">
+          <h3>&#10060; Schwache Passwörter</h3>
+          <ul>
+            <li>123456, password, admin</li>
+            <li>Geburtsdatum, Name des Haustieres</li>
+            <li>Gleiches Passwort für alles</li>
+          </ul>
+        </div>
+        <div class="card green" style="margin-top:12px">
+          <h3>&#9989; Empfehlungen</h3>
+          <ul>
+            <li>Passwort-Manager verwenden</li>
+            <li>Zwei-Faktor-Authentifizierung (2FA) aktivieren</li>
+            <li>Zugangsdaten niemals per E-Mail versenden</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Identitätsmanagement -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128100;</div>
+      <h2>Identitätsmanagement</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>Identitätsmanagement</strong> dient der Erkennung von Personen in einem Computersystem. Seine Aufgabe ist die Erstellung und Verwaltung von Benutzern sowie von Regeln für deren Online-Nutzungsspielraum.
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li>Zugang zu Hardware- und Softwarebestandteilen wird kontrolliert</li>
+          <li>Benutzerrechte und Einschränkungen werden mit der festgelegten Identität verglichen</li>
+          <li>Betrifft sowohl <strong>Mitarbeiter im Backend</strong> als auch <strong>Kunden im Frontend</strong></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#127970; Praxisbeispiel Exclusiva GmbH</h3>
+          <p>Der Administrator legt im Rahmen des Identitätsmanagements fest, was ein Nutzer des Shopsystems mit welchen Geräten und unter welchen Umständen tun darf.</p>
+          <p style="margin-top:8px">Der Administrator wird informiert, wenn ein Nutzer auf Ressourcen zugreifen möchte, für die er keine Berechtigung hat.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Maßnahmen für einen sicheren Webshop -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128737;</div>
+      <h2>Maßnahmen für einen sicheren Webshop</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#128274; Verschlüsselung</h3>
+          <ul>
+            <li>HTTPS / SSL/TLS als Standard</li>
+            <li>Verschlüsselte Datenübertragung</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#128190; Regelmäßige Backups</h3>
+          <ul>
+            <li>Tägliche Datenbanksicherung</li>
+            <li>Physisch getrennte Lagerorte</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128295; Software-Updates</h3>
+          <ul>
+            <li>Shopsoftware aktuell halten</li>
+            <li>Sicherheits-Patches sofort installieren</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128737; Firewall &amp; Antivirus</h3>
+          <ul>
+            <li>Firewall einrichten</li>
+            <li>Antivirensoftware auf allen Geräten</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128272; Zugangsdaten</h3>
+          <ul>
+            <li>Sichere Passwörter (mind. 12 Zeichen)</li>
+            <li>Serverseitigen Verzeichnisschutz</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128203; Notfallplan</h3>
+          <ul>
+            <li>Wer macht was im Notfall?</li>
+            <li>Welche Daten werden zuerst wiederhergestellt?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Übungsaufgaben -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Wodurch unterscheiden sich Datensicherheit und Datenschutz? Schließen sich beide aus?</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Im Rahmen der Datensicherung werden technische, personelle, programmtechnische und organisatorische Verfahren unterschieden. Ordnen Sie folgende Beispiele zu:</p>
+          <ul>
+            <li>a) Zugang zum PC nur mit Schlüsseln</li>
+            <li>b) Großvater-Vater-Sohn-Prinzip</li>
+            <li>c) Streamer einsetzen</li>
+            <li>d) Passwortschutz für alle Programme</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Warum wird das Großvater-Vater-Sohn-Prinzip auch Mehrgenerationenprinzip genannt? Erklären Sie den Ablauf.</p>
+        </div>
+        <div class="card red">
+          <h3>&#128209; Aufgabe 4</h3>
+          <p>Führen Sie Maßnahmen zur Datensicherung eines Webshops auf, die ein Experte empfehlen würde.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Zusammenfassung -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Datensicherung</strong> = Maßnahmen gegen Verlust, Zerstörung oder Verfälschung von Daten.
+      </div>
+      <div class="cards cols4" style="margin-top:14px">
+        <div class="card">
+          <h3>Technische Verfahren</h3>
+          <ul>
+            <li>Notstromaggregate</li>
+            <li>Parallelrechner</li>
+            <li>Streamer</li>
+            <li>Hardware-Schreibschutz</li>
+            <li>Mechanische Sicherungen</li>
+            <li>Räumliche Sicherungen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>Personelle Verfahren</h3>
+          <ul>
+            <li>Schulungen</li>
+            <li>Doppelbesetzungen</li>
+            <li>Vier-Augen-Prinzip</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>Programmtechnische Verfahren</h3>
+          <ul>
+            <li>Verschlüsselung</li>
+            <li>Plausibilitätskontrolle</li>
+            <li>Passwortverfahren</li>
+            <li>Berechtigungscodes</li>
+            <li>Software-Schreibschutz</li>
+            <li>Prüfziffern</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>Organisatorische Verfahren</h3>
+          <ul>
+            <li>Sicherheitskopien (Großvater-Vater-Sohn-Prinzip)</li>
+            <li>Überwachungsprotokolle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Simitis, S., Hornung, G. &amp; Spiecker gen. Döhmann, I. (Hrsg.). (2019). <em>Datenschutzrecht: DSGVO mit BDSG</em> (1. Aufl.). Nomos.</div>
+      <div class="ref-entry">Spindler, G. &amp; Schuster, F. (Hrsg.). (2019). <em>Recht der elektronischen Medien</em> (4. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 17</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.17 Datensicherheit</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.18 Datenschutz</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 17 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

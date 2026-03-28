@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.2 + 2.3 Webshop-Layout & Seitentypen – LF2 Tag 2</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2980B9; --primary-light: #D6EAF8; --primary-dark: #1A5276;
+  --accent: #F39C12; --accent-light: #FEF9E7;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C; --danger-light: #FADBD8;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #5DADE2);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card.gold h3 { color:var(--accent); }
+.card.green h3 { color:var(--success); }
+.card.red h3 { color:var(--danger); }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A9DFBF; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+/* Webshop-Layout Diagramm */
+.ws-layout { width:100%; border-collapse:collapse; font-size:.82rem; border-radius:10px; overflow:hidden; }
+.ws-layout td { padding:12px 16px; text-align:center; font-weight:700; border:3px solid white; }
+.ws-header { background:var(--primary-light); color:var(--primary-dark); font-size:.9rem; }
+.ws-nav { background:var(--bg-alt); color:var(--text); width:16%; writing-mode:vertical-lr; text-orientation:mixed; transform:rotate(180deg); padding:16px 8px; }
+.ws-body { background:#EAF4FE; color:var(--text); font-size:.95rem; }
+.ws-side { background:var(--accent-light); color:var(--text); width:16%; writing-mode:vertical-lr; text-orientation:mixed; transform:rotate(180deg); padding:16px 8px; }
+.ws-footer { background:var(--success-light); color:var(--success); font-size:.9rem; }
+/* Seitentypen-Übersicht Tabelle */
+.page-types-table { width:100%; border-collapse:collapse; font-size:.8rem; }
+.page-types-table th { padding:10px 12px; text-align:center; font-weight:700; color:white; }
+.page-types-table td { padding:10px 12px; border:1px solid var(--border); vertical-align:top; line-height:1.5; }
+.page-types-table tr:nth-child(even) td { background:var(--bg-alt); }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 2 &nbsp;|&nbsp; Tag 2</div>
+    <h1>2.2 Layout der Internetseiten<br>2.3 Darstellung des Sortiments</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Webshop-Aufbau, Barrierefreiheit &amp; Seitentypen</div>
+    <div class="cover-meta">
+      Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 01. April 2026<br>
+      Buchseiten 173–192
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele – Was du heute lernst</h2>
+      <span class="tag">Folie 2 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2" style="gap:10px">
+        <div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Grundstruktur eines Webshops (Header, Body, Footer) beschreiben</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Elemente des Headers und Footers benennen</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Die drei Body-Bereiche unterscheiden</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Barrierefreiheit im engeren und weiteren Sinn erklären</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Responsives Webdesign definieren</div>
+        </div>
+        <div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Startseite, Produktkategorienseite, Landing Page und Produktdetailseite unterscheiden</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Elemente einer Startseite (Slider, Teaser, Vertrauenssiegel) erläutern</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Hilfsmittel der Produktkategorienseite kennen</div>
+          <div class="lz-item"><div class="lz-check">&#10003;</div>Landing-Page-Elemente und Ranking (SEO/SEA) erklären</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Einstiegsszenario -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128172;</div>
+      <h2>Einstieg: Exclusiva GmbH</h2>
+      <span class="tag">Folie 3 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2" style="margin-bottom:14px">
+        <div class="card">
+          <h3>&#128100; Andreas Seeger fragt:</h3>
+          <p><em>„Ist der Aufbau der Seiten unseres Webshops eigentlich Zufall?"</em></p>
+        </div>
+        <div class="card gold">
+          <h3>&#128100; Herr Brand erklärt:</h3>
+          <p><em>„Nein, das Layout ist total durchdacht. Für unsere Kunden ist das Layout der erste Eindruck. In Sekundenbruchteilen entscheiden sie, ob wir vertrauenswürdig und leicht zu bedienen sind."</em></p>
+        </div>
+      </div>
+      <div class="highlight">
+        <strong>Kernaussage:</strong> Die Struktur einer Webshopseite muss dem von Besuchern früher im Internet gelernten Verhalten entsprechen. Dadurch wird schnelle und leichte Orientierung ermöglicht. Eine gute Struktur <strong>reduziert die Kaufabbruchquote</strong>.
+      </div>
+      <div class="info-box" style="margin-top:10px">
+        <strong>&#128161; Diskutiere:</strong> Führe auf, warum die Seiten eines Webshops ein ähnliches Layout haben.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Grundstruktur Header Body Footer -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#127760;</div>
+      <h2>Grundstruktur: Header – Body – Footer</h2>
+      <span class="tag">Folie 4 / 26</span>
+    </div>
+    <div class="content">
+      <table class="ws-layout" style="margin-bottom:14px">
+        <tr>
+          <td class="ws-header" colspan="3"><strong>&#128246; Logo</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HEADER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>&#128722; Warenkorb</strong><br><span style="font-weight:400; font-size:.78rem">Navigation | Suche | Kontakt | Login</span></td>
+        </tr>
+        <tr style="height:80px">
+          <td class="ws-nav">Zweite Navigation</td>
+          <td class="ws-body"><strong>Body (Inhaltsbereich)</strong><br><span style="font-size:.75rem; font-weight:400">Artikeldarstellung &amp; Kaufabwicklung</span></td>
+          <td class="ws-side">Dritte Spalte</td>
+        </tr>
+        <tr>
+          <td class="ws-footer" colspan="3"><strong>FOOTER</strong> – Impressum | AGB | Datenschutz | Gütesiegel | Newsletter</td>
+        </tr>
+      </table>
+      <div class="cards cols3" style="gap:12px">
+        <div class="card"><h3>1 Header</h3><p>Oberer Bereich; auf allen Seiten identisch; farblich abgesetzt; Logo + Navigation + Warenkorb</p></div>
+        <div class="card gold"><h3>2 Body</h3><p>Hauptinhaltsbereich; 2–3 Spalten; Artikeldarstellung und Kaufabwicklung</p></div>
+        <div class="card green"><h3>3 Footer</h3><p>Fußzeile; auf allen Seiten identisch; rechtliche Pflichtangaben + Vertrauensaufbau</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Der Header -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#11014;</div>
+      <h2>Der Header: Bestandteile</h2>
+      <span class="tag">Folie 5 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--primary); margin-bottom:8px">PFLICHT-ELEMENTE</p>
+          <ul class="bullets">
+            <li><strong>Logo</strong> – links oben; Klick führt immer zur Startseite; vermittelt Sicherheit beim Navigieren</li>
+            <li><strong>Warenkorb</strong> – rechts oben auf jeder Seite; immer sichtbar</li>
+            <li><strong>Header-Navigation</strong> – Links zu Hauptbereichen; Start-Button ganz links</li>
+            <li><strong>Suchfunktion</strong> – mittig oder rechts; ausreichend großes Feld; Lupe-Symbol</li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--accent); margin-bottom:8px">OPTIONALE ELEMENTE</p>
+          <ul class="bullets">
+            <li><strong>Direkte Kontaktmöglichkeit</strong> – E-Mail, Telefonnummer; Link zur Kontaktseite</li>
+            <li><strong>Registrieren / Log-in / Mein Konto</strong> – persönlicher Bereich des Kunden</li>
+            <li><strong>Merkzettel</strong> – Wunschliste für später; mobil vorgemerkte Produkte</li>
+            <li><strong>Hilfefunktion / FAQ</strong> – Erläuterung des Webshops</li>
+            <li><strong>„Über uns"</strong> – Unternehmen stellt sich vor</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Merke:</strong> Der Header ist auf <strong>allen Seiten identisch</strong> und ist von den anderen Elementen <strong>farblich deutlich abgesetzt</strong>. Ein zu voller Header überfordert den Kunden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Der Footer -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#11015;</div>
+      <h2>Der Footer: Pflicht &amp; Vertrauen</h2>
+      <span class="tag">Folie 6 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--danger); margin-bottom:8px">RECHTLICH VERPFLICHTEND</p>
+          <ul class="bullets">
+            <li><strong>Impressum</strong></li>
+            <li><strong>Allgemeine Geschäftsbedingungen (AGB)</strong></li>
+            <li><strong>Datenschutzhinweise</strong></li>
+            <li><strong>Widerrufsbelehrung</strong> (eventuell)</li>
+            <li><strong>Link zur Kontaktseite</strong></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--success); margin-bottom:8px">VERTRAUENSAUFBAU</p>
+          <ul class="bullets">
+            <li><strong>Gütesiegel</strong> – Trusted Shops, TÜV, EHI, Google-zertifizierter Händler</li>
+            <li><strong>SSL-Verschlüsselung</strong> – Hinweis auf sichere Verbindung</li>
+            <li><strong>Bewertungslinks</strong></li>
+            <li><strong>Newsletter-Anmeldung</strong></li>
+            <li><strong>„Über uns"</strong></li>
+            <li><strong>Wichtigste Produktbereiche</strong> (Verweislinks)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:10px">
+        <strong>&#128161; Faustregel:</strong> Im Footer nicht mehr als <strong>7–9 Informationen</strong> unterbringen – zu viele Informationen überfordern den Kunden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Der Body -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128450;</div>
+      <h2>Der Body: Zweite Navigation, Inhaltsbereich, Dritte Spalte</h2>
+      <span class="tag">Folie 7 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3" style="margin-bottom:16px">
+        <div class="card">
+          <h3>&#9664; Zweite Navigation</h3>
+          <p>Schmale Spalte <strong>links</strong>; farblich von den anderen Spalten abgesetzt; enthält alternative Navigationsleiste; führt auf alle Einzelseiten des Webshops</p>
+        </div>
+        <div class="card gold">
+          <h3>&#9646; Inhaltsbereich</h3>
+          <p>Breite <strong>Hauptspalte in der Mitte</strong>; hier findet Artikeldarstellung und Kaufabwicklung statt; nimmt längere Texte und mehrere Bilder auf</p>
+        </div>
+        <div class="card red">
+          <h3>&#9654; Dritte Spalte</h3>
+          <p>Schmale Spalte <strong>rechts</strong>; nicht in jedem Webshop vorhanden; genutzt für externe Werbeanzeigen oder Hinweise auf untergeordnete Angebote</p>
+        </div>
+      </div>
+      <div class="highlight">
+        <strong>Aufbau des Bodys:</strong> Der Body besteht aus <strong>2–3 Spalten</strong>. Die erste Spalte links ist farblich abgesetzt (zweite Navigation), die Hauptspalte (Inhaltsbereich) nimmt den größten Teil ein. Einige Webshops nutzen zusätzlich eine dritte Spalte rechts.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Barrierefreiheit Definition -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#9855;</div>
+      <h2>Barrierefreiheit: Definition &amp; Bedeutung</h2>
+      <span class="tag">Folie 8 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col" style="margin-bottom:14px">
+        <div class="card">
+          <h3>&#9679; Im engeren Sinn</h3>
+          <p>Die Umwelt ist so gestaltet, dass Menschen <strong>mit Behinderung</strong> sie ebenso nutzen können wie Menschen ohne Behinderung.</p>
+          <p style="margin-top:8px; font-size:.78rem; color:var(--text-muted)">Verankert im <strong>Behindertengleichstellungsgesetz</strong></p>
+        </div>
+        <div class="card gold">
+          <h3>&#9679; Im weiteren Sinn</h3>
+          <p><strong>Keine Personengruppe</strong> soll aufgrund einer bestimmten Gestaltung ausgeschlossen werden. Ziel: „<strong>Design für alle</strong>" / „universelles Design"</p>
+          <p style="margin-top:8px; font-size:.78rem; color:var(--text-muted)">Zugänglichkeit, Nutzbarkeit und Erlebbarkeit für möglichst <strong>alle Menschen</strong></p>
+        </div>
+      </div>
+      <div class="highlight green">
+        <strong>&#128200; Von Barrierefreiheit profitieren alle:</strong> Mobile Nutzer · Sehbehinderte · Hörbehinderte · Senioren · Kognitiv Beeinträchtigte · Motorisch Behinderte · Unerfahrene Nutzer · Suchmaschinen
+      </div>
+      <div class="highlight" style="margin-top:8px">
+        <strong>SEO-Bonus:</strong> Eine barrierefreie Website ist auch für <strong>Suchmaschinen leichter erfassbar</strong> – Barrierefreiheit ist ein Qualitätsmerkmal für das Ranking.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Barrierefreiheit Kriterien -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#9989;</div>
+      <h2>Kriterien für einen barrierefreien Webshop</h2>
+      <span class="tag">Folie 9 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3" style="gap:12px">
+        <div class="card green">
+          <h3>&#128270; Einfache Navigation</h3>
+          <p>Klare &amp; einfache Navigationsstruktur · Sitemap anbieten · Suchfunktion</p>
+        </div>
+        <div class="card green">
+          <h3>&#128172; Einfache Sprache</h3>
+          <p>Klare &amp; einfache Texte · keine Fremdwörter · keine langen, verschachtelten Sätze</p>
+        </div>
+        <div class="card green">
+          <h3>&#127916; Alternativtexte</h3>
+          <p>Für Bilder, Videos und Audiobeiträge · ermöglicht Screenreader-Nutzung</p>
+        </div>
+        <div class="card">
+          <h3>&#11835; Starke Kontraste</h3>
+          <p>Unterschied Vordergrund/Hintergrund · verbessert Wahrnehmung für alle</p>
+        </div>
+        <div class="card">
+          <h3>&#128196; Strukturierung</h3>
+          <p>Überschriften · Zwischenüberschriften · Einteilung in Abschnitte (Fieldsets)</p>
+        </div>
+        <div class="card">
+          <h3>&#128241; Geräteunabhängig</h3>
+          <p>Erreichbar über jedes Gerät und jeden Browser · keine gerätespezifischen Hürden</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:10px; font-size:.8rem">
+        <strong>Ziele für Usability &amp; Barrierefreiheit:</strong> jedes Gerät | jeder Browser | minimale Ladezeiten | übersichtliche Navigation | gut strukturierte Inhalte
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Responsives Webdesign -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128241;</div>
+      <h2>Responsives Webdesign</h2>
+      <span class="tag">Folie 10 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:14px">
+        <strong>Definition:</strong> Beim Responsiven Webdesign ändert sich der grafische Aufbau einer Website <strong>dynamisch abhängig vom verwendeten Endgerät</strong> (Bildschirmgröße). So wird auf jedem Gerät eine optimale Darstellung gewährleistet.
+      </div>
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128187; Problem: Starres Layout</h3>
+          <p>Monitorgröße und Auflösung variieren stark (Desktop, Tablet, Smartphone). Starres Layout → erzwungenes horizontales Scrollen → schlechte Usability</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128261; Lösung: Responsiv</h3>
+          <p>Layoutbreite, Schriftgröße und Bildgrößen passen sich <strong>automatisch</strong> dem Endgerät an. Optimales Nutzererlebnis auf beliebigen Geräten.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9855; Verbindung zur BF</h3>
+          <p>Responsives Webdesign und Barrierefreiheit fordern beide <strong>geräteunabhängige Zugänglichkeit</strong> – sie ergänzen sich gegenseitig.</p>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:10px">
+        <strong>&#128161; Eselsbrücke:</strong> <em>Responsiv</em> = Die Website <strong>reagiert</strong> auf die Größe des Bildschirms – wie ein Chamäleon, das seine Farbe anpasst.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Section-Divider -->
+  <section class="slide section-slide" data-index="11">
+    <div class="kicker" style="color:rgba(255,255,255,.7)">2.3 Darstellung des Sortiments</div>
+    <h1 style="color:white; font-size:2.5rem">Die Seiten des Webshops</h1>
+    <div class="cover-line" style="background:white; opacity:.6"></div>
+    <p style="color:rgba(255,255,255,.8); font-size:1.1rem">Startseite · Produktkategorienseite · Landing Page · Produktdetailseite</p>
+  </section>
+
+  <!-- FOLIE 12: Überblick Seitentypen -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128196;</div>
+      <h2>Übersicht: Seitentypen im Webshop</h2>
+      <span class="tag">Folie 12 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2" style="margin-bottom:14px">
+        <div class="card"><h3>&#127968; Startseite</h3><p>Erster Eindruck; Seriosität zeigen; Navigationsüberblick; Ausgangspunkt für alle anderen Seiten</p></div>
+        <div class="card gold"><h3>&#128203; Produktkategorienseite</h3><p>Produkte einer Kategorie anzeigen; Weg zur Produktdetailseite; Sortierung, Filter, Paginierung</p></div>
+        <div class="card red"><h3>&#127919; Landing Page</h3><p>Von Suchmaschine/Anzeige; spezielle Zielgruppe; hohe Conversion Rate; Call-to-action</p></div>
+        <div class="card green"><h3>&#128722; Produktdetailseite</h3><p>Eigentliche Verkaufsseite; alle Produktinfos für die Kaufentscheidung; zentrale Seite</p></div>
+      </div>
+      <div class="highlight">
+        <strong>Alle Wege führen zur Produktdetailseite:</strong> Startseite → Produktkategorienseite → Produktdetailseite &nbsp;|&nbsp; oder: Landing Page → direkt zur Produktdetailseite
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Die Startseite -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#127968;</div>
+      <h2>Die Startseite</h2>
+      <span class="tag">Folie 13 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:14px">
+        Die Startseite muss den Besucher von der <strong>Seriosität</strong> überzeugen, über das <strong>Produktangebot</strong> informieren und einen <strong>Navigationsüberblick</strong> geben – in weniger als 3 Sekunden.
+      </div>
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#127775; Aufgabe 1</h3>
+          <p>Sinn und Zweck des Webshops darstellen – ein Shop muss sofort als solcher erkennbar sein</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128270; Aufgabe 2</h3>
+          <p>Besucher erhält einen <strong>Navigationsüberblick</strong> – er soll sich schnell orientieren können</p>
+        </div>
+        <div class="card green">
+          <h3>&#127968; Aufgabe 3</h3>
+          <p>Ausgangsort für Besucher, wenn er von <strong>jeder Seite</strong> nach allgemeinen Informationen sucht</p>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        <strong>Herr Brand:</strong> <em>„Der erste Eindruck zählt, auch im Internet – nach maximal drei Sekunden ist die Entscheidung gefallen, ob im Onlineshop eingekauft wird oder nicht."</em>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Slider & Teaser -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#127916;</div>
+      <h2>Slider &amp; Teaser</h2>
+      <span class="tag">Folie 14 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <p style="font-size:.88rem; font-weight:700; color:var(--primary); margin-bottom:8px">&#127907; DER SLIDER</p>
+          <div class="highlight" style="margin:0 0 10px">Präsentiert mehrere, für den Webshop wichtige Inhalte – automatischer Wechsel alle 3–5 Bilder</div>
+          <ul class="bullets">
+            <li><strong>USP vorstellen</strong> – Alleinstellungsmerkmale des Webshops</li>
+            <li><strong>Warengruppen informieren</strong> – wichtige Themenwelten vorstellen</li>
+            <li><strong>Aktionen bekanntmachen</strong> – Sonderangebote</li>
+          </ul>
+          <p style="font-size:.8rem; color:var(--text-muted); margin-top:8px">Elemente: Großes Bild · Überschrift · Kurzer Teaser · Link zu weiteren Inhalten</p>
+        </div>
+        <div>
+          <p style="font-size:.88rem; font-weight:700; color:var(--accent); margin-bottom:8px">&#127919; DER TEASER</p>
+          <div class="highlight gold" style="margin:0 0 10px">Kurzes Text- oder Bildelement, das <strong>Neugier weckt</strong> und zum Weiterlesen/-klicken verleitet</div>
+          <ul class="bullets">
+            <li>Vom engl. <em>to tease</em> = anlocken, necken</li>
+            <li>Häufig als <strong>Produktboxen</strong> ausgeführt</li>
+            <li>Enthält: Produktname, Bild, Preis, ggf. Bewertungen</li>
+            <li>Weist auf einen Beitrag auf einer <strong>anderen Seite</strong> hin</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Produktboxen & Navigation -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Produktboxen &amp; Navigation auf der Startseite</h2>
+      <span class="tag">Folie 15 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--primary); margin-bottom:8px">TYPISCHE PRODUKTBOXEN</p>
+          <table class="sum-table" style="font-size:.78rem">
+            <thead><tr><th>Typ</th><th>Beschreibung</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Topseller</strong></td><td>Häufig verkaufte Artikel; Qualitätssignal</td></tr>
+              <tr><td><strong>Neue Artikel</strong></td><td>Gerade aufgenommen; ideal für Trendartikel</td></tr>
+              <tr><td><strong>Themenwelten</strong></td><td>Thematische Zusammenstellungen</td></tr>
+              <tr><td><strong>Zuletzt angesehen</strong></td><td>Personalisierte Empfehlung</td></tr>
+              <tr><td><strong>Ähnliche Artikel</strong></td><td>Für Kunden ohne Kaufabschluss</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--danger); margin-bottom:8px">DAS ZENTRALE NAVIGATIONSPROBLEM</p>
+          <div class="highlight red">
+            <strong>Konflikt:</strong> Das Unternehmen möchte das <strong>komplette Sortiment</strong> vorstellen.<br><strong>Aber:</strong> Jeder zusätzliche Navigationspunkt <strong>verschlechtert die Konversionsrate</strong>.
+          </div>
+          <div class="info-box" style="margin-top:8px; font-size:.82rem">
+            <strong>Studie:</strong> Ab <strong>5 Navigationsbegriffen</strong> werden Kunden zunehmend davon abgehalten, zur Kasse zu gehen.
+          </div>
+          <div class="info-box" style="font-size:.82rem">
+            <strong>Lösung:</strong> Wenige, <strong>kundenverständliche Kategorien</strong>, die das Gesamtsortiment repräsentieren.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Suchfunktion & Vertrauenssiegel -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128270;</div>
+      <h2>Suchfunktion &amp; Vertrauenssiegel</h2>
+      <span class="tag">Folie 16 / 26</span>
+    </div>
+    <div class="content">
+      <div class="two-col">
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--primary); margin-bottom:8px">SUCHFUNKTION &amp; NULL-TREFFER</p>
+          <ul class="bullets" style="margin-bottom:10px">
+            <li>Kunden nutzen Suche, wenn sie <strong>gezielt</strong> einen Artikel kennen</li>
+            <li>Problem: <strong>Null-Treffer-Meldungen</strong> durch Rechtschreibfehler → viele Kaufabbrüche</li>
+          </ul>
+          <div class="highlight" style="font-size:.8rem">
+            <strong>Gegenmaßnahmen:</strong> Fehlertolerante Suchmaske · „Meinten Sie"-Funktion · Autocomplete · Konkrete Rückmeldung (Artikel nicht gefunden / nicht auf Lager)
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.82rem; font-weight:700; color:var(--success); margin-bottom:8px">VERTRAUENSSIEGEL (TRUST SIGNALS)</p>
+          <ul class="bullets" style="margin-bottom:8px">
+            <li>Zertifikate anerkannter Stellen → Seriosität und Sicherheit belegen</li>
+            <li>Bekannte Siegel: <strong>Trusted Shops, TÜV, EHI, Google-zertifizierter Händler</strong></li>
+          </ul>
+          <div class="cards cols2" style="gap:8px; font-size:.78rem">
+            <div class="card green"><h3 style="font-size:.8rem">&#128200; Vorteile</h3><p>Mehr Umsatz · Gewinn an Seriosität · Erfüllung von Standards gibt Käufern Sicherheit</p></div>
+            <div class="card red"><h3 style="font-size:.8rem">&#10060; Nachteile</h3><p>Zertifikate verursachen Kosten · bei Webshop-Änderungen ggf. Neuzertifizierung</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Produktkategorienseite -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Die Produktkategorienseite</h2>
+      <span class="tag">Folie 17 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:14px">
+        Zeigt eine <strong>Auswahl der verfügbaren Produkte einer Kategorie</strong>. Ziel: umfassenden Überblick geben und alle Artikel schnell vergleichen lassen → Besucher soll eine <strong>Produktdetailseite aufrufen</strong>.
+      </div>
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128722; Warengruppen</h3>
+          <p>z.B. Pullover, Hemden, Anzüge, Hosen</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128280; Unterkategorien</h3>
+          <p>z.B. Hemden mit langen Ärmeln, Hemden mit kurzen Ärmeln, Polohemden</p>
+        </div>
+        <div class="card green">
+          <h3>&#127758; Warenwelten</h3>
+          <p>Thematische Zusammenstellungen, z.B. Spielzeug &amp; Baby, Sport &amp; Freizeit</p>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        <strong>Category Management:</strong> Die Zusammenstellung von Produktkategorien ist Aufgabe des Category Managements. Ziel: Produktkategorien definieren, optimal im Markt platzieren und präsentieren. Grundlage: kundenorientierte Sortimentspolitik → Absatz- und Ertragssteigerung.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Sortierung, Filter, Paginierung -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128295;</div>
+      <h2>Hilfsmittel: Sortierung, Filter &amp; Paginierung</h2>
+      <span class="tag">Folie 18 / 26</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Hilfsmittel</th><th>Funktion</th><th>Beispiel</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>&#128200; Sortierung</strong></td>
+            <td>Reihenfolge der Produkte bestimmen; beeinflusst Kaufverhalten maßgeblich</td>
+            <td>Beliebtheit · Bewertung · Neuheit · Preis auf-/absteigend · zufällig</td>
+          </tr>
+          <tr>
+            <td><strong>&#128269; Produktfilter</strong></td>
+            <td>Auswahl einschränken nach Produktattributen; Schieberegler für Preisspannen</td>
+            <td>Preis · Farbe · Größe · Marke · Hersteller · Material · Kundenbewertung</td>
+          </tr>
+          <tr>
+            <td><strong>&#128196; Paginierung</strong></td>
+            <td>Zu viele Produkte auf mehrere Seiten aufteilen; Blätterfunktion</td>
+            <td>Seiten 1 | 2 | 3 ... · View-All-Seite (alle auf einer Seite)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Produktattribute:</strong> Die Eigenschaften, nach denen Kunden filtern können, müssen bei der <strong>Sortimentsanlage</strong> sorgfältig gepflegt werden. Schlecht gepflegte Attribute → ineffektive Filter → Frustration beim Kunden.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Section Divider Landing Page -->
+  <section class="slide section-slide" data-index="19">
+    <div class="kicker" style="color:rgba(255,255,255,.7)">Konversionsoptimierung</div>
+    <h1 style="color:white; font-size:2.5rem">Landing Page &amp; Produktdetailseite</h1>
+    <div class="cover-line" style="background:white; opacity:.6"></div>
+    <p style="color:rgba(255,255,255,.8); font-size:1.1rem">Wie gelangt ein Kunde zur Kaufentscheidung?</p>
+  </section>
+
+  <!-- FOLIE 20: Landing Page Definition -->
+  <section class="slide" data-index="20">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Die Landing Page: Definition &amp; Ausgangspunkte</h2>
+      <span class="tag">Folie 20 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:14px">
+        <strong>Definition:</strong> Eine Landing Page ist eine speziell gestaltete Internetseite, die ein Kunde aufgrund eines besonderen Interesses von einer Suchmaschine oder Anzeige aus besucht. Aufgabe: Besucher zu einer <strong>bestimmten Handlung</strong> (= Conversion) bewegen.
+      </div>
+      <p style="font-size:.82rem; font-weight:700; color:var(--primary); margin-bottom:8px">AUSGANGSPUNKTE – Wie gelangt ein Kunde zur Landing Page?</p>
+      <div class="cards cols3" style="gap:10px">
+        <div class="card"><h3>&#128269; Suchmaschine</h3><p>Suchmaschinenoptimiertes Ergebnis weit oben in den Treffern</p></div>
+        <div class="card gold"><h3>&#128140; Newsletter / E-Mail</h3><p>Links in E-Mails oder Newslettern führen direkt zur Landing Page</p></div>
+        <div class="card red"><h3>&#128248; Werbeanzeigen</h3><p>Banner, Pop-ups oder Anzeigen im Internet (z.B. Exclusiva GmbH)</p></div>
+        <div class="card"><h3>&#128240; Traditionelle Medien</h3><p>Zeitungen, Flyer, TV-Spots mit QR-Code → Landing Page</p></div>
+        <div class="card gold"><h3>&#128241; Soziale Medien</h3><p>Social-Media-Beiträge mit Link zur Landing Page</p></div>
+        <div class="card green"><h3>&#128200; Ziel: Conversion</h3><p>Besucher soll eine Handlung ausführen: Kauf, Anmeldung, Anfrage</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 21: Elemente Landing Page -->
+  <section class="slide" data-index="21">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Elemente einer Landing Page</h2>
+      <span class="tag">Folie 21 / 26</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead><tr><th>Element</th><th>Funktion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unternehmensnennung</strong></td><td>Erkennbarkeit; Corporate Design des Webshops; Authentizität</td></tr>
+          <tr><td><strong>Headline (Überschrift)</strong></td><td>Aufmerksamkeit wecken; Inhalt der Seite verdeutlichen; neugierig machen</td></tr>
+          <tr><td><strong>Produktinformation</strong></td><td>Einleitender Text, Produktmerkmale und -vorteile, Preis, Produktbild/-video</td></tr>
+          <tr><td><strong>Vertrauenselemente</strong></td><td>Gütesiegel, Trust-Siegel, Zertifikate</td></tr>
+          <tr><td><strong>Call-to-action-Button</strong></td><td>Optisch hervorgehoben; fordert Besucher zur Handlung auf; Gefahr: zu viele Datenabfragen → Abbruch</td></tr>
+          <tr><td><strong>Datenabfrage (ggf.)</strong></td><td>Kundenkontakte herstellen; Bestandskunden zum Bestellvorgang leiten</td></tr>
+          <tr><td><strong>Kontaktmöglichkeit</strong></td><td>Formular oder direkte Kontaktdaten</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px; font-size:.82rem">
+        <strong>Vorteil der Landing Page:</strong> Kann besser auf eine spezifische Zielgruppe zugeschnitten werden als eine Produktkategorienseite → höhere Conversion Rate.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 22: Produktdetailseite -->
+  <section class="slide" data-index="22">
+    <div class="slide-header">
+      <div class="icon">&#128722;</div>
+      <h2>Die Produktdetailseite</h2>
+      <span class="tag">Folie 22 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:12px">
+        Die Produktdetailseite ist die <strong>eigentliche Verkaufsseite</strong> – der Kunde erhält hier alle Informationen für seine Kaufentscheidung. Sie übernimmt die Rolle von Warenpräsentation und Verkäufer im stationären Handel.
+      </div>
+      <div class="cards cols3" style="gap:10px">
+        <div class="card"><h3>&#128247; Produktfotos &amp; -videos</h3><p>Qualitativ hochwertig; Produkt im Nutzungskontext; mehrere Ansichten</p></div>
+        <div class="card gold"><h3>&#128196; Produktbeschreibung</h3><p>Vorteile hervorheben; schlagwortartig + detailliert; mit Keywords für SEO</p></div>
+        <div class="card green"><h3>&#128722; Buy-Box</h3><p>Preis · Lieferzeit · Lagerbestand · Kauf-Button · Auswahloptionen (Farbe, Größe)</p></div>
+        <div class="card"><h3>&#9733; Bewertungen</h3><p>Kundenbewertungen · Produktvergleich · Auswahlhilfen</p></div>
+        <div class="card red"><h3>&#128279; Cross-Selling</h3><p>Hinweise auf ähnliche Artikel; „Für Sie empfohlen"</p></div>
+        <div class="card"><h3>&#128274; Trust-Elemente</h3><p>Siegel, Zertifikate · Vorteilselemente (z.B. „Versandkostenfrei")</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 23: Ranking SEO SEA -->
+  <section class="slide" data-index="23">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>Ranking: SEO, SEA &amp; Social Media</h2>
+      <span class="tag">Folie 23 / 26</span>
+    </div>
+    <div class="content">
+      <div class="highlight" style="margin-bottom:14px">
+        <strong>Ranking</strong> = Position des eigenen Webshops in den Ergebnissen einer Suchmaschine. Je besser (weiter oben), desto häufiger wird der Link angeklickt.
+      </div>
+      <div class="cards cols3">
+        <div class="card red">
+          <h3>&#128181; SEA – bezahlt</h3>
+          <p><strong>Search Engine Advertising</strong></p>
+          <p style="margin-top:8px">Bezahlte Anzeigen bei Suchmaschinen · sofortige Sichtbarkeit · kostenpflichtig · „gesponsert"-Kennzeichnung</p>
+        </div>
+        <div class="card green">
+          <h3>&#128269; SEO – organisch</h3>
+          <p><strong>Search Engine Optimization</strong></p>
+          <p style="margin-top:8px">Relevante Inhalte · Keywords in Texten und unter Bildern · Verlinkungen · langfristig · kostenlos (aber zeitintensiv)</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128241; Social Media</h3>
+          <p><strong>Social Media Marketing</strong></p>
+          <p style="margin-top:8px">Sichtbarkeit in sozialen Netzwerken verbessert auch das organische Ranking bei Suchmaschinen</p>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px; font-size:.82rem">
+        <strong>Tipp:</strong> Inhalte auf der Produktdetailseite sollten <strong>informativ, aktuell und keywordreich</strong> sein. Regelmäßige Updates verbessern das Ranking kontinuierlich.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 24: Zusammenfassung -->
+  <section class="slide" data-index="24">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Was wir heute gelernt haben</h2>
+      <span class="tag">Folie 24 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3" style="gap:10px">
+        <div class="card green"><h3>&#9989; Header/Body/Footer</h3><p>Grundstruktur: Header (oben, identisch) · Body (2–3 Spalten) · Footer (unten, Rechtliches)</p></div>
+        <div class="card green"><h3>&#9989; Header-Elemente</h3><p>Logo · Warenkorb (rechts oben) · Navigation · Suche · optional: Kontakt, Login, Merkzettel</p></div>
+        <div class="card green"><h3>&#9989; Barrierefreiheit</h3><p>Engerer Sinn (Behinderung) vs. weiter Sinn (alle). Behindertengleichstellungsgesetz. Profitiert auch SEO.</p></div>
+        <div class="card green"><h3>&#9989; Responsives Webdesign</h3><p>Layout passt sich dynamisch dem Endgerät an → optimale Darstellung auf jedem Gerät</p></div>
+        <div class="card green"><h3>&#9989; 4 Seitentypen</h3><p>Startseite · Produktkategorienseite · Landing Page · Produktdetailseite</p></div>
+        <div class="card green"><h3>&#9989; SEO vs. SEA</h3><p>SEA = bezahlte Anzeigen · SEO = organisch durch Inhalte und Keywords</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 25: Diskussionsfragen -->
+  <section class="slide" data-index="25">
+    <div class="slide-header">
+      <div class="icon">&#128172;</div>
+      <h2>Diskussionsfragen</h2>
+      <span class="tag">Folie 25 / 26</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>1. Webshop des Ausbildungsbetriebs</h3>
+          <p>Untersuchen Sie den Webshop Ihres Ausbildungsbetriebs: Welche Elemente des Headers und Footers sind vorhanden? Gibt es Abweichungen vom idealtypischen Layout?</p>
+        </div>
+        <div class="card gold">
+          <h3>2. Barrierefreiheit testen</h3>
+          <p>Welche Kriterien für Barrierefreiheit erfüllt der Webshop Ihres Ausbildungsbetriebs? Gibt es Verbesserungspotenzial?</p>
+        </div>
+        <div class="card">
+          <h3>3. Navigation und Konversionsrate</h3>
+          <p>Wie viele Navigationspunkte hat Ihr Ausbildungsbetrieb? Ist die Navigation für Kunden übersichtlich genug oder gibt es zu viele Punkte?</p>
+        </div>
+        <div class="card gold">
+          <h3>4. Landing Page vs. Startseite</h3>
+          <p>Wann ist eine Landing Page sinnvoller als die Startseite? Nennen Sie ein Praxisbeispiel aus dem Bereich Ihres Ausbildungsbetriebs.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 26: Literatur -->
+  <section class="slide" data-index="26">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis (APA 7)</h2>
+      <span class="tag">Folie 26 / 26</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Blank, A., Brömer, K., Gerber, A., Gola, H.-J., Holtmann, D., Koch, R., Lüpertz, V., Matheis, M., Naumer, M., Rahn, T., &amp; Schütte, B. (2024). <em>Kaufmann/Kauffrau im E-Commerce: Lernfelder 1–4</em> (2. Aufl.). Westermann. (S. 173–192)</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodell und Kanalexzellenz im Digital Commerce</em> (13. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Nielsen, J., &amp; Loranger, H. (2006). <em>Prioritizing Web Usability</em>. New Riders.</div>
+      <div class="ref-entry">World Wide Web Consortium (W3C). (2018). <em>Web Content Accessibility Guidelines (WCAG) 2.1</em>. W3C.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Buchseitenangaben basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 27: Abschluss -->
+  <section class="slide cover" data-index="27">
+    <div class="kicker">Lernfeld 2 &nbsp;|&nbsp; Tag 2</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">2.2 Layout der Internetseiten &amp; 2.3 Darstellung des Sortiments</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>Tag 3 – 2.4 Das Impressum + 2.5 Haftung für Inhalte</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 26</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 2 &bull; Lernfeld 2</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End')  goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend',   e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = `<div class="grid-thumb-num">Folie ${i+1}</div><div class="grid-thumb-title">${t ? t.textContent : ''}</div>`;
+    d.addEventListener('click', () => { goTo(i); toggleGrid(); });
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+
+// Init
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+document.getElementById('progress-bar').style.width = (1/total*100).toFixed(1) + '%';
+</script>
+</body>
+</html>

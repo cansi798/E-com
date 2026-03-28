@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.5 Zahlungen mit der Girocard – Tag 5</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 5</div>
+    <h1>3.5 Zahlungen mit der Girocard</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 440 – 444</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      04. Mai 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Girocard-System verstehen</strong> – Aufbau und Funktionsweise der Girocard im deutschen Zahlungsverkehr beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Electronic Cash erklären</strong> – den Ablauf einer PIN-gestützten Zahlung am POS darstellen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Lastschriftverfahren abgrenzen</strong> – Unterschiede zwischen Electronic Cash und dem Lastschriftverfahren mit Girocard benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Smartcard-Technologie kennen</strong> – Aufgaben des Mikrochips und der Chipkarte erläutern.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>NFC-Zahlung beschreiben</strong> – kontaktloses Bezahlen mittels Near Field Communication erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Sicherheitsaspekte bewerten</strong> – Vor- und Nachteile der Girocard-Nutzung kritisch einordnen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Welche Verwendungsmöglichkeiten bietet die Girocard und wie verändern Smartcards und NFC den Zahlungsverkehr?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Einstieg – Allensbach-Studie -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>Einstieg: Wandel der Bezahlpräferenzen</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die <strong>Allensbach-Studie</strong> (2017) zeigt: 92 % der Bevölkerung besitzen eine Girocard. Bei den 30- bis 44-Jährigen überwiegt erstmals die Kartenzahlung gegenüber Bargeld (51 % vs. 44 %).
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li><strong>32 % der Bundesbürger</strong> bevorzugen mittlerweile die Karte gegenüber Bargeld.</li>
+          <li><strong>16- bis 29-Jährige:</strong> 38 % nennen die Karte als bevorzugtes Zahlungsmittel.</li>
+          <li><strong>Ab 60 Jahre:</strong> 81 % setzen weiterhin auf klassische Barzahlung.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128202; Generationenwandel</h3>
+          <ul>
+            <li>Jüngere Generationen treiben den Wandel</li>
+            <li>Kontaktloses Bezahlen beschleunigt die Entwicklung</li>
+            <li>Schnelligkeit und Bequemlichkeit sind entscheidend</li>
+            <li>Girocard ist das „monetäre Plastik" der Wahl (60 %)</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Bedeutung:</strong> Der Trend zur bargeldlosen Zahlung ist unumkehrbar – E-Commerce-Kaufleute müssen die verschiedenen Kartenverfahren kennen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Definition Girocard -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>Was ist die Girocard?</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        Die <strong>Girocard</strong> (früher als ec-Karte bezeichnet) ist eine Bankkarte, mit der der Inhaber mittels persönlicher Identifikationsnummer (PIN = <em>Personal Identification Number</em>) an Geldautomaten Bargeld abheben oder im Electronic Cash System bargeldlos bezahlen kann (vgl. Deutsche Bundesbank, 2022).
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card">
+          <h3>&#128202; Verbreitung in Deutschland</h3>
+          <ul>
+            <li>Über <strong>100 Millionen Girocards</strong> im Umlauf</li>
+            <li>Mehr als <strong>58.000 Geldautomaten</strong> in Deutschland</li>
+            <li>Über <strong>580.000 Geldautomaten</strong> in Europa</li>
+            <li>Fast jeder Bürger besitzt eine Girocard</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128274; Wichtige Einschränkung</h3>
+          <ul>
+            <li>Die Girocard kann bisher <strong>nicht</strong> für Zahlungen im Onlineshop eingesetzt werden</li>
+            <li>Im E-Commerce werden andere Zahlungsmittel benötigt (Kreditkarte, PayPal etc.)</li>
+            <li>Am POS (Point of Sale) ist sie jedoch das meistgenutzte Kartenzahlungsmittel</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Electronic Cash – Definition -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Electronic Cash – Definition &amp; Bedeutung</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          <strong>Definition:</strong> Unter <strong>Electronic Cash</strong> wird das bargeldlose Bezahlen nur mit der Girocard verstanden. Der Kunde bestätigt die Zahlung durch Eingabe seiner PIN am Kassenterminal.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Vorteile für den Händler:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li>Kein Wechselgeld nötig</li>
+            <li>Geringeres Beraubungsrisiko</li>
+            <li>Kassenfehlbeträge weitgehend ausgeschlossen</li>
+            <li>Schnelle Abwicklung</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128187; Technische Infrastruktur</h3>
+          <ul>
+            <li>Electronic-Cash-fähige Datenkassen</li>
+            <li>Online-Verbindung mit Netzknotenrechnern</li>
+            <li>Private Betreibergesellschaften wickeln den Zahlungsverkehr ab</li>
+            <li>Autorisierungsanfrage in Sekundenbruchteilen</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>POS</strong> = <em>Point of Sale</em> = Ort, an dem der Verkauf stattfindet (z. B. Kassenbereich im Einzelhandel).
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Ablauf Electronic Cash -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#9881;</div>
+      <h2>Ablauf einer Electronic-Cash-Zahlung</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>1</h4><p>Kassenpersonal ermittelt den Kaufbetrag</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>2</h4><p>Kunde sieht den Betrag auf dem Display</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>3</h4><p>Kunde bestätigt den Kaufbetrag</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>4</h4><p>Kunde steckt Karte in den Kartenleser</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box"><h4>5</h4><p>Eingabe der persönlichen PIN</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>6</h4><p>Autorisierungsstelle prüft Kartensperre &amp; Verfügbarkeit</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>7</h4><p>Positivmeldung: „Zahlung erfolgt"</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box"><h4>8</h4><p>Kunde erhält Kassenbon</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>9</h4><p>Summierte Gutschriften auf Händlerkonto</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>10</h4><p>Transaktion wird auf dem Girokonto belastet</p></div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Prüfung:</strong> Die Autorisierungsstelle prüft die richtige PIN-Eingabe, eine eventuelle Kartensperre und das individuell festgelegte Ausgabenlimit (z. B. 1.000,00 &euro; pro Woche).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Vor- und Nachteile Electronic Cash -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#9878;</div>
+      <h2>Vor- und Nachteile von Electronic Cash</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Vorteile</h3>
+          <ul>
+            <li>Schnelle Abwicklung ohne Scheckformulare</li>
+            <li>Kein Wechselgeld, kein Bargeldhandling</li>
+            <li>Geringeres Beraubungsrisiko für den Händler</li>
+            <li>Kassenfehlbeträge weitgehend ausgeschlossen</li>
+            <li>Höhere Kundenbindung und höhere Spontankäufe</li>
+            <li>Sicherheit durch PIN-Verfahren und Autorisierung</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#10060; Nachteile / Kritik</h3>
+          <ul>
+            <li>Kosten für den Kunden (Bankgebühren, Postengebühren)</li>
+            <li>Gefahr der „Entsinnlichung" des Zahlens</li>
+            <li>Verlust des Überblicks über Ausgaben</li>
+            <li>Größere Neigung zur Verschuldung</li>
+            <li>Bisher <strong>nicht im Onlineshop</strong> einsetzbar</li>
+            <li>Kosten für Händler: Bankgebühren, Leitungskosten, Hardware</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>Verbraucherschutz:</strong> Verbraucherschutzverbände warnen vor der zunehmenden Entfremdung vom Geldwert durch die einfache Kartenzahlung (vgl. Deutsche Bundesbank, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Lastschriftverfahren mit Girocard -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Lastschriftverfahren bei der Zahlung mit Girocard</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Als kostengünstigere Alternative zu Electronic Cash entwickelten Händler das <strong>Lastschriftverfahren mit Girocard</strong>. Hierbei wird die Karte über einen Magnetstreifenleser gezogen und der Kunde unterschreibt einen Lastschriftbeleg.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Ablauf:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li>Kontonummer und BLZ werden über Magnetstreifen ermittelt</li>
+            <li>Lastschriftbeleg wird erstellt</li>
+            <li>Kunde unterschreibt die Einzugsermächtigung</li>
+            <li>Händler zieht den Betrag vom Konto ein</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#9888; Wichtiger Unterschied</h3>
+          <ul>
+            <li>Beim Lastschriftverfahren findet <strong>keine PIN-Prüfung</strong> statt</li>
+            <li>Keine Verbindung zur Autorisierungszentrale</li>
+            <li>Das Unternehmen trägt das volle Risiko für die Zahlbeträge</li>
+            <li>Dafür: keine Gebühren für die Autorisierung</li>
+          </ul>
+        </div>
+        <div class="highlight red" style="margin-top:10px">
+          <strong>Risiko:</strong> Da keine Online-Prüfung stattfindet, kann der Händler nicht sicher sein, dass das Konto gedeckt ist. Das Missbrauchsrisiko ist höher als bei Electronic Cash.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Vergleich Electronic Cash vs. Lastschrift -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Vergleich: Electronic Cash vs. Lastschriftverfahren</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Merkmal</th><th>Electronic Cash (PIN)</th><th>Lastschriftverfahren (Unterschrift)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Identifikation</strong></td><td>PIN-Eingabe</td><td>Unterschrift des Kunden</td></tr>
+          <tr><td><strong>Autorisierung</strong></td><td>Online-Prüfung in Echtzeit</td><td>Keine Online-Prüfung</td></tr>
+          <tr><td><strong>Zahlungsgarantie</strong></td><td>Ja – Bank garantiert Zahlung</td><td>Nein – Risiko beim Händler</td></tr>
+          <tr><td><strong>Kosten für Händler</strong></td><td>Höher (Bankgebühren, Leitungskosten)</td><td>Geringer (keine Autorisierungsgebühr)</td></tr>
+          <tr><td><strong>Geschwindigkeit</strong></td><td>Sehr schnell (Sekunden)</td><td>Schnell (kein Online-Check)</td></tr>
+          <tr><td><strong>Missbrauchsrisiko</strong></td><td>Gering</td><td>Höher (keine Kontodeckungsprüfung)</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Fazit:</strong> Electronic Cash bietet dem Händler mehr Sicherheit, ist aber teurer. Das Lastschriftverfahren ist günstiger, birgt jedoch ein höheres Ausfallrisiko (vgl. Kollmann, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Smartcards -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128187;</div>
+      <h2>Smartcards – Die intelligente Girocard</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die Girocard entwickelt sich zunehmend zur <strong>Smartcard</strong> (= kluge Karte). Statt nur mit einem Magnetstreifen wird sie mit einem <strong>Mikrochip</strong> ausgerüstet – ein Minicomputer mit eigenem Betriebssystem und eigener Logik.
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li><strong>Eigenständige Autorisierung</strong> bei POS-Zahlungen direkt auf der Karte</li>
+          <li><strong>Prüfung der Geheimnummer</strong> erfolgt „vor Ort" auf dem Chip</li>
+          <li><strong>Ausgabenlimit</strong> wird lokal auf der Karte überwacht</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128293; Aufgaben der Chipkarte</h3>
+          <ul>
+            <li><strong>Debitorische Börse:</strong> Kleingeldspeicher, der beim Einkauf um den Kaufbetrag entladen wird</li>
+            <li><strong>Zahlungsfähigkeit:</strong> Speicherung aktueller Informationen über Verfügungsrahmen</li>
+            <li><strong>Offline-Fähigkeit:</strong> Kommunikationskosten entfallen zum Großteil</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Seit Ende 2016</strong> werden alle neuen Girocards der Volksbanken, Raiffeisenbanken und Sparkassen mit integrierter Kontaktlosfunktion ausgegeben.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Was Chipkarten leisten -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128736;</div>
+      <h2>Was Chipkarten leisten</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128273; Digitale Unterschrift</h3>
+          <p>Elektronische Signatur zur Authentifizierung von Transaktionen und Dokumenten.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Elektronischer Zahlungsverkehr</h3>
+          <p>Bargeldlose Zahlung am POS über den integrierten Chip der Girocard.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128179; Elektronische Geldbörse</h3>
+          <p>GeldKarte-Funktion als aufladbarer Kleingeldspeicher für Beträge bis 200 &euro;.</p>
+        </div>
+        <div class="card">
+          <h3>&#128274; Zugangssteuerung</h3>
+          <p>Chipkarten als Zugangsmedium für Gebäude, Systeme oder Online-Dienste.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128279; Kreditkarte</h3>
+          <p>Kombination von Girocard und Kreditkartenfunktion auf einer Chipkarte.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128190; Datenspeicher</h3>
+          <p>Sichere Speicherung persönlicher Daten, Zertifikate und Gesundheitsinformationen.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Sicherheitsmodul:</strong> Der Chip enthält ein Sicherheitsmodul, das die Daten vor unbefugtem Zugriff schützt und kryptografische Operationen durchführt.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: GeldKarte und girogo -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>GeldKarte und girogo</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="card">
+          <h3>&#128179; GeldKarte</h3>
+          <ul>
+            <li>Kontaktbehaftete <strong>Prepaid-Funktion</strong> auf der Girocard</li>
+            <li>Funktioniert als „Geldbörse" in Chipform</li>
+            <li>Aufladbar am Geldautomaten oder über das Internet</li>
+            <li>Vorrangig als <strong>Kleingeldersatz</strong></li>
+            <li>Weit verbreitet auf den meisten Girocards</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128171; girogo</h3>
+          <ul>
+            <li>Die <strong>kontaktlose Funktion</strong> der GeldKarte</li>
+            <li>Ermöglicht Zahlung durch einfaches Vorhalten an das Terminal</li>
+            <li>Direkt vom Konto – ohne Aufladen</li>
+            <li>Schneller als jede andere Zahlungsmethode</li>
+            <li>Dient vorrangig als Kleingeldersatz im Nahbereich</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight green" style="margin-top:14px">
+      <strong>Zusammenhang:</strong> GeldKarte und girogo ergänzen die klassische Electronic-Cash-Funktion der Girocard und adressieren vor allem den Bereich der Kleinbetragszahlungen bis 25 &euro; (vgl. Deutsche Bundesbank, 2022).
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: NFC – Near Field Communication -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#128225;</div>
+      <h2>Kontaktloses Bezahlen mit NFC</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>NFC</strong> (Near Field Communication) ist ein Übertragungsstandard für kontaktlose Kommunikation im Nahbereich bis zu <strong>10 Zentimetern</strong>. Damit die Girocard kontaktlos funktioniert, muss ein <strong>RFID-Chip</strong> (Radio-Frequency-Identification-Chip) integriert sein.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Technische Daten:</strong>
+          <ul style="padding-left:16px;margin-top:6px;font-size:.84rem;color:var(--text-muted)">
+            <li>Frequenzband: 13,56 MHz</li>
+            <li>Übertragungsrate: max. 424 kBit/s</li>
+            <li>Reichweite: bis zu 10 cm</li>
+            <li>Vergleichbar mit RFID und Bluetooth</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128171; Ablauf NFC-Zahlung</h3>
+          <ul>
+            <li>Zahlungsempfänger aktiviert den Betrag am Terminal</li>
+            <li>Kunde hält Girocard im Abstand von &lt; 4 cm an das Terminal</li>
+            <li>Betrag wird in weniger als einer Sekunde abgebucht</li>
+            <li>Bis 20 &euro; / 50 &euro;: <strong>keine PIN-Eingabe</strong> nötig</li>
+            <li>Bei höheren Beträgen: zusätzliche PIN-Eingabe erforderlich</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: NFC – Geschwindigkeit und Potenziale -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#9889;</div>
+      <h2>NFC: Geschwindigkeit und Potenziale</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Zahlungsart</th><th>Durchschnittliche Dauer</th><th>PIN erforderlich?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge green">NFC kontaktlos</span></td><td><strong>11 Sekunden</strong> (bis 25 &euro;)</td><td>Nein (bis 25/50 &euro;)</td></tr>
+          <tr><td><span class="badge">Girocard mit PIN</span></td><td>Ca. 22 Sekunden</td><td>Ja</td></tr>
+          <tr><td><span class="badge gold">Barzahlung</span></td><td>Ca. 22 Sekunden</td><td>Nein</td></tr>
+        </tbody>
+      </table>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#128200; Potenziale</h3>
+          <ul>
+            <li>48 % der Girocard-Inhaber nutzen NFC bereits oder planen es</li>
+            <li>67 % der 16- bis 44-Jährigen sind aufgeschlossen</li>
+            <li>Nur 29 % der über 60-Jährigen nutzen kontaktloses Bezahlen</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128241; Mobile Payment</h3>
+          <ul>
+            <li>NFC auch per Smartphone nutzbar</li>
+            <li>Mobilfunknetzbetreiber ermöglichen Handy-Zahlung</li>
+            <li>NFC-Sticker für ältere Handys</li>
+            <li>Kombination mit Apple Pay, Google Pay etc.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Verwendungsmöglichkeiten der Girocard – Übersicht -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Verwendungsmöglichkeiten der Girocard im Überblick</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols4">
+        <div class="card">
+          <h3>&#128179; Bargeldabhebung</h3>
+          <p>Abhebung von Bargeld am Geldautomaten mit der Girocard und der PIN.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Electronic Cash</h3>
+          <p>Bargeldlose Zahlung mit der Girocard am Verkaufspunkt (Point of Sale [POS]).</p>
+        </div>
+        <div class="card green">
+          <h3>&#128179; GeldKarte</h3>
+          <p>Kleingeldspeicher auf dem Chip der Girocard, wird beim Einkauf um den Zahlungsbetrag entladen.</p>
+        </div>
+        <div class="card red">
+          <h3>&#128225; NFC-Zahlung</h3>
+          <p>Kontaktlose Bezahlung mittels Near Field Communication (NFC) – schnell und bequem.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Merke:</strong> Die Girocard vereint vier zentrale Verwendungsmöglichkeiten auf einer Karte. Im E-Commerce ist sie jedoch (noch) nicht direkt einsetzbar – hier dominieren Kreditkarten und digitale Zahlungsdienste (vgl. Heinemann, 2023).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Girocard vs. Kreditkarte -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128179;</div>
+      <h2>Girocard vs. Kreditkarte</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Merkmal</th><th>Girocard</th><th>Kreditkarte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Herausgeber</strong></td><td>Banken und Sparkassen</td><td>Kreditkartenorganisationen (Visa, Mastercard)</td></tr>
+          <tr><td><strong>Kontobelastung</strong></td><td>Sofort (Debit)</td><td>Monatliche Abrechnung (Credit/Charge)</td></tr>
+          <tr><td><strong>Online-Einsatz</strong></td><td>Nicht möglich</td><td>Weltweit im E-Commerce einsetzbar</td></tr>
+          <tr><td><strong>Auslandseinsatz</strong></td><td>Eingeschränkt (V Pay, Maestro)</td><td>Weltweit akzeptiert</td></tr>
+          <tr><td><strong>Kosten</strong></td><td>Meist kostenlos (im Girokonto enthalten)</td><td>Jahresgebühr (oft 20–100 &euro;)</td></tr>
+          <tr><td><strong>Verbreitung DE</strong></td><td>Über 100 Mio. Karten</td><td>Ca. 40 Mio. Karten</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight gold" style="margin-top:12px">
+        <strong>E-Commerce-Relevanz:</strong> Für den Online-Handel ist die Kreditkarte deutlich relevanter als die Girocard. E-Commerce-Kaufleute müssen beide Systeme verstehen, um Kunden optimal zu beraten (vgl. Wirtz, 2021).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Sicherheitsmerkmale -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Sicherheitsmerkmale der Girocard</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card green">
+          <h3>&#128272; PIN-Schutz</h3>
+          <p>Persönliche Geheimzahl als zentrale Sicherheitsbarriere. Drei Fehlversuche führen zur Kartensperre.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128187; EMV-Chip</h3>
+          <p>Mikrochip mit eigenem Betriebssystem. Fälschungssicher und verschlüsselte Kommunikation mit dem Terminal.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128225; NFC-Sicherheit</h3>
+          <p>Kurze Reichweite (&lt; 4 cm) macht Abhören schwierig. Betragslimits ohne PIN begrenzen das Risiko.</p>
+        </div>
+        <div class="card">
+          <h3>&#128274; Ausgabenlimit</h3>
+          <p>Individuell festlegbares Limit (z. B. 1.000 &euro;/Woche) schützt vor hohen Verlusten bei Diebstahl.</p>
+        </div>
+        <div class="card">
+          <h3>&#128222; Sperrhotline</h3>
+          <p>24/7 erreichbar unter 116 116. Sofortige Kartensperre bei Verlust oder Diebstahl möglich.</p>
+        </div>
+        <div class="card">
+          <h3>&#128373; Autorisierung</h3>
+          <p>Echtzeit-Prüfung bei jeder Electronic-Cash-Transaktion über das Bankennetzwerk.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Übungsaufgaben -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben &amp; Diskussion</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Stellen Sie fest, welche Verwendungsmöglichkeiten Kunden mit ihrer Girocard haben. Nennen Sie jeweils ein Praxisbeispiel.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Stellen Sie die Vor- und Nachteile der verschiedenen Verwendungsmöglichkeiten der Girocard in einer Tabelle gegenüber.</p>
+        </div>
+        <div class="card">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Beschreiben Sie den Zahlungsvorgang beim Electronic Cash in eigenen Worten (10 Schritte).</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128172; Diskussion</h3>
+          <p>Die Bätje OHG überlegt, das Lastschriftverfahren mit Girocard abzuschaffen. Erstellen Sie eine Stellungnahme mit Vor- und Nachteilen sowie Alternativen.</p>
+        </div>
+      </div>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Gruppenarbeit:</strong> Erstellen Sie eine englischsprachige Mindmap über die wichtigsten Informationen zu Near Field Communication (NFC).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Bräutigam, P. (2020). <em>E-Commerce: Rechtshandbuch</em> (2. Aufl.). C.H.Beck.</div>
+      <div class="ref-entry">Deutsche Bundesbank (2022). <em>Zahlungsverhalten in Deutschland 2021: Vierte Studie über die Verwendung von Bargeld und unbaren Zahlungsinstrumenten</em>. Deutsche Bundesbank.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 5</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.5 Zahlungen mit der Girocard</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.6 Die bargeldlose Zahlung</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 5 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.1 Auftragsbearbeitung und Kaufabwicklung – Tag 1</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 1</div>
+    <h1>3.1 Auftragsbearbeitung und<br>Kaufabwicklung (Checkout-Prozess)</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 418 – 423</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      27. April 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 22</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Auftragsbearbeitung definieren</strong> – den Begriff und die einzelnen Phasen erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Checkout-Prozess verstehen</strong> – die Schritte der Kaufabwicklung im Webshop benennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>KPIs anwenden</strong> – Absprungrate, Ausstiegsrate und Konversionsrate berechnen und interpretieren.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Tunneling-Strategie erklären</strong> – Maßnahmen zur Vermeidung von Kaufabbrüchen kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Fakturierung unterscheiden</strong> – Vor- und Nachfakturierung gegenüberstellen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Qualitätsmanagement einordnen</strong> – Bedeutung für die Kundenzufriedenheit erkennen.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Wie wird eine Online-Bestellung vom Klick im Warenkorb bis zur Auslieferung effizient abgewickelt?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Definition Auftragsbearbeitung -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128220;</div>
+      <h2>Definition: Auftragsbearbeitung</h2>
+      <span class="tag">Folie 3 / 22</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Auftragsbearbeitung</strong> umfasst die datenmäßige Bearbeitung und Kontrolle der Aufträge vom Zeitpunkt der Auftragsaufgabe bis zur Ankunft der Sendungsdokumente und Rechnungen beim Kunden (vgl. Heinemann, 2023).
+      </div>
+      <div class="two-col" style="margin-top:16px">
+        <div class="card">
+          <h3>&#128100; Kundensicht</h3>
+          <p>Der Kunde erteilt einen <strong>Bestellvorgang</strong> – er wählt Waren aus und sendet die Bestellung über den Warenkorb an das Unternehmen.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127970; Unternehmenssicht</h3>
+          <p>Das Unternehmen löst einen <strong>Auftragsvorgang</strong> aus – die Bestellung wird entgegengenommen und intern verarbeitet.</p>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px">
+        <strong>Praxisbeispiel:</strong> Kundin Babette Maibaum bestellt über den Webshop der Exclusiva GmbH. Aus ihrer Sicht ist es ein Bestellvorgang – für das Unternehmen beginnt damit die Auftragsbearbeitung über das Warenwirtschaftssystem.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Die 7 Schritte der Auftragsbearbeitung -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128736;</div>
+      <h2>Die 7 Schritte der Auftragsbearbeitung</h2>
+      <span class="tag">Folie 4 / 22</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>1</h4><p>Kunde wählt Waren &amp; legt in Warenkorb</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>2</h4><p>Kunde bestellt über den Warenkorb</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>3</h4><p>Lieferant nimmt Bestellung an</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>4</h4><p>Lieferant liefert aus (Lieferschein)</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box"><h4>5</h4><p>Kunde erhält die Ware</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>6</h4><p>Lieferant erstellt Rechnung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>7</h4><p>Kunde erhält die Rechnung</p></div>
+      </div>
+      <div class="highlight gold" style="margin-top:14px">
+        <strong>Merke:</strong> Die Auftragsbearbeitung beginnt bereits mit der Abwicklung im Webshop und wird über das Warenwirtschaftssystem (ERP) gesteuert.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Kaufabwicklung (Checkout-Prozess) -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#128722;</div>
+      <h2>Kaufabwicklung (Checkout-Prozess)</h2>
+      <span class="tag">Folie 5 / 22</span>
+    </div>
+    <div class="content">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">
+        Hat der Kunde Artikel in den Warenkorb gelegt, beginnt die <strong>Kaufabwicklung</strong> (engl. Checkout-Prozess):
+      </p>
+      <div class="cards cols3">
+        <div class="card"><h3>1. Warenkorb</h3><p>Übersicht der ausgewählten Artikel mit Mengen und Preisen.</p></div>
+        <div class="card"><h3>2. Registrierung</h3><p>Ggf. Neuregistrierung oder Login des Kunden.</p></div>
+        <div class="card"><h3>3. Anmeldung</h3><p>Zugangsdaten eingeben oder als Gast bestellen.</p></div>
+        <div class="card gold"><h3>4. Zahlungsart</h3><p>Auswahl der bevorzugten Zahlungsmethode.</p></div>
+        <div class="card gold"><h3>5. Versandweg</h3><p>Auswahl des gewünschten Lieferdienstes.</p></div>
+        <div class="card green"><h3>6. Vertragsabschluss</h3><p>Unter Beachtung rechtlicher Vorgaben (AGB, Widerruf).</p></div>
+      </div>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Abschluss:</strong> Dankseite mit Bestellbestätigung – der Kunde erhält eine Zusammenfassung per E-Mail.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Tunneling-Strategie -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128679;</div>
+      <h2>Tunneling – Kaufabbrüche vermeiden</h2>
+      <span class="tag">Folie 6 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          <strong>Tunneling</strong> bedeutet, alle ablenkenden Elemente während des Checkout-Prozesses auszublenden, um die Zahl der Kaufabbrüche zu reduzieren (vgl. Kollmann, 2022).
+        </div>
+        <ul class="bullets" style="margin-top:14px">
+          <li><strong>Navigation ausblenden</strong> – Der Kunde soll im Kaufprozess bleiben.</li>
+          <li><strong>Ausstiegspunkte minimieren</strong> – Weniger Links = weniger Ablenkung.</li>
+          <li><strong>Fortschrittsanzeige zeigen</strong> – Transparenz über die verbleibenden Schritte.</li>
+          <li><strong>Klare CTAs</strong> – Eindeutige Handlungsaufforderungen wie „Weiter zur Kasse".</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Best Practice</h3>
+          <ul>
+            <li>Header vereinfachen</li>
+            <li>Sidebar entfernen</li>
+            <li>Nur Pflichtfelder anzeigen</li>
+            <li>Vertrauenselemente beibehalten</li>
+            <li>Zurück-Button ermöglichen</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Typische Fehler</h3>
+          <ul>
+            <li>Werbebanner im Checkout</li>
+            <li>Newsletter-Popup beim Bezahlen</li>
+            <li>Produktempfehlungen, die ablenken</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: KPI – Absprungrate -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>KPI: Absprungrate (Bounce Rate)</h2>
+      <span class="tag">Folie 7 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die <strong>Absprungrate</strong> gibt den Prozentsatz der Besuche an, bei denen ein Kunde die Website nach dem Aufruf einer einzigen Seite ohne weitere Interaktion verlässt.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Formel:</strong><br>
+          Absprungrate = <em>Besuche mit nur einem Seitenaufruf</em> &divide; <em>Alle Besucher der Seite</em>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128202; Beispiel</h3>
+          <p>Firma Meier: Absprungrate <strong>23 %</strong> &#10140; gut<br>
+          Firma Müller: Absprungrate <strong>82 %</strong> &#10140; problematisch</p>
+          <p style="margin-top:8px">Eine hohe Absprungrate deutet darauf hin, dass die Landingpage den Besucher nicht anspricht oder technische Probleme bestehen.</p>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Richtwert:</strong> E-Commerce-Shops haben durchschnittlich eine Absprungrate von 20–45 % (vgl. Kreutzer, 2021).
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: KPI – Ausstiegsrate -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>KPI: Ausstiegsrate (Exit Rate)</h2>
+      <span class="tag">Folie 8 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die <strong>Ausstiegsrate</strong> zeigt den Prozentsatz der Seitenaufrufe, die die letzten während eines Besuchs waren. Der Besucher hatte mindestens eine weitere Seite besucht.
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Formel:</strong><br>
+          Ausstiegsrate = <em>Besucher, die diese Seite als letzte besucht haben</em> &divide; <em>Gesamtzahl der Besucher</em>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128161; Interpretation</h3>
+          <ul>
+            <li><strong>Hohe Ausstiegsrate</strong> kann bedeuten: Inhalte wenig attraktiv oder technische Probleme.</li>
+            <li><strong>Aber auch:</strong> Der Besucher hat die gewünschte Information gefunden.</li>
+          </ul>
+        </div>
+        <div class="card gold" style="margin-top:10px">
+          <h3>&#128221; Beispiel</h3>
+          <p>Babette Maibaum besucht einen Webshop, schaut sich 4 Unterseiten an und verlässt die Seite auf der 4. Seite. Die Ausstiegsrate der 4. Seite beträgt <strong>43 %</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: KPI – Konversionsrate -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#127942;</div>
+      <h2>KPI: Konversionsrate (Conversion Rate)</h2>
+      <span class="tag">Folie 9 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          Die <strong>Konversionsrate</strong> gibt den prozentualen Anteil der Besucher an, die ein zuvor definiertes Ziel im Webshop erreicht haben – meist einen Kaufabschluss (vgl. Wirtz, 2021).
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Formel:</strong><br>
+          Konversionsrate = (<em>Besucher mit Kaufabschluss</em> &divide; <em>Gesamtzahl der Besucher</em>) &times; 100
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128202; Rechenbeispiel</h3>
+          <p>Ein Webshop hat <strong>200.000 Besucher</strong>.</p>
+          <p>Es kommen zu <strong>4.000 Verkaufsabschlüssen</strong>.</p>
+          <p style="margin-top:8px"><strong>Konversionsrate = (4.000 / 200.000) &times; 100 = 2 %</strong></p>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Richtwert:</strong> Im deutschen E-Commerce liegt die durchschnittliche Konversionsrate bei 2–5 % (vgl. Heinemann, 2023).
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Vergleich der drei KPIs -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>Vergleich: Absprung-, Ausstiegs- &amp; Konversionsrate</h2>
+      <span class="tag">Folie 10 / 22</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Kennzahl</th><th>Was wird gemessen?</th><th>Berechnung</th><th>Zielwert</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge red">Absprungrate</span></td>
+            <td>Besucher, die nach nur 1 Seite gehen</td>
+            <td>1-Seiten-Besuche / Alle Besucher</td>
+            <td>Möglichst niedrig (&lt; 40 %)</td>
+          </tr>
+          <tr>
+            <td><span class="badge gold">Ausstiegsrate</span></td>
+            <td>Letzte besuchte Seite pro Session</td>
+            <td>Letzte-Seite-Besucher / Gesamtbesucher</td>
+            <td>Kontextabhängig</td>
+          </tr>
+          <tr>
+            <td><span class="badge green">Konversionsrate</span></td>
+            <td>Besucher, die ein Ziel erreichen (Kauf)</td>
+            <td>(Käufer / Alle Besucher) &times; 100</td>
+            <td>Möglichst hoch (2–5 %)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Zusammenhang:</strong> Eine niedrige Absprungrate und eine niedrige Ausstiegsrate im Checkout führen zu einer höheren Konversionsrate. Optimierung an allen drei Kennzahlen erhöht den Umsatz.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Warenkorbabbruch-Gründe -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#128721;</div>
+      <h2>Die häufigsten Warenkorbabbruch-Gründe</h2>
+      <span class="tag">Folie 11 / 22</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Grund</th><th>Anteil</th><th>Lösungsansatz</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&#128176; Hohe Versandkosten</td><td><strong>57 %</strong></td><td>Kostenlose Lieferung ab Mindestbestellwert</td></tr>
+          <tr><td>&#128179; Fehlende Zahlungsmethoden</td><td><strong>53 %</strong></td><td>Vielfältige Zahlungsoptionen anbieten</td></tr>
+          <tr><td>&#128100; Kundenkonto-Zwang</td><td><strong>39 %</strong></td><td>Gastzugang ermöglichen</td></tr>
+          <tr><td>&#128181; Woanders günstiger</td><td><strong>33 %</strong></td><td>Preisgarantie, Bestpreis-Versprechen</td></tr>
+          <tr><td>&#128203; Komplexe Kaufmodalitäten</td><td><strong>25 %</strong></td><td>Checkout-Schritte reduzieren</td></tr>
+          <tr><td>&#128666; Zu lange Versanddauer</td><td><strong>24 %</strong></td><td>Express-Optionen anbieten</td></tr>
+          <tr><td>&#128295; Technische Probleme</td><td><strong>21 %</strong></td><td>Performance-Optimierung, Testing</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight red" style="margin-top:10px">
+        <strong>Quelle:</strong> Statista / ibi research (2021). Die Ergebnisse zeigen, dass Transparenz bei Kosten und einfache Prozesse die wichtigsten Faktoren zur Reduzierung von Warenkorbabbrüchen sind.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Weitere Absatzkennzahlen -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128200;</div>
+      <h2>Weitere Absatzkennzahlen</h2>
+      <span class="tag">Folie 12 / 22</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Kennzahl</th><th>Beschreibung</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Bruttonachfrage</strong></td><td>Alle möglichen Umsätze vor Stornos, technischen Problemen, Zahlungsausfällen.</td></tr>
+          <tr><td><strong>Bruttoumsatz</strong></td><td>Verkaufserlöse aller Artikel/Dienstleistungen vor Steuern (auch „Liefer-Umsatz").</td></tr>
+          <tr><td><strong>Nettoumsatz</strong></td><td>Verkaufserlöse nach Abzug von Steuern.</td></tr>
+          <tr><td><strong>Stornoquote</strong></td><td>Prozentualer Anteil von Stornierungen an den abgeschlossenen Verträgen.</td></tr>
+          <tr><td><strong>Widerrufsquote</strong></td><td>Anteil widerrufener Kaufverträge innerhalb der 14-Tage-Frist.</td></tr>
+          <tr><td><strong>Null-Treffer-Quote</strong></td><td>Anteil der Suchanfragen ohne Ergebnis an der Gesamtzahl der Suchanfragen.</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Praxis:</strong> Diese Kennzahlen dienen der Beschaffungsplanung und der Optimierung des Webshops. Eine hohe Null-Treffer-Quote zeigt z. B. Sortimentslücken auf.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Phasen der Auftragsbearbeitung -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#9881;</div>
+      <h2>Phasen der Auftragsbearbeitung im Detail</h2>
+      <span class="tag">Folie 13 / 22</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box"><h4>&#128233; Übermittlung</h4><p>Auftrag geht vom Kunden ein</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128203; Aufbereitung</h4><p>Prüfung auf Preise, Konditionen, Bonität</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128221; Umsetzung</h4><p>Auftragsbestätigung &amp; interne Papiere</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box"><h4>&#128230; Zusammenstellung</h4><p>Kommissionierung im Lager</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128666; Versand</h4><p>Transport &amp; Auslieferung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128176; Fakturierung</h4><p>Rechnungserstellung</p></div>
+      </div>
+      <div class="highlight" style="margin-top:14px">
+        <strong>Kommissionierung</strong> = Zusammenstellung der Güter im Lager auf Grundlage der Auftragsunterlagen (Warenart, -menge, -gewicht, Verpackung).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: Fakturierung -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Fakturierung: Vor- vs. Nachfakturierung</h2>
+      <span class="tag">Folie 14 / 22</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        <strong>Fakturierung</strong> = die Rechnungserstellung für die Aufträge. Sie kann zu verschiedenen Zeitpunkten im Prozess stattfinden.
+      </div>
+      <div class="cards cols2" style="margin-top:14px">
+        <div class="card">
+          <h3>&#9200; Vorfakturierung</h3>
+          <ul>
+            <li>Rechnung wird <strong>vor</strong> der Kommissionierung erstellt</li>
+            <li>Basis: die Bestellung des Kunden</li>
+            <li>Vorteil: schnellere Rechnungsstellung</li>
+            <li>Risiko: Lieferumfang kann abweichen</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128230; Nachfakturierung</h3>
+          <ul>
+            <li>Rechnung wird <strong>nach</strong> der Kommissionierung erstellt</li>
+            <li>Basis: tatsächlich kommissionierte Ware</li>
+            <li>Vorteil: Rechnung stimmt mit Lieferung überein</li>
+            <li>Nachteil: zeitverzögert</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Qualitätsmanagement -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#11088;</div>
+      <h2>Qualitätsmanagement in der Auftragsbearbeitung</h2>
+      <span class="tag">Folie 15 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">
+          <strong>Qualitätsmanagement</strong> umfasst alle Maßnahmen, die ein Unternehmen zur Erreichung und Verbesserung von Qualität trifft – besonders wichtig in der Auftragsbearbeitung (vgl. Bruhn, 2022).
+        </div>
+        <ul class="bullets" style="margin-top:12px">
+          <li><strong>Fehler in frühen Phasen</strong> wirken sich durch die gesamte Prozesskette aus.</li>
+          <li><strong>Korrekturkosten</strong> steigen exponentiell, je später ein Fehler entdeckt wird.</li>
+          <li><strong>Kundenzufriedenheit</strong> hängt direkt von der Qualität der Auftragsbearbeitung ab.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Qualitätsmaßnahmen</h3>
+          <ul>
+            <li>Automatische Plausibilitätsprüfung</li>
+            <li>Vier-Augen-Prinzip bei Rechnungen</li>
+            <li>Regelmäßige Prozessaudits</li>
+            <li>Kundenfeedback-Auswertung</li>
+            <li>Kontinuierliche Verbesserung (KVP)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Übungsaufgabe -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgabe: Konversionsrate berechnen</h2>
+      <span class="tag">Folie 16 / 22</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="card">
+          <h3>&#128209; Aufgabe</h3>
+          <p>Ein Webshop für T-Shirts hat <strong>2.000 Besucher</strong>. Davon bestellen <strong>320 Kunden</strong> einen Artikel.</p>
+          <p style="margin-top:8px">a) Berechnen Sie die Konversionsrate.</p>
+          <p>b) Beurteilen Sie das Ergebnis.</p>
+        </div>
+        <div class="card gold" style="margin-top:12px">
+          <h3>&#128209; Weitere Aufgabe</h3>
+          <p>Erklären Sie den Unterschied zwischen Absprungrate und Ausstiegsrate anhand eines konkreten Beispiels.</p>
+        </div>
+      </div>
+      <div>
+        <div class="highlight green">
+          <strong>Lösung a):</strong><br>
+          Konversionsrate = (320 / 2.000) &times; 100 = <strong>16 %</strong>
+        </div>
+        <div class="highlight" style="margin-top:10px">
+          <strong>Lösung b):</strong><br>
+          16 % ist ein sehr guter Wert – deutlich über dem Durchschnitt von 2–5 %. Dies kann auf eine sehr zielgerichtete Zielgruppe oder starke Markentreue hindeuten.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Praxisbeispiel Exclusiva GmbH -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#127970;</div>
+      <h2>Praxisbeispiel: Exclusiva GmbH</h2>
+      <span class="tag">Folie 17 / 22</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128187; Checkout-Prozess</h3>
+          <ul>
+            <li>Warenwirtschaftssystem erfasst Bestelldaten</li>
+            <li>Tunneling: Navigation wird im Checkout ausgeblendet</li>
+            <li>Fortschrittsanzeige zeigt 5 Schritte</li>
+            <li>Gastzugang möglich</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128200; Monitoring</h3>
+          <ul>
+            <li>Tägliche Auswertung der Konversionsrate</li>
+            <li>Wöchentliches Reporting der Absprungrate</li>
+            <li>Monatliche Analyse der Stornoquote</li>
+            <li>A/B-Tests im Checkout-Bereich</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <h3>&#128666; Logistik</h3>
+          <ul>
+            <li>Nachfakturierung (Rechnung nach Kommissionierung)</li>
+            <li>Versand über DHL, Hermes, DPD</li>
+            <li>Same-Day-Delivery in der Region</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#128202; Ergebnisse</h3>
+          <ul>
+            <li>Konversionsrate: 3,8 %</li>
+            <li>Widerrufsquote: 12 %</li>
+            <li>Stornoquote: 4 %</li>
+            <li>Absprungrate: 32 %</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Zusammenfassung Flussdiagramm -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung: Gesamtprozess</h2>
+      <span class="tag">Folie 18 / 22</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box" style="background:var(--primary-light)"><h4>Übermittlung</h4><p>Bestellung über Webshop</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--primary-light)"><h4>Verkaufsabwicklung</h4><p>Checkout-Prozess</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--accent-light)"><h4>Aufbereitung</h4><p>Prüfung &amp; Ergänzung</p></div>
+      </div>
+      <div class="step-flow" style="margin-top:10px">
+        <div class="step-box" style="background:var(--accent-light)"><h4>Umsetzung</h4><p>Auftragsbestätigung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>Kommissionierung</h4><p>Lagerzusammenstellung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box" style="background:var(--success-light)"><h4>Versand &amp; Fakturierung</h4><p>Lieferung + Rechnung</p></div>
+      </div>
+      <div class="highlight" style="margin-top:16px">
+        <strong>Kernaussage:</strong> Die Auftragsbearbeitung ist eine durchgängige Prozesskette vom Klick im Warenkorb bis zum Zahlungseingang. Jede Phase muss qualitätsgesichert ablaufen, um Kundenzufriedenheit und Effizienz zu gewährleisten.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Was wir gelernt haben -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Was wir heute gelernt haben</h2>
+      <span class="tag">Folie 19 / 22</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green">
+          <h3>&#9989; Auftragsbearbeitung</h3>
+          <p>Bearbeitung aller Vorgänge von der Bestellaufgabe bis zur Auslieferung und Abrechnung.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Checkout-Prozess</h3>
+          <p>7 Schritte: Warenkorb → Registrierung → Anmeldung → Zahlung → Versand → Vertragsabschluss → Dank.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Tunneling</h3>
+          <p>Ablenkende Elemente ausblenden, um Kaufabbrüche zu reduzieren.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; KPIs</h3>
+          <p>Absprungrate, Ausstiegsrate und Konversionsrate als zentrale Leistungskennzahlen.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Fakturierung</h3>
+          <p>Vor- und Nachfakturierung – Rechnungserstellung zu verschiedenen Zeitpunkten.</p>
+        </div>
+        <div class="card green">
+          <h3>&#9989; Qualitätsmanagement</h3>
+          <p>Fehler früh erkennen spart Kosten und erhöht die Kundenzufriedenheit.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Diskussionsfragen -->
+  <section class="slide" data-index="20">
+    <div class="slide-header">
+      <div class="icon">&#128172;</div>
+      <h2>Diskussionsfragen</h2>
+      <span class="tag">Folie 20 / 22</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>1. Tunneling vs. Empfehlungen</h3>
+          <p>Cross-Selling im Checkout kann Umsatz steigern, aber auch die Konversionsrate senken. Wie löst man diesen Konflikt?</p>
+        </div>
+        <div class="card gold">
+          <h3>2. KPI-Priorisierung</h3>
+          <p>Welche der drei KPIs (Absprung-, Ausstiegs-, Konversionsrate) hat die größte Bedeutung für Ihren Ausbildungsbetrieb?</p>
+        </div>
+        <div class="card">
+          <h3>3. Vor- vs. Nachfakturierung</h3>
+          <p>In welchen Branchen eignet sich die Vorfakturierung besser und warum?</p>
+        </div>
+        <div class="card gold">
+          <h3>4. Qualitätsmanagement</h3>
+          <p>Welche konkreten Fehler in der Auftragsbearbeitung kennen Sie aus Ihrem Betrieb? Wie werden sie verhindert?</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 21: Literaturverzeichnis -->
+  <section class="slide" data-index="21">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 21 / 22</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Bruhn, M. (2022). <em>Qualitätsmanagement für Dienstleistungen: Handbuch für ein erfolgreiches Qualitätsmanagement</em> (12. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Meier, A. &amp; Stormer, H. (2021). <em>eBusiness &amp; eCommerce: Management der digitalen Wertschöpfungskette</em> (4. Aufl.). Springer.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">ibi research an der Universität Regensburg (2021). <em>Erfolgsfaktor Payment: Der Einfluss der Zahlungsverfahren auf den Umsatz</em>. ibi research.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 22: Abschluss -->
+  <section class="slide cover" data-index="22">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 1</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.1 Auftragsbearbeitung und Kaufabwicklung</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.2 Der Warenkorb</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 22</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 1 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

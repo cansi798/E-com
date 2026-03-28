@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.2 Der Warenkorb – Tag 2</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#viewport { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide.cover { justify-content:center; text-align:center; }
+.slide.section-slide {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.kicker { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.slide h1 { font-size:2.8rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-line { width:80px; height:4px; background:var(--primary); margin:0 auto 20px; border-radius:2px; }
+.subtitle { font-size:1.2rem; color:var(--text-muted); margin-bottom:30px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-header {
+  display:flex; align-items:center; gap:14px; width:100%; margin-bottom:20px; align-self:flex-start;
+}
+.slide-header .icon { font-size:1.6rem; }
+.slide-header h2 { font-size:1.5rem; font-weight:700; color:var(--primary); flex:1; }
+.slide-header .tag {
+  font-size:.72rem; background:var(--bg-alt); color:var(--text-muted);
+  padding:4px 12px; border-radius:20px; white-space:nowrap;
+}
+.content { width:100%; flex:1; overflow:hidden; }
+.slide-footer { width:100%; text-align:right; font-size:.68rem; color:var(--text-muted); margin-top:auto; padding-top:8px; }
+.cards { display:grid; gap:14px; width:100%; }
+.cols2 { grid-template-columns:1fr 1fr; }
+.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.cols4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:18px 22px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.gold::before { background:var(--accent); }
+.card.green::before { background:var(--success); }
+.card.red::before { background:var(--danger); }
+.card h3 { font-size:.95rem; font-weight:700; color:var(--primary); margin-bottom:8px; }
+.card p, .card li { font-size:.84rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:3px; }
+.bullets { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; }
+.bullets li { display:flex; align-items:flex-start; gap:12px; font-size:.9rem; line-height:1.55; }
+.bullets li::before { content:''; min-width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:7px; }
+.highlight {
+  background:var(--primary-light); border-radius:12px; padding:16px 24px;
+  width:100%; border-left:4px solid var(--primary); margin:12px 0;
+  font-size:.88rem; line-height:1.6;
+}
+.highlight.gold { background:var(--accent-light); border-left-color:var(--accent); }
+.highlight.green { background:var(--success-light); border-left-color:var(--success); }
+.highlight.red { background:var(--danger-light); border-left-color:var(--danger); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.badge {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.7rem; font-weight:700; padding:2px 10px;
+  border-radius:20px; margin-right:4px;
+}
+.badge.gold { background:var(--accent); }
+.badge.green { background:var(--success); }
+.badge.red { background:var(--danger); }
+table.sum-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.sum-table th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+.sum-table td { padding:8px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+.sum-table tr:nth-child(even) td { background:var(--bg-alt); }
+.sum-table tr:hover td { background:var(--primary-light); }
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:8px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:14px 12px;
+  text-align:center; position:relative; font-size:.8rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.82rem; margin-bottom:4px; }
+.step-box p { color:var(--text-muted); font-size:.72rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:10px 14px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:8px; font-size:.87rem; line-height:1.5;
+}
+.lz-check {
+  min-width:24px; height:24px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem;
+}
+.info-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px; margin:8px 0;
+  font-size:.85rem; line-height:1.6; box-shadow:var(--shadow);
+}
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-header, .slide.active .content,
+.slide.active .highlight, .slide.active table { animation:fadeUp .5s ease both; }
+.slide.active .slide-header { animation-delay:.05s; }
+.slide.active .content { animation-delay:.15s; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); padding:4px 10px; border-radius:8px; }
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; padding:0 20px; }
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <!-- FOLIE 1: Deckblatt -->
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 2</div>
+    <h1>3.2 Der Warenkorb</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 424 – 428</div>
+    <div class="cover-meta">
+      Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>
+      28. April 2026<br><br>
+      <strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong>
+    </div>
+  </section>
+
+  <!-- FOLIE 2: Lernziele -->
+  <section class="slide" data-index="2">
+    <div class="slide-header">
+      <div class="icon">&#127919;</div>
+      <h2>Lernziele</h2>
+      <span class="tag">Folie 2 / 20</span>
+    </div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Warenkorb als Prozessschritt einordnen</strong> – die Rolle des Warenkorbs als erster Schritt der Verkaufsabwicklung verstehen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Pflicht-Elemente benennen</strong> – Artikelauflistung, Call-to-Action-Button und Fortschrittsanzeige als Mindestbestandteile kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Optionale Elemente bewerten</strong> – Vertrauenselemente, Gutscheine, Empfehlungen und Versandkosten einordnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Preisangabenverordnung anwenden</strong> – gesetzliche Anforderungen an Preisdarstellung im Warenkorb kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Gemischten Warenkorb erklären</strong> – Unterscheidung verschiedener Umsatzsteuersätze im Warenkorb verstehen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Benutzerfreundlichkeit beurteilen</strong> – Kriterien für einen optimalen Warenkorb anwenden.</div></div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Leitfrage:</strong> Welche Elemente muss ein Warenkorb enthalten, damit der Kunde den Kaufprozess vertrauensvoll und ohne Abbruch durchläuft?
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 3: Warenkorb als erster Schritt -->
+  <section class="slide" data-index="3">
+    <div class="slide-header">
+      <div class="icon">&#128722;</div>
+      <h2>Der Warenkorb als erster Schritt</h2>
+      <span class="tag">Folie 3 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Die Kaufabwicklung beginnt mit der <strong>Ansicht des Warenkorbs</strong>. Er ist ein entscheidender Zwischenschritt zwischen der Artikelauswahl und dem Vertragsabschluss (vgl. Heinemann, 2023).
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Mindestens drei Elemente</strong> muss ein Warenkorb enthalten:
+        </div>
+        <ul class="bullets" style="margin-top:10px">
+          <li><strong>Übersicht der ausgewählten Artikel</strong></li>
+          <li><strong>Call-to-Action-Button</strong> (z. B. „Zur Kasse")</li>
+          <li><strong>Fortschrittsanzeige</strong> über den Kaufprozess</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Weitere empfohlene Elemente</h3>
+          <ul>
+            <li>Angabe des Gesamtpreises</li>
+            <li>Voraussichtlicher Liefertermin</li>
+            <li>Versandkosten</li>
+            <li>Vertrauenselemente (Trust-Siegel)</li>
+            <li>Gutscheinfeld</li>
+            <li>Produktempfehlungen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 4: Call-to-Action-Button -->
+  <section class="slide" data-index="4">
+    <div class="slide-header">
+      <div class="icon">&#128073;</div>
+      <h2>Der Call-to-Action-Button (CTA)</h2>
+      <span class="tag">Folie 4 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Mit Aufruf des Warenkorbs beginnt der eigentliche <strong>Kaufvorgang</strong>. Eingeleitet wird dieser durch Anklicken eines <strong>Call-to-Action-Buttons</strong>. Ziel: den Besucher zu einer gewünschten Aktion führen (vgl. Kreutzer, 2021).
+        </div>
+        <div class="info-box" style="margin-top:12px">
+          <strong>Typische CTA-Beschriftungen:</strong>
+        </div>
+        <ul class="bullets" style="margin-top:8px">
+          <li>„zum Warenkorb"</li>
+          <li>„zur Kasse" / „zur Kasse gehen"</li>
+          <li>„continue" / „weiter"</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Vorteile eines guten CTA</h3>
+          <ul>
+            <li>Gibt dem Käufer <strong>Orientierung</strong> im Kaufprozess</li>
+            <li>Schafft <strong>Vertrauen und Sicherheit</strong></li>
+            <li>Reduziert Kaufabbrüche durch klare Handlungsaufforderung</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#10060; Häufige CTA-Fehler</h3>
+          <ul>
+            <li>Button ist nicht auffällig genug gestaltet</li>
+            <li>Mehrere CTAs verwirren den Kunden</li>
+            <li>Beschriftung ist unklar oder nichtssagend</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 5: Fortschrittsanzeige -->
+  <section class="slide" data-index="5">
+    <div class="slide-header">
+      <div class="icon">&#9203;</div>
+      <h2>Die Fortschrittsanzeige</h2>
+      <span class="tag">Folie 5 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        Die <strong>Fortschrittsanzeige</strong> informiert den Käufer über die Abfolge der weiteren Schritte bis zum Ende des Kaufvorgangs. Ziel ist eine verbesserte <strong>Transparenz</strong> der Kaufabwicklung (vgl. Kollmann, 2022).
+      </div>
+      <div class="step-flow" style="margin-top:16px">
+        <div class="step-box" style="background:var(--primary-light)"><h4>&#128722; Warenkorb</h4><p>Artikelübersicht</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128100; Anmeldung</h4><p>Login / Registrierung</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128205; Adresse</h4><p>Lieferadresse</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#128179; Zahlung</h4><p>Zahlungsart wählen</p></div>
+        <div class="step-arrow">&#10140;</div>
+        <div class="step-box"><h4>&#9989; Bestätigung</h4><p>Bestellung absenden</p></div>
+      </div>
+      <div class="cards cols2" style="margin-top:16px">
+        <div class="card green">
+          <h3>&#9989; Vorteile der Fortschrittsanzeige</h3>
+          <ul>
+            <li>Kunde sieht, wie viele Schritte noch kommen</li>
+            <li>Grüner Haken bestätigt vollständige Angaben</li>
+            <li>Zurück-Navigation ermöglicht Korrekturen</li>
+            <li>Stärkt das Vertrauen in den Kaufprozess</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128161; Best Practice</h3>
+          <ul>
+            <li>Maximal 4–5 Schritte anzeigen</li>
+            <li>Aktuellen Schritt farblich hervorheben</li>
+            <li>Abgeschlossene Schritte mit Häkchen markieren</li>
+            <li>Auf allen Seiten des Checkouts sichtbar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 6: Die Artikelauflistung -->
+  <section class="slide" data-index="6">
+    <div class="slide-header">
+      <div class="icon">&#128220;</div>
+      <h2>Die Artikelauflistung</h2>
+      <span class="tag">Folie 6 / 20</span>
+    </div>
+    <div class="content">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px">
+        Der Warenkorb gibt dem Kunden eine <strong>Übersicht</strong> darüber, welche Artikel er zum Kauf vorgesehen hat. Folgende Daten müssen enthalten sein:
+      </p>
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128230; Artikelinformationen</h3>
+          <ul>
+            <li>Ausgewählte Artikel und Hersteller</li>
+            <li>Artikelnummern</li>
+            <li>Ausgewählte Variante (Größe, Farbe usw.)</li>
+            <li>Abbildung des Artikels in gewählter Form</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Preis- und Mengeninformationen</h3>
+          <ul>
+            <li>Einzelpreis des Artikels</li>
+            <li>Anzahl aller ausgewählten Artikel</li>
+            <li>Gesamtpreis des Artikels</li>
+            <li>Lieferbarkeit der Artikel</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight gold" style="margin-top:14px">
+        <strong>Wichtig:</strong> Dem Kunden müssen Möglichkeiten gegeben werden, einzelne Artikel zu <strong>löschen</strong> oder deren <strong>Mengen zu verändern</strong>. Dies erhöht die Benutzerfreundlichkeit und reduziert Frustration.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 7: Gesamtpreis und Preisangabenverordnung -->
+  <section class="slide" data-index="7">
+    <div class="slide-header">
+      <div class="icon">&#128176;</div>
+      <h2>Gesamtpreis &amp; Preisangabenverordnung</h2>
+      <span class="tag">Folie 7 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red">
+          Bei der Angabe der Artikelpreise und der Berechnung des Gesamtpreises ist die <strong>Preisangabenverordnung (PAngV)</strong> zu beachten. Alle Preise müssen <strong>Gesamtpreise</strong> sein und alle Preisbestandteile enthalten (vgl. Wirtz, 2021).
+        </div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Die enthaltene <strong>Mehrwertsteuer</strong> muss als Betrag separat ausgewiesen werden</li>
+          <li>Versandkosten müssen transparent angegeben werden</li>
+          <li>Grundpreise bei mengenabhängigen Produkten sind Pflicht</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3>&#128209; Beispiel: Preisdarstellung</h3>
+          <p style="margin-bottom:6px"><strong>Artikel:</strong> Lehrbuch IT-Berufe</p>
+          <p>Einzelpreis: 40,90 &euro;</p>
+          <p>Versandkosten: 2,50 &euro;</p>
+          <p style="margin-top:6px"><strong>Gesamtsumme: 43,40 &euro;</strong></p>
+          <p style="font-size:.75rem;margin-top:4px">inkl. MwSt. zzgl. Versand</p>
+        </div>
+        <div class="highlight green" style="margin-top:10px">
+          <strong>Tipp:</strong> Transparente Preisdarstellung ist einer der wichtigsten Faktoren zur Vermeidung von Warenkorbabbrüchen. 57 % der Abbrüche sind auf unerwartete Zusatzkosten zurückzuführen.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 8: Liefertermin -->
+  <section class="slide" data-index="8">
+    <div class="slide-header">
+      <div class="icon">&#128666;</div>
+      <h2>Voraussichtlicher Liefertermin</h2>
+      <span class="tag">Folie 8 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Durch automatisierte Geschäftsprozesse im Versandbereich kann ein Webshop den <strong>voraussichtlichen Liefertermin</strong> mit hoher Wahrscheinlichkeit prognostizieren. Diese Angabe erleichtert dem Kunden den Kauf (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128197; Warum Lieferdaten wichtig sind</h3>
+          <ul>
+            <li>Kunden planen ihre Einkäufe terminbezogen</li>
+            <li>Geschenkkäufe erfordern verbindliche Termine</li>
+            <li>Ein konkretes Datum wirkt positiv auf das Kaufverhalten</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Best Practice Lieferangaben</h3>
+          <ul>
+            <li>Lieferzeit in <strong>Werktagen</strong> angeben (z. B. 2–3 Werktage)</li>
+            <li>Alternativ: konkretes Lieferdatum anzeigen</li>
+            <li>Klare Symbole nutzen (z. B. grünes Häkchen für sofort lieferbar)</li>
+            <li>Verknappung nur einsetzen, wenn real (z. B. „Nur noch 3 auf Lager")</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Achtung:</strong> Nur 8,74 % der deutschen Onlineshops zeigen ein genaues Lieferdatum an. Hier liegt großes Optimierungspotenzial (vgl. ibi research, 2021).
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 9: Versandkosten -->
+  <section class="slide" data-index="9">
+    <div class="slide-header">
+      <div class="icon">&#128230;</div>
+      <h2>Angabe der Versandkosten</h2>
+      <span class="tag">Folie 9 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Der Kunde legt die <strong>Versandart</strong> und damit die Versandkosten oft erst später fest. Dennoch können bereits im Warenkorb die Kosten für den <strong>Standardversand</strong> innerhalb Deutschlands angegeben werden (vgl. Kollmann, 2022).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128176; Versandkosten-Strategien</h3>
+          <ul>
+            <li>Kostenloser Versand ab Mindestbestellwert</li>
+            <li>Flatrate-Versandkosten (z. B. 4,95 &euro; pauschal)</li>
+            <li>Gewichtsbasierte Versandkosten</li>
+            <li>Express-Option gegen Aufpreis</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card red">
+          <h3>&#128721; Warenkorbabbruch durch Versandkosten</h3>
+          <p><strong>57 %</strong> der Kunden brechen den Kauf wegen zu hoher Versandkosten ab.</p>
+          <p style="margin-top:6px">Transparenz ist entscheidend: Versteckte Kosten führen zu Vertrauensverlust.</p>
+        </div>
+        <div class="card green" style="margin-top:10px">
+          <h3>&#128161; Tipp</h3>
+          <p>Versandkosten sollten <strong>prominent und früh</strong> im Warenkorb angezeigt werden – nicht erst im letzten Schritt. Zeigen Sie auch „zzgl. Versand" an, wenn die endgültigen Kosten noch offen sind.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 10: Vertrauenselemente -->
+  <section class="slide" data-index="10">
+    <div class="slide-header">
+      <div class="icon">&#128274;</div>
+      <h2>Angaben zur Erhöhung des Vertrauens</h2>
+      <span class="tag">Folie 10 / 20</span>
+    </div>
+    <div class="content">
+      <div class="highlight">
+        Viele Webshops bieten in ihren Warenkörben Angaben, die beim Käufer <strong>Vertrauen in einen sicheren Einkaufsprozess</strong> aufbauen sollen. Da kein persönlicher Kontakt zum Verkäufer besteht, sind diese Elemente besonders wichtig (vgl. Meier &amp; Stormer, 2021).
+      </div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#128737; Qualitätssiegel</h3>
+          <ul>
+            <li>Trusted Shops</li>
+            <li>TÜV-Siegel</li>
+            <li>EHI-Siegel</li>
+            <li>Stiftung Warentest</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128274; SSL-Verschlüsselung</h3>
+          <ul>
+            <li>Hinweis auf sichere Datenübertragung</li>
+            <li>Schloss-Symbol in der Adressleiste</li>
+            <li>HTTPS-Verbindung</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128259; Umtauschregelungen</h3>
+          <ul>
+            <li>Großzügige Rückgabefrist</li>
+            <li>Kostenloser Rückversand</li>
+            <li>Geld-zurück-Garantie</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight green" style="margin-top:12px">
+        <strong>Statistik:</strong> 60,19 % der großen deutschen Onlineshops haben Trust-Elemente gut sichtbar auf dem Warenkorb integriert – meist im Header oder neben dem Call-to-Action (vgl. ibi research, 2021).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 11: Gutscheine -->
+  <section class="slide" data-index="11">
+    <div class="slide-header">
+      <div class="icon">&#127915;</div>
+      <h2>Einlösung von Gutscheinen</h2>
+      <span class="tag">Folie 11 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Besitzt der Kunde einen <strong>Gutschein</strong>, kann er diesen häufig bereits im Warenkorb einreichen. Der Gutscheincode wird eingegeben und der Betrag wird vom <strong>Rechnungsbetrag abgezogen</strong> (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#127915; Arten von Gutscheinen</h3>
+          <ul>
+            <li><strong>Wertgutscheine:</strong> fester Betrag (z. B. 10 &euro;)</li>
+            <li><strong>Prozentgutscheine:</strong> prozentualer Rabatt (z. B. 15 %)</li>
+            <li><strong>Versandkostengutscheine:</strong> kostenloser Versand</li>
+            <li><strong>Aktionsgutscheine:</strong> zeitlich begrenzt</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Vorteile für den Shop</h3>
+          <ul>
+            <li>Erhöhte Kaufmotivation</li>
+            <li>Neukundengewinnung</li>
+            <li>Kundenbindung</li>
+            <li>Messbarkeit von Marketingkampagnen</li>
+          </ul>
+        </div>
+        <div class="card red" style="margin-top:10px">
+          <h3>&#9888; Risiken</h3>
+          <ul>
+            <li>Kaufabbruch durch externe Gutscheinsuche</li>
+            <li>Margenreduzierung bei zu hohen Rabatten</li>
+            <li>Missbrauch durch Code-Sharing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 12: Empfehlungen / Cross-Selling -->
+  <section class="slide" data-index="12">
+    <div class="slide-header">
+      <div class="icon">&#128161;</div>
+      <h2>Empfehlungen im Warenkorb</h2>
+      <span class="tag">Folie 12 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight gold">
+          Aufgrund der Beobachtung früherer Käufe können dem Kunden <strong>weitere Artikel vorgeschlagen</strong> werden, die ihn möglicherweise interessieren. Dies ist eine Form des <strong>Cross-Sellings</strong> (vgl. Kreutzer, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128209; Praxisbeispiel</h3>
+          <p>Ein Kunde kauft ein <strong>Handy</strong>. Im Warenkorb werden passende <strong>Ersatzakkus</strong> oder <strong>Handytaschen</strong> vorgeschlagen: „Das könnte Ihnen auch gefallen".</p>
+          <p style="margin-top:6px">&#10140; Steigert die Chance auf zusätzliche Umsätze erheblich.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#128200; Empfehlungsarten</h3>
+          <ul>
+            <li><strong>Cross-Selling:</strong> ergänzende Produkte</li>
+            <li><strong>Up-Selling:</strong> höherwertige Alternativen</li>
+            <li><strong>Frequently Bought Together:</strong> häufige Kombinationen</li>
+            <li><strong>Personalisiert:</strong> basierend auf Browsing-Historie</li>
+          </ul>
+        </div>
+        <div class="highlight red" style="margin-top:10px">
+          <strong>Achtung:</strong> Empfehlungen im Warenkorb können auch ablenkend wirken und den Checkout-Prozess verzögern. Die Balance zwischen Umsatzsteigerung und Tunneling ist entscheidend.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 13: Der benutzerfreundliche Warenkorb -->
+  <section class="slide" data-index="13">
+    <div class="slide-header">
+      <div class="icon">&#11088;</div>
+      <h2>Der benutzerfreundliche Warenkorb</h2>
+      <span class="tag">Folie 13 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card">
+          <h3>&#128230; Produktdetails</h3>
+          <p>Produktdetails und Produktbild im Warenkorb anzeigen – inklusive Link zur Produktseite.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#127915; Gutscheincodes</h3>
+          <p>Gutscheincodes anbieten – Eingabefeld gut sichtbar platzieren.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128259; Löschen &amp; Hinzufügen</h3>
+          <p>Das Löschen und Hinzufügen von Produkten einfach und intuitiv gestalten.</p>
+        </div>
+        <div class="card">
+          <h3>&#128279; Weiter einkaufen</h3>
+          <p>„Weiter einkaufen"- und „Zur Kasse"-Links einfügen, um dem Kunden die Wahl zu lassen.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Kostentransparenz</h3>
+          <p>Kosten (z. B. Versand) transparent machen – keine versteckten Gebühren.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128279; Produktlink</h3>
+          <p>Link zur Produktseite bereitstellen, damit der Kunde Details erneut prüfen kann.</p>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Kernprinzip:</strong> Der Warenkorb muss dem Kunden das Gefühl von Kontrolle und Transparenz geben. Jede Unsicherheit kann zum Kaufabbruch führen (vgl. Kollmann, 2022).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 14: 7 konversionsrelevante Fakten -->
+  <section class="slide" data-index="14">
+    <div class="slide-header">
+      <div class="icon">&#128202;</div>
+      <h2>7 konversionsrelevante Fakten zum Warenkorb</h2>
+      <span class="tag">Folie 14 / 20</span>
+    </div>
+    <div class="content">
+      <table class="sum-table">
+        <thead>
+          <tr><th>Nr.</th><th>Fakt</th><th>Erkenntnis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge">01</span></td><td>Add-to-Cart</td><td>53,4 % ändern nur die Artikelanzahl; 33,01 % nutzen „Bestätigungs-Layer"</td></tr>
+          <tr><td><span class="badge gold">02</span></td><td>Zahlarten</td><td>Nur 31,07 % zeigen Zahlarten im Warenkorb – Fehlen verursacht 7 % Abbrüche</td></tr>
+          <tr><td><span class="badge green">03</span></td><td>UVP</td><td>46,6 % der Shops zeigen Shop-relevante UVP auf dem Warenkorb an</td></tr>
+          <tr><td><span class="badge">04</span></td><td>Tunneling</td><td>Nur 26,21 % setzen das konversionssteigernde Prinzip des Tunnelings ein</td></tr>
+          <tr><td><span class="badge gold">05</span></td><td>Kontakt</td><td>42,72 % zeigen eine direkte Telefonnummer gut sichtbar an</td></tr>
+          <tr><td><span class="badge green">06</span></td><td>Trust-Elemente</td><td>60,19 % haben Trust-Elemente gut sichtbar integriert</td></tr>
+          <tr><td><span class="badge red">07</span></td><td>Lieferung</td><td>Nur 8,74 % zeigen ein genaues Lieferdatum an</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight" style="margin-top:10px">
+        <strong>Quelle:</strong> Analyse der 100 größten deutschen Onlineshops (vgl. ibi research, 2021).
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 15: Verlassen des Warenkorbs -->
+  <section class="slide" data-index="15">
+    <div class="slide-header">
+      <div class="icon">&#128682;</div>
+      <h2>Verlassen des Warenkorbs</h2>
+      <span class="tag">Folie 15 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Mit Call-to-Action-Elementen wie <strong>„weiter zur Kasse"</strong> verlässt der Kunde den Warenkorb und geht zum nächsten Schritt der Verkaufsabwicklung über (vgl. Heinemann, 2023).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128722; Was der Kunde im Warenkorb tun kann</h3>
+          <ul>
+            <li>Artikel kontrollieren und Menge ergänzen</li>
+            <li>Einkauf fortführen und weitere Produkte wählen</li>
+            <li>Zur Kasse gehen und Bestellung abschließen</li>
+            <li>Gutschein einlösen</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>&#9989; Optimaler Warenkorb-Abschluss</h3>
+          <ul>
+            <li><strong>Primärer CTA:</strong> „Zur Kasse" – groß, farbig, prominent</li>
+            <li><strong>Sekundärer CTA:</strong> „Weiter einkaufen" – dezenter platziert</li>
+            <li>Zwischensumme und Versandkosten klar anzeigen</li>
+            <li>MwSt. separat ausweisen</li>
+          </ul>
+        </div>
+        <div class="highlight gold" style="margin-top:10px">
+          <strong>Merke:</strong> Der Übergang vom Warenkorb zur Kasse ist einer der kritischsten Momente im Checkout – hier entscheidet sich, ob der Kunde kauft oder abspringt.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 16: Gemischter Warenkorb -->
+  <section class="slide" data-index="16">
+    <div class="slide-header">
+      <div class="icon">&#128230;</div>
+      <h2>Der gemischte Warenkorb</h2>
+      <span class="tag">Folie 16 / 20</span>
+    </div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">
+          Ein <strong>gemischter Warenkorb</strong> liegt vor, wenn die enthaltenen Artikel <strong>verschiedenen Umsatzsteuersätzen</strong> unterliegen (z. B. 7 % und 19 %). Die Nebenleistungskosten müssen anteilig zugeordnet werden (vgl. Wirtz, 2021).
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>&#128209; Beispiel</h3>
+          <p>Ein Warenkorb enthält:</p>
+          <ul>
+            <li>Buch (7 % MwSt.) – 19,90 &euro;</li>
+            <li>USB-Stick (19 % MwSt.) – 12,99 &euro;</li>
+            <li>Versandkosten: 4,95 &euro;</li>
+          </ul>
+          <p style="margin-top:6px">&#10140; Versandkosten werden <strong>anteilig</strong> nach Nettobeträgen der Positionen aufgeteilt.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card gold">
+          <h3>&#128176; Anteilige Zuordnung</h3>
+          <p>Bei der Exclusiva GmbH wird der jeweilige Umsatzsteuersatz <strong>anteilig anhand der Nettobeträge</strong> der einzelnen Positionen auf die Versandkosten angewendet.</p>
+          <p style="margin-top:6px">Kosten für Nebenleistungen (Beförderung, Verpackung, Versicherung) müssen den unterschiedlich besteuerten Artikeln bzw. Dienstleistungen entsprechend zugeordnet werden.</p>
+        </div>
+        <div class="highlight red" style="margin-top:10px">
+          <strong>Rechtlich wichtig:</strong> Die korrekte Zuordnung der Umsatzsteuer im gemischten Warenkorb ist gesetzlich vorgeschrieben und muss technisch im Shopsystem korrekt implementiert sein.
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 17: Übungsaufgaben -->
+  <section class="slide" data-index="17">
+    <div class="slide-header">
+      <div class="icon">&#128221;</div>
+      <h2>Übungsaufgaben</h2>
+      <span class="tag">Folie 17 / 20</span>
+    </div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card">
+          <h3>&#128209; Aufgabe 1</h3>
+          <p>Nennen Sie die drei Elemente, die ein Warenkorb <strong>mindestens</strong> enthalten muss. Erklären Sie jeweils deren Funktion.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 2</h3>
+          <p>Führen Sie mindestens <strong>drei Beispiele</strong> für Call-to-Action-Buttons auf und nennen Sie <strong>zwei Vorteile</strong> eines guten CTA.</p>
+        </div>
+        <div class="card">
+          <h3>&#128209; Aufgabe 3</h3>
+          <p>Welche Daten kann der Kunde der <strong>Artikelauflistung</strong> im Warenkorb entnehmen? Listen Sie mindestens fünf Punkte auf.</p>
+        </div>
+        <div class="card gold">
+          <h3>&#128209; Aufgabe 4</h3>
+          <p>Nennen Sie drei mögliche Angaben im Webshop, die das <strong>Vertrauen</strong> eines potenziellen Kunden stärken können.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 5</h3>
+          <p>Erklären Sie, was ein <strong>gemischter Warenkorb</strong> ist und welche Besonderheit bei der Berechnung der Versandkosten gilt.</p>
+        </div>
+        <div class="card green">
+          <h3>&#128209; Aufgabe 6</h3>
+          <p>Untersuchen Sie den Warenkorb Ihres Ausbildungsbetriebs: Sind alle empfohlenen Elemente vorhanden? Welche fehlen?</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 18: Zusammenfassung -->
+  <section class="slide" data-index="18">
+    <div class="slide-header">
+      <div class="icon">&#128203;</div>
+      <h2>Zusammenfassung</h2>
+      <span class="tag">Folie 18 / 20</span>
+    </div>
+    <div class="content">
+      <div class="step-flow">
+        <div class="step-box" style="background:var(--primary-light)"><h4>Warenkorb</h4><p>= erster Teil der Verkaufsabwicklung</p></div>
+      </div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card green">
+          <h3>&#9989; Pflicht-Elemente</h3>
+          <ul>
+            <li>Call-to-Action-Button</li>
+            <li>Artikelübersicht</li>
+            <li>Fortschrittsanzeige</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>&#128176; Preis-Elemente</h3>
+          <ul>
+            <li>Gesamtpreis</li>
+            <li>Versandkosten</li>
+            <li>Liefertermin</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128274; Vertrauens-Elemente</h3>
+          <ul>
+            <li>Trust-Siegel</li>
+            <li>SSL-Hinweis</li>
+            <li>Umtauschregelungen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cards cols2" style="margin-top:10px">
+        <div class="card">
+          <h3>&#127915; Zusatz-Elemente</h3>
+          <ul>
+            <li>Gutscheineinlösung</li>
+            <li>Empfehlungen</li>
+            <li>Verlassen des Warenkorbs</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <h3>&#128721; Gemischter Warenkorb</h3>
+          <p>Verschiedene MwSt.-Sätze erfordern anteilige Zuordnung der Nebenkosten auf die einzelnen Positionen.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 19: Literaturverzeichnis -->
+  <section class="slide" data-index="19">
+    <div class="slide-header">
+      <div class="icon">&#128218;</div>
+      <h2>Literaturverzeichnis</h2>
+      <span class="tag">Folie 19 / 20</span>
+    </div>
+    <div class="content">
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Meier, A. &amp; Stormer, H. (2021). <em>eBusiness &amp; eCommerce: Management der digitalen Wertschöpfungskette</em> (4. Aufl.). Springer.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">ibi research an der Universität Regensburg (2021). <em>Erfolgsfaktor Payment: Der Einfluss der Zahlungsverfahren auf den Umsatz</em>. ibi research.</div>
+      <div class="highlight" style="margin-top:12px">
+        <strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <!-- FOLIE 20: Abschluss -->
+  <section class="slide cover" data-index="20">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 2</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.2 Der Warenkorb</div>
+    <div class="cover-meta">
+      Nächstes Thema: <strong>3.3 Anmeldung bzw. Registrierung</strong><br><br>
+      &copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten
+    </div>
+  </section>
+
+</div><!-- /viewport -->
+
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (&#8592;)">&#8592;</button>
+  <span id="slide-counter">1 / 20</span>
+  <button id="btn-next" title="Nächste Folie (&#8594;)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>Tag 2 &bull; Lernfeld 3</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('h2,h1');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

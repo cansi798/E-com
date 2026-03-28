@@ -1,0 +1,33 @@
+# LaTeX Quelldateien und Artefakte
+*.tex
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# PDF-Dateien (zu groß für Git)
+*.pdf
+
+# Python-Skripte und Cache
+*.py
+__pycache__/
+*.pyc
+
+# Planungsdateien
+*.txt
+*.png
+*.jpg
+*.jpeg
+
+# Sonstige lokale Dateien
+docs/plans/
+split_lernfeld1.py
+split_lernfeld234.py
+E-Commerce_Planung.pdf
+tag7_cover.png
+tag8_cover.png
+tag8_quiz.png
+tag8_quiz_new.png

@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag 6 – 1.7 Einrichtung eines Webshops</title>
+<style>
+:root {
+  --bg: #FFFFFF; --bg-card: #F8FAFC; --bg-alt: #F1F5F9;
+  --text: #1E293B; --text-muted: #64748B;
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --accent: #F59E0B; --accent-light: #FEF3C7;
+  --success: #10B981; --success-light: #D1FAE5;
+  --danger: #EF4444; --danger-light: #FEE2E2;
+  --border: #E2E8F0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg); color: var(--text);
+  height: 100vh; overflow: hidden; user-select: none;
+}
+#progress-bar {
+  position:fixed; top:0; left:0; height:4px;
+  background: linear-gradient(90deg, var(--primary), #60A5FA);
+  transition: width 0.4s ease; z-index:100;
+}
+#slideshow { width:100vw; height:100vh; position:relative; overflow:hidden; }
+.slide {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:60px 80px 50px; opacity:0; transform:translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events:none; background:var(--bg);
+}
+.slide.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.slide.exit-left { opacity:0; transform:translateX(-60px); }
+.slide-cover { background:var(--bg); justify-content:center; text-align:center; }
+.slide-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  text-align:center; color:white;
+}
+.slide-content { justify-content:flex-start; padding-top:70px; }
+.cover-tag { font-size:.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--primary); margin-bottom:20px; }
+.cover-title { font-size:3rem; font-weight:800; line-height:1.15; color:var(--text); margin-bottom:16px; }
+.cover-subtitle { font-size:1.3rem; color:var(--text-muted); margin-bottom:36px; }
+.cover-meta { font-size:.9rem; color:var(--text-muted); line-height:1.8; }
+.slide-title {
+  font-size:1.6rem; font-weight:700; color:var(--primary);
+  margin-bottom:24px; position:relative; align-self:flex-start;
+}
+.slide-title::after {
+  content:''; display:block; width:60px; height:4px;
+  background:var(--primary); margin-top:8px; border-radius:2px;
+}
+.section-label { font-size:.8rem; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.8); margin-bottom:16px; }
+.section-title { font-size:2.8rem; font-weight:800; color:#fff; }
+.section-num { font-size:6rem; font-weight:900; color:rgba(255,255,255,.12); position:absolute; bottom:30px; right:60px; line-height:1; }
+.content-grid { display:grid; gap:16px; width:100%; }
+.grid-2 { grid-template-columns:1fr 1fr; }
+.grid-3 { grid-template-columns:1fr 1fr 1fr; }
+.card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; position:relative;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--primary); border-radius:4px 0 0 4px; }
+.card.blue::before { background:var(--primary); }
+.card.gold::before { background:var(--accent); }
+.card h3 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:10px; }
+.card p, .card li { font-size:.88rem; color:var(--text-muted); line-height:1.6; }
+.card ul { padding-left:16px; }
+.card li { margin-bottom:4px; }
+.bullet-list { list-style:none; width:100%; display:flex; flex-direction:column; gap:12px; }
+.bullet-list li { display:flex; align-items:flex-start; gap:14px; font-size:.95rem; line-height:1.5; }
+.bullet-list li .icon {
+  min-width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; margin-top:1px;
+}
+.bullet-list li .icon.blue { background:var(--primary); }
+.bullet-list li .icon.gold { background:var(--accent); color:#fff; }
+.highlight-box {
+  background:var(--primary-light); border-radius:12px; padding:20px 28px;
+  width:100%; border-left:4px solid var(--primary); margin:16px 0;
+}
+.highlight-box p { font-size:.92rem; line-height:1.7; color:var(--text); }
+.cite { font-size:.78rem; color:var(--text-muted); margin-top:8px; font-style:italic; }
+.tag-pill {
+  display:inline-block; background:var(--primary); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; margin:3px 3px 3px 0; letter-spacing:.5px;
+}
+.tag-pill.blue { background:var(--primary); }
+.tag-pill.gold { background:var(--accent); color:#fff; }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; font-weight:700; }
+td { padding:9px 14px; color:var(--text); border-bottom:1px solid var(--border); }
+tr:nth-child(even) td { background:var(--bg-alt); }
+tr:hover td { background:var(--primary-light); }
+.svg-wrap { width:100%; display:flex; justify-content:center; margin:10px 0; }
+#nav {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:16px;
+  background:rgba(255,255,255,.85); backdrop-filter:blur(12px);
+  border:1px solid var(--border); border-radius:40px;
+  padding:10px 24px; z-index:50; box-shadow:var(--shadow-lg);
+}
+#nav button {
+  background:none; border:none; color:var(--text); font-size:1.1rem;
+  cursor:pointer; padding:4px 10px; border-radius:20px; transition:background .2s;
+}
+#nav button:hover { background:var(--primary-light); }
+#slide-counter { font-size:.82rem; color:var(--text-muted); min-width:60px; text-align:center; }
+#footer {
+  position:fixed; bottom:0; left:0; right:0; padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.68rem; color:var(--text-muted);
+  border-top:1px solid var(--border);
+  background:rgba(255,255,255,.9); backdrop-filter:blur(6px);
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active .slide-title, .slide.active .content-grid,
+.slide.active .bullet-list, .slide.active table,
+.slide.active .highlight-box, .slide.active .svg-wrap { animation:fadeUp .5s ease both; }
+.slide.active .slide-title { animation-delay:.05s; }
+.slide.active .content-grid { animation-delay:.15s; }
+.slide.active .bullet-list { animation-delay:.15s; }
+.slide.active table { animation-delay:.15s; }
+.toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+.toc-item {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-card); border-radius:10px; padding:14px 18px;
+  border:1px solid var(--border); font-size:.9rem; box-shadow:var(--shadow);
+}
+.toc-num { font-size:1.4rem; font-weight:900; color:var(--primary); min-width:32px; }
+.lz-item {
+  display:flex; align-items:flex-start; gap:14px; padding:12px 16px;
+  background:var(--success-light); border-radius:10px;
+  border:1px solid #A7F3D0; margin-bottom:10px; font-size:.9rem; line-height:1.5;
+}
+.lz-check {
+  min-width:26px; height:26px; border-radius:50%;
+  background:var(--success); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+}
+.step-flow { display:flex; align-items:stretch; gap:0; width:100%; margin-top:10px; }
+.step-box {
+  flex:1; background:var(--bg-card); border-radius:10px; padding:16px 14px;
+  text-align:center; position:relative; font-size:.82rem;
+  border:1px solid var(--border); box-shadow:var(--shadow);
+}
+.step-box h4 { color:var(--primary); font-size:.85rem; margin-bottom:6px; }
+.step-box p { color:var(--text-muted); font-size:.78rem; line-height:1.4; }
+.step-arrow { display:flex; align-items:center; color:var(--primary); font-size:1.2rem; padding:0 4px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+.ref-entry { font-size:.78rem; color:var(--text-muted); margin-bottom:10px; line-height:1.6; padding-left:24px; text-indent:-24px; }
+#grid-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.97); backdrop-filter:blur(8px);
+  z-index:200; overflow-y:auto; padding:20px;
+}
+#grid-overlay.visible { display:block; }
+#grid-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+#grid-header span { font-size:1.2rem; font-weight:700; color:var(--primary); }
+#grid-header button {
+  background:none; border:none; font-size:1.5rem; cursor:pointer;
+  color:var(--text-muted); padding:4px 10px; border-radius:8px;
+}
+#grid-header button:hover { background:var(--bg-alt); }
+#grid-container {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px; padding:0 20px;
+}
+.grid-thumb {
+  background:var(--bg-card); border:2px solid var(--border);
+  border-radius:10px; padding:12px; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.grid-thumb:hover { border-color:var(--primary); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.grid-thumb.current { border-color:var(--primary); background:var(--primary-light); }
+.grid-thumb-num { font-size:.75rem; font-weight:700; color:var(--primary); margin-bottom:4px; }
+.grid-thumb-title { font-size:.72rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="slideshow">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide slide-cover active" id="s1">
+    <div style="margin-bottom:30px">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="38" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+        <rect x="18" y="28" width="44" height="30" rx="4" fill="#3B82F6"/>
+        <rect x="24" y="34" width="14" height="10" rx="2" fill="#F59E0B"/>
+        <rect x="42" y="34" width="14" height="4" rx="1" fill="rgba(0,0,0,0.4)"/>
+        <rect x="42" y="40" width="10" height="4" rx="1" fill="rgba(0,0,0,0.2)"/>
+        <path d="M32 58 L32 62 M48 58 L48 62 M26 62 L54 62" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="cover-tag">E-Commerce Ausbildung &bull; Lernfeld 1 &bull; Tag 6</div>
+    <div class="cover-title">1.7 Einrichtung eines<br>Webshops</div>
+    <div class="cover-subtitle">Buchseiten 68–75 &bull; Systeme, Technik, Recht &amp; Prozesse</div>
+    <div style="width:80px;height:3px;background:linear-gradient(90deg,#2563EB,#F59E0B);border-radius:2px;margin:0 auto 30px;"></div>
+    <div class="cover-meta">
+      Can Siebert &amp; Hamzah Meyer<br>
+      Berufsschule &bull; 02. März 2026
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Inhaltsverzeichnis -->
+  <div class="slide slide-content" id="s2">
+    <div class="slide-title">Inhaltsverzeichnis</div>
+    <div class="toc-grid">
+      <div class="toc-item"><span class="toc-num">1</span><span>Lernziele &amp; Überblick</span></div>
+      <div class="toc-item"><span class="toc-num">2</span><span>Was ist ein Webshop-System?</span></div>
+      <div class="toc-item"><span class="toc-num">3</span><span>Shopify</span></div>
+      <div class="toc-item"><span class="toc-num">4</span><span>WooCommerce</span></div>
+      <div class="toc-item"><span class="toc-num">5</span><span>Magento / Adobe Commerce</span></div>
+      <div class="toc-item"><span class="toc-num">6</span><span>Shopware</span></div>
+      <div class="toc-item"><span class="toc-num">7</span><span>Systemvergleich</span></div>
+      <div class="toc-item"><span class="toc-num">8</span><span>Technische Grundlagen</span></div>
+      <div class="toc-item"><span class="toc-num">9</span><span>Hosting &amp; SSL</span></div>
+      <div class="toc-item"><span class="toc-num">10</span><span>Rechtliche Pflichtangaben</span></div>
+      <div class="toc-item"><span class="toc-num">11</span><span>Checkout &amp; Zahlungsarten</span></div>
+      <div class="toc-item"><span class="toc-num">12</span><span>Produktkatalog</span></div>
+      <div class="toc-item"><span class="toc-num">13</span><span>Zusammenfassung</span></div>
+      <div class="toc-item"><span class="toc-num">14</span><span>Literaturverzeichnis</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Lernziele -->
+  <div class="slide slide-content" id="s3">
+    <div class="slide-title">Lernziele</div>
+    <div class="lz-item"><div class="lz-check">&#10003;</div>Ich kann die gängigen Webshop-Systeme (Shopify, WooCommerce, Magento, Shopware) nennen und ihre Merkmale vergleichen.</div>
+    <div class="lz-item"><div class="lz-check">&#10003;</div>Ich verstehe den Unterschied zwischen Frontend und Backend sowie die Rolle von Hosting und SSL-Zertifikaten.</div>
+    <div class="lz-item"><div class="lz-check">&#10003;</div>Ich kenne die rechtlichen Pflichtangaben (Impressum, DSGVO, AGB, Widerruf) für einen deutschen Online-Shop.</div>
+    <div class="lz-item"><div class="lz-check">&#10003;</div>Ich kann den Checkout-Prozess und gängige Zahlungsarten beschreiben.</div>
+    <div class="lz-item"><div class="lz-check">&#10003;</div>Ich weiß, wie ein strukturierter Produktkatalog aufgebaut wird.</div>
+  </div>
+
+  <!-- SLIDE 4: SECTION – Webshop-Systeme -->
+  <div class="slide slide-section" id="s4">
+    <div class="section-label">Abschnitt 1</div>
+    <div class="section-title">Webshop-Systeme</div>
+    <div class="section-num">01</div>
+  </div>
+
+  <!-- SLIDE NEW: Was ist ein Webshop? Definition & Abgrenzung -->
+  <div class="slide slide-content" id="s_ws_def">
+    <div class="slide-title">Was ist ein Webshop?</div>
+    <div class="highlight-box">
+      <p><strong>Webshop</strong> (auch: Online-Shop, E-Shop) = digitales Geschäft mit drei Kernfunktionen: <strong>Warenkatalog</strong>, <strong>Warenkorb</strong> und <strong>Checkout/Bezahlung</strong>.</p>
+      <p class="cite">Kollmann, T. (2022). <em>E-Business</em> (8. Aufl., S. 68). Springer Gabler.</p>
+    </div>
+    <div class="content-grid grid-3" style="margin-top:14px">
+      <div class="card blue">
+        <h3>1. Warenkatalog</h3>
+        <p>Darstellung aller angebotenen Produkte und Dienstleistungen mit Preisen, Bildern und Beschreibungen.</p>
+      </div>
+      <div class="card">
+        <h3>2. Warenkorb</h3>
+        <p>Sammlung ausgewählter Artikel vor dem Kauf. Ermöglicht Mengenanpassung und Überblick vor dem Checkout.</p>
+      </div>
+      <div class="card gold">
+        <h3>3. Checkout / Bezahlung</h3>
+        <p>Abwicklung von Adresseingabe, Versandwahl, Zahlungsauswahl und Bestellbestätigung.</p>
+      </div>
+    </div>
+    <table style="margin-top:14px">
+      <thead>
+        <tr><th>Merkmal</th><th>Normale Website</th><th>Webshop</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Hauptzweck</td><td>Information, Kontakt</td><td>Verkauf von Produkten/DL</td></tr>
+        <tr><td>Warenkatalog / Warenkorb</td><td>Nein</td><td>Ja (Pflicht)</td></tr>
+        <tr><td>Checkout / Bezahlung</td><td>Nein</td><td>Ja (Pflicht)</td></tr>
+        <tr><td>Rechtliche Pflichten</td><td>Impressum, Datenschutz</td><td>+ AGB, Widerruf, PAngV</td></tr>
+        <tr><td>Technischer Aufwand</td><td>Gering bis mittel</td><td>Mittel bis hoch</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SLIDE 5: Was ist ein Webshop-System? -->
+  <div class="slide slide-content" id="s5">
+    <div class="slide-title">Was ist ein Webshop-System?</div>
+    <div class="highlight-box">
+      <p>Ein <strong>Webshop-System</strong> (E-Commerce-Plattform) ist eine Software, die alle Funktionen eines Online-Handels vereint: Produktpräsentation, Warenkorb, Bezahlung, Lagerverwaltung und Kundenkommunikation.</p>
+      <p class="cite">Kollmann, T. (2022). <em>E-Business</em> (8. Aufl., S. 68). Springer Gabler.</p>
+    </div>
+    <div class="content-grid grid-3" style="margin-top:16px">
+      <div class="card blue">
+        <h3>SaaS-Lösungen</h3>
+        <p>Software as a Service – gehostet beim Anbieter, monatliche Gebühr, sofort einsatzbereit (z.B. Shopify).</p>
+      </div>
+      <div class="card">
+        <h3>Open-Source</h3>
+        <p>Quellcode frei verfügbar, Self-Hosting nötig, hohe Anpassbarkeit (z.B. WooCommerce, Magento).</p>
+      </div>
+      <div class="card gold">
+        <h3>Enterprise</h3>
+        <p>Für große Unternehmen, individuelle Lizenzmodelle, Vollintegration (z.B. Shopware, SAP Commerce).</p>
+      </div>
+    </div>
+    <div class="svg-wrap" style="margin-top:18px">
+      <svg width="560" height="60" viewBox="0 0 560 60">
+        <rect x="0" y="20" width="160" height="30" rx="8" fill="#3B82F6"/>
+        <text x="80" y="40" text-anchor="middle" fill="#F59E0B" font-size="12" font-weight="700">Klein / Einsteiger</text>
+        <polygon points="160,20 185,35 160,50" fill="#2563EB"/>
+        <rect x="185" y="20" width="170" height="30" rx="8" fill="#3B82F6"/>
+        <text x="270" y="40" text-anchor="middle" fill="#1E293B" font-size="12" font-weight="700">Mittelstand</text>
+        <polygon points="355,20 380,35 355,50" fill="#2563EB"/>
+        <rect x="380" y="20" width="180" height="30" rx="8" fill="#2563EB"/>
+        <text x="470" y="40" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Enterprise</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Shopify -->
+  <div class="slide slide-content" id="s6">
+    <div class="slide-title">Shopify</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="220" height="140" viewBox="0 0 220 140">
+            <rect x="10" y="10" width="200" height="120" rx="14" fill="#F8FAFC" stroke="#96bf48" stroke-width="2"/>
+            <text x="110" y="48" text-anchor="middle" fill="#96bf48" font-size="22" font-weight="900">Shopify</text>
+            <rect x="30" y="60" width="70" height="8" rx="4" fill="#3B82F6"/>
+            <rect x="30" y="74" width="50" height="8" rx="4" fill="#3B82F6" opacity="0.6"/>
+            <rect x="120" y="60" width="80" height="50" rx="8" fill="#96bf48" opacity="0.15" stroke="#96bf48" stroke-width="1"/>
+            <text x="160" y="92" text-anchor="middle" fill="#96bf48" font-size="11">SaaS</text>
+            <rect x="30" y="100" width="55" height="18" rx="6" fill="#96bf48"/>
+            <text x="57" y="113" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Kaufen</text>
+          </svg>
+        </div>
+        <div class="highlight-box" style="margin-top:10px">
+          <p>Shopify ist eine <strong>Cloud-basierte SaaS-Plattform</strong> aus Kanada (gegr. 2006). Über 4,6 Millionen aktive Shops weltweit (Shopify Inc., 2024).</p>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">+</div><span><strong>Einfache Einrichtung</strong> – kein technisches Vorwissen nötig</span></li>
+          <li><div class="icon gold">+</div><span><strong>App Store</strong> – über 8.000 Erweiterungen</span></li>
+          <li><div class="icon gold">+</div><span><strong>POS</strong> – Point-of-Sale für stationären Handel</span></li>
+          <li><div class="icon">−</div><span>Monatliche Kosten: Basic $29 – Advanced $299</span></li>
+          <li><div class="icon">−</div><span>Transaktionsgebühren bei Nicht-Shopify-Payments</span></li>
+          <li><div class="icon">−</div><span>Eingeschränkte Anpassbarkeit (Liquid-Template)</span></li>
+        </ul>
+        <p class="cite" style="margin-top:12px">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (13. Aufl., S. 142). Springer Gabler.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: WooCommerce -->
+  <div class="slide slide-content" id="s7">
+    <div class="slide-title">WooCommerce</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="220" height="140" viewBox="0 0 220 140">
+            <rect x="10" y="10" width="200" height="120" rx="14" fill="#F8FAFC" stroke="#7f54b3" stroke-width="2"/>
+            <text x="110" y="48" text-anchor="middle" fill="#7f54b3" font-size="18" font-weight="900">WooCommerce</text>
+            <rect x="25" y="58" width="170" height="2" rx="1" fill="rgba(0,0,0,0.1)"/>
+            <rect x="30" y="68" width="40" height="40" rx="6" fill="#7f54b3" opacity="0.3"/>
+            <rect x="80" y="68" width="40" height="40" rx="6" fill="#7f54b3" opacity="0.3"/>
+            <rect x="130" y="68" width="40" height="40" rx="6" fill="#7f54b3" opacity="0.3"/>
+            <text x="50" y="93" text-anchor="middle" fill="#fff" font-size="9">Plugin</text>
+            <text x="100" y="93" text-anchor="middle" fill="#fff" font-size="9">Theme</text>
+            <text x="150" y="93" text-anchor="middle" fill="#fff" font-size="9">WP</text>
+            <text x="110" y="125" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9">Open-Source | WordPress</text>
+          </svg>
+        </div>
+        <div class="highlight-box" style="margin-top:10px">
+          <p>WooCommerce ist ein <strong>WordPress-Plugin</strong> (Open-Source, seit 2011). Es betreibt ca. 23 % aller Online-Shops weltweit (BuiltWith, 2024).</p>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">+</div><span><strong>Kostenlos</strong> als Basis-Plugin (nur Hosting)</span></li>
+          <li><div class="icon gold">+</div><span>Riesiges Plugin-Ökosystem (WordPress)</span></li>
+          <li><div class="icon gold">+</div><span>Volle Kontrolle über Code und Daten</span></li>
+          <li><div class="icon blue">+</div><span>SEO-Stärke durch WordPress</span></li>
+          <li><div class="icon">−</div><span>Technisches Know-how für Wartung nötig</span></li>
+          <li><div class="icon">−</div><span>Performance-Optimierung oft aufwendig</span></li>
+        </ul>
+        <p class="cite" style="margin-top:12px">Kollmann, T. (2022). <em>E-Business</em> (8. Aufl., S. 71). Springer Gabler.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Magento -->
+  <div class="slide slide-content" id="s8">
+    <div class="slide-title">Magento / Adobe Commerce</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="220" height="140" viewBox="0 0 220 140">
+            <rect x="10" y="10" width="200" height="120" rx="14" fill="#F8FAFC" stroke="#f26322" stroke-width="2"/>
+            <polygon points="110,25 130,55 110,85 90,55" fill="#f26322" opacity="0.8"/>
+            <polygon points="90,55 110,85 90,115" fill="#f26322" opacity="0.5"/>
+            <polygon points="130,55 110,85 130,115" fill="#f26322" opacity="0.3"/>
+            <text x="110" y="132" text-anchor="middle" fill="#f26322" font-size="11" font-weight="700">Adobe Commerce</text>
+          </svg>
+        </div>
+        <div class="highlight-box" style="margin-top:10px">
+          <p>Magento (seit 2018 Adobe Commerce) ist eine <strong>Enterprise-Open-Source-Plattform</strong>. Adobe Commerce Cloud ist die kostenpflichtige Enterprise-Version.</p>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">+</div><span>Extrem <strong>skalierbar</strong> – geeignet für große Kataloge</span></li>
+          <li><div class="icon gold">+</div><span>Multi-Store, Mehrsprachigkeit, Multi-Währung</span></li>
+          <li><div class="icon gold">+</div><span>Starkes B2B-Feature-Set</span></li>
+          <li><div class="icon">−</div><span>Hohe Entwicklungskosten (PHP/Zend-Kenntnisse)</span></li>
+          <li><div class="icon">−</div><span>Adobe Commerce: ab ~$22.000/Jahr Lizenz</span></li>
+          <li><div class="icon">−</div><span>Komplexe Server-Anforderungen</span></li>
+        </ul>
+        <p class="cite" style="margin-top:12px">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl., S. 193). Springer Gabler.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Shopware -->
+  <div class="slide slide-content" id="s9">
+    <div class="slide-title">Shopware</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="220" height="140" viewBox="0 0 220 140">
+            <rect x="10" y="10" width="200" height="120" rx="14" fill="#F8FAFC" stroke="#189eff" stroke-width="2"/>
+            <path d="M50 80 Q80 30 110 70 Q140 110 170 60" stroke="#189eff" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="50" cy="80" r="5" fill="#189eff"/>
+            <circle cx="110" cy="70" r="5" fill="#189eff"/>
+            <circle cx="170" cy="60" r="5" fill="#F59E0B"/>
+            <text x="110" y="120" text-anchor="middle" fill="#189eff" font-size="13" font-weight="700">Shopware 6</text>
+            <text x="110" y="134" text-anchor="middle" fill="rgba(0,0,0,0.35)" font-size="9">Made in Germany</text>
+          </svg>
+        </div>
+        <div class="highlight-box" style="margin-top:10px">
+          <p>Shopware (gegr. 2000, Schöppingen) ist eine <strong>deutsche E-Commerce-Plattform</strong> mit Open-Source-Community-Edition. Shopware 6 basiert auf Symfony &amp; Vue.js.</p>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">+</div><span><strong>DSGVO-konform</strong> by Design (German Engineering)</span></li>
+          <li><div class="icon gold">+</div><span>Headless-Commerce-fähig (API-first)</span></li>
+          <li><div class="icon gold">+</div><span>Starke B2C &amp; B2B Funktionen</span></li>
+          <li><div class="icon blue">+</div><span>Community-Edition kostenfrei</span></li>
+          <li><div class="icon">−</div><span>Kleineres globales Ökosystem als Magento</span></li>
+          <li><div class="icon">−</div><span>Enterprise-Pläne kostenintensiv</span></li>
+        </ul>
+        <p class="cite" style="margin-top:12px">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (13. Aufl., S. 149). Springer Gabler.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE NEW: OXID eSales -->
+  <div class="slide slide-content" id="s_oxid">
+    <div class="slide-title">OXID eSales</div>
+    <div class="two-col">
+      <div>
+        <div class="highlight-box">
+          <p><strong>OXID eSales</strong> ist eine deutsche Open-Source-E-Commerce-Plattform (gegr. 1999, Freiburg). Besonders stark im <strong>B2B-Bereich</strong> und bekannt für DSGVO-Konformität und hohe Anpassbarkeit.</p>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Stärken im B2B</h3>
+          <ul>
+            <li>Kundenspezifische Preislisten</li>
+            <li>Staffelpreise und Mengenrabatte</li>
+            <li>Benutzerrollen und Unterkonten</li>
+            <li>ERP-Integration (SAP, Microsoft Dynamics)</li>
+            <li>Mehrsprachigkeit & Multi-Mandanten</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">+</div><span><strong>Made in Germany</strong> – 100 % DSGVO-konform by design</span></li>
+          <li><div class="icon gold">+</div><span>Open Source Community Edition verfügbar</span></li>
+          <li><div class="icon gold">+</div><span>Modulares Baukastenprinzip</span></li>
+          <li><div class="icon gold">+</div><span>Starker B2B-Fokus (Großhandelsfunktionen)</span></li>
+          <li><div class="icon">−</div><span>Weniger Marktanteile weltweit als Shopify/Magento</span></li>
+          <li><div class="icon">−</div><span>Variabel: Lizenzkosten je nach Ausbaustufe</span></li>
+        </ul>
+        <div class="card gold" style="margin-top:14px">
+          <h3>Typische Kunden</h3>
+          <p>Mittelständische B2B-Händler in der DACH-Region; Großhändler; Unternehmen mit komplexen Preisstrukturen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE NEW: Shopware Praxisbeispiel -->
+  <div class="slide slide-content" id="s_sw_praxis">
+    <div class="slide-title">Praxisbeispiel: Shopware in Deutschland</div>
+    <div class="two-col">
+      <div>
+        <div class="highlight-box">
+          <p><strong>Shopware</strong> wurde 2000 in Schöppingen gegründet und ist das führende Open-Source-Shopsystem im DACH-Raum. Shopware 6 basiert auf modernen Technologien: <strong>Symfony (PHP)</strong> und <strong>Vue.js</strong>.</p>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Bekannte Kunden</h3>
+          <ul>
+            <li>L'Oréal Deutschland</li>
+            <li>Mustang Jeans</li>
+            <li>FC Bayern München (Fan-Shop)</li>
+            <li>Tchibo Businessshop</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="content-grid grid-2" style="gap:10px">
+          <div class="card blue">
+            <h3>Community Edition</h3>
+            <p>Kostenlos; für KMU und Entwickler; voller Funktionsumfang für Einsteiger.</p>
+            <span class="tag-pill blue">Kostenlos</span>
+          </div>
+          <div class="card">
+            <h3>Rise Plan</h3>
+            <p>Ab ca. 600 EUR/Monat; erweiterte B2B-Funktionen, Multi-Channel, KI-Features.</p>
+            <span class="tag-pill">Enterprise</span>
+          </div>
+        </div>
+        <div class="card gold" style="margin-top:12px">
+          <h3>Warum Shopware für DACH?</h3>
+          <ul>
+            <li>DSGVO-Konformität eingebaut</li>
+            <li>Deutscher Kundensupport</li>
+            <li>EU-Serverstandorte</li>
+            <li>Aktive deutschsprachige Community</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (13. Aufl., S. 149). Springer Gabler. | Shopware AG. (2024). shopware.com</p>
+  </div>
+
+  <!-- SLIDE 10: Systemvergleich Tabelle -->
+  <div class="slide slide-content" id="s10">
+    <div class="slide-title">Systemvergleich auf einen Blick</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Kriterium</th>
+          <th>Shopify</th>
+          <th>WooCommerce</th>
+          <th>Magento</th>
+          <th>Shopware</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Lizenzmodell</td><td>SaaS</td><td>Open-Source</td><td>Open-Source / Enterprise</td><td>Open-Source / Enterprise</td></tr>
+        <tr><td>Zielgruppe</td><td>KMU / Starter</td><td>KMU / Blogger</td><td>Enterprise</td><td>KMU / Enterprise</td></tr>
+        <tr><td>Technikkenntnisse</td><td>Gering</td><td>Mittel</td><td>Hoch</td><td>Mittel–Hoch</td></tr>
+        <tr><td>Hosting</td><td>Inklusive</td><td>Selbst</td><td>Selbst / Cloud</td><td>Selbst / Cloud</td></tr>
+        <tr><td>DSGVO (DE)</td><td>Einschränkungen</td><td>Plugins nötig</td><td>Konfigurierbar</td><td>Sehr gut</td></tr>
+        <tr><td>Einstiegskosten</td><td>Ab $29/Monat</td><td>~$5–15/Monat Hosting</td><td>Hoch</td><td>Kostenlos (CE)</td></tr>
+        <tr><td>Marktanteil</td><td>~10 %</td><td>~23 %</td><td>~6 %</td><td>~4 % (DACH)</td></tr>
+      </tbody>
+    </table>
+    <p class="cite" style="margin-top:12px">Quelle: BuiltWith (2024); Kollmann, T. (2022). <em>E-Business</em> (8. Aufl., S. 70–72). Springer Gabler.</p>
+  </div>
+
+  <!-- SLIDE 11: SECTION – Technische Grundlagen -->
+  <div class="slide slide-section" id="s11">
+    <div class="section-label">Abschnitt 2</div>
+    <div class="section-title">Technische Grundlagen</div>
+    <div class="section-num">02</div>
+  </div>
+
+  <!-- SLIDE 12: Frontend vs Backend -->
+  <div class="slide slide-content" id="s12">
+    <div class="slide-title">Frontend vs. Backend</div>
+    <div class="svg-wrap">
+      <svg width="620" height="170" viewBox="0 0 620 170">
+        <!-- Frontend Box -->
+        <rect x="10" y="20" width="270" height="130" rx="12" fill="#F8FAFC" stroke="#3B82F6" stroke-width="2"/>
+        <text x="145" y="48" text-anchor="middle" fill="#F59E0B" font-size="14" font-weight="700">FRONTEND</text>
+        <text x="145" y="66" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="10">(Client-Side / Browser)</text>
+        <rect x="25" y="78" width="80" height="24" rx="6" fill="#3B82F6"/>
+        <text x="65" y="95" text-anchor="middle" fill="#fff" font-size="10">HTML/CSS</text>
+        <rect x="115" y="78" width="60" height="24" rx="6" fill="#3B82F6"/>
+        <text x="145" y="95" text-anchor="middle" fill="#fff" font-size="10">JavaScript</text>
+        <rect x="185" y="78" width="80" height="24" rx="6" fill="#3B82F6"/>
+        <text x="225" y="95" text-anchor="middle" fill="#fff" font-size="10">Templates</text>
+        <text x="145" y="130" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9">Produktseiten · Warenkorb · Design</text>
+        <!-- Arrow -->
+        <path d="M280 85 L340 85" stroke="#2563EB" stroke-width="2.5" marker-end="url(#arr)" stroke-dasharray="5,3"/>
+        <path d="M340 95 L280 95" stroke="#2563EB" stroke-width="2.5" marker-end="url(#arr2)" stroke-dasharray="5,3"/>
+        <text x="310" y="80" text-anchor="middle" fill="#2563EB" font-size="9">API</text>
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#2563EB"/>
+          </marker>
+          <marker id="arr2" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
+            <path d="M6,0 L0,3 L6,6 Z" fill="#2563EB"/>
+          </marker>
+        </defs>
+        <!-- Backend Box -->
+        <rect x="340" y="20" width="270" height="130" rx="12" fill="#F8FAFC" stroke="#2563EB" stroke-width="2"/>
+        <text x="475" y="48" text-anchor="middle" fill="#F59E0B" font-size="14" font-weight="700">BACKEND</text>
+        <text x="475" y="66" text-anchor="middle" fill="rgba(0,0,0,0.5)" font-size="10">(Server-Side)</text>
+        <rect x="355" y="78" width="70" height="24" rx="6" fill="#2563EB" opacity="0.7"/>
+        <text x="390" y="95" text-anchor="middle" fill="#fff" font-size="10">PHP/Python</text>
+        <rect x="435" y="78" width="60" height="24" rx="6" fill="#2563EB" opacity="0.7"/>
+        <text x="465" y="95" text-anchor="middle" fill="#fff" font-size="10">Datenbank</text>
+        <rect x="505" y="78" width="90" height="24" rx="6" fill="#2563EB" opacity="0.7"/>
+        <text x="550" y="95" text-anchor="middle" fill="#fff" font-size="10">Zahlungslogik</text>
+        <text x="475" y="130" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9">Bestellungen · Lager · Nutzer · Preise</text>
+      </svg>
+    </div>
+    <div class="content-grid grid-2" style="margin-top:4px">
+      <div class="card blue">
+        <h3>Frontend-Technologien</h3>
+        <p>HTML5 strukturiert Inhalte, CSS3 gestaltet das Layout, JavaScript ermöglicht Interaktivität. Moderne Shops nutzen Frameworks wie React oder Vue.js für schnelle UX.</p>
+      </div>
+      <div class="card">
+        <h3>Backend-Technologien</h3>
+        <p>PHP (WooCommerce, Magento), Node.js (Shopify), Symfony (Shopware). Datenbanken: MySQL / MariaDB für Produkt- und Bestelldaten.</p>
+      </div>
+    </div>
+    <p class="cite">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl., S. 198). Springer Gabler.</p>
+  </div>
+
+  <!-- SLIDE 13: Hosting -->
+  <div class="slide slide-content" id="s13">
+    <div class="slide-title">Hosting-Arten</div>
+    <div class="content-grid grid-3">
+      <div class="card blue">
+        <h3>Shared Hosting</h3>
+        <p>Mehrere Kunden teilen einen Server. Günstig (~3–10 €/Monat), aber geringe Performance. Geeignet für kleine Shops mit wenig Traffic.</p>
+        <div style="margin-top:10px">
+          <span class="tag-pill blue">Billig</span>
+          <span class="tag-pill blue">Begrenzt</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>VPS / Cloud</h3>
+        <p>Virtueller privater Server (z.B. Hetzner, AWS, Azure). Dedizierte Ressourcen, skalierbar. Ideal für wachsende Shops (~10–80 €/Monat).</p>
+        <div style="margin-top:10px">
+          <span class="tag-pill">Flexibel</span>
+          <span class="tag-pill">Skalierbar</span>
+        </div>
+      </div>
+      <div class="card gold">
+        <h3>Managed Hosting</h3>
+        <p>Anbieter übernimmt Administration, Updates und Sicherheit. Spezialisierte Anbieter für WooCommerce (Kinsta) oder Magento (Nexcess).</p>
+        <div style="margin-top:10px">
+          <span class="tag-pill gold">Wartungsfrei</span>
+          <span class="tag-pill gold">Teurer</span>
+        </div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:16px">
+      <p><strong>Wichtig:</strong> Serverstandort in Deutschland / EU bevorzugen (DSGVO-Anforderung). Hosting in den USA kann zu Datenschutzproblemen fuhren (Schrems II, EuGH 2020).</p>
+      <p class="cite">Karg, M., &amp; Thomsen, S. (2022). <em>Datenschutzrecht im E-Commerce</em> (3. Aufl., S. 44). Beck.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: SSL -->
+  <div class="slide slide-content" id="s14">
+    <div class="slide-title">SSL/TLS-Zertifikate</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="240" height="180" viewBox="0 0 240 180">
+            <rect x="20" y="10" width="200" height="160" rx="14" fill="#F8FAFC" stroke="#27ae60" stroke-width="2"/>
+            <!-- Lock -->
+            <rect x="85" y="70" width="70" height="60" rx="8" fill="#27ae60" opacity="0.8"/>
+            <path d="M95 70 Q95 45 120 45 Q145 45 145 70" fill="none" stroke="#27ae60" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="120" cy="100" r="8" fill="#F8FAFC"/>
+            <rect x="117" y="100" width="6" height="14" rx="3" fill="#F8FAFC"/>
+            <text x="120" y="155" text-anchor="middle" fill="#27ae60" font-size="12" font-weight="700">HTTPS ✓</text>
+            <text x="120" y="170" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="9">256-Bit Verschlüsselung</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">1</div><span><strong>SSL (Secure Sockets Layer)</strong> / TLS verschlüsselt die Datenübertragung zwischen Browser und Server.</span></li>
+          <li><div class="icon gold">2</div><span>Erkennbar am <strong>Schloss-Symbol</strong> und <code style="color:#F59E0B">https://</code> in der URL.</span></li>
+          <li><div class="icon gold">3</div><span>Seit 2018 markiert Google Chrome HTTP-Seiten als <strong>„Nicht sicher"</strong>.</span></li>
+          <li><div class="icon gold">4</div><span>Kostenlose Zertifikate via <strong>Let's Encrypt</strong>; kostenpflichtige Extended Validation (EV) für mehr Vertrauen.</span></li>
+          <li><div class="icon gold">5</div><span>Pflicht für Online-Shops: Ohne HTTPS = Abmahngefahr (§ 5 DDG).</span></li>
+        </ul>
+        <p class="cite" style="margin-top:12px">Bundesamt für Sicherheit in der Informationstechnik (BSI). (2023). <em>Sichere Nutzung von TLS</em>. BSI.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: SECTION – Rechtliche Pflichtangaben -->
+  <div class="slide slide-section" id="s15">
+    <div class="section-label">Abschnitt 3</div>
+    <div class="section-title">Rechtliche Pflichtangaben</div>
+    <div class="section-num">03</div>
+  </div>
+
+  <!-- SLIDE 16: Überblick Rechtliches -->
+  <div class="slide slide-content" id="s16">
+    <div class="slide-title">Rechtlicher Rahmen im E-Commerce (DE)</div>
+    <div class="content-grid grid-2">
+      <div class="card blue">
+        <h3>Digitale-Dienste-Gesetz (DDG, seit Mai 2024)</h3>
+        <p>Regelt Impressumspflicht (§ 5 DDG, seit Mai 2024; zuvor § 5 TMG) und Informationspflichten. Jeder kommerzielle Online-Auftritt benötigt ein vollständiges Impressum.</p>
+      </div>
+      <div class="card">
+        <h3>BGB – Fernabsatzrecht</h3>
+        <p>§§ 312b–312k BGB: Verbraucher haben im Fernabsatz ein <strong>14-tägiges Widerrufsrecht</strong> ohne Begründung.</p>
+      </div>
+      <div class="card gold">
+        <h3>DSGVO (seit 2018)</h3>
+        <p>Datenschutz-Grundverordnung – regelt Verarbeitung personenbezogener Daten. Verstöße: bis zu 4 % des weltweiten Jahresumsatzes Bußgeld.</p>
+      </div>
+      <div class="card blue">
+        <h3>UWG / Preisangaben-VO</h3>
+        <p>Wettbewerbsrecht: Preise müssen inkl. MwSt. und ggf. Versandkosten klar angegeben werden (PAngV). Irreführende Werbung ist verboten.</p>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:14px">Föhlisch, C. (2023). <em>Praxishandbuch Online-Handel</em> (5. Aufl., S. 23–45). O'Reilly.</p>
+  </div>
+
+  <!-- SLIDE NEW: IDA WPC Eselsbrücke -->
+  <div class="slide slide-content" id="s_idawp">
+    <div class="slide-title">Rechtliche Pflichten – IDA WPC</div>
+    <div class="highlight-box" style="margin-bottom:16px">
+      <p>&#128161; <strong>Eselsbrücke:</strong> <strong>I</strong>mmer <strong>D</strong>aran <strong>A</strong>rbeiten, <strong>W</strong>eil <strong>P</strong>flichten <strong>C</strong>ount! — Sechs Pflichten für jeden deutschen Online-Shop.</p>
+    </div>
+    <div class="content-grid grid-3" style="margin-bottom:12px">
+      <div class="card blue">
+        <h3>I – Impressum</h3>
+        <p>§ 5 DDG (seit 05/2024, zuvor § 5 TMG) — Name, Anschrift, E-Mail, USt-IdNr. Maximal 2 Klicks erreichbar. <strong>Fehlt es → Abmahngefahr!</strong></p>
+        <span class="tag-pill blue">Hoch</span>
+      </div>
+      <div class="card">
+        <h3>D – Datenschutz</h3>
+        <p>DSGVO Art. 13/14 — Welche Daten werden wie verarbeitet? Cookie-Banner mit Opt-in Pflicht.</p>
+        <span class="tag-pill">Hoch</span>
+      </div>
+      <div class="card gold">
+        <h3>A – AGB</h3>
+        <p>§§ 305–310 BGB — Zahlungsbedingungen, Lieferung, Haftung. Nie selbst formulieren – Händlerbund o.ä. nutzen!</p>
+        <span class="tag-pill gold">Mittel</span>
+      </div>
+    </div>
+    <div class="content-grid grid-3">
+      <div class="card blue">
+        <h3>W – Widerruf</h3>
+        <p>§§ 312g, 355 BGB — 14-tägiges Widerrufsrecht im B2C. Widerrufsbelehrung + Musterformular Pflicht.</p>
+        <span class="tag-pill blue">Hoch</span>
+      </div>
+      <div class="card">
+        <h3>P – Preise (PAngV)</h3>
+        <p>Preisangabenverordnung — Bruttopreise inkl. MwSt. und Versandkosten klar anzeigen.</p>
+        <span class="tag-pill">Mittel</span>
+      </div>
+      <div class="card gold">
+        <h3>C – Cookies (TDDDG)</h3>
+        <p>Einwilligung vor nicht-essenziellen Cookies (Opt-in). Cookie-Banner ist Pflicht.</p>
+        <span class="tag-pill gold">Mittel</span>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">Föhlisch, C. (2023). <em>Praxishandbuch Online-Handel</em> (5. Aufl., S. 23–68). O'Reilly.</p>
+  </div>
+
+  <!-- QUIZ SLIDE 1: Webshop & Shopsysteme -->
+  <div class="slide slide-content" id="s_quiz1" style="overflow-y:auto; padding-top:50px; background:linear-gradient(135deg,#FFFFFF 0%,#F1F5F9 100%);">
+    <div class="slide-title" style="color:#1E293B;">🧠 Zwischenquiz: Webshop & Shopsysteme</div>
+    <div style="max-width:820px;width:100%">
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">1. Was sind die drei Kernfunktionen eines Webshops?</p>
+        <div>
+          <button onclick="chk6a('q6a1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) Blog, Kontaktformular, Newsletter</button>
+          <button onclick="chk6a('q6a1',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) Warenkatalog, Warenkorb, Checkout/Bezahlung</button>
+          <button onclick="chk6a('q6a1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) Suche, Social Media, CRM</button>
+        </div>
+        <p id="q6a1-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">2. Was ist der Hauptvorteil einer SaaS-Lösung wie Shopify gegenüber Open Source?</p>
+        <div>
+          <button onclick="chk6a('q6a2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) Kostenlos und volle Datenkontrolle</button>
+          <button onclick="chk6a('q6a2',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) Sofort einsatzbereit, kein eigenes Hosting nötig, wenig technischer Aufwand</button>
+          <button onclick="chk6a('q6a2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) Maximale Anpassbarkeit und kein monatlicher Preis</button>
+        </div>
+        <p id="q6a2-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">3. Welches Shopsystem ist als „Made in Germany" bekannt und besonders im DACH-Raum verbreitet?</p>
+        <div>
+          <button onclick="chk6a('q6a3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) Shopify</button>
+          <button onclick="chk6a('q6a3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) Magento</button>
+          <button onclick="chk6a('q6a3',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) Shopware</button>
+        </div>
+        <p id="q6a3-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+    </div>
+    <script>
+    function chk6a(qid, btn, correct) {
+      btn.closest('div').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#c0392b';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+      if (!correct) {
+        btn.closest('div').querySelectorAll('button').forEach(b => {
+          if (b.onclick && b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- SLIDE 17: Impressum -->
+  <div class="slide slide-content" id="s17">
+    <div class="slide-title">Impressum – Pflichtangaben (§ 5 DDG, seit 05/2024)</div>
+    <div class="two-col">
+      <ul class="bullet-list">
+        <li><div class="icon blue">✓</div><span>Vollständiger Name oder Firmenname</span></li>
+        <li><div class="icon blue">✓</div><span>Ladungsfähige Postanschrift (kein Postfach)</span></li>
+        <li><div class="icon blue">✓</div><span>E-Mail-Adresse (telefonische Erreichbarkeit empfohlen)</span></li>
+        <li><div class="icon blue">✓</div><span>Handelsregisternummer (bei eingetragenen Unternehmen)</span></li>
+        <li><div class="icon blue">✓</div><span>USt-IdNr. oder Steuernummer (§ 27a UStG)</span></li>
+        <li><div class="icon blue">✓</div><span>Aufsichtsbehörde (bei genehmigungspflichtigen Berufen)</span></li>
+        <li><div class="icon blue">✓</div><span>Angabe der EU-Streitschlichtungsplattform (ODR)</span></li>
+      </ul>
+      <div>
+        <div class="highlight-box">
+          <p><strong>Zwei-Klick-Regel:</strong> Das Impressum muss von jeder Seite des Shops aus mit <strong>maximal zwei Klicks</strong> erreichbar sein. Typischer Platz: Footer der Website.</p>
+        </div>
+        <div class="highlight-box" style="margin-top:12px;border-left-color:#2563EB">
+          <p><strong>Abmahnrisiko:</strong> Fehlendes oder fehlerhaftes Impressum ist einer der häufigsten Abmahngründe im deutschen E-Commerce. Kosten: €500–€1.500.</p>
+          <p class="cite">Föhlisch, C. (2023). <em>Praxishandbuch Online-Handel</em> (5. Aufl., S. 29). O'Reilly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: DSGVO -->
+  <div class="slide slide-content" id="s18">
+    <div class="slide-title">DSGVO – Datenschutz im Shop</div>
+    <div class="content-grid grid-3">
+      <div class="card blue">
+        <h3>Datenschutzerklärung</h3>
+        <p>Pflicht auf jeder Website. Muss erklären: welche Daten gesammelt, warum, wie lange gespeichert, wer Empfänger ist.</p>
+      </div>
+      <div class="card">
+        <h3>Cookie-Consent</h3>
+        <p>Nicht-essenzielle Cookies (Tracking, Marketing) erfordern aktive Einwilligung. Kein Opt-out reicht – Opt-in ist Pflicht (EuGH, 2019).</p>
+      </div>
+      <div class="card gold">
+        <h3>Auftragsverarbeitung</h3>
+        <p>AVV (Art. 28 DSGVO) mit allen Dienstleistern abschließen, die Kundendaten verarbeiten (Zahlungsanbieter, E-Mail-Tools).</p>
+      </div>
+    </div>
+    <div class="svg-wrap" style="margin-top:14px">
+      <svg width="580" height="70" viewBox="0 0 580 70">
+        <rect x="0" y="15" width="100" height="40" rx="8" fill="#F8FAFC" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="50" y="40" text-anchor="middle" fill="#1E293B" font-size="10">Erhebung</text>
+        <path d="M100 35 L130 35" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+        <defs><marker id="a1" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#2563EB"/></marker></defs>
+        <rect x="130" y="15" width="110" height="40" rx="8" fill="#F8FAFC" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="185" y="40" text-anchor="middle" fill="#1E293B" font-size="10">Verarbeitung</text>
+        <path d="M240 35 L270 35" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+        <rect x="270" y="15" width="100" height="40" rx="8" fill="#F8FAFC" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="320" y="40" text-anchor="middle" fill="#1E293B" font-size="10">Speicherung</text>
+        <path d="M370 35 L400 35" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+        <rect x="400" y="15" width="100" height="40" rx="8" fill="#F8FAFC" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="450" y="40" text-anchor="middle" fill="#F59E0B" font-size="10">Löschung</text>
+        <path d="M500 35 L530 35" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+        <rect x="530" y="15" width="50" height="40" rx="8" fill="#27ae60" opacity="0.7"/>
+        <text x="555" y="40" text-anchor="middle" fill="#fff" font-size="9">Konform</text>
+      </svg>
+    </div>
+    <p class="cite">Karg, M., &amp; Thomsen, S. (2022). <em>Datenschutzrecht im E-Commerce</em> (3. Aufl., S. 78–102). Beck.</p>
+  </div>
+
+  <!-- SLIDE 19: AGB -->
+  <div class="slide slide-content" id="s19">
+    <div class="slide-title">AGB – Allgemeine Geschäftsbedingungen</div>
+    <div class="two-col">
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon blue">1</div><span><strong>Vertragsgegenstand:</strong> Welche Leistungen werden angeboten?</span></li>
+          <li><div class="icon blue">2</div><span><strong>Vertragsschluss:</strong> Wann kommt der Kaufvertrag zustande? (§ 145 BGB)</span></li>
+          <li><div class="icon blue">3</div><span><strong>Preise &amp; Zahlungsbedingungen:</strong> Fälligkeit, Mahnkosten</span></li>
+          <li><div class="icon blue">4</div><span><strong>Lieferung:</strong> Lieferzeiten, Versandkosten, Gefahrübergang</span></li>
+          <li><div class="icon blue">5</div><span><strong>Gewährleistung:</strong> 2 Jahre gesetzliche Mängelhaftung</span></li>
+          <li><div class="icon blue">6</div><span><strong>Haftungsbeschränkung:</strong> soweit gesetzlich zulässig</span></li>
+          <li><div class="icon blue">7</div><span><strong>Gerichtsstand &amp; anwendbares Recht</strong></span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="highlight-box">
+          <p><strong>Einbeziehung der AGB:</strong> Kunde muss vor Vertragsschluss klar auf die AGB hingewiesen werden und aktiv zustimmen (Checkbox). Kein „stillschweigendes Einverständnis".</p>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Empfehlung</h3>
+          <p>AGB nie selbst formulieren – Abmahnfallen drohen! Zertifizierte Quellen: <strong>Händlerbund</strong>, <strong>IT-Recht Kanzlei</strong>, <strong>eRecht24</strong> (mit Update-Service).</p>
+        </div>
+        <p class="cite" style="margin-top:10px">Föhlisch, C. (2023). <em>Praxishandbuch Online-Handel</em> (5. Aufl., S. 52–68). O'Reilly.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: Widerruf -->
+  <div class="slide slide-content" id="s20">
+    <div class="slide-title">Widerrufsrecht im Fernabsatz</div>
+    <div class="step-flow">
+      <div class="step-box">
+        <h4>Kauf</h4>
+        <p>Vertragsschluss Online</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step-box">
+        <h4>Lieferung</h4>
+        <p>Ware beim Kunden</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step-box" style="border: 2px solid #F59E0B;">
+        <h4 style="color:#2563EB">14 Tage</h4>
+        <p>Widerrufsfrist ab Erhalt</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step-box">
+        <h4>Widerruf</h4>
+        <p>Schriftlich / Formular</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step-box">
+        <h4>Rücksendung</h4>
+        <p>14 Tage Zeit</p>
+      </div>
+      <div class="step-arrow">&#8594;</div>
+      <div class="step-box">
+        <h4>Erstattung</h4>
+        <p>Innerhalb 14 Tage</p>
+      </div>
+    </div>
+    <div class="content-grid grid-2" style="margin-top:16px">
+      <div class="card blue">
+        <h3>Pflichten des Händlers</h3>
+        <ul>
+          <li>Widerrufsbelehrung vor Vertragsschluss (§ 312d BGB)</li>
+          <li>Musterwiderrufsformular bereitstellen</li>
+          <li>Rückzahlung binnen 14 Tagen (inkl. Hinversand)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Ausnahmen vom Widerrufsrecht</h3>
+        <ul>
+          <li>Individuell angefertigte Waren</li>
+          <li>Leicht verderbliche Waren</li>
+          <li>Entsiegelte Software / Hygieneprodukte</li>
+          <li>Digitale Inhalte (nach Download-Start)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">Spindler, G., &amp; Schuster, F. (Hrsg.). (2022). <em>Recht der elektronischen Medien</em> (4. Aufl., S. 312). Beck.</p>
+  </div>
+
+  <!-- QUIZ SLIDE 2: Rechtliches im E-Commerce -->
+  <div class="slide slide-content" id="s_quiz2" style="overflow-y:auto; padding-top:50px; background:linear-gradient(135deg,#FFFFFF 0%,#F1F5F9 100%);">
+    <div class="slide-title" style="color:#1E293B;">🧠 Zwischenquiz: Recht im Online-Shop</div>
+    <div style="max-width:820px;width:100%">
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">1. Welches Gesetz schreibt das Impressum für Online-Shops vor?</p>
+        <div>
+          <button onclick="chk6b('q6b1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) BGB § 145</button>
+          <button onclick="chk6b('q6b1',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) § 5 DDG (Digitale-Dienste-Gesetz, seit Mai 2024)</button>
+          <button onclick="chk6b('q6b1',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) DSGVO Art. 5</button>
+        </div>
+        <p id="q6b1-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">2. Wofür steht die Abkürzung DSGVO?</p>
+        <div>
+          <button onclick="chk6b('q6b2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) Digitale Sicherheits- und Grundschutz-Verordnung</button>
+          <button onclick="chk6b('q6b2',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) Datenschutz-Grundverordnung</button>
+          <button onclick="chk6b('q6b2',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) Datensicherheits-Grundverordnung Online</button>
+        </div>
+        <p id="q6b2-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+      <div style="background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:16px 20px;margin-bottom:14px;">
+        <p style="font-weight:bold;margin-bottom:8px;color:#1E293B;">3. Wie viele Tage hat ein Privatverbraucher im B2C-Fernabsatz das Widerrufsrecht?</p>
+        <div>
+          <button onclick="chk6b('q6b3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">A) 7 Tage</button>
+          <button onclick="chk6b('q6b3',this,true)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">B) 14 Tage</button>
+          <button onclick="chk6b('q6b3',this,false)" style="display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:#F1F5F9;border:1px solid rgba(0,0,0,0.15);border-radius:6px;color:#1E293B;cursor:pointer;">C) 30 Tage</button>
+        </div>
+        <p id="q6b3-result" style="margin-top:5px;font-weight:bold;display:none;"></p>
+      </div>
+    </div>
+    <script>
+    function chk6b(qid, btn, correct) {
+      btn.closest('div').querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.style.background = correct ? '#27ae60' : '#c0392b';
+      const result = document.getElementById(qid + '-result');
+      result.style.display = 'block';
+      result.style.color = correct ? '#2ecc71' : '#e74c3c';
+      result.textContent = correct ? '✅ Richtig!' : '❌ Falsch! Schau nochmal auf die vorherigen Folien.';
+      if (!correct) {
+        btn.closest('div').querySelectorAll('button').forEach(b => {
+          if (b.onclick && b.onclick.toString().includes('true')) b.style.background = '#27ae60';
+        });
+      }
+    }
+    </script>
+  </div>
+
+  <!-- SLIDE 21: SECTION – Checkout & Zahlung -->
+  <div class="slide slide-section" id="s21">
+    <div class="section-label">Abschnitt 4</div>
+    <div class="section-title">Checkout-Prozess &amp; Zahlungsarten</div>
+    <div class="section-num">04</div>
+  </div>
+
+  <!-- SLIDE 22: Checkout-Prozess -->
+  <div class="slide slide-content" id="s22">
+    <div class="slide-title">Der Checkout-Prozess</div>
+    <div class="svg-wrap">
+      <svg width="640" height="90" viewBox="0 0 640 90">
+        <defs>
+          <marker id="ca" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2563EB"/></marker>
+        </defs>
+        <!-- Steps -->
+        <rect x="5" y="20" width="88" height="50" rx="10" fill="#3B82F6"/>
+        <text x="49" y="48" text-anchor="middle" fill="#1E293B" font-size="10" font-weight="700">Warenkorb</text>
+        <text x="49" y="62" text-anchor="middle" fill="#64748B" font-size="9">Artikel prüfen</text>
+        <path d="M93 45 L113 45" stroke="#2563EB" stroke-width="2" marker-end="url(#ca)"/>
+
+        <rect x="113" y="20" width="88" height="50" rx="10" fill="#3B82F6"/>
+        <text x="157" y="48" text-anchor="middle" fill="#1E293B" font-size="10" font-weight="700">Anmeldung</text>
+        <text x="157" y="62" text-anchor="middle" fill="#64748B" font-size="9">Gast / Konto</text>
+        <path d="M201 45 L221 45" stroke="#2563EB" stroke-width="2" marker-end="url(#ca)"/>
+
+        <rect x="221" y="20" width="88" height="50" rx="10" fill="#3B82F6"/>
+        <text x="265" y="48" text-anchor="middle" fill="#1E293B" font-size="10" font-weight="700">Adresse</text>
+        <text x="265" y="62" text-anchor="middle" fill="#64748B" font-size="9">Liefer &amp; Rechnung</text>
+        <path d="M309 45 L329 45" stroke="#2563EB" stroke-width="2" marker-end="url(#ca)"/>
+
+        <rect x="329" y="20" width="88" height="50" rx="10" fill="#3B82F6"/>
+        <text x="373" y="48" text-anchor="middle" fill="#1E293B" font-size="10" font-weight="700">Versand</text>
+        <text x="373" y="62" text-anchor="middle" fill="#64748B" font-size="9">Methode wählen</text>
+        <path d="M417 45 L437 45" stroke="#2563EB" stroke-width="2" marker-end="url(#ca)"/>
+
+        <rect x="437" y="20" width="88" height="50" rx="10" fill="#2563EB"/>
+        <text x="481" y="48" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Zahlung</text>
+        <text x="481" y="62" text-anchor="middle" fill="rgba(0,0,0,0.7)" font-size="9">Methode &amp; Daten</text>
+        <path d="M525 45 L545 45" stroke="#2563EB" stroke-width="2" marker-end="url(#ca)"/>
+
+        <rect x="545" y="20" width="88" height="50" rx="10" fill="#27ae60" opacity="0.8"/>
+        <text x="589" y="48" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Bestellung</text>
+        <text x="589" y="62" text-anchor="middle" fill="rgba(0,0,0,0.7)" font-size="9">Bestätigung ✓</text>
+      </svg>
+    </div>
+    <div class="content-grid grid-2" style="margin-top:8px">
+      <div class="card blue">
+        <h3>One-Page-Checkout</h3>
+        <p>Alle Schritte auf einer Seite. Reduziert Kaufabbrüche (Baymard Institute: 70,19 % Abbruchrate im Schnitt). Shopify und WooCommerce bieten dies nativ an.</p>
+      </div>
+      <div class="card">
+        <h3>Pflichtinformationen im Checkout</h3>
+        <ul>
+          <li>Gesamtpreis inkl. MwSt. und Versand</li>
+          <li>Hinweis auf Widerrufsrecht</li>
+          <li>AGB-Zustimmung (Checkbox)</li>
+          <li>Datenschutzerklärung verlinkt</li>
+          <li>„Kaufen"-Button eindeutig beschriftet</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cite">Baymard Institute. (2024). <em>Cart abandonment rate statistics</em>. https://baymard.com</p>
+  </div>
+
+  <!-- SLIDE 23: Zahlungsarten -->
+  <div class="slide slide-content" id="s23">
+    <div class="slide-title">Zahlungsarten im E-Commerce</div>
+    <div class="content-grid grid-3">
+      <div class="card blue">
+        <h3>PayPal</h3>
+        <p>Beliebteste Methode in Deutschland (~74 % der Online-Käufer nutzen PayPal). Käuferschutz erhöht Vertrauen. Gebühren: ~1,5–3,4 % + €0,35.</p>
+        <span class="tag-pill blue">Beliebt</span>
+      </div>
+      <div class="card">
+        <h3>Kreditkarte (Stripe)</h3>
+        <p>Visa, Mastercard, Amex. International unverzichtbar. 3D-Secure (SCA) seit PSD2-Richtlinie 2019 Pflicht in der EU.</p>
+        <span class="tag-pill">International</span>
+      </div>
+      <div class="card gold">
+        <h3>Klarna / BNPL</h3>
+        <p>„Buy Now, Pay Later" – Rechnung, Ratenzahlung oder Sofortzahlung. Erhöht Konversionsrate, aber Forderungsausfall-Risiko.</p>
+        <span class="tag-pill gold">Trend</span>
+      </div>
+    </div>
+    <div class="content-grid grid-3" style="margin-top:12px">
+      <div class="card blue">
+        <h3>Vorkasse / Überweisung</h3>
+        <p>Kein Zahlungsausfallrisiko für Händler. Niedrige Conversion – Kunden warten nicht gern auf Zahlungseingang.</p>
+      </div>
+      <div class="card">
+        <h3>Nachnahme</h3>
+        <p>Zahlung bei Lieferung. Rückläufig (hohe Gebühren, Retourenrisiko). Noch relevant für bestimmte Zielgruppen.</p>
+      </div>
+      <div class="card gold">
+        <h3>Kauf auf Rechnung</h3>
+        <p>Beliebteste Zahlungsart in Deutschland (EHI, 2023). Höchstes Zahlungsausfallrisiko. Bonitätsprüfung empfohlen.</p>
+        <span class="tag-pill gold">DE Favorit</span>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">EHI Retail Institute. (2023). <em>E-Commerce-Markt Deutschland</em> (S. 34). EHI.</p>
+  </div>
+
+  <!-- SLIDE 24: PSD2 / Sicherheit -->
+  <div class="slide slide-content" id="s24">
+    <div class="slide-title">Zahlungssicherheit – PSD2 &amp; SCA</div>
+    <div class="two-col">
+      <div>
+        <div class="highlight-box">
+          <p><strong>PSD2</strong> (Payment Services Directive 2) – EU-Richtlinie, seit September 2019 in Kraft. Schreibt <strong>Starke Kundenauthentifizierung (SCA)</strong> vor.</p>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>3 Faktoren der SCA</h3>
+          <ul>
+            <li><strong>Wissen:</strong> Passwort, PIN</li>
+            <li><strong>Besitz:</strong> Smartphone, Chipkarte</li>
+            <li><strong>Inhärenz:</strong> Fingerabdruck, Face-ID</li>
+          </ul>
+          <p style="margin-top:8px">Mindestens 2 der 3 Faktoren müssen kombiniert werden.</p>
+        </div>
+      </div>
+      <div>
+        <div class="svg-wrap">
+          <svg width="240" height="200" viewBox="0 0 240 200">
+            <circle cx="120" cy="100" r="90" fill="none" stroke="#3B82F6" stroke-width="2" stroke-dasharray="8,4"/>
+            <circle cx="120" cy="100" r="55" fill="#F8FAFC" stroke="#2563EB" stroke-width="2"/>
+            <text x="120" y="95" text-anchor="middle" fill="#F59E0B" font-size="12" font-weight="700">SCA</text>
+            <text x="120" y="112" text-anchor="middle" fill="#64748B" font-size="9">2 von 3</text>
+            <!-- Labels -->
+            <rect x="10" y="10" width="70" height="28" rx="6" fill="#3B82F6"/>
+            <text x="45" y="28" text-anchor="middle" fill="#fff" font-size="10">Wissen</text>
+            <rect x="160" y="10" width="70" height="28" rx="6" fill="#3B82F6"/>
+            <text x="195" y="28" text-anchor="middle" fill="#fff" font-size="10">Besitz</text>
+            <rect x="85" y="168" width="70" height="28" rx="6" fill="#2563EB" opacity="0.8"/>
+            <text x="120" y="186" text-anchor="middle" fill="#fff" font-size="10">Inhärenz</text>
+            <line x1="80" y1="30" x2="100" y2="65" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+            <line x1="195" y1="38" x2="160" y2="70" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+            <line x1="120" y1="168" x2="120" y2="155" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <p class="cite">Europäische Bankenaufsichtsbehörde (EBA). (2019). <em>Guidelines on strong customer authentication</em>. EBA/GL/2019/01.</p>
+  </div>
+
+  <!-- SLIDE: Checkout-Optimierung -->
+  <div class="slide slide-content" id="s_checkout_opt">
+    <div class="slide-title">Checkout-Optimierung – Warenkorbabbrüche reduzieren</div>
+    <div class="highlight-box" style="margin-bottom:18px;">
+      <strong>ca. 70 % aller Warenkörbe werden abgebrochen.</strong> Durch gezielte Maßnahmen lässt sich die Abbruchrate deutlich senken.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+      <div class="card">
+        <h3>1. Gastkauf ermöglichen</h3>
+        <p>Kein Pflicht-Kundenkonto – senkt die Einstiegshürde erheblich.</p>
+      </div>
+      <div class="card">
+        <h3>2. Versandkosten früh zeigen</h3>
+        <p>Überraschende Kosten im letzten Schritt sind der häufigste Abbruchgrund.</p>
+      </div>
+      <div class="card">
+        <h3>3. Fortschrittsanzeige</h3>
+        <p>Schritt-für-Schritt-Indikator gibt Orientierung und reduziert Unsicherheit.</p>
+      </div>
+      <div class="card">
+        <h3>4. Vertrauenssignale</h3>
+        <p>SSL-Schloss, Trusted Shops Siegel, bekannte Zahlungslogos sichtbar platzieren.</p>
+      </div>
+      <div class="card">
+        <h3>5. Abbruch-E-Mails</h3>
+        <p>Automatisierte Erinnerungs-Mail 1–2 h nach Abbruch — Wiederherstellungsrate bis zu 15 %.</p>
+      </div>
+      <div class="card">
+        <h3>6. Mobil optimieren</h3>
+        <p>Über 60 % der Käufe beginnen auf dem Smartphone — mobile-first Checkout ist Pflicht.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 25: SECTION – Produktkatalog -->
+  <div class="slide slide-section" id="s25">
+    <div class="section-label">Abschnitt 5</div>
+    <div class="section-title">Produktkatalog</div>
+    <div class="section-num">05</div>
+  </div>
+
+  <!-- SLIDE 26: Produktkatalog Struktur -->
+  <div class="slide slide-content" id="s26">
+    <div class="slide-title">Aufbau eines Produktkatalogs</div>
+    <div class="two-col">
+      <div>
+        <div class="svg-wrap">
+          <svg width="260" height="200" viewBox="0 0 260 200">
+            <!-- Tree structure -->
+            <rect x="90" y="5" width="80" height="30" rx="6" fill="#2563EB"/>
+            <text x="130" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Shop</text>
+            <line x1="130" y1="35" x2="60" y2="65" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>
+            <line x1="130" y1="35" x2="130" y2="65" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>
+            <line x1="130" y1="35" x2="200" y2="65" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>
+            <rect x="20" y="65" width="80" height="28" rx="6" fill="#3B82F6"/>
+            <text x="60" y="83" text-anchor="middle" fill="#fff" font-size="10">Kategorie A</text>
+            <rect x="90" y="65" width="80" height="28" rx="6" fill="#3B82F6"/>
+            <text x="130" y="83" text-anchor="middle" fill="#fff" font-size="10">Kategorie B</text>
+            <rect x="160" y="65" width="80" height="28" rx="6" fill="#3B82F6"/>
+            <text x="200" y="83" text-anchor="middle" fill="#fff" font-size="10">Kategorie C</text>
+            <line x1="60" y1="93" x2="40" y2="125" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+            <line x1="60" y1="93" x2="80" y2="125" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+            <rect x="10" y="125" width="60" height="24" rx="5" fill="#F8FAFC" stroke="#F59E0B" stroke-width="1"/>
+            <text x="40" y="141" text-anchor="middle" fill="#F59E0B" font-size="9">Produkt 1</text>
+            <rect x="50" y="125" width="60" height="24" rx="5" fill="#F8FAFC" stroke="#F59E0B" stroke-width="1"/>
+            <text x="80" y="141" text-anchor="middle" fill="#F59E0B" font-size="9">Produkt 2</text>
+            <text x="130" y="175" text-anchor="middle" fill="rgba(0,0,0,0.3)" font-size="9">Hierarchische Struktur</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <ul class="bullet-list">
+          <li><div class="icon gold">1</div><span><strong>Kategorisierung:</strong> logische Hierarchie (Hauptkat. → Subkat. → Produkt)</span></li>
+          <li><div class="icon gold">2</div><span><strong>Produktname:</strong> eindeutig, suchmaschinenoptimiert (SEO)</span></li>
+          <li><div class="icon gold">3</div><span><strong>Beschreibung:</strong> kurz (Teaser) + lang (Details), unique Content</span></li>
+          <li><div class="icon gold">4</div><span><strong>Bilder:</strong> min. 3–5 Bilder, weißer Hintergrund, Zoom-Funktion</span></li>
+          <li><div class="icon gold">5</div><span><strong>Attribute:</strong> Größe, Farbe, Material, Gewicht (Varianten)</span></li>
+          <li><div class="icon gold">6</div><span><strong>SKU</strong> (Stock Keeping Unit): eindeutige Artikelnummer</span></li>
+          <li><div class="icon gold">7</div><span><strong>Preis:</strong> Brutto, UVP, Staffelpreise, Sonderpreise</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">Kollmann, T. (2022). <em>E-Business</em> (8. Aufl., S. 73). Springer Gabler.</p>
+  </div>
+
+  <!-- SLIDE 27: Produktbeschreibung & SEO -->
+  <div class="slide slide-content" id="s27">
+    <div class="slide-title">Produktbeschreibung &amp; SEO</div>
+    <div class="content-grid grid-2">
+      <div class="card blue">
+        <h3>Must-haves einer guten Produktseite</h3>
+        <ul>
+          <li>H1-Headline mit Keyword</li>
+          <li>Meta-Title &amp; Meta-Description</li>
+          <li>Alt-Texte für alle Bilder</li>
+          <li>Strukturierte Daten (Schema.org)</li>
+          <li>Kundenbewertungen (Trust-Signal)</li>
+          <li>Lagerbestand / Lieferzeit anzeigen</li>
+          <li>Trust-Badges (SSL, Käuferschutz)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Duplicate-Content vermeiden</h3>
+        <p style="margin-bottom:8px">Identische Produktbeschreibungen auf mehreren Seiten schaden dem Google-Ranking (Panda-Algorithmus). Lösungen:</p>
+        <ul>
+          <li>Canonical-Tags setzen</li>
+          <li>Einzigartige Texte für jede Variante</li>
+          <li>Herstellertexte umschreiben</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:14px">
+      <p><strong>Conversion-Optimierung:</strong> Hochwertige Produktbilder steigern die Konversionsrate um bis zu 30 %. 360°-Ansicht und Video erhöhen die Verweildauer (Nielsen Norman Group, 2022).</p>
+      <p class="cite">Nielsen Norman Group. (2022). <em>E-commerce UX: Product page design</em>. https://nngroup.com</p>
+    </div>
+  </div>
+
+  <!-- SLIDE: Artikelstamm & Produkteintrag Checkliste -->
+  <div class="slide slide-content" id="s_artikelstamm">
+    <div class="slide-title">Artikelstamm – Produkteintrag Checkliste</div>
+    <div class="highlight-box" style="margin-bottom:18px;">
+      <strong>Gute Produktbilder erhöhen die Conversion Rate um bis zu 30 %.</strong> Ein vollständiger Artikelstamm ist die Basis für jeden erfolgreichen Webshop.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="card blue">
+        <h3>Pflichtfelder</h3>
+        <ul>
+          <li><strong>Produkttitel</strong> – präzise, keywordoptimiert</li>
+          <li><strong>Bilder</strong> – mind. 3–5 hochwertige Fotos</li>
+          <li><strong>Beschreibung</strong> – 200–500 Wörter, einzigartig</li>
+          <li><strong>Preis</strong> inkl. MwSt. und ggf. Grundpreis</li>
+          <li><strong>Verfügbarkeit</strong> &amp; Lieferzeit</li>
+          <li><strong>SKU / EAN / GTIN</strong> – eindeutige Kennzeichnung</li>
+        </ul>
+      </div>
+      <div class="card gold">
+        <h3>Empfohlene Felder</h3>
+        <ul>
+          <li><strong>Varianten</strong> (Größe, Farbe, Material)</li>
+          <li><strong>Kundenbewertungen</strong> aktivieren</li>
+          <li><strong>Cross-Selling</strong> / Zubehör verknüpfen</li>
+          <li><strong>Meta-Title &amp; Description</strong> für SEO</li>
+          <li><strong>Alt-Texte</strong> für alle Bilder</li>
+          <li><strong>Versandgewicht &amp; Maße</strong> für Versandkalkulation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 28: Lagerverwaltung & Varianten -->
+  <div class="slide slide-content" id="s28">
+    <div class="slide-title">Lagerverwaltung &amp; Produktvarianten</div>
+    <div class="content-grid grid-2">
+      <div class="card blue">
+        <h3>Bestandsverwaltung (Inventory)</h3>
+        <ul>
+          <li>Lagerbestand in Echtzeit tracken</li>
+          <li>Automatische Bestandswarnung (Reorder Point)</li>
+          <li>Mehrlagerverwaltung (Multi-Warehouse)</li>
+          <li>Barcode/RFID-Integration</li>
+          <li>Anbindung ERP (SAP, Sage, DATEV)</li>
+        </ul>
+      </div>
+      <div class="card gold">
+        <h3>Produktvarianten</h3>
+        <p style="margin-bottom:8px">Ein Produkt mit mehreren Ausprägungen (Größe S/M/L, Farbe rot/blau) sollte als <strong>Variantenartikel</strong> angelegt werden:</p>
+        <ul>
+          <li>Jede Variante hat eigene SKU &amp; EAN</li>
+          <li>Eigener Bestand je Variante</li>
+          <li>Ggf. unterschiedliche Preise</li>
+          <li>Kombinationsmatrix in Backend</li>
+        </ul>
+      </div>
+    </div>
+    <div class="svg-wrap" style="margin-top:14px">
+      <svg width="500" height="60" viewBox="0 0 500 60">
+        <rect x="0" y="10" width="100" height="40" rx="8" fill="#F8FAFC" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="50" y="35" text-anchor="middle" fill="#1E293B" font-size="11">Stammprodukt</text>
+        <line x1="100" y1="30" x2="130" y2="15" stroke="#2563EB" stroke-width="1.5"/>
+        <line x1="100" y1="30" x2="130" y2="30" stroke="#2563EB" stroke-width="1.5"/>
+        <line x1="100" y1="30" x2="130" y2="45" stroke="#2563EB" stroke-width="1.5"/>
+        <rect x="130" y="5" width="100" height="20" rx="5" fill="#3B82F6" opacity="0.8"/>
+        <text x="180" y="19" text-anchor="middle" fill="#fff" font-size="9">SKU-001 | Größe S</text>
+        <rect x="130" y="20" width="100" height="20" rx="5" fill="#3B82F6" opacity="0.8"/>
+        <text x="180" y="34" text-anchor="middle" fill="#fff" font-size="9">SKU-002 | Größe M</text>
+        <rect x="130" y="35" width="100" height="20" rx="5" fill="#3B82F6" opacity="0.8"/>
+        <text x="180" y="49" text-anchor="middle" fill="#fff" font-size="9">SKU-003 | Größe L</text>
+        <line x1="230" y1="15" x2="260" y2="15" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+        <line x1="230" y1="30" x2="260" y2="30" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+        <line x1="230" y1="45" x2="260" y2="45" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+        <rect x="260" y="5" width="80" height="20" rx="5" fill="#2563EB" opacity="0.7"/>
+        <text x="300" y="19" text-anchor="middle" fill="#fff" font-size="9">Bestand: 12</text>
+        <rect x="260" y="20" width="80" height="20" rx="5" fill="#2563EB" opacity="0.7"/>
+        <text x="300" y="34" text-anchor="middle" fill="#fff" font-size="9">Bestand: 5</text>
+        <rect x="260" y="35" width="80" height="20" rx="5" fill="#27ae60" opacity="0.7"/>
+        <text x="300" y="49" text-anchor="middle" fill="#fff" font-size="9">Bestand: 0 !</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SLIDE 29: Einrichtung Schritt für Schritt -->
+  <div class="slide slide-content" id="s29">
+    <div class="slide-title">Webshop einrichten – Schritt für Schritt</div>
+    <div class="content-grid grid-2">
+      <div class="card blue">
+        <h3>Phase 1: Planung &amp; Auswahl</h3>
+        <ul>
+          <li>Zielgruppe &amp; Geschäftsmodell definieren</li>
+          <li>Systemauswahl (SaaS / Open-Source)</li>
+          <li>Domain registrieren (.de / .com)</li>
+          <li>Hosting buchen (EU-Server!)</li>
+          <li>SSL-Zertifikat einrichten</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Phase 2: Technische Einrichtung</h3>
+        <ul>
+          <li>Shop-System installieren / Account anlegen</li>
+          <li>Theme / Template auswählen &amp; anpassen</li>
+          <li>Zahlungsanbieter anbinden (PayPal, Stripe)</li>
+          <li>Versanddienstleister konfigurieren</li>
+          <li>E-Mail-Transaktions-System (SMTP)</li>
+        </ul>
+      </div>
+      <div class="card gold">
+        <h3>Phase 3: Rechtliches</h3>
+        <ul>
+          <li>Impressum, AGB, Datenschutz einpflegen</li>
+          <li>Cookie-Consent-Tool einrichten</li>
+          <li>Widerrufsbelehrung &amp; Musterformular</li>
+          <li>Preisangaben korrekt (PAngV)</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3>Phase 4: Launch</h3>
+        <ul>
+          <li>Produkte anlegen &amp; Katalog strukturieren</li>
+          <li>Testbestellungen durchführen</li>
+          <li>Google Analytics / Search Console einrichten</li>
+          <li>SEO-Grundoptimierung</li>
+          <li>Go-Live &amp; Marketing starten</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">Heinemann, G. (2023). <em>Der neue Online-Handel</em> (13. Aufl., S. 162). Springer Gabler.</p>
+  </div>
+
+  <!-- SLIDE 30: Conversion-Optimierung -->
+  <div class="slide slide-content" id="s30">
+    <div class="slide-title">Conversion-Rate-Optimierung (CRO)</div>
+    <div class="highlight-box">
+      <p>Die <strong>Conversion Rate</strong> (CR) gibt an, wie viele Besucher eine gewünschte Aktion (Kauf) tätigen. Durchschnittliche CR im E-Commerce: <strong>2–3 %</strong> (IRP Commerce, 2024).</p>
+      <p style="margin-top:6px">CR = (Anzahl Käufe ÷ Besucher) × 100</p>
+    </div>
+    <div class="content-grid grid-3" style="margin-top:14px">
+      <div class="card blue">
+        <h3>Trust-Signale</h3>
+        <ul>
+          <li>Kundenbewertungen (Trusted Shops)</li>
+          <li>Gütesiegel (TÜV, EHI)</li>
+          <li>Sichere Zahlung Icons</li>
+          <li>Kostenloser Versand / Rückgabe</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>UX-Optimierung</h3>
+        <ul>
+          <li>Mobile-First Design</li>
+          <li>Ladezeit &lt; 3 Sekunden (Core Web Vitals)</li>
+          <li>Klare Call-to-Action Buttons</li>
+          <li>Suchfunktion mit Autocomplete</li>
+        </ul>
+      </div>
+      <div class="card gold">
+        <h3>Personalisierung</h3>
+        <ul>
+          <li>„Kunden kauften auch …"</li>
+          <li>Zuletzt angesehene Produkte</li>
+          <li>Dynamische Preise / Rabatte</li>
+          <li>Abandoned-Cart-E-Mails</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cite" style="margin-top:10px">IRP Commerce. (2024). <em>Global ecommerce conversion rate benchmarks</em>. https://irpcommerce.com</p>
+  </div>
+
+  <!-- SLIDE 31: Wiederholung / Übung -->
+  <div class="slide slide-content" id="s31">
+    <div class="slide-title">Wiederholungsfragen</div>
+    <div class="content-grid grid-2">
+      <div class="card blue">
+        <h3>Frage 1</h3>
+        <p>Nennen Sie vier gängige Webshop-Systeme und ordnen Sie je ein Merkmal zu.</p>
+      </div>
+      <div class="card">
+        <h3>Frage 2</h3>
+        <p>Was ist der Unterschied zwischen Frontend und Backend im Kontext eines Webshops?</p>
+      </div>
+      <div class="card gold">
+        <h3>Frage 3</h3>
+        <p>Welche Pflichtangaben muss ein deutsches Online-Shop-Impressum gemäß § 5 DDG (seit Mai 2024, zuvor § 5 TMG) enthalten?</p>
+      </div>
+      <div class="card blue">
+        <h3>Frage 4</h3>
+        <p>Wie lange beträgt die Widerrufsfrist im Fernabsatz und welche Ausnahmen gibt es?</p>
+      </div>
+      <div class="card">
+        <h3>Frage 5</h3>
+        <p>Was bedeutet SCA im Zusammenhang mit PSD2 und welche drei Faktoren werden unterschieden?</p>
+      </div>
+      <div class="card gold">
+        <h3>Frage 6</h3>
+        <p>Was versteht man unter einer SKU und warum ist sie im Produktkatalog wichtig?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ 3: Checkout, Zahlungsarten & Produktkatalog -->
+  <div class="slide quiz-slide" id="s_quiz3" style="background:linear-gradient(135deg,#FFFFFF 0%,#F1F5F9 100%);justify-content:flex-start;align-items:stretch;overflow-y:auto;padding:40px 80px 60px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:inline-block;background:var(--accent);color:#fff;font-size:.8rem;font-weight:700;letter-spacing:.12em;padding:6px 18px;border-radius:20px;margin-bottom:10px;">ZWISCHENQUIZ 3</div>
+      <h2 style="color:#1E293B;font-size:2rem;margin:0;">Checkout, Zahlung &amp; Produktkatalog</h2>
+    </div>
+    <div id="q6a_feedback" style="display:none;padding:12px 18px;border-radius:8px;font-weight:700;font-size:1rem;margin-bottom:16px;"></div>
+    <div style="background:rgba(0,0,0,.07);border-radius:12px;padding:22px 26px;margin-bottom:18px;">
+      <p style="color:#334155;font-weight:600;margin:0 0 14px;">1. Wie hoch ist die durchschnittliche Warenkorbabbruchrate im E-Commerce?</p>
+      <div id="q6a_btns" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="chk6c('q6a',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">ca. 30 %</button>
+        <button onclick="chk6c('q6a',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">ca. 50 %</button>
+        <button onclick="chk6c('q6a',true,this)"  style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">ca. 70 %</button>
+        <button onclick="chk6c('q6a',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">ca. 90 %</button>
+      </div>
+    </div>
+    <div id="q6b_feedback" style="display:none;padding:12px 18px;border-radius:8px;font-weight:700;font-size:1rem;margin-bottom:16px;"></div>
+    <div style="background:rgba(0,0,0,.07);border-radius:12px;padding:22px 26px;margin-bottom:18px;">
+      <p style="color:#334155;font-weight:600;margin:0 0 14px;">2. Welche Zahlungsart hat in Deutschland die höchste Akzeptanz beim Online-Kauf?</p>
+      <div id="q6b_btns" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="chk6c('q6b',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">Kreditkarte</button>
+        <button onclick="chk6c('q6b',true,this)"  style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">PayPal</button>
+        <button onclick="chk6c('q6b',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">Rechnung</button>
+        <button onclick="chk6c('q6b',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">Vorkasse</button>
+      </div>
+    </div>
+    <div id="q6c_feedback" style="display:none;padding:12px 18px;border-radius:8px;font-weight:700;font-size:1rem;margin-bottom:16px;"></div>
+    <div style="background:rgba(0,0,0,.07);border-radius:12px;padding:22px 26px;margin-bottom:18px;">
+      <p style="color:#334155;font-weight:600;margin:0 0 14px;">3. Um wie viel Prozent können gute Produktbilder die Conversion Rate erhöhen?</p>
+      <div id="q6c_btns" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="chk6c('q6c',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">bis zu 10 %</button>
+        <button onclick="chk6c('q6c',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">bis zu 20 %</button>
+        <button onclick="chk6c('q6c',true,this)"  style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">bis zu 30 %</button>
+        <button onclick="chk6c('q6c',false,this)" style="padding:10px 18px;border-radius:8px;border:2px solid #CBD5E1;background:#FFFFFF;color:#1E293B;cursor:pointer;font-size:.95rem;">bis zu 50 %</button>
+      </div>
+    </div>
+    <script>
+    function chk6c(qid, correct, btn) {
+      var container = document.getElementById(qid + '_btns');
+      var btns = container.querySelectorAll('button');
+      btns.forEach(function(b) {
+        b.disabled = true;
+        b.style.opacity = '0.5';
+        b.style.cursor = 'default';
+      });
+      btn.style.opacity = '1';
+      btn.style.background = correct ? '#27ae60' : '#c0392b';
+      btn.style.borderColor = correct ? '#27ae60' : '#c0392b';
+      if (!correct) {
+        btns.forEach(function(b) {
+          if (b.onclick && b.onclick.toString().indexOf('true') !== -1) {
+            b.style.background = '#27ae60';
+            b.style.borderColor = '#27ae60';
+            b.style.opacity = '1';
+          }
+        });
+      }
+      var fb = document.getElementById(qid + '_feedback');
+      fb.style.display = 'block';
+      fb.style.background = correct ? 'rgba(39,174,96,.25)' : 'rgba(192,57,43,.25)';
+      fb.style.color = correct ? '#2ecc71' : '#e74c3c';
+      fb.style.border = '1px solid ' + (correct ? '#27ae60' : '#c0392b');
+      fb.textContent = correct
+        ? '✓ Richtig!'
+        : qid === 'q6a' ? '✗ Falsch. Richtig: ca. 70 % aller Warenkörbe werden abgebrochen.'
+        : qid === 'q6b' ? '✗ Falsch. Richtig: PayPal ist die beliebteste Online-Zahlungsart in Deutschland.'
+        : '✗ Falsch. Richtig: Gute Produktbilder können die Conversion Rate um bis zu 30 % steigern.';
+    }
+    </script>
+  </div>
+
+  <!-- SLIDE 32: SECTION – Zusammenfassung -->
+  <div class="slide slide-section" id="s32">
+    <div class="section-label">Abschluss</div>
+    <div class="section-title">Zusammenfassung</div>
+    <div class="section-num">&#10003;</div>
+  </div>
+
+  <!-- SLIDE 33: Zusammenfassung -->
+  <div class="slide slide-content" id="s33">
+    <div class="slide-title">Zusammenfassung – Die wichtigsten Erkenntnisse</div>
+    <ul class="bullet-list">
+      <li><div class="icon gold">1</div><span><strong>Systemwahl:</strong> SaaS (Shopify) für Einsteiger, Open-Source (WooCommerce) für Flexibilität, Enterprise (Magento/Shopware) für große Kataloge.</span></li>
+      <li><div class="icon gold">2</div><span><strong>Technik:</strong> Frontend (HTML/CSS/JS) und Backend (PHP/DB) bilden zusammen den Shop. SSL/HTTPS ist Pflicht für Sicherheit und Vertrauen.</span></li>
+      <li><div class="icon gold">3</div><span><strong>Recht:</strong> Impressum (§ 5 DDG, seit 05/2024), Datenschutzerklärung (DSGVO), AGB, Widerrufsbelehrung und Cookie-Einwilligung (TDDDG) sind gesetzlich verpflichtend.</span></li>
+      <li><div class="icon gold">4</div><span><strong>Checkout:</strong> Maximal 6 klar strukturierte Schritte; Pflichtinfos vor Kaufabschluss anzeigen; starke Authentifizierung (SCA/PSD2).</span></li>
+      <li><div class="icon gold">5</div><span><strong>Produktkatalog:</strong> Eindeutige SKU, strukturierte Kategorien, hochwertige Bilder und SEO-optimierte Texte steigern Sichtbarkeit und Conversion.</span></li>
+    </ul>
+    <div class="highlight-box" style="margin-top:16px">
+      <p>"Der Aufbau eines erfolgreichen Online-Shops erfordert die Integration von technischem Know-how, rechtlichem Bewusstsein und kaufmännischem Denken" (Kollmann, T., 2022, S. 75).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 34: Literaturverzeichnis -->
+  <div class="slide slide-content" id="s34">
+    <div class="slide-title">Literaturverzeichnis</div>
+    <div style="width:100%;overflow-y:auto;max-height:62vh">
+      <p class="ref-entry">Baymard Institute. (2024). <em>Cart abandonment rate statistics</em>. Baymard Institute. https://baymard.com/lists/cart-abandonment-rate</p>
+      <p class="ref-entry">Bundesamt für Sicherheit in der Informationstechnik (BSI). (2023). <em>Technische Richtlinie TR-02102-2: Kryptographische Verfahren – Verwendung von Transport Layer Security (TLS)</em>. BSI.</p>
+      <p class="ref-entry">BuiltWith. (2024). <em>E-commerce usage distribution in the top 1 million sites</em>. BuiltWith Pty Ltd. https://builtwith.com/ecommerce</p>
+      <p class="ref-entry">EHI Retail Institute. (2023). <em>E-Commerce-Markt Deutschland 2023: Umsätze, Strategien, Trends</em>. EHI Retail Institute GmbH.</p>
+      <p class="ref-entry">Europäische Bankenaufsichtsbehörde (EBA). (2019). <em>Guidelines on strong customer authentication and common and secure methods of communication under PSD2</em> (EBA/GL/2019/01). EBA.</p>
+      <p class="ref-entry">Föhlisch, C. (2023). <em>Praxishandbuch Online-Handel: Rechtssicherer Shop-Aufbau und -Betrieb</em> (5. Aufl.). O'Reilly Media.</p>
+      <p class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (13. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-40487-1</p>
+      <p class="ref-entry">IRP Commerce. (2024). <em>Global ecommerce average conversion rate benchmarks</em>. IRP Commerce. https://irpcommerce.com/en/gb/ecommercestatistics.aspx</p>
+      <p class="ref-entry">Karg, M., &amp; Thomsen, S. (2022). <em>Datenschutzrecht im E-Commerce: DSGVO praxisnah</em> (3. Aufl.). C. H. Beck.</p>
+      <p class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-36124-2</p>
+      <p class="ref-entry">Nielsen Norman Group. (2022). <em>E-commerce UX: Product-page design</em>. Nielsen Norman Group. https://nngroup.com/articles/product-pages-ux</p>
+      <p class="ref-entry">Shopify Inc. (2024). <em>Shopify Q4 and full year 2023 financial results</em>. Shopify Inc. https://investors.shopify.com</p>
+      <p class="ref-entry">Spindler, G., &amp; Schuster, F. (Hrsg.). (2022). <em>Recht der elektronischen Medien: Kommentar</em> (4. Aufl.). C. H. Beck.</p>
+      <p class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler. https://doi.org/10.1007/978-3-658-33462-8</p>
+    </div>
+    <p class="cite" style="margin-top:8px">Alle Quellen zitiert nach APA 7th Edition.</p>
+  </div>
+
+  <!-- SLIDE 35: Ende -->
+  <div class="slide slide-cover" id="s35">
+    <div style="margin-bottom:28px">
+      <svg width="70" height="70" viewBox="0 0 70 70">
+        <circle cx="35" cy="35" r="33" fill="none" stroke="#F59E0B" stroke-width="2"/>
+        <path d="M20 35 L30 45 L50 25" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="cover-tag">Tag 6 &bull; Lernfeld 1</div>
+    <div class="cover-title" style="font-size:2.4rem">Vielen Dank für<br>eure Aufmerksamkeit!</div>
+    <div style="width:70px;height:3px;background:linear-gradient(90deg,#2563EB,#F59E0B);border-radius:2px;margin:24px auto;"></div>
+    <div class="cover-subtitle">Fragen? Anmerkungen? Diskussion!</div>
+    <div class="cover-meta" style="margin-top:30px">
+      <strong style="color:var(--accent)">1.7 Einrichtung eines Webshops</strong><br>
+      Buchseiten 68–75 &bull; E-Commerce Ausbildung<br><br>
+      Can Siebert &amp; Hamzah Meyer
+    </div>
+  </div>
+
+</div><!-- end slideshow -->
+
+<!-- Navigation -->
+<!-- Grid Overlay -->
+
+
+<!-- Navigation -->
+<!-- Grid Overlay -->
+<div id="grid-overlay">
+  <div id="grid-header">
+    <span>Folienübersicht</span>
+    <button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button>
+  </div>
+  <div id="grid-container"></div>
+</div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" title="Vorherige Folie (←)">&#8592;</button>
+  <span id="slide-counter">1 / 44</span>
+  <button id="btn-next" title="Nächste Folie (→)">&#8594;</button>
+  <button id="btn-grid" title="Folienübersicht (G)">&#8862;</button>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <span>1.7 Einrichtung eines Webshops &bull; Lernfeld 1</span>
+  <span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-left');
+  const prev = current;
+  current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + total;
+  document.getElementById('progress-bar').style.width = ((current+1)/total*100).toFixed(1) + '%';
+}
+
+document.getElementById('btn-next').addEventListener('click', () => goTo(current+1));
+document.getElementById('btn-prev').addEventListener('click', () => goTo(current-1));
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('visible')) {
+    if (e.key === 'Escape') toggleGrid();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current+1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total-1);
+  if (e.key.toLowerCase() === 'g') toggleGrid();
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchX;
+  if (Math.abs(diff) > 50) { diff < 0 ? goTo(current+1) : goTo(current-1); }
+});
+
+function toggleGrid() {
+  const o = document.getElementById('grid-overlay');
+  if (!o.classList.contains('visible')) buildGrid();
+  o.classList.toggle('visible');
+}
+
+function buildGrid() {
+  const c = document.getElementById('grid-container');
+  c.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'grid-thumb' + (i === current ? ' current' : '');
+    const t = s.querySelector('.slide-title,.cover-title,.section-title');
+    d.innerHTML = '<div class="grid-thumb-num">Folie '+(i+1)+'</div>'
+      + '<div class="grid-thumb-title">'+(t ? t.textContent.substring(0,40) : 'Folie '+(i+1))+'</div>';
+    d.onclick = () => { goTo(i); toggleGrid(); };
+    c.appendChild(d);
+  });
+}
+
+document.getElementById('btn-grid').addEventListener('click', toggleGrid);
+document.getElementById('progress-bar').style.width = ((1/total)*100).toFixed(1) + '%';
+document.getElementById('slide-counter').textContent = '1 / ' + total;
+</script>
+</body>
+</html>

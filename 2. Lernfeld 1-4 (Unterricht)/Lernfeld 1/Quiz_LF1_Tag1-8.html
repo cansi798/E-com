@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernfeld 1 Quiz - Tag 1 bis 8</title>
+<style>
+:root {
+  --red: #C0392B;
+  --dark: #1A1A2E;
+  --blue: #3498DB;
+  --orange: #F39C12;
+  --green: #27AE60;
+  --gray: #ECF0F1;
+  --white: #FFFFFF;
+  --shadow: 0 4px 15px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.15);
+  --radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--gray);
+  color: var(--dark);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Landing Page */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.landing-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: var(--shadow-lg);
+  max-width: 700px;
+  width: 100%;
+}
+
+.landing-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.landing-card h1 {
+  font-size: 2.4em;
+  color: var(--dark);
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.landing-card h1 span {
+  color: var(--blue);
+}
+
+.landing-card .subtitle {
+  font-size: 1.2em;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.tag-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.tag-overview-item {
+  background: var(--gray);
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 0.95em;
+  border-left: 4px solid var(--blue);
+  transition: var(--transition);
+}
+
+.tag-overview-item:hover {
+  transform: translateX(4px);
+  border-left-color: var(--orange);
+}
+
+.tag-overview-item strong {
+  color: var(--dark);
+}
+
+.btn-start {
+  background: linear-gradient(135deg, var(--blue), #2980B9);
+  color: var(--white);
+  border: none;
+  padding: 18px 60px;
+  font-size: 1.3em;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.btn-start:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(52, 152, 219, 0.5);
+}
+
+/* Quiz Page */
+.quiz-page {
+  display: none;
+  padding: 20px 0;
+}
+
+.quiz-header {
+  background: var(--dark);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 24px 30px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.quiz-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tag-title {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+
+.tag-badge {
+  background: var(--blue);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.score-display {
+  display: flex;
+  gap: 20px;
+  font-size: 0.95em;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.score-dot.correct { background: var(--green); }
+.score-dot.wrong { background: var(--red); }
+
+/* Progress Bar */
+.progress-container {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.progress-text {
+  text-align: right;
+  font-size: 0.8em;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+/* Question Card */
+.question-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.question-number {
+  display: inline-block;
+  background: var(--blue);
+  color: var(--white);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.question-text {
+  font-size: 1.15em;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--dark);
+  line-height: 1.5;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--gray);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  font-size: 1em;
+  color: var(--dark);
+  width: 100%;
+}
+
+.option-btn:hover:not(.disabled) {
+  border-color: var(--blue);
+  background: #EBF5FB;
+  transform: translateX(4px);
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--white);
+  font-weight: 700;
+  color: var(--dark);
+  flex-shrink: 0;
+  border: 2px solid #ddd;
+  transition: var(--transition);
+}
+
+.option-text {
+  flex: 1;
+}
+
+.option-btn.correct-answer {
+  background: #D5F5E3;
+  border-color: var(--green);
+}
+
+.option-btn.correct-answer .option-label {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+.option-btn.wrong-answer {
+  background: #FADBD8;
+  border-color: var(--red);
+}
+
+.option-btn.wrong-answer .option-label {
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
+}
+
+.option-btn.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.option-btn.correct-answer.disabled {
+  opacity: 1;
+}
+
+.feedback-msg {
+  margin-top: 14px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95em;
+  display: none;
+}
+
+.feedback-msg.correct {
+  background: #D5F5E3;
+  color: #1E8449;
+  display: block;
+}
+
+.feedback-msg.wrong {
+  background: #FADBD8;
+  color: #C0392B;
+  display: block;
+}
+
+/* Navigation */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-nav {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-nav:hover {
+  transform: translateY(-2px);
+}
+
+.btn-prev {
+  background: var(--white);
+  color: var(--dark);
+  border: 2px solid #ddd;
+}
+
+.btn-prev:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.btn-next {
+  background: linear-gradient(135deg, var(--blue), #2980B9);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-next:hover {
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+.btn-finish {
+  background: linear-gradient(135deg, var(--green), #229954);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.btn-finish:hover {
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+/* Tag Navigation Dots */
+.tag-nav-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tag-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  background: var(--white);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  color: var(--dark);
+}
+
+.tag-dot.active {
+  background: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+  transform: scale(1.1);
+}
+
+.tag-dot.completed {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+.tag-dot:hover {
+  transform: scale(1.1);
+  border-color: var(--blue);
+}
+
+/* Summary Page */
+.summary-page {
+  display: none;
+  padding: 20px 0;
+}
+
+.summary-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.summary-card h2 {
+  font-size: 2em;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.summary-subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+}
+
+.total-score {
+  font-size: 3.5em;
+  font-weight: 800;
+  margin: 20px 0;
+  line-height: 1;
+}
+
+.total-score .fraction {
+  font-size: 0.4em;
+  color: #999;
+  font-weight: 400;
+}
+
+.total-percentage {
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.grade-emoji {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.grade-text {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.tag-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 30px 0;
+  text-align: left;
+}
+
+.tag-result-item {
+  background: var(--gray);
+  border-radius: 12px;
+  padding: 18px;
+  transition: var(--transition);
+}
+
+.tag-result-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.tag-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tag-result-name {
+  font-weight: 700;
+  font-size: 0.95em;
+  color: var(--dark);
+}
+
+.tag-result-score {
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+.tag-result-bar {
+  background: #ddd;
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.tag-result-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease;
+}
+
+.btn-restart {
+  background: linear-gradient(135deg, var(--orange), #E67E22);
+  color: var(--white);
+  border: none;
+  padding: 16px 50px;
+  font-size: 1.15em;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+  margin-top: 20px;
+}
+
+.btn-restart:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(243, 156, 18, 0.5);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 30px 20px;
+  color: #999;
+  font-size: 0.9em;
+}
+
+.footer strong {
+  color: #666;
+}
+
+/* Overall Progress */
+.overall-progress {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.overall-label {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #666;
+  white-space: nowrap;
+}
+
+.overall-bar-container {
+  flex: 1;
+  min-width: 150px;
+}
+
+.overall-bar-bg {
+  background: var(--gray);
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.overall-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--red));
+  border-radius: 8px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.overall-score-text {
+  font-weight: 700;
+  font-size: 0.95em;
+  color: var(--dark);
+  white-space: nowrap;
+}
+
+/* Question indicators */
+.question-indicators {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.q-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.q-indicator.active {
+  border-color: var(--blue);
+  background: #EBF5FB;
+  color: var(--blue);
+}
+
+.q-indicator.answered-correct {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+.q-indicator.answered-wrong {
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
+}
+
+.q-indicator:hover {
+  transform: scale(1.15);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .landing-card {
+    padding: 40px 24px;
+  }
+  .landing-card h1 {
+    font-size: 1.7em;
+  }
+  .landing-card .subtitle {
+    font-size: 1em;
+  }
+  .tag-overview {
+    grid-template-columns: 1fr;
+  }
+  .quiz-header {
+    padding: 18px 20px;
+  }
+  .tag-title {
+    font-size: 1.1em;
+  }
+  .question-card {
+    padding: 20px;
+  }
+  .question-text {
+    font-size: 1.05em;
+  }
+  .option-btn {
+    padding: 12px 14px;
+    font-size: 0.95em;
+  }
+  .option-label {
+    width: 30px;
+    height: 30px;
+    font-size: 0.85em;
+  }
+  .btn-nav {
+    padding: 12px 24px;
+    font-size: 0.9em;
+  }
+  .summary-card {
+    padding: 30px 20px;
+  }
+  .total-score {
+    font-size: 2.5em;
+  }
+  .tag-results {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding: 12px;
+  }
+  .nav-buttons {
+    flex-direction: column;
+  }
+  .btn-nav {
+    justify-content: center;
+  }
+  .q-indicator {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7em;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease forwards;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+</style>
+</head>
+<body>
+
+<!-- Landing Page -->
+<div id="landingPage" class="landing-page">
+  <div class="landing-card fade-in">
+    <div class="landing-icon">&#128218;</div>
+    <h1>Lernfeld 1 Quiz <span>Tag 1 bis 8</span></h1>
+    <p class="subtitle">160 Multiple-Choice-Fragen zum Selbsttest</p>
+    <div class="tag-overview" id="tagOverview"></div>
+    <button class="btn-start" onclick="startQuiz()">Quiz starten &#10148;</button>
+  </div>
+  <div class="footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- Quiz Page -->
+<div id="quizPage" class="quiz-page container">
+  <div class="tag-nav-dots" id="tagNavDots"></div>
+  <div class="overall-progress">
+    <span class="overall-label">Gesamtfortschritt:</span>
+    <div class="overall-bar-container">
+      <div class="overall-bar-bg">
+        <div class="overall-bar-fill" id="overallBar"></div>
+      </div>
+    </div>
+    <span class="overall-score-text" id="overallScoreText">0 / 160</span>
+  </div>
+  <div class="quiz-header" id="quizHeader">
+    <div class="quiz-header-top">
+      <div class="tag-title" id="tagTitle"></div>
+      <div class="tag-badge" id="tagBadge"></div>
+    </div>
+    <div class="score-display">
+      <div class="score-item"><span class="score-dot correct"></span><span id="correctCount">0</span> Richtig</div>
+      <div class="score-item"><span class="score-dot wrong"></span><span id="wrongCount">0</span> Falsch</div>
+    </div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 20 beantwortet</div>
+  </div>
+  <div class="question-indicators" id="questionIndicators"></div>
+  <div id="questionContainer"></div>
+  <div class="nav-buttons" id="navButtons"></div>
+  <div class="footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<!-- Summary Page -->
+<div id="summaryPage" class="summary-page container">
+  <div class="summary-card fade-in" id="summaryContent"></div>
+  <div class="footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+</div>
+
+<script>
+const quizData = [
+  {
+    tag: 1,
+    title: "Das Modellunternehmen",
+    questions: [
+      { q: "In welchem Jahr wurde die Exclusiva GmbH urspr\u00fcnglich als Einzelunternehmen gegr\u00fcndet?", options: ["1978", "1969", "1985", "2001"], correct: 1 },
+      { q: "Wie hoch ist das Mindeststammkapital einer GmbH?", options: ["50.000 EUR", "10.000 EUR", "25.000 EUR", "100.000 EUR"], correct: 2 },
+      { q: "Was bedeutet die Abk\u00fcrzung B2C?", options: ["Business to Company", "Business to Consumer", "Brand to Customer", "Buying to Consumer"], correct: 1 },
+      { q: "Welche Haftung haben die Gesellschafter einer GmbH?", options: ["Sie haften unbeschr\u00e4nkt mit ihrem Privatverm\u00f6gen", "Sie haften nur mit ihrer Einlage", "Sie haften gar nicht", "Sie haften nur bei Vorsatz"], correct: 1 },
+      { q: "Was ist ein Warenwirtschaftssystem (WWS)?", options: ["Eine Buchhaltungssoftware", "Ein System zur reinen Lagerverwaltung", "Eine Software zur Verwaltung aller warenbezogenen Daten und Prozesse", "Ein Programm f\u00fcr das Online-Marketing"], correct: 2 },
+      { q: "Welche Art der Handlungsvollmacht ist die engste?", options: ["Allgemeine Handlungsvollmacht", "Artvollmacht", "Einzelvollmacht", "Prokura"], correct: 2 },
+      { q: "Welcher Funktionsbereich ist NICHT im Organigramm der Exclusiva GmbH?", options: ["Einkauf", "Onlinevertrieb", "Forschung & Entwicklung", "Rechnungswesen"], correct: 2 },
+      { q: "Wof\u00fcr steht B2B?", options: ["Business to Bank", "Business to Business", "Brand to Brand", "Buyer to Buyer"], correct: 1 },
+      { q: "Seit wann ist der Beruf Kaufmann/Kauffrau im E-Commerce ein eigenst\u00e4ndiger Ausbildungsberuf?", options: ["2015", "2020", "2018", "2010"], correct: 2 },
+      { q: "Welche Aufgabe geh\u00f6rt NICHT zu den betrieblichen Grundfunktionen?", options: ["Beschaffung", "Lager", "Personalentwicklung", "Rechnungswesen"], correct: 2 },
+      { q: "Was war das urspr\u00fcngliche Sortiment der Exclusiva GmbH?", options: ["Elektronik", "Luxus-Schreibwaren", "Sportartikel", "Lebensmittel"], correct: 1 },
+      { q: "Wo hat die Exclusiva GmbH ihren Sitz?", options: ["Hamburg", "Berlin", "Hildesheim", "M\u00fcnchen"], correct: 2 },
+      { q: "Was ist eine GmbH rechtlich gesehen?", options: ["Eine Personengesellschaft", "Eine juristische Person", "Eine Einzelfirma", "Ein Verein"], correct: 1 },
+      { q: "Welches Gesch\u00e4ft ist von der Handlungsvollmacht grunds\u00e4tzlich ausgeschlossen?", options: ["Einkauf von Waren", "Aufnahme von Darlehen", "Verkauf an Kunden", "Bestellung von B\u00fcromaterial"], correct: 1 },
+      { q: "In welchem Gesetz sind Handlungsvollmachten geregelt?", options: ["BGB", "HGB", "StGB", "UWG"], correct: 1 },
+      { q: "Welches Organ geh\u00f6rt zur GmbH?", options: ["Vorstand", "Hauptversammlung", "Gesellschafterversammlung", "Betriebsversammlung"], correct: 2 },
+      { q: "Wie viele Mitarbeiter hat die Exclusiva GmbH ca.?", options: ["50", "150", "300", "1.000"], correct: 2 },
+      { q: "Wann wurde die Exclusiva GmbH in eine GmbH umgewandelt?", options: ["1969", "1978", "1985", "2001"], correct: 2 },
+      { q: "Ab wie vielen wahlberechtigten Arbeitnehmern kann ein Betriebsrat gebildet werden?", options: ["3", "5", "10", "20"], correct: 1 },
+      { q: "Was umfasst ein Unternehmensleitbild?", options: ["Nur den Jahresabschluss", "Mission, Vision und Werte", "Nur die Umsatzzahlen", "Die Steuererkl\u00e4rung"], correct: 1 }
+    ]
+  },
+  {
+    tag: 2,
+    title: "Orientierung & Aktives Lesen",
+    questions: [
+      { q: "Im Einliniensystem hat jeder Mitarbeiter...", options: ["mehrere Vorgesetzte", "genau einen Vorgesetzten", "keinen Vorgesetzten", "einen Berater"], correct: 1 },
+      { q: "Welches Organisationsmodell wurde von F.W. Taylor entwickelt?", options: ["Einliniensystem", "Mehrliniensystem", "Stabliniensystem", "Matrixsystem"], correct: 1 },
+      { q: "Was beschreibt die Aufbauorganisation?", options: ["Die zeitliche Abfolge von Prozessen", "Die hierarchische Struktur eines Unternehmens", "Die Marketingstrategie", "Die Finanzplanung"], correct: 1 },
+      { q: "Im Stabliniensystem haben St\u00e4be...", options: ["volle Weisungsbefugnis", "keine Weisungsbefugnis, nur beratende Funktion", "mehr Macht als die Gesch\u00e4ftsleitung", "nur Kontrollfunktion"], correct: 1 },
+      { q: 'Was ist der erste Schritt der 5-Schritt-Lesemethode?', options: ["Fragen stellen", "Gr\u00fcndlich lesen", "\u00dcberfliegen", "Wiederholen"], correct: 2 },
+      { q: "Was ist ein Gesch\u00e4ftsprozess?", options: ["Eine einmalige T\u00e4tigkeit", "Eine Folge logisch zusammenh\u00e4ngender Aktivit\u00e4ten mit definiertem Anfang und Ende", "Ein Organisationsdiagramm", "Eine Stellenbeschreibung"], correct: 1 },
+      { q: "Welcher Nachteil geh\u00f6rt zum Einliniensystem?", options: ["Kompetenzkonflikte", "Langer Dienstweg", "Unklare Zust\u00e4ndigkeiten", "Fehlende Hierarchie"], correct: 1 },
+      { q: "Was versteht man unter aktivem Lesen?", options: ["Schnelles \u00dcberfliegen ohne Nachdenken", "Strukturiertes Lesen mit Fragen, Notizen und Wiederholung", "Lautes Vorlesen", "Lesen mit Musikbegleitung"], correct: 1 },
+      { q: "Welcher Vorteil geh\u00f6rt zum Mehrliniensystem?", options: ["Klare Zust\u00e4ndigkeiten", "Spezialisierung der F\u00fchrung", "Keine Konflikte", "Eindeutiger Dienstweg"], correct: 1 },
+      { q: 'Was bedeutet "Spaced Repetition"?', options: ["Schnelles Lesen", "Wiederholung in gr\u00f6\u00dfer werdenden Zeitabst\u00e4nden", "Gruppenarbeit", "Auswendiglernen in einem St\u00fcck"], correct: 1 },
+      { q: "Welcher Schritt der 5-Schritt-Methode fordert, das Gelesene in eigenen Worten wiederzugeben?", options: ["\u00dcberfliegen", "Fragen stellen", "Verk\u00fcrzen/Recite", "Wiederholen"], correct: 2 },
+      { q: "Worauf sollte man in den ersten Tagen im neuen Betrieb besonders achten?", options: ["Sofort eigene Regeln aufstellen", "P\u00fcnktlichkeit, gepflegtes Erscheinungsbild, Freundlichkeit", "M\u00f6glichst wenig auffallen", "Nur auf das Gehalt achten"], correct: 1 },
+      { q: "Was zeigt ein Organigramm?", options: ["Die Umsatzentwicklung", "Die hierarchische Struktur und Funktionsbereiche", "Die Arbeitszeiten", "Die Kundenstruktur"], correct: 1 },
+      { q: "Was ist ein Nachteil des Stabliniensystems?", options: ["Es gibt keine klaren Weisungswege", "St\u00e4be k\u00f6nnen teuer sein und haben keinen direkten Einfluss", "Es gibt zu viele Vorgesetzte", "Mitarbeiter haben keine Ansprechpartner"], correct: 1 },
+      { q: "Was ist passives Lesen?", options: ["Strukturiertes Lesen mit Notizen", "Text von vorne nach hinten lesen ohne Nacharbeiten", "Lesen mit Markierungen", "Gruppenarbeit am Text"], correct: 1 },
+      { q: "Im Betrieb sollte man im Zweifel...", options: ["sofort duzen", "siezen, bis das Du angeboten wird", "gar nicht kommunizieren", "immer beim Nachnamen bleiben"], correct: 1 },
+      { q: "Was ist der Zweck eines Gesch\u00e4ftsprozesses?", options: ["Mitarbeiter zu kontrollieren", "Einen Wert f\u00fcr einen Kunden zu erzeugen", "Die Hierarchie zu st\u00e4rken", "Kosten zu verursachen"], correct: 1 },
+      { q: "Wie viel Prozent der Gesamtlesezeit sollte das \u00dcberfliegen (Schritt 1) ca. dauern?", options: ["50%", "30%", "5-10%", "1%"], correct: 2 },
+      { q: "Was unterscheidet das Mehrlinien- vom Einliniensystem?", options: ["Im Mehrliniensystem gibt es keine Vorgesetzten", "Im Mehrliniensystem hat jede Stelle mehrere Vorgesetzte", "Im Mehrliniensystem gibt es weniger Abteilungen", "Es gibt keinen Unterschied"], correct: 1 },
+      { q: "Welche Information ist in den ersten Arbeitstagen wichtig?", options: ["Das Privatleben der Kollegen", "Ansprechpartner, Arbeitszeiten und betriebliche Abl\u00e4ufe", "Die B\u00f6rsenkurse", "Die Geschichte des Geb\u00e4udes"], correct: 1 }
+    ]
+  },
+  {
+    tag: 3,
+    title: "Handlungskompetenz & Feedback",
+    questions: [
+      { q: "Aus welchen vier Komponenten besteht Handlungskompetenz?", options: ["Fach-, Methoden-, Sozial- und Personalkompetenz", "Lesen, Schreiben, Rechnen, Kommunikation", "Planung, Durchf\u00fchrung, Kontrolle, Korrektur", "Wissen, Vergessen, Lernen, Pr\u00fcfen"], correct: 0 },
+      { q: 'Wer pr\u00e4gte 1974 den Begriff "Schl\u00fcsselqualifikationen"?', options: ["Schulz von Thun", "Dieter Mertens", "Albert Mehrabian", "Guy Kawasaki"], correct: 1 },
+      { q: "Was ist die Sandwich-Methode?", options: ["Eine Ern\u00e4hrungsregel", "Feedback: Lob - Kritik - Lob", "Eine Verkaufsstrategie", "Eine Lernmethode"], correct: 1 },
+      { q: "Wie viel Prozent der Wirkung macht laut Mehrabian die K\u00f6rpersprache bei emotionalen Botschaften aus?", options: ["7%", "38%", "55%", "93%"], correct: 2 },
+      { q: "Was besagt das Vier-Seiten-Modell von Schulz von Thun?", options: ["Jede Nachricht hat vier Empf\u00e4nger", "Jede Nachricht enth\u00e4lt vier Botschaften gleichzeitig", "Man soll vier Mal nachdenken bevor man spricht", "Kommunikation hat vier Phasen"], correct: 1 },
+      { q: "Was geh\u00f6rt zur Methodenkompetenz?", options: ["Buchf\u00fchrungskenntnisse", "Probleml\u00f6sungsstrategien und Lernmethoden", "Teamarbeit und Empathie", "P\u00fcnktlichkeit und Belastbarkeit"], correct: 1 },
+      { q: 'Was ist die h\u00f6chste Anforderung, die Arbeitgeber an Mitarbeiter stellen (laut Handout)?', options: ["Fachkenntnisse (70%)", "Teamf\u00e4higkeit (68%)", "Selbstst\u00e4ndigkeit (93%)", "EDV-Kenntnisse (62%)"], correct: 2 },
+      { q: "Welche Aussage geh\u00f6rt zur Selbstoffenbarung im Vier-Seiten-Modell?", options: ["Was soll der Empf\u00e4nger tun?", "Was ist die sachliche Information?", "Was verrate ich \u00fcber mich selbst?", "Wie stehe ich zum Empf\u00e4nger?"], correct: 2 },
+      { q: "Was ist eine Schl\u00fcsselqualifikation?", options: ["Eine berufsspezifische Fachkenntnis", "Eine breit \u00fcbertragbare Kompetenz, die in vielen Berufen anwendbar ist", "Ein bestimmter Schulabschluss", "Eine IHK-Pr\u00fcfungsnote"], correct: 1 },
+      { q: "Wie lautet die 10-20-30-Regel von Guy Kawasaki?", options: ["10 Themen, 20 Seiten, 30 Bilder", "Max. 10 Folien, max. 20 Minuten, min. 30 Punkt Schriftgr\u00f6\u00dfe", "10 Fragen, 20 Antworten, 30 Beispiele", "10 Minuten reden, 20 Minuten Pause, 30 Minuten Diskussion"], correct: 1 },
+      { q: "Was geh\u00f6rt zur Sozialkompetenz?", options: ["Buchf\u00fchrung und IT-Skills", "Teamarbeit, Kommunikation und Konfliktl\u00f6sung", "Zeitmanagement und Lernstrategien", "Selbstmotivation und Belastbarkeit"], correct: 1 },
+      { q: "Welche Feedbackregel ist korrekt?", options: ["Du-Botschaften sind besser als Ich-Botschaften", "Feedback soll m\u00f6glichst allgemein gehalten werden", "Feedback soll konkret, konstruktiv und zeitnah sein", "Feedback sollte man m\u00f6glichst sp\u00e4t geben"], correct: 2 },
+      { q: 'Was sind "Vintage-Qualifikationen" nach Mertens?', options: ["Alte, nicht mehr brauchbare F\u00e4higkeiten", "Qualifikationen zum Ausgleich von Wissensunterschieden zwischen Generationen", "Besonders wertvolle Fachkenntnisse", "Handwerkliche F\u00e4higkeiten"], correct: 1 },
+      { q: "Welche vier Seiten hat eine Nachricht nach Schulz von Thun?", options: ["Sender, Empf\u00e4nger, Kanal, Botschaft", "Sachinhalt, Selbstoffenbarung, Beziehung, Appell", "Frage, Antwort, Erkl\u00e4rung, Zusammenfassung", "Einleitung, Hauptteil, Schluss, Feedback"], correct: 1 },
+      { q: "Was geh\u00f6rt zur Personalkompetenz?", options: ["Fachwissen in Buchf\u00fchrung", "Eigenverantwortung, Motivation und Lernbereitschaft", "Teamarbeit und Konfliktl\u00f6sung", "Probleml\u00f6sungsstrategien"], correct: 1 },
+      { q: "Wie sollte man auf kritisches Feedback reagieren?", options: ["Sofort rechtfertigen", "Zuh\u00f6ren, nachdenken, nachfragen und als Lernchance begreifen", "Das Gespr\u00e4ch abbrechen", "Gegenangriff starten"], correct: 1 },
+      { q: 'Was sind "Horizontqualifikationen" nach Mertens?', options: ["Fachspezifische Kenntnisse", "F\u00e4higkeit, neue Informationen zu beschaffen und zu verarbeiten", "Grundlegende mathematische F\u00e4higkeiten", "F\u00fchrungskompetenzen"], correct: 1 },
+      { q: "Was macht laut Mehrabian nur 7% der Wirkung bei emotionalen Botschaften aus?", options: ["K\u00f6rpersprache", "Stimme und Tonfall", "Worte und Inhalt", "Blickkontakt"], correct: 2 },
+      { q: "Was ist der Merksatz f\u00fcr die vier Kompetenzen?", options: ["SSBA", "FaMeSoPe", "KEKK", "SVDC"], correct: 1 },
+      { q: "Was ist Handlungskompetenz vereinfacht?", options: ["Nur Wissen haben", "Wissen + K\u00f6nnen + Wollen", "Nur gut ausgebildet sein", "Nur motiviert sein"], correct: 1 }
+    ]
+  },
+  {
+    tag: 4,
+    title: "Soziale Kompetenz & E-Commerce-Arten",
+    questions: [
+      { q: "Wof\u00fcr steht das K\u00fcrzel KEKK bei sozialer Kompetenz?", options: ["Kommunikation, Empathie, Kooperation, Konfliktl\u00f6sung", "Kreativit\u00e4t, Eigeninitiative, Kompetenz, Kontrolle", "Kundenn\u00e4he, Effizienz, Kosten, Qualit\u00e4t", "Kompetenz, Erfahrung, Know-how, Karriere"], correct: 0 },
+      { q: "Welche Phase der Teamentwicklung nach Tuckman kommt zuerst?", options: ["Storming", "Norming", "Forming", "Performing"], correct: 2 },
+      { q: "Was ist C2C im E-Commerce?", options: ["Company to Customer", "Consumer to Consumer", "Commerce to Commerce", "Cloud to Cloud"], correct: 1 },
+      { q: "Welcher Anteil hat E-Commerce am Gesamthandel in Deutschland (ca. 2022)?", options: ["ca. 2,5%", "ca. 10,5%", "ca. 35%", "ca. 50%"], correct: 1 },
+      { q: "In welcher Tuckman-Phase treten Konflikte und Machtkämpfe auf?", options: ["Forming", "Storming", "Norming", "Performing"], correct: 1 },
+      { q: "Was ist B2G?", options: ["Business to Germany", "Business to Government", "Business to Group", "Brand to Global"], correct: 1 },
+      { q: "Wie hoch war der E-Commerce-Umsatz in Deutschland 2022 ca.?", options: ["ca. 25 Mrd. EUR", "ca. 50 Mrd. EUR", "ca. 90,4 Mrd. EUR", "ca. 200 Mrd. EUR"], correct: 2 },
+      { q: "Was kennzeichnet die Performing-Phase nach Tuckman?", options: ["Unsicherheit und H\u00f6flichkeit", "Konflikte und Machtkämpfe", "Hohe Effizienz, Vertrauen und Eigenverantwortung", "Regelaufstellung und Zusammenhalt"], correct: 2 },
+      { q: "Was ist Social Commerce?", options: ["Handel zwischen Sozialeinrichtungen", "Kaufen direkt \u00fcber Social-Media-Plattformen", "Spenden \u00fcber das Internet", "Sozialversicherung online abschlie\u00dfen"], correct: 1 },
+      { q: "Welche Konfliktart liegt vor, wenn zwei Abteilungen unterschiedliche Meinungen zur besten L\u00f6sung haben?", options: ["Beziehungskonflikt", "Sachkonflikt", "Rollenkonflikt", "Zielkonflikt"], correct: 1 },
+      { q: "Wie lange betr\u00e4gt die Widerrufsfrist bei B2C-Online-K\u00e4ufen?", options: ["7 Tage", "14 Tage", "30 Tage", "90 Tage"], correct: 1 },
+      { q: "Was ist die Win-Win-Strategie?", options: ["Einer gewinnt, der andere verliert", "Beide Seiten suchen gemeinsam eine L\u00f6sung, mit der alle zufrieden sind", "Es wird ein Kompromiss erzwungen", "Der St\u00e4rkere gewinnt immer"], correct: 1 },
+      { q: "Welche ist die beliebteste Produktkategorie im deutschen E-Commerce?", options: ["Elektronik", "Bekleidung & Schuhe", "Lebensmittel", "M\u00f6bel"], correct: 1 },
+      { q: "Was beschreibt die Norming-Phase nach Tuckman?", options: ["Kennenlernen und Unsicherheit", "Konflikte und Machtkämpfe", "Regeln entstehen, Zusammenhalt und Akzeptanz", "H\u00f6chste Produktivit\u00e4t"], correct: 2 },
+      { q: "Was ist Empathie im beruflichen Kontext?", options: ["Mitleid mit Kollegen haben", "Sich in andere hineinversetzen k\u00f6nnen und Perspektivwechsel", "Immer allen zustimmen", "Konflikte vermeiden"], correct: 1 },
+      { q: 'Welcher Akteur steht bei E-Commerce-Modellen f\u00fcr "G"?', options: ["Germany", "Government", "Global", "Group"], correct: 1 },
+      { q: "Was war die h\u00e4ufigste Zahlungsart im deutschen E-Commerce 2022?", options: ["Kreditkarte", "Sofort\u00fcberweisung", "PayPal / Kauf auf Rechnung", "Bitcoin"], correct: 2 },
+      { q: "Warum ist digitale Kommunikation oft missverst\u00e4ndlicher als pers\u00f6nliche?", options: ["Weil digitale Texte zu lang sind", "Weil nonverbale Signale wie Mimik und Tonfall fehlen", "Weil E-Mails teuer sind", "Weil das Internet langsam ist"], correct: 1 },
+      { q: "Was ist die Plattform Vinted ein Beispiel f\u00fcr?", options: ["B2B", "B2C", "C2C", "B2G"], correct: 2 },
+      { q: "Wer ist der gr\u00f6\u00dfte Online-H\u00e4ndler in Deutschland?", options: ["Zalando", "Otto", "Amazon.de", "MediaMarkt"], correct: 2 }
+    ]
+  },
+  {
+    tag: 5,
+    title: "Vertriebskan\u00e4le",
+    questions: [
+      { q: "Was ist ein Vertriebskanal?", options: ["Ein Fernsehsender", "Der Weg der Ware vom Hersteller zum Kunden", "Eine Werbekampagne", "Ein Lagerraum"], correct: 1 },
+      { q: "Was bedeutet Omnichannel?", options: ["Nur einen Vertriebskanal nutzen", "Alle Kan\u00e4le nahtlos integriert aus Kundensicht", "Viele Kan\u00e4le, aber getrennt", "Nur online verkaufen"], correct: 1 },
+      { q: "Wof\u00fcr steht das KRAK-Modell?", options: ["Kreativit\u00e4t, Reichweite, Analyse, Kommunikation", "Kosten, Reichweite, Aufwand, Kontrolle", "Kunden, Rabatte, Angebote, Kampagnen", "Konkurrenz, Risiko, Absatz, Kosten"], correct: 1 },
+      { q: "Was ist ein Vorteil des eigenen Webshops gegen\u00fcber einem Marktplatz?", options: ["Sofortige hohe Reichweite", "Geringerer Einrichtungsaufwand", "Vollst\u00e4ndige Kontrolle \u00fcber Design, Daten und Preise", "Niedrigere monatliche Kosten"], correct: 2 },
+      { q: "Welche Distributionsstrategie nutzt man f\u00fcr Luxusprodukte wie Rolex?", options: ["Intensive Distribution", "Selektive Distribution", "Exklusive Distribution", "Multi-Channel-Distribution"], correct: 2 },
+      { q: "Was ist D2C (Direct to Consumer)?", options: ["Direktverkauf zwischen Verbrauchern", "Hersteller verkauft direkt an Endkunden ohne Zwischenh\u00e4ndler", "Digitaler Kundendienst", "Daten\u00fcbertragung zum Kunden"], correct: 1 },
+      { q: "Was ist ein Vorteil von Marktpl\u00e4tzen wie Amazon?", options: ["Volle Kontrolle \u00fcber die Marke", "Eigene Kundendaten", "Sehr hohe Reichweite bei Millionen Nutzern", "Geringe Provisionskosten"], correct: 2 },
+      { q: "Was ist Click & Collect?", options: ["Online bestellen und im Laden abholen", "Online bezahlen und online abholen", "Im Laden bestellen und nach Hause liefern lassen", "Werbeaktionen in Social Media"], correct: 0 },
+      { q: "Welche Distributionsstrategie verfolgt Coca-Cola?", options: ["Exklusive Distribution", "Selektive Distribution", "Intensive Distribution", "Einzelvertrieb"], correct: 2 },
+      { q: "Was unterscheidet Multi-Channel von Cross-Channel?", options: ["Es gibt keinen Unterschied", "Bei Cross-Channel sind die Kan\u00e4le verbunden (z.B. online bestellen, im Laden zur\u00fcckgeben)", "Multi-Channel hat mehr Kan\u00e4le", "Cross-Channel ist g\u00fcnstiger"], correct: 1 },
+      { q: "Was ist Voice Commerce?", options: ["Telefonverkauf", "Bestellung per Sprachassistent wie Alexa", "Podcast-Werbung", "Kommunikation per Telefon"], correct: 1 },
+      { q: 'Was ist die "Place"-Komponente im Marketing-Mix (4P)?', options: ["Produktgestaltung", "Preispolitik", "Distributionspolitik / Vertriebskanal", "Werbung"], correct: 2 },
+      { q: "Was ist Live Shopping?", options: ["Einkaufen im Gesch\u00e4ft", "Produkte werden live per Video pr\u00e4sentiert und in Echtzeit verkauft", "24/7-Lieferservice", "Echtzeit-Preisvergleich"], correct: 1 },
+      { q: "Was ist ein Nachteil des station\u00e4ren Handels?", options: ["Keine pers\u00f6nliche Beratung", "Begrenzte \u00d6ffnungszeiten und geografisch begrenzte Reichweite", "Kein Vertrauen der Kunden", "Keine Warenpr\u00e4sentation m\u00f6glich"], correct: 1 },
+      { q: "Was ist Subscription Commerce?", options: ["Einmalige Bestellung", "Abo-Modell mit regelm\u00e4\u00dfiger Lieferung gegen monatliche Zahlung", "Kostenlose Proben", "Ratenfinanzierung"], correct: 1 },
+      { q: 'Welche Kanalstrategie beschreibt "nur ein Ladengesch\u00e4ft"?', options: ["Multi-Channel", "Cross-Channel", "Single Channel", "Omnichannel"], correct: 2 },
+      { q: "Worin besteht ein Nachteil der Abh\u00e4ngigkeit von Marktpl\u00e4tzen?", options: ["Zu viel Kontrolle \u00fcber die eigenen Daten", "Algorithmus-\u00c4nderungen und Geb\u00fchren\u00e4nderungen k\u00f6nnen das Gesch\u00e4ft beeinflussen", "Zu wenig Reichweite", "Die Einrichtung ist zu schwierig"], correct: 1 },
+      { q: "Was macht Shopify, Shopware und WooCommerce zu Webshop-L\u00f6sungen?", options: ["Sie sind Social-Media-Plattformen", "Sie sind Shopsysteme zum Aufbau eigener Online-Shops", "Sie sind Marktpl\u00e4tze wie Amazon", "Sie sind Zahlungsdienstleister"], correct: 1 },
+      { q: 'Was bedeutet "Hybridstrategie" im Vertrieb?', options: ["Nur online oder nur offline verkaufen", "Sowohl Marktpl\u00e4tze als auch eigenen Webshop nutzen", "Nur \u00fcber Social Media verkaufen", "Nur im Ausland verkaufen"], correct: 1 },
+      { q: "Welches Unternehmen wird als Beispiel f\u00fcr selektive Distribution genannt?", options: ["Coca-Cola", "Ferrari", "Samsung / Levi's", "Haribo"], correct: 2 }
+    ]
+  },
+  {
+    tag: 6,
+    title: "Einrichtung eines Webshops",
+    questions: [
+      { q: "Was sind die drei Kernfunktionen eines Webshops?", options: ["Werbung, Versand, Retoure", "Warenkatalog, Warenkorb, Bezahlprozess (Checkout)", "Design, Programmierung, Hosting", "SEO, SEA, Social Media"], correct: 1 },
+      { q: "Was bedeutet SaaS?", options: ["Software as a Service", "Shop as a System", "Security and Safety", "Server and Storage"], correct: 0 },
+      { q: "Welches Shopsystem ist besonders f\u00fcr den DACH-Raum geeignet?", options: ["Magento", "Shopify", "Shopware", "Etsy"], correct: 2 },
+      { q: "Was ist das Frontend eines Webshops?", options: ["Die Datenbank", "Der f\u00fcr den Kunden sichtbare Bereich (Design, Navigation, Produktseiten)", "Die Serverkonfiguration", "Die Buchhaltungssoftware"], correct: 1 },
+      { q: "Welche Technologien werden typischerweise im Frontend eingesetzt?", options: ["PHP, Python, Java", "HTML, CSS, JavaScript", "SQL, MongoDB", "SAP, Navision"], correct: 1 },
+      { q: "Was passiert ohne SSL-Zertifikat?", options: ["Der Shop wird schneller", 'Browser zeigt "Nicht sicher", SEO-Nachteil, Daten k\u00f6nnen abgefangen werden', "Nichts Besonderes", "Die Preise werden falsch angezeigt"], correct: 1 },
+      { q: "Welches Shopsystem ist ein WordPress-Plugin?", options: ["Shopify", "Magento", "WooCommerce", "OXID"], correct: 2 },
+      { q: "Was ist Responsive Design?", options: ["Ein Designstil mit vielen Farben", "Die automatische Anpassung der Website-Darstellung an die Bildschirmgr\u00f6\u00dfe", "Ein Feedback-System", "Ein Logo-Generator"], correct: 1 },
+      { q: "\u00dcber wie viel Prozent der Online-K\u00e4ufe werden 2024 \u00fcber Smartphones abgeschlossen?", options: ["Ca. 25%", "Ca. 45%", "Ca. 65%", "Ca. 85%"], correct: 2 },
+      { q: "Was beschreibt das Backend eines Webshops?", options: ["Das Design der Website", "Die Verwaltung von Produkten, Bestellungen und Nutzerdaten im Hintergrund", "Die Farben und Schriften", "Die Kundenbewertungen"], correct: 1 },
+      { q: "Was kostet eine kostenlose SSL-L\u00f6sung bei Let's Encrypt?", options: ["50 EUR/Jahr", "200 EUR/Jahr", "0 EUR (kostenlos)", "10 EUR/Monat"], correct: 2 },
+      { q: "Welches Shopsystem gilt als Enterprise-L\u00f6sung f\u00fcr komplexe Anforderungen?", options: ["WooCommerce", "Shopify", "Magento / Adobe Commerce", "Wix"], correct: 2 },
+      { q: 'Was bedeutet "Mobile First"?', options: ["Zuerst den Desktop-Shop bauen", "Webshops werden zuerst f\u00fcr Smartphones designt", "Mobile Ger\u00e4te sind nicht wichtig", "Nur \u00fcber Apps verkaufen"], correct: 1 },
+      { q: "Was ist der Vendor Lock-in bei SaaS-L\u00f6sungen?", options: ["Ein Sicherheitsfeature", "Die Abh\u00e4ngigkeit vom Anbieter, die einen Wechsel erschwert", "Ein Rabattmodell", "Eine Datenschutzma\u00dfnahme"], correct: 1 },
+      { q: "Was ist Open-Source-Software?", options: ["Software, die nur online funktioniert", "Software mit frei verf\u00fcgbarem Quellcode", "Software nur f\u00fcr Unternehmen", "Kostenpflichtige Software"], correct: 1 },
+      { q: "Was ersetzt seit Mai 2024 das Telemediengesetz (TMG)?", options: ["DSGVO", "Digitale-Dienste-Gesetz (DDG)", "BGB", "UWG"], correct: 1 },
+      { q: "Wie hei\u00dft der Prozess vom Warenkorb bis zur Bestellbest\u00e4tigung?", options: ["Login", "Checkout", "Browse", "Download"], correct: 1 },
+      { q: "Welches Shopsystem ist besonders f\u00fcr B2B-Handel in Deutschland geeignet?", options: ["Shopify", "WooCommerce", "OXID eShop", "Wix"], correct: 2 },
+      { q: "Was ist Google Mobile-First-Indexing?", options: ["Google bewertet prim\u00e4r die Desktop-Version", "Google bewertet prim\u00e4r die mobile Version einer Website", "Google zeigt nur mobile Anzeigen", "Google ignoriert mobile Nutzer"], correct: 1 },
+      { q: "In welchem Jahr fand der erste Online-Kauf der Welt statt?", options: ["1990", "1994", "2000", "2005"], correct: 1 }
+    ]
+  },
+  {
+    tag: 7,
+    title: "Webshop Name & Adresse",
+    questions: [
+      { q: "Was ist eine Domain?", options: ["Ein Computerprogramm", "Die eindeutige, menschenlesbare Adresse einer Website im Internet", "Ein Passwort", "Ein Zahlungssystem"], correct: 1 },
+      { q: "Was macht das DNS (Domain Name System)?", options: ["Es verschl\u00fcsselt Daten", "Es \u00fcbersetzt Domain-Namen in IP-Adressen", "Es erstellt Webseiten", "Es speichert Passw\u00f6rter"], correct: 1 },
+      { q: "Welche TLD sollte ein deutscher Online-Shop bevorzugt nutzen?", options: [".com", ".de", ".shop", ".net"], correct: 1 },
+      { q: "Was ist DENIC?", options: ["Ein Shopsystem", "Die zentrale Vergabestelle f\u00fcr .de-Domains", "Ein Zahlungsdienstleister", "Eine Marketingagentur"], correct: 1 },
+      { q: "Welche Hosting-Art ist am g\u00fcnstigsten?", options: ["Cloud Hosting", "Dedicated Server", "VPS", "Shared Hosting"], correct: 3 },
+      { q: "Was steht in \u00a75 DDG (ehemals \u00a75 TMG)?", options: ["Datenschutzregeln", "Impressumspflicht", "Widerrufsrecht", "Steuerrecht"], correct: 1 },
+      { q: "Wie lange betr\u00e4gt die Widerrufsfrist bei Online-K\u00e4ufen ab Warenerhalt?", options: ["7 Tage", "14 Tage", "30 Tage", "28 Tage"], correct: 1 },
+      { q: "Was passiert bei fehlendem/falschem Widerrufshinweis?", options: ["Nichts", "Verl\u00e4ngerung auf 12 Monate + 14 Tage", "Der Shop wird gesperrt", "Die Ware wird kostenlos"], correct: 1 },
+      { q: 'Welcher URL-Bestandteil ist "www" in www.exclusiva-gmbh.de?', options: ["TLD", "Protokoll", "Subdomain", "Pfad"], correct: 2 },
+      { q: "Wie hoch k\u00f6nnen DSGVO-Bu\u00dfgelder maximal sein?", options: ["500 EUR", "50.000 EUR", "20 Millionen EUR oder 4% des weltweiten Jahresumsatzes", "1 Million EUR"], correct: 2 },
+      { q: "Was ist Cloud Hosting?", options: ["Hosting auf einem einzigen festen Server", "Hosting auf verteilten Servern mit automatischer Skalierung", "Hosting nur f\u00fcr Cloud-Speicher", "Kostenloses Hosting"], correct: 1 },
+      { q: 'Was ist die Second-Level-Domain in "shop.mein-laden.de"?', options: ["shop", "mein-laden", ".de", "https"], correct: 1 },
+      { q: "Was bedeutet Pay-per-Use beim Cloud Hosting?", options: ["Pauschalpreis pro Monat", "Man zahlt nur, was man tats\u00e4chlich nutzt", "Kostenlose Nutzung", "Einmalige Zahlung"], correct: 1 },
+      { q: "Welche Stelle pr\u00fcft man vor dem Domain-Kauf auf Markenrechte?", options: ["DENIC", "DPMA (Deutsches Patent- und Markenamt)", "IHK", "Finanzamt"], correct: 1 },
+      { q: "Was ist ein SSL-Zertifikat?", options: ["Ein Designzertifikat", "Eine Verschl\u00fcsselung f\u00fcr sichere Daten\u00fcbertragung zwischen Browser und Server", "Ein Qualit\u00e4tssiegel", "Eine Steuerbescheinigung"], correct: 1 },
+      { q: "Mit wie vielen Klicks muss das Impressum von der Startseite erreichbar sein?", options: ["1 Klick", "Maximal 2 Klicks", "5 Klicks", "Es gibt keine Regel"], correct: 1 },
+      { q: "Was kostet eine .de-Domain pro Jahr ungef\u00e4hr?", options: ["100-200 EUR", "10-15 EUR", "1-2 EUR", "500 EUR"], correct: 1 },
+      { q: "Welche Rechtsgrundlage regelt die Datenschutzerkl\u00e4rung?", options: ["HGB", "Art. 13/14 DSGVO", "\u00a75 DDG", "\u00a7312g BGB"], correct: 1 },
+      { q: "Was f\u00e4llt NICHT unter das Widerrufsrecht?", options: ["Kleidung", "Elektronik", "Ma\u00dfgefertigte Produkte", "B\u00fccher"], correct: 2 },
+      { q: "Wie hoch kann das Bu\u00dfgeld f\u00fcr ein fehlendes Impressum sein?", options: ["100 EUR", "1.000 EUR", "Bis zu 50.000 EUR", "500 EUR"], correct: 2 }
+    ]
+  },
+  {
+    tag: 8,
+    title: "SEO & Online-Marketing",
+    questions: [
+      { q: "Wof\u00fcr steht SEO?", options: ["Social E-Commerce Optimization", "Search Engine Optimization", "Shop Enhancement Online", "Structured E-Commerce Operation"], correct: 1 },
+      { q: "Wie lang darf ein Title-Tag maximal sein?", options: ["30 Zeichen", "60 Zeichen", "100 Zeichen", "200 Zeichen"], correct: 1 },
+      { q: "Was sind Long-Tail-Keywords?", options: ["Kurze, allgemeine Suchbegriffe mit viel Wettbewerb", "Lange, spezifische Suchbegriffe mit hoher Kaufabsicht", "Keywords nur f\u00fcr YouTube", "Verbotene Suchbegriffe"], correct: 1 },
+      { q: "Was ist der Unterschied zwischen SEO und SEA?", options: ["Es gibt keinen Unterschied", "SEO ist organische (kostenlose) Sichtbarkeit, SEA ist bezahlte Werbung", "SEO ist nur f\u00fcr Social Media", "SEA ist kostenlos, SEO ist bezahlt"], correct: 1 },
+      { q: "Wie hoch ist die Conversion Rate eines guten Webshops?", options: ["10-15%", "50%", "1-3%", "0,01%"], correct: 2 },
+      { q: "Wof\u00fcr steht das PESO-Modell?", options: ["Preis, Eingang, Service, Output", "Paid, Earned, Shared, Owned Media", "Produkt, Erlebnis, Strategie, Organisation", "Personal, Einkauf, Sortiment, Online"], correct: 1 },
+      { q: "Was ist die Meta-Description?", options: ["Die Haupt\u00fcberschrift der Seite", "Die Kurzbeschreibung unter dem Titel in Google-Suchergebnissen", "Der Seiteninhalt", "Das Logo der Website"], correct: 1 },
+      { q: "Wie viel EUR Ertrag bringt E-Mail-Marketing pro 1 EUR Invest ca.?", options: ["5 EUR", "15 EUR", "36 EUR", "100 EUR"], correct: 2 },
+      { q: "Was bedeutet CPC?", options: ["Customer Profit Calculator", "Cost per Click", "Conversion per Customer", "Content per Channel"], correct: 1 },
+      { q: "Seit wann gilt bei Google das Mobile-First-Indexing?", options: ["2010", "2018", "2022", "2025"], correct: 1 },
+      { q: "Was ist die Bounce Rate?", options: ["Der Anteil erfolgreicher K\u00e4ufe", "Der Anteil der Besucher, die nach nur einer Seite die Website verlassen", "Die Ladezeit der Website", "Der Gewinn pro Kunde"], correct: 1 },
+      { q: "Wie viele H1-\u00dcberschriften sollte eine Seite haben?", options: ["So viele wie m\u00f6glich", "Mindestens 5", "Genau eine", "Keine"], correct: 2 },
+      { q: "Was ist der AOV?", options: ["Abholort Verpackung", "Average Order Value - durchschnittlicher Bestellwert", "Automatische Online-Verwaltung", "Allgemeiner Onlinehandels-Verein"], correct: 1 },
+      { q: "Was macht die robots.txt Datei?", options: ["Sie erstellt automatisch Inhalte", "Sie definiert, welche Seiten Suchmaschinen crawlen d\u00fcrfen", "Sie verschl\u00fcsselt die Website", "Sie blockiert Hacker"], correct: 1 },
+      { q: "Was ist der CLV (Customer Lifetime Value)?", options: ["Die Kosten f\u00fcr einen Neukunden", "Der gesamte Umsatz, den ein Kunde \u00fcber die Dauer der Gesch\u00e4ftsbeziehung einbringt", "Der Gewinn des ersten Kaufs", "Die Anzahl der Besuche"], correct: 1 },
+      { q: "Was ist der ideale Wert f\u00fcr CLV im Verh\u00e4ltnis zum CAC?", options: ["CLV = CAC", "CLV \u2265 3\u00d7 CAC", "CLV < CAC", "CLV = 0"], correct: 1 },
+      { q: "Was ist eine sitemap.xml?", options: ["Ein Design-Template", "Eine Liste aller URLs, die Google beim Finden aller Seiten hilft", "Eine Zahlungsdatei", "Ein Sicherheitsprotokoll"], correct: 1 },
+      { q: "Was ist ein Merkmal von Short-Tail-Keywords?", options: ["Sehr spezifisch mit hoher Conversion", "Sehr hohes Suchvolumen und hoher Wettbewerb", "Nur 1 Suche pro Monat", "Nur f\u00fcr B2B geeignet"], correct: 1 },
+      { q: "Welche Plattform wird f\u00fcr junge Zielgruppen (13-30 Jahre) und Social Commerce empfohlen?", options: ["Facebook", "Pinterest", "TikTok", "LinkedIn"], correct: 2 },
+      { q: "Was ist Double-Opt-In?", options: ["Zweimaliges Bezahlen", "Zweistufiges Einwilligungsverfahren f\u00fcr E-Mail-Marketing (DSGVO-konform)", "Doppelte Verschl\u00fcsselung", "Zwei Passw\u00f6rter eingeben"], correct: 1 }
+    ]
+  }
+];
+
+// State
+let currentTag = 0;
+let currentQuestion = 0;
+let answers = []; // answers[tag][question] = { selected: index, correct: boolean } or null
+let tagScores = []; // tagScores[tag] = { correct: n, wrong: n }
+
+function initState() {
+  answers = [];
+  tagScores = [];
+  for (let t = 0; t < quizData.length; t++) {
+    answers.push(new Array(quizData[t].questions.length).fill(null));
+    tagScores.push({ correct: 0, wrong: 0 });
+  }
+  currentTag = 0;
+  currentQuestion = 0;
+}
+
+function startQuiz() {
+  initState();
+  document.getElementById('landingPage').style.display = 'none';
+  document.getElementById('quizPage').style.display = 'block';
+  document.getElementById('summaryPage').style.display = 'none';
+  renderQuiz();
+}
+
+function renderQuiz() {
+  renderTagDots();
+  renderHeader();
+  renderQuestionIndicators();
+  renderQuestion();
+  renderNavButtons();
+  updateOverallProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderTagDots() {
+  const container = document.getElementById('tagNavDots');
+  container.innerHTML = '';
+  for (let t = 0; t < quizData.length; t++) {
+    const dot = document.createElement('div');
+    dot.className = 'tag-dot';
+    if (t === currentTag) dot.classList.add('active');
+    const allAnswered = answers[t].every(a => a !== null);
+    if (allAnswered) dot.classList.add('completed');
+    dot.textContent = t + 1;
+    dot.title = 'Tag ' + (t + 1) + ': ' + quizData[t].title;
+    dot.onclick = () => { currentTag = t; currentQuestion = 0; renderQuiz(); };
+    container.appendChild(dot);
+  }
+}
+
+function renderHeader() {
+  const tag = quizData[currentTag];
+  document.getElementById('tagTitle').textContent = 'Tag ' + tag.tag + ': ' + tag.title;
+  document.getElementById('tagBadge').textContent = 'Tag ' + tag.tag + ' / 8';
+  document.getElementById('correctCount').textContent = tagScores[currentTag].correct;
+  document.getElementById('wrongCount').textContent = tagScores[currentTag].wrong;
+
+  const answered = answers[currentTag].filter(a => a !== null).length;
+  const total = tag.questions.length;
+  const pct = total > 0 ? (answered / total * 100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = answered + ' / ' + total + ' beantwortet';
+}
+
+function renderQuestionIndicators() {
+  const container = document.getElementById('questionIndicators');
+  container.innerHTML = '';
+  const tag = quizData[currentTag];
+  for (let i = 0; i < tag.questions.length; i++) {
+    const ind = document.createElement('div');
+    ind.className = 'q-indicator';
+    if (i === currentQuestion) ind.classList.add('active');
+    if (answers[currentTag][i] !== null) {
+      ind.classList.add(answers[currentTag][i].correct ? 'answered-correct' : 'answered-wrong');
+    }
+    ind.textContent = i + 1;
+    ind.onclick = () => { currentQuestion = i; renderQuiz(); };
+    container.appendChild(ind);
+  }
+}
+
+function renderQuestion() {
+  const container = document.getElementById('questionContainer');
+  const tag = quizData[currentTag];
+  const q = tag.questions[currentQuestion];
+  const ans = answers[currentTag][currentQuestion];
+  const labels = ['A', 'B', 'C', 'D'];
+
+  let html = '<div class="question-card fade-in">';
+  html += '<div class="question-number">Frage ' + (currentQuestion + 1) + ' von ' + tag.questions.length + '</div>';
+  html += '<div class="question-text">' + escapeHtml(q.q) + '</div>';
+  html += '<div class="options">';
+
+  for (let i = 0; i < q.options.length; i++) {
+    let cls = 'option-btn';
+    if (ans !== null) {
+      cls += ' disabled';
+      if (i === q.correct) cls += ' correct-answer';
+      if (i === ans.selected && !ans.correct) cls += ' wrong-answer';
+    }
+    html += '<button class="' + cls + '" ' + (ans !== null ? 'disabled' : '') + ' onclick="selectAnswer(' + currentTag + ',' + currentQuestion + ',' + i + ')">';
+    html += '<span class="option-label">' + labels[i] + '</span>';
+    html += '<span class="option-text">' + escapeHtml(q.options[i]) + '</span>';
+    html += '</button>';
+  }
+
+  html += '</div>';
+
+  if (ans !== null) {
+    if (ans.correct) {
+      html += '<div class="feedback-msg correct">&#10004; Richtig! Sehr gut.</div>';
+    } else {
+      html += '<div class="feedback-msg wrong">&#10008; Falsch. Die richtige Antwort ist ' + labels[q.correct] + ': ' + escapeHtml(q.options[q.correct]) + '</div>';
+    }
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function selectAnswer(tagIdx, qIdx, optIdx) {
+  if (answers[tagIdx][qIdx] !== null) return;
+  const q = quizData[tagIdx].questions[qIdx];
+  const isCorrect = optIdx === q.correct;
+  answers[tagIdx][qIdx] = { selected: optIdx, correct: isCorrect };
+  if (isCorrect) {
+    tagScores[tagIdx].correct++;
+  } else {
+    tagScores[tagIdx].wrong++;
+  }
+  renderHeader();
+  renderQuestionIndicators();
+  renderQuestion();
+  renderNavButtons();
+  updateOverallProgress();
+}
+
+function renderNavButtons() {
+  const container = document.getElementById('navButtons');
+  const tag = quizData[currentTag];
+  const isFirstQ = currentQuestion === 0 && currentTag === 0;
+  const isLastQ = currentQuestion === tag.questions.length - 1;
+  const isLastTag = currentTag === quizData.length - 1;
+  const allDone = answers.every(tagAns => tagAns.every(a => a !== null));
+
+  let html = '';
+
+  // Prev button
+  if (!isFirstQ || currentTag > 0) {
+    html += '<button class="btn-nav btn-prev" onclick="prevQuestion()">&#9664; Zur\u00fcck</button>';
+  } else {
+    html += '<div></div>';
+  }
+
+  // Next / Finish
+  if (isLastQ && isLastTag && allDone) {
+    html += '<button class="btn-nav btn-finish" onclick="showSummary()">Ergebnis anzeigen &#9654;</button>';
+  } else if (isLastQ && !isLastTag) {
+    html += '<button class="btn-nav btn-next" onclick="nextTag()">N\u00e4chster Tag &#9654;</button>';
+  } else if (isLastQ && isLastTag && !allDone) {
+    html += '<button class="btn-nav btn-next" disabled style="opacity:0.5;cursor:default;">Alle Fragen beantworten</button>';
+  } else {
+    html += '<button class="btn-nav btn-next" onclick="nextQuestion()">N\u00e4chste Frage &#9654;</button>';
+  }
+
+  container.innerHTML = html;
+}
+
+function nextQuestion() {
+  const tag = quizData[currentTag];
+  if (currentQuestion < tag.questions.length - 1) {
+    currentQuestion++;
+    renderQuiz();
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuiz();
+  } else if (currentTag > 0) {
+    currentTag--;
+    currentQuestion = quizData[currentTag].questions.length - 1;
+    renderQuiz();
+  }
+}
+
+function nextTag() {
+  if (currentTag < quizData.length - 1) {
+    currentTag++;
+    currentQuestion = 0;
+    renderQuiz();
+  }
+}
+
+function updateOverallProgress() {
+  let totalAnswered = 0;
+  let totalCorrect = 0;
+  const totalQuestions = 160;
+  for (let t = 0; t < quizData.length; t++) {
+    totalAnswered += answers[t].filter(a => a !== null).length;
+    totalCorrect += tagScores[t].correct;
+  }
+  const pct = totalQuestions > 0 ? (totalAnswered / totalQuestions * 100) : 0;
+  document.getElementById('overallBar').style.width = pct + '%';
+  document.getElementById('overallScoreText').textContent = totalCorrect + ' / ' + totalAnswered + ' richtig';
+}
+
+function showSummary() {
+  document.getElementById('quizPage').style.display = 'none';
+  document.getElementById('summaryPage').style.display = 'block';
+
+  let totalCorrect = 0;
+  let totalQuestions = 0;
+  for (let t = 0; t < quizData.length; t++) {
+    totalCorrect += tagScores[t].correct;
+    totalQuestions += quizData[t].questions.length;
+  }
+  const pct = Math.round(totalCorrect / totalQuestions * 100);
+
+  let gradeIcon = '';
+  let gradeText = '';
+  let gradeColor = '';
+  if (pct >= 90) { gradeIcon = '&#127942;'; gradeText = 'Hervorragend! Du bist bestens vorbereitet!'; gradeColor = 'var(--green)'; }
+  else if (pct >= 75) { gradeIcon = '&#11088;'; gradeText = 'Sehr gut! Nur noch Kleinigkeiten zum Perfektionieren.'; gradeColor = 'var(--blue)'; }
+  else if (pct >= 60) { gradeIcon = '&#128170;'; gradeText = 'Gut! Einige Themen solltest du noch wiederholen.'; gradeColor = 'var(--orange)'; }
+  else if (pct >= 40) { gradeIcon = '&#128214;'; gradeText = 'Ausreichend. Es gibt noch einiges zu lernen.'; gradeColor = 'var(--orange)'; }
+  else { gradeIcon = '&#128218;'; gradeText = 'Hier ist noch viel Luft nach oben. Wiederhole die Inhalte!'; gradeColor = 'var(--red)'; }
+
+  let html = '<h2>Quiz abgeschlossen!</h2>';
+  html += '<p class="summary-subtitle">Dein Ergebnis f\u00fcr Lernfeld 1 - Tag 1 bis 8</p>';
+  html += '<div class="grade-emoji">' + gradeIcon + '</div>';
+  html += '<div class="total-score" style="color:' + gradeColor + '">' + totalCorrect + ' <span class="fraction">/ ' + totalQuestions + '</span></div>';
+  html += '<div class="total-percentage" style="color:' + gradeColor + '">' + pct + '%</div>';
+  html += '<p class="grade-text">' + gradeText + '</p>';
+
+  html += '<div class="tag-results">';
+  for (let t = 0; t < quizData.length; t++) {
+    const tag = quizData[t];
+    const c = tagScores[t].correct;
+    const total = tag.questions.length;
+    const tagPct = Math.round(c / total * 100);
+    let barColor = 'var(--green)';
+    if (tagPct < 40) barColor = 'var(--red)';
+    else if (tagPct < 70) barColor = 'var(--orange)';
+    else if (tagPct < 85) barColor = 'var(--blue)';
+
+    html += '<div class="tag-result-item">';
+    html += '<div class="tag-result-header">';
+    html += '<span class="tag-result-name">Tag ' + tag.tag + '</span>';
+    html += '<span class="tag-result-score" style="color:' + barColor + '">' + c + '/' + total + ' (' + tagPct + '%)</span>';
+    html += '</div>';
+    html += '<div class="tag-result-bar"><div class="tag-result-fill" style="width:' + tagPct + '%;background:' + barColor + '"></div></div>';
+    html += '<div style="font-size:0.8em;color:#888;margin-top:6px;">' + escapeHtml(tag.title) + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '<button class="btn-restart" onclick="restartQuiz()">&#128260; Quiz wiederholen</button>';
+
+  document.getElementById('summaryContent').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  document.getElementById('summaryPage').style.display = 'none';
+  document.getElementById('landingPage').style.display = 'flex';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
+}
+
+// Initialize landing page tag overview
+function initLanding() {
+  const container = document.getElementById('tagOverview');
+  const tagTitles = [
+    'Das Modellunternehmen',
+    'Orientierung & Aktives Lesen',
+    'Handlungskompetenz & Feedback',
+    'Soziale Kompetenz & E-Commerce-Arten',
+    'Vertriebskan\u00e4le',
+    'Einrichtung eines Webshops',
+    'Webshop Name & Adresse',
+    'SEO & Online-Marketing'
+  ];
+  for (let i = 0; i < tagTitles.length; i++) {
+    const item = document.createElement('div');
+    item.className = 'tag-overview-item';
+    item.innerHTML = '<strong>Tag ' + (i + 1) + ':</strong> ' + tagTitles[i] + ' <span style="color:#999;">(20 Fragen)</span>';
+    container.appendChild(item);
+  }
+}
+
+initLanding();
+</script>
+
+</body>
+</html>

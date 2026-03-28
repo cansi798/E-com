@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.18 Datenschutz – Tag 18</title>
+<style>
+:root{--bg:#FFFFFF;--bg-card:#F8FAFC;--bg-alt:#F1F5F9;--text:#1E293B;--text-muted:#64748B;--primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1D4ED8;--accent:#F59E0B;--accent-light:#FEF3C7;--success:#10B981;--success-light:#D1FAE5;--danger:#EF4444;--danger-light:#FEE2E2;--border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-lg:0 4px 12px rgba(0,0,0,0.1)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none}#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA);transition:width .4s ease;z-index:100}#viewport{width:100vw;height:100vh;position:relative;overflow:hidden}.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;background:var(--bg)}.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit-left{opacity:0;transform:translateX(-60px)}.slide.cover{justify-content:center;text-align:center}.kicker{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--primary);margin-bottom:20px}.slide h1{font-size:2.8rem;font-weight:800;line-height:1.15;color:var(--text);margin-bottom:16px}.cover-line{width:80px;height:4px;background:var(--primary);margin:0 auto 20px;border-radius:2px}.subtitle{font-size:1.2rem;color:var(--text-muted);margin-bottom:30px}.cover-meta{font-size:.9rem;color:var(--text-muted);line-height:1.8}.slide-header{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:20px;align-self:flex-start}.slide-header .icon{font-size:1.6rem}.slide-header h2{font-size:1.5rem;font-weight:700;color:var(--primary);flex:1}.slide-header .tag{font-size:.72rem;background:var(--bg-alt);color:var(--text-muted);padding:4px 12px;border-radius:20px;white-space:nowrap}.content{width:100%;flex:1;overflow:hidden}.slide-footer{width:100%;text-align:right;font-size:.68rem;color:var(--text-muted);margin-top:auto;padding-top:8px}.cards{display:grid;gap:14px;width:100%}.cols2{grid-template-columns:1fr 1fr}.cols3{grid-template-columns:1fr 1fr 1fr}.cols4{grid-template-columns:1fr 1fr 1fr 1fr}.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow)}.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary);border-radius:4px 0 0 4px}.card.gold::before{background:var(--accent)}.card.green::before{background:var(--success)}.card.red::before{background:var(--danger)}.card h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:8px}.card p,.card li{font-size:.84rem;color:var(--text-muted);line-height:1.6}.card ul{padding-left:16px}.card li{margin-bottom:3px}.bullets{list-style:none;width:100%;display:flex;flex-direction:column;gap:10px}.bullets li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;line-height:1.55}.bullets li::before{content:'';min-width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:7px}.highlight{background:var(--primary-light);border-radius:12px;padding:16px 24px;width:100%;border-left:4px solid var(--primary);margin:12px 0;font-size:.88rem;line-height:1.6}.highlight.gold{background:var(--accent-light);border-left-color:var(--accent)}.highlight.green{background:var(--success-light);border-left-color:var(--success)}.highlight.red{background:var(--danger-light);border-left-color:var(--danger)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}.badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:4px}.badge.gold{background:var(--accent)}.badge.green{background:var(--success)}.badge.red{background:var(--danger)}table.sum-table{width:100%;border-collapse:collapse;font-size:.82rem}.sum-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:700}.sum-table td{padding:8px 14px;color:var(--text);border-bottom:1px solid var(--border)}.sum-table tr:nth-child(even) td{background:var(--bg-alt)}.sum-table tr:hover td{background:var(--primary-light)}.ref-entry{font-size:.78rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6;padding-left:24px;text-indent:-24px}.lz-item{display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--success-light);border-radius:10px;border:1px solid #A7F3D0;margin-bottom:8px;font-size:.87rem;line-height:1.5}.lz-check{min-width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem}.info-box{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:8px 0;font-size:.85rem;line-height:1.6;box-shadow:var(--shadow)}#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:40px;padding:10px 24px;z-index:50;box-shadow:var(--shadow-lg)}#nav button{background:none;border:none;color:var(--text);font-size:1.1rem;cursor:pointer;padding:4px 10px;border-radius:20px;transition:background .2s}#nav button:hover{background:var(--primary-light)}#slide-counter{font-size:.82rem;color:var(--text-muted);min-width:60px;text-align:center}#footer{position:fixed;bottom:0;left:0;right:0;padding:6px 40px;display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);background:rgba(255,255,255,.9);backdrop-filter:blur(6px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.slide.active .slide-header,.slide.active .content,.slide.active .highlight,.slide.active table{animation:fadeUp .5s ease both}.slide.active .slide-header{animation-delay:.05s}.slide.active .content{animation-delay:.15s}#grid-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:200;overflow-y:auto;padding:20px}#grid-overlay.visible{display:block}#grid-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 20px;border-bottom:1px solid var(--border);margin-bottom:20px}#grid-header span{font-size:1.2rem;font-weight:700;color:var(--primary)}#grid-header button{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);padding:4px 10px;border-radius:8px}#grid-header button:hover{background:var(--bg-alt)}#grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:0 20px}.grid-thumb{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}.grid-thumb:hover{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px)}.grid-thumb.current{border-color:var(--primary);background:var(--primary-light)}.grid-thumb-num{font-size:.75rem;font-weight:700;color:var(--primary);margin-bottom:4px}.grid-thumb-title{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="viewport">
+
+  <section class="slide cover active" data-index="1">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 18</div>
+    <h1>3.18 Datenschutz</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">Buchseiten 540 – 557</div>
+    <div class="cover-meta">Kaufmann/-frau im E-Commerce &nbsp;|&nbsp; Berufsschule<br>26. Mai 2026<br><br><strong style="color:var(--text)">Can Siebert &amp; Hamzah Meyer</strong></div>
+  </section>
+
+  <section class="slide" data-index="2">
+    <div class="slide-header"><div class="icon">&#127919;</div><h2>Lernziele</h2><span class="tag">Folie 2 / 22</span></div>
+    <div class="content">
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Datenschutz definieren</strong> – Zweck und Rechtsgrundlagen des Datenschutzes erklären.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Personenbezogene Daten erkennen</strong> – Beispiele benennen und von juristischen Personen abgrenzen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>DSGVO verstehen</strong> – die wichtigsten Regelungen der EU-Datenschutzgrundverordnung kennen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Rechte der Betroffenen anwenden</strong> – Auskunfts-, Berichtigungs-, Sperrungs- und Löschungsrecht beschreiben.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Datenschutz im Webshop umsetzen</strong> – Datenschutzerklärung, Cookies und Einwilligung einordnen.</div></div>
+      <div class="lz-item"><div class="lz-check">&#10003;</div><div><strong>Datenschutzbeauftragten einordnen</strong> – Aufgaben und Pflichten kennen.</div></div>
+      <div class="highlight" style="margin-top:12px"><strong>Leitfrage:</strong> Wie schützt ein E-Commerce-Unternehmen die personenbezogenen Daten seiner Kunden und Mitarbeiter?</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="3">
+    <div class="slide-header"><div class="icon">&#128274;</div><h2>Was ist Datenschutz?</h2><span class="tag">Folie 3 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green"><strong>Datenschutz</strong> soll die Bürger vor dem Missbrauch der Daten bewahren, die an irgendeiner Stelle gespeichert oder verarbeitet werden.</div>
+        <div class="info-box" style="margin-top:12px"><strong>Rechtsgrundlagen:</strong><ul style="padding-left:16px;margin-top:8px"><li>EU-Datenschutzgrundverordnung (DSGVO)</li><li>Bundesdatenschutzgesetz (BDSG)</li></ul></div>
+      </div>
+      <div>
+        <div class="card"><h3>&#128161; Informationelle Selbstbestimmung</h3><p>Jeder Bürger darf über die Erhebung, Speicherung, Übermittlung und Verarbeitung seiner Daten entscheiden, soweit dies gesetzlich nicht anders geregelt ist.</p></div>
+        <div class="highlight gold" style="margin-top:12px"><strong>Grundrecht:</strong> Das Bundesverfassungsgericht hat den Datenschutz eindeutig als Grundrecht des Bürgers hervorgehoben.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="4">
+    <div class="slide-header"><div class="icon">&#128100;</div><h2>Personenbezogene Daten</h2><span class="tag">Folie 4 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Personenbezogene Daten</strong> sind alle Einzelangaben über persönliche oder sachliche Verhältnisse natürlicher Personen, also jedes Menschen.</div>
+        <div class="card" style="margin-top:12px"><h3>Beispiele</h3><ul><li>Name, Vorname, Geburtsdatum</li><li>Anschrift, Beruf</li><li>Finanz- und Vermögenslage</li><li>Gesundheitszustand</li><li>Politische und religiöse Anschauungen</li><li>Straftaten und Ordnungswidrigkeiten</li></ul></div>
+      </div>
+      <div>
+        <div class="card red"><h3>&#10060; Nicht geschützt</h3><p>Daten <strong>juristischer Personen</strong> (Unternehmen) sind nicht vom BDSG betroffen:</p><ul><li>Kapital einer Aktiengesellschaft</li><li>Beschäftigtenzahl einer GmbH</li></ul></div>
+        <div class="highlight red" style="margin-top:12px"><strong>Ohne ausdrückliche Genehmigung</strong> dürfen niemals gespeichert werden: Krankheitsdaten, Daten über private Gewohnheiten, Daten über politische und religiöse Überzeugungen oder Straftaten.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="5">
+    <div class="slide-header"><div class="icon">&#9878;</div><h2>Zulässigkeit der Datenverarbeitung</h2><span class="tag">Folie 5 / 22</span></div>
+    <div class="content">
+      <div class="highlight">Speicherung personenbezogener Daten ist für Unternehmen zulässig:</div>
+      <div class="cards cols3" style="margin-top:14px">
+        <div class="card green"><h3>Vertragsverhältnis</h3><p>Im Rahmen eines Vertrags dürfen z. B. nach Abschluss eines Arbeitsvertrags Daten gespeichert werden.</p></div>
+        <div class="card"><h3>Berechtigte Interessen</h3><p>Zu Werbezwecken dürfen Adressen möglicher Kunden gespeichert werden, sofern schutzwürdige Belange nicht beeinträchtigt werden.</p></div>
+        <div class="card gold"><h3>Einwilligung</h3><p>Wenn der Betroffene ausdrücklich einwilligt. Pauschale AGB-Klauseln oder versehentliche Mausklicks reichen nicht aus.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="6">
+    <div class="slide-header"><div class="icon">&#128100;</div><h2>Rechte der Betroffenen</h2><span class="tag">Folie 6 / 22</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card green"><h3>&#128269; Auskunftsrecht</h3><p>Jeder Betroffene kann bei der speichernden Stelle die zu seiner Person gespeicherten Daten erfragen. Die Stelle ist zur Auskunft verpflichtet.</p></div>
+        <div class="card"><h3>&#9998; Berichtigungsrecht</h3><p>Die speichernde Stelle muss unrichtige Daten – unabhängig vom Grund für den Fehler – korrigieren.</p></div>
+        <div class="card gold"><h3>&#128274; Sperrungsrecht</h3><p>Wenn weder die Richtigkeit noch die Unrichtigkeit bewiesen werden kann, dürfen die Daten nicht weiter verwendet, sondern müssen gesperrt werden.</p></div>
+        <div class="card red"><h3>&#128465; Löschungsrecht</h3><p>Wenn die Speicherung unzulässig ist, muss die speichernde Stelle die Daten von ihren Datenträgern entfernen.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="7">
+    <div class="slide-header"><div class="icon">&#128101;</div><h2>Pflichten datenverarbeitender Stellen</h2><span class="tag">Folie 7 / 22</span></div>
+    <div class="content">
+      <ul class="bullets">
+        <li><strong>Wahrung des Datengeheimnisses</strong> – Alle Mitarbeiter müssen verpflichtet werden, personenbezogene Daten nicht unbefugt zu verarbeiten, bekannt zu geben oder zugänglich zu machen.</li>
+        <li><strong>Prüfung der Zulässigkeit</strong> – Bei allen personenbezogenen Daten muss kontrolliert werden, ob die Verarbeitung erlaubt ist.</li>
+        <li><strong>Benachrichtigung bei erstmaliger Speicherung</strong> – Werden erstmals Daten über eine Person gespeichert, muss sie darüber informiert werden.</li>
+        <li><strong>Ernennung eines Datenschutzbeauftragten</strong> – Ab mindestens fünf Personen mit automatisierter Verarbeitung personenbezogener Daten muss ein Datenschutzbeauftragter eingesetzt werden.</li>
+        <li><strong>Technische und organisatorische Kontrollen</strong> – Die 8 Gebote des Datenschutzes umsetzen.</li>
+      </ul>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="8">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Die 8 Gebote des Datenschutzes</h2><span class="tag">Folie 8 / 22</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Zutrittskontrolle</h3><p>Unbefugten den Zugang zu EDV-Anlagen verwehren.</p></div>
+        <div class="card"><h3>2. Zugangskontrolle</h3><p>Sicherstellen, dass nur Befugte die EDV-Anlagen nutzen können.</p></div>
+        <div class="card gold"><h3>3. Zugriffskontrolle</h3><p>Berechtigte Mitarbeiter dürfen nur auf die Daten zugreifen, für die sie Berechtigung besitzen.</p></div>
+        <div class="card gold"><h3>4. Weitergabekontrolle</h3><p>Daten dürfen beim Transport nicht unbefugt gelesen, kopiert oder verändert werden.</p></div>
+        <div class="card green"><h3>5. Eingabekontrolle</h3><p>Nachvollziehbar machen, welche Daten wann von wem eingegeben wurden.</p></div>
+        <div class="card green"><h3>6. Auftragskontrolle</h3><p>Im Auftrag verarbeitete Daten nur entsprechend den Weisungen verarbeiten.</p></div>
+        <div class="card red"><h3>7. Verfügbarkeitskontrolle</h3><p>Personenbezogene Daten dürfen nicht zufällig zerstört werden oder verloren gehen.</p></div>
+        <div class="card red"><h3>8. Trennungsgebot</h3><p>Zu unterschiedlichen Zwecken erhobene Daten müssen getrennt verarbeitet werden können.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="9">
+    <div class="slide-header"><div class="icon">&#127466;&#127482;</div><h2>Die DSGVO (seit 25. Mai 2018)</h2><span class="tag">Folie 9 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>DSGVO</strong> = Datenschutz-Grundverordnung (engl. GDPR – General Data Protection Regulation). Seit dem 25. Mai 2018 in der gesamten EU anwendbar.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Einheitlich hohes Datenschutzniveau in der gesamten EU</li>
+          <li>Gilt auch für Unternehmen <strong>außerhalb der EU</strong>, sobald sie Daten von EU-Bürgern verarbeiten</li>
+          <li>Gilt für B2C <strong>und</strong> B2B (natürliche Personen als Ansprechpartner)</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card green"><h3>Grundsätze der DSGVO</h3><ul><li>Recht auf informationelle Selbstbestimmung</li><li>Prinzip der Datensparsamkeit</li><li>Transparenz</li><li>Informationspflicht der Unternehmen</li><li>Verzeichnis von Verarbeitungstätigkeiten</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="10">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Besondere Regeln der DSGVO</h2><span class="tag">Folie 10 / 22</span></div>
+    <div class="content">
+      <div class="cards cols3">
+        <div class="card"><h3>&#128465; Recht auf Löschung</h3><p>Personenbezogene Daten müssen gelöscht oder gesperrt werden, wenn für die Verwendung keine Berechtigung mehr vorliegt.</p></div>
+        <div class="card"><h3>&#128230; Datenportabilität</h3><p>Man darf vom datenverarbeitenden Unternehmen verlangen, seine Daten in üblichem Format an einen anderen Verantwortlichen weiterzugeben.</p></div>
+        <div class="card gold"><h3>&#128203; Rechenschaftspflicht</h3><p>Der Datenverantwortliche muss auf Aufforderung die Einhaltung aller Datenschutzprinzipien nachweisen.</p></div>
+        <div class="card gold"><h3>&#9989; Einwilligung</h3><p>Nicht an besondere Form gebunden. Muss jederzeit mit Wirkung für die Zukunft widerrufen werden können. Dokumentation ist vorteilhaft.</p></div>
+        <div class="card green"><h3>&#127760; One-Stop-Shop</h3><p>Eine „federführende" Aufsichtsbehörde soll als alleiniger Ansprechpartner für Datenschutz im Unternehmen dienen.</p></div>
+        <div class="card red"><h3>&#9888; Meldepflicht bei Datenpannen</h3><p>Aufsichtsbehörde muss innerhalb von <strong>72 Stunden</strong> informiert werden. In bestimmten Fällen auch die Betroffenen.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="11">
+    <div class="slide-header"><div class="icon">&#128176;</div><h2>Bußgelder bei Verstößen</h2><span class="tag">Folie 11 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight red"><strong>Bei Datenschutzverstößen:</strong> Behörden dürfen ein Bußgeld von bis zu <strong>4 % des Jahresumsatzes</strong> verhängen. Der Höchstbetrag liegt bei <strong>20 Millionen Euro</strong> (statt wie früher 300.000 Euro).</div>
+        <div class="info-box" style="margin-top:12px"><strong>Datenschutz-Folgeabschätzung:</strong> Wenn Daten einer Person nach sensiblen Kriterien (Sexualität, Gesundheit, rassische Herkunft, politische Ansichten) identifiziert oder kategorisiert werden können, besteht eine besonders hohe Gefahr. Unternehmen müssen dann eine Folgeabschätzung durchführen.</div>
+      </div>
+      <div>
+        <div class="card"><h3>&#128100; Datenschutzbeauftragter</h3><ul><li>Muss über Fachwissen verfügen, aber nicht unbedingt zertifiziert sein</li><li>Ist <strong>weisungsfrei</strong></li><li>Beratung der Verantwortlichen</li><li>Überwachung der datenschutzrechtlichen Vorschriften</li><li>Prüfung von Verträgen mit Auftragsverarbeitern</li><li>Durchführung von Datenschutz-Folgeabschätzungen</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="12">
+    <div class="slide-header"><div class="icon">&#127760;</div><h2>Datenschutz in Webshops</h2><span class="tag">Folie 12 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Informationspflicht:</strong> Der Webshop muss zu Beginn der Kaufabwicklung den Kunden über Art, Umfang und Zweck der Erfassung und Verwendung personenbezogener Daten in allgemein verständlicher Form unterrichten.</div>
+        <div class="card" style="margin-top:12px"><h3>Datenschutzerklärung</h3><p>Stellt dar, wie das Unternehmen die Daten der Käufer schützt. Muss gut auffindbar sein und nach herrschender Meinung mit maximal <strong>zwei Mausklicks</strong> erreichbar sein.</p></div>
+      </div>
+      <div>
+        <div class="card gold"><h3>Inhalt der Datenschutzerklärung</h3><ul><li>Art, Umfang und Zweck der Datenerhebung</li><li>Weitergabe an Dritte</li><li>Verarbeitung außerhalb des EWR</li><li>Maßnahmen zum Schutz der Daten</li><li>Einsatz von Cookies und Web-Bugs</li><li>Nutzung von Webanalyse-Tools</li><li>Nutzung von Social-Plug-ins</li><li>Auskunfts-, Berichtigungs-, Sperrungs- und Löschungsrechte</li><li>Kontaktmöglichkeit zum Datenschutzbeauftragten</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="13">
+    <div class="slide-header"><div class="icon">&#127850;</div><h2>Cookies und Datenschutz</h2><span class="tag">Folie 13 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight"><strong>Cookies</strong> sind kleine Textdateien, die der Webserver im Browser des Nutzers speichert und später wieder abrufen kann.</div>
+        <div class="card" style="margin-top:12px"><h3>Wofür werden Cookies eingesetzt?</h3><ul><li>Session-Management (Warenkorb, Login)</li><li>Speicherung individueller Einstellungen (Sprache, Schriftgröße)</li><li>Aufzeichnung des Surfverhaltens (Drittanbieter-Cookies für Werbung)</li></ul></div>
+      </div>
+      <div>
+        <div class="card red"><h3>&#9888; Datenschutzrechtliche Kritik</h3><p>Die Möglichkeit des umfangreichen Datenabgriffs über Cookies ist der größte Kritikpunkt: Wenn beim Surfen ein Werbebanner genau das Produkt zeigt, das man kürzlich auf einer anderen Seite angeklickt hat, liegt dies an einem Cookie.</p></div>
+        <div class="highlight gold" style="margin-top:12px"><strong>Cookie-Consent:</strong> Gemäß DSGVO müssen Nutzer über den Einsatz von Cookies informiert werden und aktiv einwilligen (Opt-in), bevor nicht-essentielle Cookies gesetzt werden dürfen.</div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="14">
+    <div class="slide-header"><div class="icon">&#9989;</div><h2>Ausdrückliche Zustimmung des Kunden</h2><span class="tag">Folie 14 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight green">Personenbezogene Daten der Nutzer dürfen nur unter drei Bedingungen erfasst und verarbeitet werden:</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Der Kunde hat <strong>eingewilligt</strong></li>
+          <li>Das BDSG sieht die Erhebung und Nutzung vor</li>
+          <li>Spezielle Datenschutzvorschriften (z. B. Telemediengesetz) setzen den gesetzlichen Rahmen</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card red"><h3>&#10060; Nicht ausreichend</h3><ul><li>Pauschale Klauseln innerhalb der AGB</li><li>Ein versehentlicher Mausklick des Kunden</li><li>Vorangekreuzte Checkboxen</li></ul></div>
+        <div class="card green" style="margin-top:12px"><h3>&#128269; Auskunftsrecht des Kunden</h3><p>Die Auskunft ist grundsätzlich <strong>kostenlos</strong> und darf einmal im Kalenderjahr eingeholt werden. Die Textform ist vorgeschrieben.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="15">
+    <div class="slide-header"><div class="icon">&#128101;</div><h2>Beschäftigtendatenschutz</h2><span class="tag">Folie 15 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="highlight">Neben dem Kundendatenschutz müssen im Verhältnis zwischen Unternehmen und Beschäftigten zusätzliche spezielle Vorschriften beachtet werden: der <strong>Arbeitnehmerdatenschutz</strong>.</div>
+        <ul class="bullets" style="margin-top:12px">
+          <li>Arbeitgeber darf Daten nur im begrenzten Umfang speichern und verarbeiten</li>
+          <li>Zugriff auf Beschäftigtendaten nur, wenn für das Arbeitsverhältnis erforderlich</li>
+          <li>Freiwillige schriftliche Einwilligung des Beschäftigten</li>
+          <li>Betriebsvereinbarung zwischen Arbeitgeber und Betriebsrat</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card gold"><h3>Wichtige Regeln</h3><ul><li>Personalakten sorgfältig und vertraulich aufbewahren</li><li>Keine Detailinformationen zur Gesundheit erheben</li><li>Gesundheitsdaten dürfen nicht Bestandteil der Personalakte werden</li><li>Besondere Daten (Herkunft, Religion, Gewerkschaft, Gesundheit) bedürfen einer <strong>ausdrücklichen Einwilligung</strong></li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="16">
+    <div class="slide-header"><div class="icon">&#128100;</div><h2>Der betriebliche Datenschutzbeauftragte</h2><span class="tag">Folie 16 / 22</span></div>
+    <div class="content two-col">
+      <div>
+        <div class="card green"><h3>Aufgaben</h3><ul><li>Kontrolle und Überwachung der Datenschutzbestimmungen</li><li>Information der Geschäftsführung über Probleme</li><li>Verantwortlich für Aufbau einer Datenschutzorganisation</li><li>Ansprechpartner für Mitarbeiter bei Datenschutzfragen</li><li>Verpflichtung der Mitarbeiter auf das Datenschutzgeheimnis</li><li>Gesamtüberblick über alle Verfahrensverzeichnisse</li><li>Überwachung der Entsorgung und Löschung personenbezogener Daten</li></ul></div>
+      </div>
+      <div>
+        <div class="card"><h3>Wer muss einen ernennen?</h3><ul><li>Fast alle Behörden, sobald Daten gespeichert werden</li><li>Nicht öffentliche Stellen (z. B. Unternehmen), wenn zehn Personen und mehr in der automatisierten Verarbeitung dauerhaft beschäftigt sind</li></ul></div>
+        <div class="card gold" style="margin-top:12px"><h3>Rechtsstellung</h3><ul><li>Der Geschäftsleitung direkt unterstellt</li><li>Eingesetztes unabhängiges Kontrollorgan</li><li>Besonderer Kündigungsschutz</li><li>Unterliegt der Verschwiegenheitspflicht</li><li>Zeugnisverweigerungsrecht</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="17">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Übungsaufgaben I</h2><span class="tag">Folie 17 / 22</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128209; Aufgabe 1</h3><p>Welche Aufgabe haben datenschutzrechtliche Regelungen?</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 2</h3><p>In welchen Fällen handelt es sich um geschützte Daten?</p><ul><li>a) Gehaltshöhe von Maria Pahlevan</li><li>b) Bilanzkennziffern der Exclusiva GmbH</li><li>c) Bewertung des Gesundheitszustands von Katarzyna Lindemann</li><li>d) Preis für eine Tüte Gummibärchen</li></ul></div>
+        <div class="card green"><h3>&#128209; Aufgabe 3</h3><p>Wer ist für den Schutz personenbezogener Daten verantwortlich?</p></div>
+        <div class="card red"><h3>&#128209; Aufgabe 4</h3><p>Welche der 8 Gebote des Datenschutzes sind in den folgenden Fällen angesprochen?</p><ul><li>a) Spezialprogramm protokolliert Programmzugriffe</li><li>b) Gehaltsüberweisung nur mit Passwort</li><li>c) Bildschirm sperren beim Verlassen</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="18">
+    <div class="slide-header"><div class="icon">&#128221;</div><h2>Übungsaufgaben II</h2><span class="tag">Folie 18 / 22</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>&#128209; Aufgabe 5</h3><p>Welche Aufgaben hat ein Datenschutzbeauftragter? Nennen Sie mindestens fünf.</p></div>
+        <div class="card gold"><h3>&#128209; Aufgabe 6</h3><p>Was ist das Ziel einer Datenschutzerklärung? Geben Sie Informationen an, die zu einer Datenschutzerklärung gehören.</p></div>
+        <div class="card green"><h3>&#128209; Aufgabe 7</h3><p>In welchen Fällen darf ein Webshopbetreiber Daten von Kunden erheben? Nennen Sie die drei Bedingungen.</p></div>
+        <div class="card red"><h3>&#128209; Aufgabe 8</h3><p>Führen Sie die wichtigsten Maßnahmen auf, die die Datenschutz-Grundverordnung besonders betont.</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="19">
+    <div class="slide-header"><div class="icon">&#128203;</div><h2>Zusammenfassung</h2><span class="tag">Folie 19 / 22</span></div>
+    <div class="content">
+      <div class="cards cols4">
+        <div class="card"><h3>Bedeutung</h3><p>Grundrecht der „informationellen Selbstbestimmung": Jeder Bürger darf über die Erhebung, Speicherung, Übermittlung und Verarbeitung seiner Daten selbst entscheiden.</p></div>
+        <div class="card gold"><h3>Aufgabe</h3><p>Schutz personenbezogener Daten vor Missbrauch. Zulässigkeit durch Einwilligung, Erlaubnis des BDSG oder andere Rechtsvorschrift.</p></div>
+        <div class="card green"><h3>Rechte der Betroffenen</h3><ul><li>Auskunftsrecht</li><li>Berichtigungsrecht</li><li>Sperrungsrecht</li><li>Löschungsrecht</li></ul></div>
+        <div class="card red"><h3>Pflichten der Datenverarbeiter</h3><ul><li>Wahrung des Datengeheimnisses</li><li>Technische &amp; organisatorische Maßnahmen</li><li>Prüfung der Zulässigkeit</li><li>Benachrichtigung bei Erstspeicherung</li><li>Ernennung eines Datenschutzbeauftragten</li></ul></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="20">
+    <div class="slide-header"><div class="icon">&#128172;</div><h2>Diskussionsfragen</h2><span class="tag">Folie 20 / 22</span></div>
+    <div class="content">
+      <div class="cards cols2">
+        <div class="card"><h3>1. Cookie-Consent</h3><p>Wie empfinden Sie als Nutzer die Cookie-Banner auf Webseiten? Sind sie hilfreich oder störend? Diskutieren Sie Pro und Contra.</p></div>
+        <div class="card gold"><h3>2. Datensparsamkeit</h3><p>Ein Webshop möchte möglichst viele Daten über seine Kunden sammeln, um personalisierte Angebote zu machen. Wie steht das im Spannungsfeld zur DSGVO?</p></div>
+        <div class="card green"><h3>3. Auskunftsrecht</h3><p>Wie würden Sie vorgehen, wenn Sie von Ihrem Ausbildungsbetrieb erfahren wollen, welche Daten über Sie gespeichert sind?</p></div>
+        <div class="card red"><h3>4. Bußgelder</h3><p>Recherchieren Sie: Welche großen Bußgelder wurden in Deutschland oder der EU bereits wegen DSGVO-Verstößen verhängt?</p></div>
+      </div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide" data-index="21">
+    <div class="slide-header"><div class="icon">&#128218;</div><h2>Literaturverzeichnis</h2><span class="tag">Folie 21 / 22</span></div>
+    <div class="content">
+      <div class="ref-entry">Heinemann, G. (2023). <em>Der neue Online-Handel: Geschäftsmodelle, Geschäftssysteme und Benchmarks im E-Commerce</em> (14. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kollmann, T. (2022). <em>E-Business: Grundlagen elektronischer Geschäftsprozesse in der Digitalen Wirtschaft</em> (8. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Kreutzer, R. T. (2021). <em>Online-Marketing</em> (3. Aufl.). Springer Gabler.</div>
+      <div class="ref-entry">Simitis, S., Hornung, G. &amp; Spiecker gen. Döhmann, I. (Hrsg.). (2019). <em>Datenschutzrecht: DSGVO mit BDSG</em> (1. Aufl.). Nomos.</div>
+      <div class="ref-entry">Spindler, G. &amp; Schuster, F. (Hrsg.). (2019). <em>Recht der elektronischen Medien</em> (4. Aufl.). C.H. Beck.</div>
+      <div class="ref-entry">Wirtz, B. W. (2021). <em>Electronic Business</em> (7. Aufl.). Springer Gabler.</div>
+      <div class="highlight" style="margin-top:12px"><strong>Hinweis:</strong> Alle Quellen entsprechen dem APA 7 Zitierstandard. Die Buchseiten basieren auf: Blank, A. et al. (2024). <em>Kaufmann/Kauffrau im E-Commerce</em> (Lernfelder 1–4). Westermann.</div>
+    </div>
+    <div class="slide-footer">&copy; Can Siebert &amp; Hamzah Meyer</div>
+  </section>
+
+  <section class="slide cover" data-index="22">
+    <div class="kicker">Lernfeld 3 &nbsp;|&nbsp; Tag 18</div>
+    <h1>Vielen Dank!</h1>
+    <div class="cover-line"></div>
+    <div class="subtitle">3.18 Datenschutz</div>
+    <div class="cover-meta">Nächstes Thema: <strong>3.19 Der Abschluss des Checkout-Prozesses</strong><br><br>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Alle Rechte vorbehalten</div>
+  </section>
+
+</div>
+<div id="grid-overlay"><div id="grid-header"><span>Folienübersicht</span><button onclick="toggleGrid()" title="Schließen (Esc)">&times;</button></div><div id="grid-container"></div></div>
+<div id="nav"><button id="btn-prev" title="Vorherige Folie">&#8592;</button><span id="slide-counter">1 / 22</span><button id="btn-next" title="Nächste Folie">&#8594;</button><button id="btn-grid" title="Folienübersicht (G)">&#8862;</button></div>
+<div id="footer"><span>Tag 18 &bull; Lernfeld 3</span><span>&copy; 2026 Can Siebert &amp; Hamzah Meyer &bull; E-Commerce Ausbildung</span></div>
+<script>
+const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;function goTo(n){if(n<0||n>=total||n===current)return;slides[current].classList.remove('active');slides[current].classList.add('exit-left');const prev=current;current=n;slides[current].classList.add('active');setTimeout(()=>slides[prev].classList.remove('exit-left'),500);document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100).toFixed(1)+'%'}document.getElementById('btn-next').addEventListener('click',()=>goTo(current+1));document.getElementById('btn-prev').addEventListener('click',()=>goTo(current-1));document.addEventListener('keydown',e=>{if(document.getElementById('grid-overlay').classList.contains('visible')){if(e.key==='Escape')toggleGrid();return}if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);if(e.key==='Home')goTo(0);if(e.key==='End')goTo(total-1);if(e.key.toLowerCase()==='g')toggleGrid()});let touchX=0;document.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-touchX;if(Math.abs(diff)>50){diff<0?goTo(current+1):goTo(current-1)}});function toggleGrid(){const o=document.getElementById('grid-overlay');if(!o.classList.contains('visible'))buildGrid();o.classList.toggle('visible')}function buildGrid(){const c=document.getElementById('grid-container');c.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='grid-thumb'+(i===current?' current':'');const t=s.querySelector('h2,h1');d.innerHTML='<div class="grid-thumb-num">Folie '+(i+1)+'</div><div class="grid-thumb-title">'+(t?t.textContent.substring(0,40):'Folie '+(i+1))+'</div>';d.onclick=()=>{goTo(i);toggleGrid()};c.appendChild(d)})}document.getElementById('btn-grid').addEventListener('click',toggleGrid);document.getElementById('progress-bar').style.width=((1/total)*100).toFixed(1)+'%';document.getElementById('slide-counter').textContent='1 / '+total;
+</script>
+</body>
+</html>

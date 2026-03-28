@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 6: Einrichtung eines Webshops – Lernfeld 1</title>
+<style>
+  :root {
+    --red: #c0392b;
+    --red-light: #fde8e8;
+    --blue: #3498db;
+    --blue-light: #ebf5fb;
+    --dark: #1a1a2e;
+    --green: #27ae60;
+    --green-light: #d4f0df;
+    --orange: #f39c12;
+    --orange-light: #fef3e2;
+    --purple: #8e44ad;
+    --purple-light: #f5eef8;
+    --teal: #16a085;
+    --teal-light: #e8f8f5;
+    --navy: #2c3e50;
+    --bg: #f4f4f8;
+    --card: #ffffff;
+    --border: #dde0e8;
+    --text: #2c3e50;
+    --text-light: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--dark), var(--navy));
+    color: white;
+    padding: 20px 24px;
+    border-bottom: 3px solid var(--red);
+  }
+  header h1 { font-size: 1.25rem; margin-bottom: 4px; font-weight: 700; }
+  header p { color: #adb5bd; font-size: 0.85rem; }
+
+  .main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* Score Header */
+  .quiz-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-size: 1.1rem; font-weight: 700; color: var(--red); }
+  .quiz-meta { font-size: 0.85rem; color: var(--text-light); margin-top: 3px; }
+
+  .score-box { display: flex; gap: 18px; flex-wrap: wrap; }
+  .score-item { text-align: center; min-width: 65px; }
+  .score-item .val { font-size: 1.6rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .val.correct { color: var(--green); }
+  .val.wrong { color: var(--red); }
+  .val.open { color: var(--blue); }
+
+  /* Progress */
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--orange)); border-radius: 3px; transition: width 0.3s; }
+
+  /* Controls */
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.15s;
+  }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--navy); color: white; }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-green { background: var(--green); color: white; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 14px; border: 1px solid var(--border);
+    border-radius: 20px; background: white; cursor: pointer; font-size: 0.8rem; font-weight: 500;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--blue); }
+  .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+  /* Question Cards */
+  .question-card {
+    background: var(--card); border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--border); transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .question-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .question-card.answered-correct { border-left: 4px solid var(--green); }
+  .question-card.answered-wrong { border-left: 4px solid var(--red); }
+  .question-card.answered-partial { border-left: 4px solid var(--orange); }
+
+  .q-number {
+    font-size: 0.72rem; font-weight: 700; color: var(--red);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+  .q-category {
+    display: inline-block; font-size: 0.68rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px; margin-left: 8px;
+  }
+  .cat-definition { background: var(--blue-light); color: var(--blue); }
+  .cat-technik { background: var(--purple-light); color: var(--purple); }
+  .cat-recht { background: var(--red-light); color: var(--red); }
+  .cat-checkout { background: var(--orange-light); color: #b45309; }
+  .cat-produkt { background: var(--green-light); color: var(--green); }
+  .cat-shopsystem { background: var(--teal-light); color: var(--teal); }
+
+  .q-text { font-size: 0.98rem; line-height: 1.55; margin-bottom: 14px; font-weight: 500; color: var(--dark); }
+  .q-hint { font-size: 0.78rem; color: var(--orange); margin-bottom: 10px; font-style: italic; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; background: var(--bg);
+    transition: all 0.15s; text-align: left; font-size: 0.9rem; line-height: 1.45;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); }
+  .choice-btn .label { font-weight: 700; min-width: 22px; color: var(--blue); flex-shrink: 0; }
+  .choice-btn.selected { border-color: var(--blue); background: #dde8f8; }
+  .choice-btn.correct-answer { border-color: var(--green); background: var(--green-light); }
+  .choice-btn.wrong-selected { border-color: var(--red); background: var(--red-light); }
+  .choice-btn.missed { border-color: var(--orange); background: var(--orange-light); }
+  .choice-btn:disabled { cursor: default; opacity: 0.9; }
+
+  .q-feedback {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem; display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: var(--green-light); color: #1a5c30; }
+  .q-feedback.partial { background: var(--orange-light); color: #8a5c00; }
+  .q-feedback.fail { background: var(--red-light); color: #8a1a1a; }
+
+  .check-btn {
+    margin-top: 12px; padding: 7px 16px; background: var(--navy);
+    color: white; border: none; border-radius: 7px; cursor: pointer;
+    font-size: 0.86rem; font-weight: 600; transition: all 0.15s;
+  }
+  .check-btn:hover:not(:disabled) { background: var(--blue); }
+  .check-btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* Final Banner */
+  .final-banner {
+    background: linear-gradient(135deg, var(--dark), var(--navy));
+    color: white; border-radius: 12px; padding: 28px;
+    text-align: center; margin-bottom: 20px; display: none;
+    border: 2px solid var(--red);
+  }
+  .final-banner.show { display: block; }
+  .final-banner .grade { font-size: 3rem; font-weight: 900; margin: 10px 0; }
+  .final-banner .sub { color: #adb5bd; font-size: 0.9rem; }
+
+  /* Footer */
+  footer {
+    text-align: center; padding: 16px;
+    font-size: 0.75rem; color: #999;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#128218; Quiz – Tag 6: Einrichtung eines Webshops</h1>
+  <p>Kaufmann/Kauffrau im E-Commerce &middot; Lernfeld 1 &middot; &copy; Can Siebert &amp; Hamzah Meyer</p>
+</header>
+
+<div class="main">
+  <div class="quiz-header">
+    <div>
+      <div class="quiz-title">Tag 6: Einrichtung eines Webshops</div>
+      <div class="quiz-meta">60 Fragen &middot; Einzelauswahl oder Mehrfachauswahl (wird angezeigt)</div>
+    </div>
+    <div class="score-box">
+      <div class="score-item"><div class="val correct" id="sc-correct">0</div><div class="lbl">Richtig</div></div>
+      <div class="score-item"><div class="val wrong" id="sc-wrong">0</div><div class="lbl">Falsch</div></div>
+      <div class="score-item"><div class="val open" id="sc-open">60</div><div class="lbl">Offen</div></div>
+      <div class="score-item"><div class="val" id="sc-pct" style="color:var(--dark)">–</div><div class="lbl">Punkte</div></div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="final-banner" id="final-banner">
+    <div style="font-size:1.1rem">&#127891; Quiz abgeschlossen!</div>
+    <div class="grade" id="final-grade"></div>
+    <div class="sub" id="final-sub"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" onclick="checkAll()">&#9654; Alle auswerten</button>
+    <button class="btn btn-outline" onclick="resetAll()">&#8634; Zurücksetzen</button>
+    <button class="btn btn-secondary" onclick="showOnlyWrong()">&#10060; Nur Falsche</button>
+    <button class="btn btn-green" onclick="showAll()">&#9989; Alle anzeigen</button>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size:0.8rem;color:#666;">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Offen</button>
+    <button class="filter-btn" onclick="setFilter('correct',this)">Richtig</button>
+    <button class="filter-btn" onclick="setFilter('wrong',this)">Falsch</button>
+  </div>
+
+  <div id="questions-container"></div>
+</div>
+
+<footer>&copy; Can Siebert &amp; Hamzah Meyer &middot; Stand 03/2026 &middot; Lernfeld 1 – Tag 6</footer>
+
+<script>
+const questions = [
+  // === WEBSHOP-GRUNDLAGEN (1-4) ===
+  {
+    num: 1, cat: "definition",
+    text: "Was ist ein Webshop laut Definition?",
+    choices: [
+      {label: "A", text: "Eine reine Informationswebsite eines Unternehmens ohne Kauffunktion"},
+      {label: "B", text: "Eine interaktive Website, die Kunden den Kauf von Produkten/Dienstleistungen über das Internet ermöglicht"},
+      {label: "C", text: "Ein internes Verwaltungssystem für Lagerbestände"},
+      {label: "D", text: "Eine Social-Media-Seite mit Produktvorstellungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 2, cat: "definition",
+    text: "Welche drei Kernfunktionen muss ein Webshop zwingend haben? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Warenkatalog mit Produkten, Preisen und Beschreibungen"},
+      {label: "B", text: "Internes HR-System zur Mitarbeiterverwaltung"},
+      {label: "C", text: "Warenkorb zum Sammeln ausgewählter Artikel"},
+      {label: "D", text: "Blogsystem zur Veröffentlichung von Ratgeberartikeln"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 3, cat: "definition",
+    text: "Was unterscheidet einen Webshop von einer normalen Website?",
+    choices: [
+      {label: "A", text: "Der Webshop hat keine Impressumspflicht"},
+      {label: "B", text: "Der Webshop enthält zwingend Warenkatalog, Warenkorb und Bezahlprozess"},
+      {label: "C", text: "Normale Websites können keine Kontaktformulare haben"},
+      {label: "D", text: "Webshops benötigen kein Impressum, weil sie AGB haben"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 4, cat: "recht",
+    text: "Welche rechtlichen Pflichten hat ein Webshop zusätzlich zu einer normalen Website? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "AGB (Allgemeine Geschäftsbedingungen)"},
+      {label: "B", text: "Pflicht zur Bereitstellung einer Sitemap"},
+      {label: "C", text: "Widerrufsbelehrung"},
+      {label: "D", text: "Pflicht zur monatlichen Aktualisierung der Website"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  // === SHOPSYSTEME (5-12) ===
+  {
+    num: 5, cat: "shopsystem",
+    text: "Was versteht man unter einem SaaS-Shopsystem?",
+    choices: [
+      {label: "A", text: "Eine Software, die einmalig gekauft und lokal installiert wird"},
+      {label: "B", text: "Eine gemietete Software, die auf den Servern des Anbieters läuft – keine eigene Installation nötig"},
+      {label: "C", text: "Ein Open-Source-System ohne laufende Kosten"},
+      {label: "D", text: "Eine selbst entwickelte Software des Unternehmens"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 6, cat: "shopsystem",
+    text: "Was ist ein wesentliches Merkmal von Open-Source-Shopsystemen?",
+    choices: [
+      {label: "A", text: "Der Quellcode ist kostenlos verfügbar, aber eigenes Hosting und Wartung sind nötig"},
+      {label: "B", text: "Die Software wird vom Anbieter vollständig betrieben und gewartet"},
+      {label: "C", text: "Open-Source-Systeme sind immer teurer als SaaS-Lösungen"},
+      {label: "D", text: "Es gibt keine Anpassungsmöglichkeiten am Quellcode"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 7, cat: "shopsystem",
+    text: "Welches Shopsystem ist ein SaaS-System?",
+    choices: [
+      {label: "A", text: "WooCommerce"},
+      {label: "B", text: "Magento"},
+      {label: "C", text: "Shopify"},
+      {label: "D", text: "OXID eShop"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 8, cat: "shopsystem",
+    text: "Ab welchem monatlichen Preis ist Shopify (Basic-Plan) erhältlich?",
+    choices: [
+      {label: "A", text: "ab 5 EUR/Monat"},
+      {label: "B", text: "ab 36 EUR/Monat"},
+      {label: "C", text: "ab 99 EUR/Monat"},
+      {label: "D", text: "ab 600 EUR/Monat"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 9, cat: "shopsystem",
+    text: "Welches Shopsystem ist besonders für WordPress-Nutzer geeignet?",
+    choices: [
+      {label: "A", text: "Shopify"},
+      {label: "B", text: "WooCommerce"},
+      {label: "C", text: "Magento"},
+      {label: "D", text: "OXID eShop"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 10, cat: "shopsystem",
+    text: "Für welche Art von Unternehmen eignet sich Magento / Adobe Commerce?",
+    choices: [
+      {label: "A", text: "Kleine Startups ohne technische Kenntnisse"},
+      {label: "B", text: "KMU mit WordPress-Kenntnissen"},
+      {label: "C", text: "Enterprise-Unternehmen mit komplexen Anforderungen und sehr hoher Skalierbarkeit"},
+      {label: "D", text: "Ausschließlich B2B-Unternehmen im DACH-Raum"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 11, cat: "shopsystem",
+    text: "Was ist die Besonderheit von Shopware?",
+    choices: [
+      {label: "A", text: "Es wurde in den USA gegründet und ist weltweit verbreitet"},
+      {label: "B", text: "Es wurde 2000 in Deutschland gegründet und ist das führende Open-Source-Shopsystem im DACH-Raum"},
+      {label: "C", text: "Es ist ausschließlich als SaaS-Lösung ohne Community-Version verfügbar"},
+      {label: "D", text: "Es ist das günstigste Shopsystem auf dem Markt"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 12, cat: "shopsystem",
+    text: "Welche bekannten Unternehmen nutzen Shopware?",
+    choices: [
+      {label: "A", text: "Alibaba, Amazon, Zalando"},
+      {label: "B", text: "L'Oréal, Mustang, FC Bayern München Shop"},
+      {label: "C", text: "Nike, Adidas, Puma"},
+      {label: "D", text: "Otto, MediaMarkt, Saturn"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  // === TECHNISCHE GRUNDLAGEN (13-20) ===
+  {
+    num: 13, cat: "technik",
+    text: "Wofür steht das Frontend eines Webshops?",
+    choices: [
+      {label: "A", text: "Der verborgene Bereich mit Datenbank und Produktverwaltung"},
+      {label: "B", text: "Der sichtbare Bereich (Produktseiten, Warenkorb, Design, Navigation)"},
+      {label: "C", text: "Die Serverinfrastruktur und das Hosting-System"},
+      {label: "D", text: "Das interne Bestellverwaltungssystem"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 14, cat: "technik",
+    text: "Welche Technologien werden im Frontend eingesetzt?",
+    choices: [
+      {label: "A", text: "PHP, Python, Datenbank"},
+      {label: "B", text: "SQL, Serverlogik, API"},
+      {label: "C", text: "HTML, CSS, JavaScript"},
+      {label: "D", text: "Linux, Apache, MySQL"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 15, cat: "technik",
+    text: "Was gehört zum Backend eines Webshops?",
+    choices: [
+      {label: "A", text: "Produktseiten, Warenkorb und Navigation (sichtbar für Kunden)"},
+      {label: "B", text: "Produktverwaltung, Bestellungen, Nutzerdaten und Lagerverwaltung"},
+      {label: "C", text: "CSS-Styling und JavaScript-Animationen"},
+      {label: "D", text: "Nur die Startseite des Shops"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 16, cat: "technik",
+    text: "Welche Hosting-Art ist für kleine Shops am günstigsten?",
+    choices: [
+      {label: "A", text: "Dedicated Server"},
+      {label: "B", text: "Cloud Hosting"},
+      {label: "C", text: "Shared Hosting (2–10 EUR/Monat)"},
+      {label: "D", text: "VPS (Virtual Private Server)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 17, cat: "technik",
+    text: "Was ist ein VPS (Virtual Private Server)?",
+    choices: [
+      {label: "A", text: "Ein physisch eigener Server mit ausschließlicher Nutzung"},
+      {label: "B", text: "Ein virtueller eigener Server auf gemeinsamer Hardware (ca. 10–50 EUR/Monat)"},
+      {label: "C", text: "Ein gemeinsamer Server für mehrere Websites ohne Ressourcentrennung"},
+      {label: "D", text: "Eine Cloud-Lösung von Amazon Web Services"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 18, cat: "technik",
+    text: "Für welche Art von Shops empfiehlt sich Cloud Hosting?",
+    choices: [
+      {label: "A", text: "Kleine Shops mit wenigen Produkten"},
+      {label: "B", text: "Mittlere Shops mit stabilen Besucherzahlen"},
+      {label: "C", text: "Shops mit stark schwankenden Besucherzahlen und Ressourcenbedarf"},
+      {label: "D", text: "Shops, die keine skalierbare Infrastruktur benötigen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 19, cat: "technik",
+    text: "Was ist SSL/TLS?",
+    choices: [
+      {label: "A", text: "Ein Shopsystem für kleine Unternehmen"},
+      {label: "B", text: "Ein Verschlüsselungsprotokoll, das die Datenübertragung zwischen Browser und Webserver sichert"},
+      {label: "C", text: "Eine Zahlungsart im E-Commerce"},
+      {label: "D", text: "Ein Verfahren zur Suchmaschinenoptimierung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 20, cat: "technik",
+    text: "Woran erkennt man, dass eine Website SSL verwendet?",
+    choices: [
+      {label: "A", text: "Die URL beginnt mit \u201Ehttp://\u201C ohne Schloss-Symbol"},
+      {label: "B", text: "Die URL beginnt mit \u201EHTTPS\u201C und ein Schloss-Symbol ist sichtbar"},
+      {label: "C", text: "Die Ladezeit ist besonders langsam"},
+      {label: "D", text: "Die Website verwendet keine Cookies"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 21, cat: "technik",
+    text: "Welche Folge droht, wenn ein Online-Shop kein SSL-Zertifikat hat? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Der Browser zeigt eine Warnung \u201ENicht sicher\u201C"},
+      {label: "B", text: "Der Shop erhält automatisch eine bessere Google-Platzierung"},
+      {label: "C", text: "Google bestraft fehlende Verschlüsselung im Suchranking (SEO-Nachteil)"},
+      {label: "D", text: "Die Versandkosten steigen automatisch"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  // === RECHT (22-28) ===
+  {
+    num: 22, cat: "recht",
+    text: "Welches Gesetz schreibt seit Mai 2024 das Impressum für deutsche Online-Shops vor?",
+    choices: [
+      {label: "A", text: "DSGVO (Datenschutz-Grundverordnung)"},
+      {label: "B", text: "BGB §312g"},
+      {label: "C", text: "§5 DDG (Digitale-Dienste-Gesetz) – zuvor §5 TMG"},
+      {label: "D", text: "PAngV (Preisangabenverordnung)"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 23, cat: "recht",
+    text: "Welche Mindestangaben muss das Impressum enthalten? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Vollständiger Name / Unternehmensname"},
+      {label: "B", text: "Anzahl der Mitarbeiter"},
+      {label: "C", text: "Postanschrift (kein Postfach!)"},
+      {label: "D", text: "Geheime Betriebsgeheimnisse"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 24, cat: "recht",
+    text: "Wie viele Klicks von jeder Seite entfernt darf das Impressum maximal sein?",
+    choices: [
+      {label: "A", text: "Maximal 1 Klick"},
+      {label: "B", text: "Maximal 2 Klicks"},
+      {label: "C", text: "Maximal 5 Klicks"},
+      {label: "D", text: "Maximal 10 Klicks"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 25, cat: "recht",
+    text: "Welche Konsequenz droht bei fehlendem oder unvollständigem Impressum?",
+    choices: [
+      {label: "A", text: "Eine automatische Sperrung durch Google"},
+      {label: "B", text: "Eine kostenpflichtige Abmahnung (oft dreistelliger bis vierstelliger Euro-Bereich)"},
+      {label: "C", text: "Eine Strafe von maximal 50 EUR"},
+      {label: "D", text: "Keine Konsequenz – das Impressum ist freiwillig"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 26, cat: "recht",
+    text: "Welche Rechtsgrundlage regelt die Datenschutzerklärung?",
+    choices: [
+      {label: "A", text: "§5 DDG"},
+      {label: "B", text: "BGB §305–310"},
+      {label: "C", text: "DSGVO Art. 13/14"},
+      {label: "D", text: "PAngV"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 27, cat: "recht",
+    text: "Was müssen Online-Shops laut PAngV (Preisangabenverordnung) angeben?",
+    choices: [
+      {label: "A", text: "Nur den Nettopreis ohne Mehrwertsteuer"},
+      {label: "B", text: "Bruttopreise inklusive Mehrwertsteuer sowie Versandkosten"},
+      {label: "C", text: "Den Herstellerpreis ohne Händlermarge"},
+      {label: "D", text: "Keine Preisangaben – Preise dürfen auf Anfrage genannt werden"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 28, cat: "recht",
+    text: "Wofür steht die Eselsbrücke \u201EIDA WPC\u201C?",
+    choices: [
+      {label: "A", text: "Inventar, Datenbank, Artikel, Warenkorb, Produkt, Checkout"},
+      {label: "B", text: "Impressum, Datenschutz, AGB, Widerruf, Preise, Cookies"},
+      {label: "C", text: "Inhalt, Design, Angebot, Website, Plattform, Commerce"},
+      {label: "D", text: "Index, Daten, API, Webserver, PHP, CSS"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  // === CHECKOUT (29-35) ===
+  {
+    num: 29, cat: "checkout",
+    text: "Wie hoch ist die Warenkorbabbruchrate im E-Commerce laut Baymard Institute (2024)?",
+    choices: [
+      {label: "A", text: "ca. 20 %"},
+      {label: "B", text: "ca. 40 %"},
+      {label: "C", text: "ca. 70 %"},
+      {label: "D", text: "ca. 95 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 30, cat: "checkout",
+    text: "Was ist der häufigste Grund für Warenkorbabbrüche (48 %)?",
+    choices: [
+      {label: "A", text: "Zu viele Produktbilder auf der Produktseite"},
+      {label: "B", text: "Unerwartete Zusatzkosten (Versand, Steuern), die erst im Checkout sichtbar werden"},
+      {label: "C", text: "Die Website hat kein Impressum"},
+      {label: "D", text: "Das Sortiment ist zu klein"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 31, cat: "checkout",
+    text: "Welche Maßnahme reduziert die Warenkorbabbruchrate?",
+    choices: [
+      {label: "A", text: "Zwangsregistrierung vor dem Kauf einführen"},
+      {label: "B", text: "Gastkauf-Option ermöglichen – keine Pflichtregistrierung"},
+      {label: "C", text: "Versandkosten erst nach der Bezahlung anzeigen"},
+      {label: "D", text: "Checkout-Prozess auf 10 Seiten ausweiten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 32, cat: "checkout",
+    text: "Was sind Vertrauenssignale im Checkout-Prozess? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Gütesiegel wie Trusted Shops"},
+      {label: "B", text: "Ein sehr langer Checkout-Prozess"},
+      {label: "C", text: "SSL-Hinweis und Schloss-Symbol"},
+      {label: "D", text: "Pflichtregistrierung für alle Nutzer"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 33, cat: "technik",
+    text: "Wie hoch ist der Anteil der Online-Käufe, die über Smartphones abgeschlossen werden (2024)?",
+    choices: [
+      {label: "A", text: "mehr als 10 %"},
+      {label: "B", text: "mehr als 30 %"},
+      {label: "C", text: "mehr als 65 %"},
+      {label: "D", text: "mehr als 90 %"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 34, cat: "checkout",
+    text: "In welcher Reihenfolge läuft der Checkout-Prozess ab?",
+    choices: [
+      {label: "A", text: "Zahlung → Adresse → Warenkorb → Login → Bestätigung"},
+      {label: "B", text: "Warenkorb → Login/Gastkauf → Adresse → Zahlung → Bestätigung"},
+      {label: "C", text: "Adresse → Warenkorb → Zahlung → Login → Bestätigung"},
+      {label: "D", text: "Login → Warenkorb → Bestätigung → Adresse → Zahlung"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 35, cat: "checkout",
+    text: "Was sind Abbruch-E-Mails?",
+    choices: [
+      {label: "A", text: "E-Mails, mit denen Kunden Bestellungen stornieren"},
+      {label: "B", text: "Automatische Erinnerungen an Kunden, die ihren Warenkorb gefüllt, aber nicht bestellt haben"},
+      {label: "C", text: "Werbemails nach einem abgeschlossenen Kauf"},
+      {label: "D", text: "E-Mails des Händlers zur Kündigung von Kundenkonten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  // === ZAHLUNGSARTEN (36-41) ===
+  {
+    num: 36, cat: "checkout",
+    text: "Welche Zahlungsart ist in Deutschland am beliebtesten (#1, ca. 29 %)?",
+    choices: [
+      {label: "A", text: "PayPal"},
+      {label: "B", text: "Kreditkarte"},
+      {label: "C", text: "Kauf auf Rechnung"},
+      {label: "D", text: "Klarna"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 37, cat: "checkout",
+    text: "Wie hoch sind die Transaktionskosten für PayPal?",
+    choices: [
+      {label: "A", text: "Kostenlos für den Shop"},
+      {label: "B", text: "ca. 0,5 % + 0,10 EUR"},
+      {label: "C", text: "ca. 2,49 % + 0,35 EUR"},
+      {label: "D", text: "ca. 5 % + 1,00 EUR"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 38, cat: "checkout",
+    text: "Was bedeutet BNPL?",
+    choices: [
+      {label: "A", text: "Buy Now, Pay Later – Kauf jetzt, zahle später"},
+      {label: "B", text: "Business Network Payment Link"},
+      {label: "C", text: "Best New Payment Logic"},
+      {label: "D", text: "Buchungsnachweis Prüfungsleistung"}
+    ],
+    multi: false, correct: ["A"]
+  },
+  {
+    num: 39, cat: "checkout",
+    text: "Welche Zahlungsart ist als ‚Klarna Sofort' (ehemals Sofortüberweisung) bekannt?",
+    choices: [
+      {label: "A", text: "Apple Pay / Google Pay"},
+      {label: "B", text: "SEPA-Lastschrift"},
+      {label: "C", text: "Echtzeitüberweisung via Online-Banking"},
+      {label: "D", text: "Kryptowährungen"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 40, cat: "checkout",
+    text: "Welche Zahlungsart hat in Deutschland sehr geringe Kosten für den Shop?",
+    choices: [
+      {label: "A", text: "PayPal"},
+      {label: "B", text: "Kreditkarte"},
+      {label: "C", text: "Klarna"},
+      {label: "D", text: "SEPA-Lastschrift"}
+    ],
+    multi: false, correct: ["D"]
+  },
+  {
+    num: 41, cat: "checkout",
+    text: "Wofür steht die Eselsbrücke \u201EP-R-L-K\u201C bei den beliebtesten Zahlungsarten?",
+    choices: [
+      {label: "A", text: "Produkt, Rechnung, Lager, Konto"},
+      {label: "B", text: "PayPal, Rechnung, Lastschrift, Kreditkarte"},
+      {label: "C", text: "Preis, Rabatt, Lieferung, Kaufvertrag"},
+      {label: "D", text: "Planung, Retoure, Logistik, Konversion"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  // === PRODUKTKATALOG (42-53) ===
+  {
+    num: 42, cat: "produkt",
+    text: "Was ist der Artikelstamm (Produktkatalog) im Webshop?",
+    choices: [
+      {label: "A", text: "Das Lager, in dem physische Waren aufbewahrt werden"},
+      {label: "B", text: "Das Herzstück des Online-Shops mit allen Produktdaten und -präsentationen"},
+      {label: "C", text: "Das Backend-System zur Mitarbeiterverwaltung"},
+      {label: "D", text: "Die Liste aller Bestellungen der letzten 12 Monate"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 43, cat: "produkt",
+    text: "Wie viele Produktbilder empfiehlt das Handout als Mindestanzahl?",
+    choices: [
+      {label: "A", text: "1 Bild"},
+      {label: "B", text: "3–5 Bilder"},
+      {label: "C", text: "10 Bilder"},
+      {label: "D", text: "20 Bilder"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 44, cat: "produkt",
+    text: "Welche Mindestauflösung empfiehlt das Handout für Produktbilder (Zoom-Funktion)?",
+    choices: [
+      {label: "A", text: "300 × 300 Pixel"},
+      {label: "B", text: "500 × 500 Pixel"},
+      {label: "C", text: "1000 × 1000 Pixel"},
+      {label: "D", text: "4000 × 4000 Pixel"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 45, cat: "produkt",
+    text: "Um wie viel Prozent können gute Produktbilder die Conversion Rate erhöhen?",
+    choices: [
+      {label: "A", text: "um ca. 5 %"},
+      {label: "B", text: "um bis zu 30 %"},
+      {label: "C", text: "um ca. 50 %"},
+      {label: "D", text: "um ca. 100 %"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 46, cat: "produkt",
+    text: "Was ist der häufigste Grund für Kaufabbrüche auf Produktseiten?",
+    choices: [
+      {label: "A", text: "Zu niedrige Preise"},
+      {label: "B", text: "Schlechte Bildqualität oder fehlende Detailbilder"},
+      {label: "C", text: "Zu viele Produktvarianten"},
+      {label: "D", text: "Fehlende Kundenbewertungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 47, cat: "produkt",
+    text: "Welche Elemente gehören zu einem guten Produkttitel? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "Wichtige Keywords am Anfang für SEO"},
+      {label: "B", text: "Möglichst viele Sonderzeichen und Ausrufezeichen"},
+      {label: "C", text: "Klare und prägnante Formulierung (max. 60–80 Zeichen)"},
+      {label: "D", text: "Mindestens 300 Zeichen für vollständige Information"}
+    ],
+    multi: true, correct: ["A", "C"]
+  },
+  {
+    num: 48, cat: "produkt",
+    text: "Was beschreibt Cross-Selling im Produkteintrag?",
+    choices: [
+      {label: "A", text: "Das Anbieten von Produkten in unterschiedlichen Ländern"},
+      {label: "B", text: "Empfehlungen ergänzender Produkte (z.\u00A0B. \u201EAndere kauften auch…\u201C)"},
+      {label: "C", text: "Das Verkaufen von Produkten über verschiedene Kanäle"},
+      {label: "D", text: "Die Darstellung des Produkts in verschiedenen Sprachen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 49, cat: "produkt",
+    text: "Welche Produktbeschreibungslänge wird empfohlen?",
+    choices: [
+      {label: "A", text: "ca. 10–50 Wörter (sehr kurz)"},
+      {label: "B", text: "ca. 200–500 Wörter"},
+      {label: "C", text: "mindestens 2000 Wörter"},
+      {label: "D", text: "Kein Richtwert – so lang wie nötig"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 50, cat: "recht",
+    text: "Was ist beim Preis im Produkteintrag gesetzlich vorgeschrieben?",
+    choices: [
+      {label: "A", text: "Nur der Nettopreis ohne MwSt. muss angezeigt werden"},
+      {label: "B", text: "Der Bruttopreis inkl. MwSt. muss klar sichtbar sein (PAngV)"},
+      {label: "C", text: "Der Preis darf erst nach dem Login sichtbar werden"},
+      {label: "D", text: "Es reicht, den Preis im Checkout zu nennen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 51, cat: "produkt",
+    text: "Was erhöht das Vertrauen von Kunden auf einer Produktseite erheblich (Social Proof)?",
+    choices: [
+      {label: "A", text: "Viele animierte Banner und Pop-ups"},
+      {label: "B", text: "Kundenbewertungen (Sternebewertungen und Textrezensionen)"},
+      {label: "C", text: "Ein sehr langer Produkttitel"},
+      {label: "D", text: "Das Verstecken der Versandkosten bis zum Checkout"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 52, cat: "produkt",
+    text: "Welche Hintergrundfarbe empfiehlt sich für Produktbilder (Marktplatz-Standard)?",
+    choices: [
+      {label: "A", text: "Schwarz"},
+      {label: "B", text: "Bunt (passend zur Markenfarbe)"},
+      {label: "C", text: "Weiß oder neutral"},
+      {label: "D", text: "Grau"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 53, cat: "produkt",
+    text: "Was beschreibt Up-Selling?",
+    choices: [
+      {label: "A", text: "Das Anbieten von Zubehör zu einem gekauften Produkt"},
+      {label: "B", text: "Das Empfehlen einer höherwertigen oder teureren Alternative zum betrachteten Produkt"},
+      {label: "C", text: "Das Verkaufen von Produkten über Social Commerce"},
+      {label: "D", text: "Das direkte Anbieten von Mengenrabatten"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  // === ALLGEMEIN & VERTIEFUNG (54-60) ===
+  {
+    num: 54, cat: "definition",
+    text: "Auf welchen Buchseiten finden sich die Inhalte von Tag 6?",
+    choices: [
+      {label: "A", text: "40–53"},
+      {label: "B", text: "54–67"},
+      {label: "C", text: "68–75"},
+      {label: "D", text: "76–90"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 55, cat: "shopsystem",
+    text: "Welches Shopsystem basiert auf Vue.js und Symfony?",
+    choices: [
+      {label: "A", text: "Shopify"},
+      {label: "B", text: "WooCommerce"},
+      {label: "C", text: "Shopware 6"},
+      {label: "D", text: "OXID eShop"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 56, cat: "checkout",
+    text: "Welche Quellen werden im Handout für Zahlungsarten-Statistiken genannt? (2 richtige Antworten)",
+    choices: [
+      {label: "A", text: "EHI Retail Institute (2024)"},
+      {label: "B", text: "bevh (2024)"},
+      {label: "C", text: "Statista GmbH (2024)"},
+      {label: "D", text: "HDE Online-Monitor 2024"}
+    ],
+    multi: true, correct: ["A", "B"]
+  },
+  {
+    num: 57, cat: "produkt",
+    text: "Ein Nutzer sieht: \u201EPassende Socken zu diesem Sneaker\u201C. Was beschreibt das?",
+    choices: [
+      {label: "A", text: "Up-Selling"},
+      {label: "B", text: "Voice Commerce"},
+      {label: "C", text: "Cross-Selling"},
+      {label: "D", text: "D2C-Strategie"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 58, cat: "shopsystem",
+    text: "Was ist ein wichtiger Unterschied zwischen SaaS und Open Source im Hinblick auf die Kontrolle?",
+    choices: [
+      {label: "A", text: "SaaS bietet mehr Kontrolle als Open Source"},
+      {label: "B", text: "Open Source bietet mehr Freiheit und Kontrolle, erfordert aber mehr Eigenverantwortung"},
+      {label: "C", text: "Beide bieten identische Kontrollmöglichkeiten"},
+      {label: "D", text: "Open Source erlaubt keine individuellen Anpassungen"}
+    ],
+    multi: false, correct: ["B"]
+  },
+  {
+    num: 59, cat: "checkout",
+    text: "Welche Zahlungsart wächst laut Handout stark im deutschen E-Commerce?",
+    choices: [
+      {label: "A", text: "Kauf auf Rechnung"},
+      {label: "B", text: "SEPA-Lastschrift"},
+      {label: "C", text: "Apple Pay / Google Pay"},
+      {label: "D", text: "Klarna Sofort"}
+    ],
+    multi: false, correct: ["C"]
+  },
+  {
+    num: 60, cat: "checkout",
+    text: "Was ist das Ausfallrisiko beim Kauf auf Rechnung?",
+    choices: [
+      {label: "A", text: "Für den Kunden: Er muss sofort zahlen, bevor er die Ware erhält"},
+      {label: "B", text: "Für den Shop: Der Kunde bezahlt nach Erhalt der Ware – Zahlungsausfall möglich"},
+      {label: "C", text: "Es gibt kein Risiko, da Rechnung immer versichert ist"},
+      {label: "D", text: "Für den Marktplatz: Er haftet bei Nicht-Zahlung"}
+    ],
+    multi: false, correct: ["B"]
+  }
+];
+
+const catLabels = {
+  definition: {label: "Grundlagen", cls: "cat-definition"},
+  shopsystem: {label: "Shopsysteme", cls: "cat-shopsystem"},
+  technik: {label: "Technik", cls: "cat-technik"},
+  recht: {label: "Recht", cls: "cat-recht"},
+  checkout: {label: "Checkout & Zahlung", cls: "cat-checkout"},
+  produkt: {label: "Produktkatalog", cls: "cat-produkt"}
+};
+
+let questionStates = {};
+let currentFilter = 'all';
+
+function init() {
+  questions.forEach(q => { questionStates[q.num] = 'open'; });
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const catInfo = catLabels[q.cat] || {label: "", cls: ""};
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card_' + q.num;
+    card.innerHTML = `
+      <div class="q-number">Frage ${idx + 1} / 60 <span class="q-category ${catInfo.cls}">${catInfo.label}</span></div>
+      <div class="q-text">${q.text}</div>
+      ${q.multi ? '<div class="q-hint">&#8505; Mehrfachauswahl: Wähle 2 richtige Antworten</div>' : ''}
+      <div class="choices" id="choices_${q.num}"></div>
+      <button class="check-btn" id="checkbtn_${q.num}" disabled>Auswerten</button>
+      <div class="q-feedback" id="feedback_${q.num}"></div>
+    `;
+    container.appendChild(card);
+
+    const choicesDiv = document.getElementById('choices_' + q.num);
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.id = 'choice_' + q.num + '_' + c.label;
+      btn.dataset.label = c.label;
+      btn.innerHTML = '<span class="label">' + c.label + '</span><span>' + c.text + '</span>';
+      btn.addEventListener('click', () => toggleChoice(q.num, c.label, q.multi));
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('checkbtn_' + q.num).addEventListener('click', () => checkQuestion(q.num, q.correct));
+  });
+  updateScoreboard();
+}
+
+function toggleChoice(num, label, multi) {
+  const btn = document.getElementById('choice_' + num + '_' + label);
+  if (!btn || btn.disabled) return;
+  if (!multi) {
+    document.querySelectorAll('[id^="choice_' + num + '_"]').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    btn.classList.toggle('selected');
+    const sel = document.querySelectorAll('[id^="choice_' + num + '_"].selected');
+    if (sel.length > 2) btn.classList.remove('selected');
+  }
+  const any = document.querySelectorAll('[id^="choice_' + num + '_"].selected').length > 0;
+  document.getElementById('checkbtn_' + num).disabled = !any;
+}
+
+function checkQuestion(num, correct) {
+  const allBtns = document.querySelectorAll('[id^="choice_' + num + '_"]');
+  const selected = [...allBtns].filter(b => b.classList.contains('selected')).map(b => b.dataset.label);
+  allBtns.forEach(b => b.disabled = true);
+  document.getElementById('checkbtn_' + num).disabled = true;
+
+  const correctSet = new Set(correct);
+  const selectedSet = new Set(selected);
+  allBtns.forEach(b => {
+    const l = b.dataset.label;
+    if (correctSet.has(l) && selectedSet.has(l)) b.classList.add('correct-answer');
+    else if (!correctSet.has(l) && selectedSet.has(l)) b.classList.add('wrong-selected');
+    else if (correctSet.has(l) && !selectedSet.has(l)) b.classList.add('missed');
+  });
+
+  const allCorrectSelected = [...correctSet].every(l => selectedSet.has(l));
+  const noWrongSelected = [...selectedSet].every(l => correctSet.has(l));
+  let status = 'wrong';
+  if (allCorrectSelected && noWrongSelected) status = 'correct';
+  else if (!allCorrectSelected && noWrongSelected && selected.length > 0) status = 'partial';
+
+  questionStates[num] = status;
+  const feedback = document.getElementById('feedback_' + num);
+  const card = document.getElementById('card_' + num);
+  card.classList.remove('answered-correct','answered-wrong','answered-partial');
+  if (status === 'correct') {
+    feedback.className = 'q-feedback show ok';
+    feedback.textContent = '\u2713 Richtig! Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-correct');
+  } else if (status === 'partial') {
+    feedback.className = 'q-feedback show partial';
+    feedback.textContent = '\u25D1 Teilweise richtig. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-partial');
+  } else {
+    feedback.className = 'q-feedback show fail';
+    feedback.textContent = '\u2717 Falsch. Korrekte Antwort: ' + correct.join(', ');
+    card.classList.add('answered-wrong');
+  }
+  updateScoreboard();
+  applyFilter(currentFilter);
+}
+
+function checkAll() {
+  document.querySelectorAll('.check-btn:not(:disabled)').forEach(b => b.click());
+}
+
+function resetAll() {
+  document.getElementById('final-banner').classList.remove('show');
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+  init();
+}
+
+function updateScoreboard() {
+  const vals = Object.values(questionStates);
+  const total = vals.length;
+  const correct = vals.filter(v => v === 'correct').length;
+  const wrong = vals.filter(v => v === 'wrong' || v === 'partial').length;
+  const open = vals.filter(v => v === 'open').length;
+  const answered = correct + wrong;
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-open').textContent = open;
+  document.getElementById('sc-pct').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '\u2013';
+  document.getElementById('progress-fill').style.width = (total > 0 ? answered / total * 100 : 0) + '%';
+  if (open === 0 && total > 0) {
+    const pct = Math.round(correct / total * 100);
+    const grade = pct >= 92 ? '1' : pct >= 81 ? '2' : pct >= 67 ? '3' : pct >= 50 ? '4' : pct >= 30 ? '5' : '6';
+    document.getElementById('final-grade').textContent = pct + '% \u00B7 Note ' + grade;
+    document.getElementById('final-sub').textContent = correct + ' von ' + total + ' Fragen richtig';
+    document.getElementById('final-banner').classList.add('show');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function setFilter(filter, btnEl) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  applyFilter(filter);
+}
+
+function applyFilter(filter) {
+  document.querySelectorAll('.question-card').forEach(card => {
+    const num = parseInt(card.id.replace('card_',''));
+    const state = questionStates[num] || 'open';
+    if (filter === 'all') card.style.display = '';
+    else if (filter === 'open') card.style.display = state === 'open' ? '' : 'none';
+    else if (filter === 'correct') card.style.display = state === 'correct' ? '' : 'none';
+    else if (filter === 'wrong') card.style.display = (state === 'wrong' || state === 'partial') ? '' : 'none';
+  });
+}
+
+function showOnlyWrong() {
+  const btn = [...document.querySelectorAll('.filter-btn')].find(b => b.textContent === 'Falsch');
+  if (btn) setFilter('wrong', btn);
+}
+
+function showAll() {
+  setFilter('all', document.querySelectorAll('.filter-btn')[0]);
+}
+
+init();
+</script>
+</body>
+</html>

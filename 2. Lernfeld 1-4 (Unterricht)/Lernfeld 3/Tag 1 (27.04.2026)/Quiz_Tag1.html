@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Tag 1 – LF3: Auftragsbearbeitung und Kaufabwicklung</title>
+<style>
+:root {
+  --primary: #2563EB; --primary-light: #DBEAFE; --primary-dark: #1D4ED8;
+  --success: #27AE60; --success-light: #D5F5E3;
+  --danger: #E74C3C;  --danger-light: #FADBD8;
+  --accent: #F39C12;  --accent-light: #FEF9E7;
+  --text: #1E293B; --text-muted: #64748B;
+  --bg: #F8FAFC; --bg-card: #FFFFFF; --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color:white; padding:24px 40px; display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { font-size:1.4rem; font-weight:800; }
+header .meta { font-size:.85rem; opacity:.8; margin-top:4px; }
+#score-box { background:rgba(255,255,255,.15); border-radius:12px; padding:12px 24px; text-align:center; }
+#score-box .score-num { font-size:2rem; font-weight:800; }
+#score-box .score-label { font-size:.75rem; opacity:.8; }
+#progress-wrap { background:rgba(255,255,255,.2); height:6px; }
+#progress-fill { background:white; height:6px; transition:width .4s ease; }
+main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+.q-card { background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:28px 32px; margin-bottom:24px; display:none; }
+.q-card.active { display:block; }
+.q-num { font-size:.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+.q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.opt { background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:12px; font-size:.9rem; line-height:1.4; }
+.opt:hover { border-color:var(--primary); background:var(--primary-light); }
+.opt .letter { min-width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; }
+.opt.correct { border-color:var(--success); background:var(--success-light); pointer-events:none; }
+.opt.correct .letter { background:var(--success); color:white; }
+.opt.wrong   { border-color:var(--danger);  background:var(--danger-light);  pointer-events:none; }
+.opt.wrong .letter { background:var(--danger); color:white; }
+.opt.disabled { opacity:.6; pointer-events:none; }
+.feedback { margin-top:16px; padding:14px 18px; border-radius:10px; font-size:.88rem; line-height:1.6; display:none; }
+.feedback.show { display:block; }
+.feedback.ok  { background:var(--success-light); border-left:4px solid var(--success); }
+.feedback.err { background:var(--danger-light);  border-left:4px solid var(--danger); }
+.q-nav { display:flex; justify-content:flex-end; margin-top:20px; gap:12px; }
+.btn { padding:10px 24px; border-radius:30px; border:none; cursor:pointer; font-size:.88rem; font-weight:700; transition:all .2s; }
+.btn-next { background:var(--primary); color:white; }
+.btn-next:hover { background:var(--primary-dark); }
+#result-card { display:none; background:var(--bg-card); border-radius:16px; border:1px solid var(--border); box-shadow:var(--shadow); padding:40px 32px; text-align:center; }
+#result-card.show { display:block; }
+.result-circle { width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; }
+.result-circle.excellent { background:var(--success-light); color:var(--success); border:4px solid var(--success); }
+.result-circle.good      { background:var(--primary-light); color:var(--primary); border:4px solid var(--primary); }
+.result-circle.ok        { background:var(--accent-light);  color:var(--accent);  border:4px solid var(--accent); }
+.result-circle.low       { background:var(--danger-light);  color:var(--danger);  border:4px solid var(--danger); }
+#result-msg { font-size:1.1rem; margin-bottom:8px; font-weight:600; }
+#result-sub { font-size:.9rem; color:var(--text-muted); margin-bottom:24px; }
+.btn-restart { background:var(--primary); color:white; padding:12px 32px; border-radius:30px; border:none; cursor:pointer; font-size:.95rem; font-weight:700; }
+.btn-restart:hover { background:var(--primary-dark); }
+#q-dots { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:24px; }
+.dot { width:12px; height:12px; border-radius:50%; background:var(--border); cursor:pointer; transition:all .2s; }
+.dot.answered-ok  { background:var(--success); }
+.dot.answered-err { background:var(--danger); }
+.dot.current      { transform:scale(1.4); background:var(--primary); }
+footer { text-align:center; font-size:.72rem; color:var(--text-muted); padding:16px; border-top:1px solid var(--border); margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>&#128203; Quiz – Tag 1: Auftragsbearbeitung &amp; Kaufabwicklung</h1>
+    <div class="meta">Lernfeld 3 &nbsp;|&nbsp; Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; 20 Fragen</div>
+  </div>
+  <div id="score-box">
+    <div class="score-num" id="score-display">0 / 0</div>
+    <div class="score-label">Richtig</div>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-fill" style="width:0%"></div></div>
+<main>
+  <div id="q-dots"></div>
+
+  <!-- FRAGE 1 -->
+  <div class="q-card active">
+    <div class="q-num">Frage 1 von 20</div>
+    <div class="q-text">Was umfasst die Auftragsbearbeitung laut Definition?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Nur die Kommissionierung im Lager</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Die datenmäßige Bearbeitung und Kontrolle der Aufträge vom Zeitpunkt der Auftragsaufgabe bis zur Ankunft der Sendungsdokumente und Rechnungen beim Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Ausschließlich die Rechnungsstellung an den Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Den Versand der Ware an den Kunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Auftragsbearbeitung umfasst alle Schritte vom Zeitpunkt der Auftragsaufgabe bis zur Ankunft der Sendungsdokumente und Rechnungen beim Kunden (vgl. Heinemann, 2023).</div>
+    <div class="feedback err">&#10008; Falsch. Auftragsbearbeitung ist die datenmäßige Bearbeitung und Kontrolle der Aufträge vom Zeitpunkt der Auftragsaufgabe bis zur Ankunft der Sendungsdokumente und Rechnungen beim Kunden.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 2 -->
+  <div class="q-card">
+    <div class="q-num">Frage 2 von 20</div>
+    <div class="q-text">Wie bezeichnet man aus Kundensicht den Vorgang, wenn ein Kunde Waren im Webshop auswählt und über den Warenkorb an das Unternehmen sendet?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Auftragsvorgang</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bestellvorgang</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Kommissionierungsvorgang</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Fakturierungsvorgang</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Aus Kundensicht handelt es sich um einen Bestellvorgang – das Unternehmen hingegen löst einen Auftragsvorgang aus.</div>
+    <div class="feedback err">&#10008; Falsch. Aus Kundensicht ist es ein Bestellvorgang. Aus Unternehmenssicht spricht man von einem Auftragsvorgang.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 3 -->
+  <div class="q-card">
+    <div class="q-num">Frage 3 von 20</div>
+    <div class="q-text">Welches System steuert die Auftragsbearbeitung im Unternehmen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> CRM-System (Customer Relationship Management)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> CMS (Content Management System)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Warenwirtschaftssystem (ERP)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> SEO-Tool (Search Engine Optimization)</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Auftragsbearbeitung wird über das Warenwirtschaftssystem (ERP – Enterprise Resource Planning) gesteuert.</div>
+    <div class="feedback err">&#10008; Falsch. Die Auftragsbearbeitung wird über das Warenwirtschaftssystem (ERP) gesteuert, nicht über CRM oder CMS.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 4 -->
+  <div class="q-card">
+    <div class="q-num">Frage 4 von 20</div>
+    <div class="q-text">Wie viele Schritte umfasst der Checkout-Prozess (Kaufabwicklung) im Webshop?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 4 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 5 Schritte</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 6 Schritte</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 8 Schritte</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Der Checkout-Prozess umfasst 6 Schritte: Warenkorb, Registrierung, Anmeldung, Zahlungsart, Versandweg, Vertragsabschluss.</div>
+    <div class="feedback err">&#10008; Falsch. Der Checkout-Prozess hat 6 Schritte: Warenkorb → Registrierung → Anmeldung → Zahlungsart → Versandweg → Vertragsabschluss.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 5 -->
+  <div class="q-card">
+    <div class="q-num">Frage 5 von 20</div>
+    <div class="q-text">Was versteht man unter der „Tunneling-Strategie" im Checkout-Prozess?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Dem Kunden werden Cross-Selling-Produkte präsentiert</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Alle ablenkenden Elemente werden ausgeblendet, um die Zahl der Kaufabbrüche zu reduzieren</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Navigation wird während des Checkouts erweitert</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Der Kunde wird in eine exklusive Produktseite weitergeleitet</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Tunneling bedeutet, alle ablenkenden Elemente (Navigation, Werbebanner etc.) während des Checkout-Prozesses auszublenden, um Kaufabbrüche zu reduzieren.</div>
+    <div class="feedback err">&#10008; Falsch. Tunneling bedeutet: alle ablenkenden Elemente während des Checkouts ausblenden. Navigation weg, weniger Links, klare CTAs – Ziel ist weniger Kaufabbrüche.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 6 -->
+  <div class="q-card">
+    <div class="q-num">Frage 6 von 20</div>
+    <div class="q-text">Die Absprungrate (Bounce Rate) misst …</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> den Anteil der Kunden, die einen Kauf abschließen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> die letzte besuchte Seite in einer Session</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> den Prozentsatz der Besuche, bei denen ein Kunde die Website nach dem Aufruf einer einzigen Seite ohne weitere Interaktion verlässt</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> die durchschnittliche Verweildauer auf der Website</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Absprungrate gibt den Prozentsatz der Besuche an, bei denen ein Kunde die Website nach dem Aufruf einer einzigen Seite ohne weitere Interaktion verlässt.</div>
+    <div class="feedback err">&#10008; Falsch. Die Absprungrate = Besuche mit nur einem Seitenaufruf ÷ Alle Besucher der Seite. Der Besucher hat nach nur einer Seite die Website verlassen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 7 -->
+  <div class="q-card">
+    <div class="q-num">Frage 7 von 20</div>
+    <div class="q-text">Ein Webshop hat 200.000 Besucher und 4.000 Verkaufsabschlüsse. Wie hoch ist die Konversionsrate?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 0,2 %</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> 2 %</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 20 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 4 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Konversionsrate = (4.000 / 200.000) × 100 = 2 %. Dies entspricht dem deutschen Durchschnitt im E-Commerce von 2–5 %.</div>
+    <div class="feedback err">&#10008; Falsch. Konversionsrate = (Käufer / Alle Besucher) × 100 = (4.000 / 200.000) × 100 = 2 %.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 8 -->
+  <div class="q-card">
+    <div class="q-num">Frage 8 von 20</div>
+    <div class="q-text">Was unterscheidet die Ausstiegsrate von der Absprungrate?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Ausstiegsrate misst nur den ersten Seitenaufruf</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bei der Ausstiegsrate hat der Besucher mindestens eine weitere Seite besucht, bevor er die Website verlässt</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Die Ausstiegsrate ist identisch mit der Absprungrate</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Ausstiegsrate misst ausschließlich den Checkout-Bereich</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Ausstiegsrate zeigt den Prozentsatz der Seitenaufrufe, die die letzten während eines Besuchs waren – wobei der Besucher mindestens eine weitere Seite besucht hatte.</div>
+    <div class="feedback err">&#10008; Falsch. Der Unterschied: Bei der Absprungrate verlässt der Nutzer nach der ersten Seite die Website. Bei der Ausstiegsrate hatte er mindestens eine weitere Seite besucht.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 9 -->
+  <div class="q-card">
+    <div class="q-num">Frage 9 von 20</div>
+    <div class="q-text">Welches ist laut Statistik der häufigste Grund für Warenkorbabbrüche?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Technische Probleme (21 %)</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Kundenkonto-Zwang (39 %)</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Hohe Versandkosten (57 %)</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Zu lange Versanddauer (24 %)</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Mit 57 % sind hohe Versandkosten der häufigste Grund für Warenkorbabbrüche (Quelle: Statista/ibi research 2021).</div>
+    <div class="feedback err">&#10008; Falsch. Die häufigste Ursache für Warenkorbabbrüche sind hohe Versandkosten mit 57 %. Danach folgen fehlende Zahlungsmethoden (53 %) und Kundenkonto-Zwang (39 %).</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 10 -->
+  <div class="q-card">
+    <div class="q-num">Frage 10 von 20</div>
+    <div class="q-text">Was versteht man unter „Kommissionierung"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Die Erstellung der Rechnung für den Kunden</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Die Auftragsbestätigung an den Kunden</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Die Zusammenstellung der Güter im Lager auf Grundlage der Auftragsunterlagen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Die Bonitätsprüfung des Kunden</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Kommissionierung = Zusammenstellung der Güter im Lager auf Grundlage der Auftragsunterlagen (Warenart, -menge, -gewicht, Verpackung).</div>
+    <div class="feedback err">&#10008; Falsch. Kommissionierung bedeutet die Zusammenstellung der Güter im Lager auf Grundlage der Auftragsunterlagen – also das physische Heraussuchen und Zusammenstellen der bestellten Waren.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 11 -->
+  <div class="q-card">
+    <div class="q-num">Frage 11 von 20</div>
+    <div class="q-text">Was ist der Unterschied zwischen Vorfakturierung und Nachfakturierung?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Bei der Vorfakturierung wird die Rechnung nach dem Versand erstellt</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Bei der Vorfakturierung wird die Rechnung vor der Kommissionierung erstellt, bei der Nachfakturierung danach</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Vorfakturierung bedeutet Rechnungsstellung beim Kunden vor der Lieferung</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Es gibt keinen Unterschied – beides meint das Gleiche</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Vorfakturierung: Rechnung vor der Kommissionierung (Risiko: Lieferumfang kann abweichen). Nachfakturierung: Rechnung nach der Kommissionierung (Vorteil: Rechnung stimmt mit Lieferung überein).</div>
+    <div class="feedback err">&#10008; Falsch. Vorfakturierung = Rechnung vor der Kommissionierung; Nachfakturierung = Rechnung nach der Kommissionierung, auf Basis der tatsächlich gelieferten Ware.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 12 -->
+  <div class="q-card">
+    <div class="q-num">Frage 12 von 20</div>
+    <div class="q-text">Was ist die Bruttonachfrage?</div>
+    <div class="options">
+      <div class="opt" data-correct="true"><span class="letter">A</span> Alle möglichen Umsätze vor Stornos, technischen Problemen und Zahlungsausfällen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Verkaufserlöse nach Abzug von Steuern</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Prozentualer Anteil von Stornierungen an den abgeschlossenen Verträgen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Verkaufserlöse aller Artikel vor Steuern</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Bruttonachfrage umfasst alle möglichen Umsätze, die theoretisch erzielt werden könnten – also noch vor Stornos, technischen Problemen oder Zahlungsausfällen.</div>
+    <div class="feedback err">&#10008; Falsch. Die Bruttonachfrage umfasst alle möglichen Umsätze vor Stornos, technischen Problemen und Zahlungsausfällen. Verkaufserlöse nach Steuern = Nettoumsatz.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 13 -->
+  <div class="q-card">
+    <div class="q-num">Frage 13 von 20</div>
+    <div class="q-text">Was gibt die Null-Treffer-Quote an?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den Anteil der Kunden ohne Kundenkonto</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Den Anteil widerrufener Kaufverträge</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Den Anteil der Suchanfragen ohne Ergebnis an der Gesamtzahl der Suchanfragen</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Den Anteil stornierter Bestellungen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Null-Treffer-Quote = Anteil der Suchanfragen ohne Ergebnis an der Gesamtzahl der Suchanfragen. Eine hohe Null-Treffer-Quote zeigt Sortimentslücken auf.</div>
+    <div class="feedback err">&#10008; Falsch. Die Null-Treffer-Quote gibt den Anteil der Suchanfragen ohne Ergebnis an. Eine hohe Quote zeigt, dass Kunden nach Produkten suchen, die der Shop nicht führt.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 14 -->
+  <div class="q-card">
+    <div class="q-num">Frage 14 von 20</div>
+    <div class="q-text">Die Exclusiva GmbH setzt im Checkout-Bereich Tunneling ein. Welche Maßnahme entspricht dem Tunneling-Prinzip?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Produktempfehlungen im Checkout anzeigen</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> Newsletter-Popup während des Bezahlvorgangs</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> Navigation und Header im Checkout vereinfachen/ausblenden</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Werbebanner im Checkout-Bereich platzieren</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Beim Tunneling wird die Navigation ausgeblendet, der Header vereinfacht und Ablenkungen minimiert – der Kunde soll im Kaufprozess bleiben.</div>
+    <div class="feedback err">&#10008; Falsch. Newsletter-Popups, Werbebanner und Produktempfehlungen sind typische Tunneling-Fehler. Korrekt ist das Ausblenden der Navigation und Vereinfachung des Headers.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 15 -->
+  <div class="q-card">
+    <div class="q-num">Frage 15 von 20</div>
+    <div class="q-text">Welcher Richtwert gilt laut Kreutzer (2021) für die Absprungrate im deutschen E-Commerce?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 5–10 %</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> 20–45 %</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> 60–80 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 50–70 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! E-Commerce-Shops haben laut Kreutzer (2021) durchschnittlich eine Absprungrate von 20–45 %. Werte über 45 % sind ein Warnsignal.</div>
+    <div class="feedback err">&#10008; Falsch. Der Richtwert für die Absprungrate im E-Commerce liegt laut Kreutzer (2021) bei 20–45 %. Alles darüber deutet auf Optimierungsbedarf hin.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 16 -->
+  <div class="q-card">
+    <div class="q-num">Frage 16 von 20</div>
+    <div class="q-text">In welcher Phase der Auftragsbearbeitung wird die Bonität des Kunden geprüft?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Übermittlung</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Aufbereitung</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Versand</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Fakturierung</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! In der Phase „Aufbereitung" werden Preise, Konditionen und die Bonität des Kunden geprüft, bevor der Auftrag weiterverarbeitet wird.</div>
+    <div class="feedback err">&#10008; Falsch. Die Bonitätsprüfung findet in der Phase „Aufbereitung" statt – dort werden Preise, Konditionen und die Zahlungsfähigkeit des Kunden geprüft.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 17 -->
+  <div class="q-card">
+    <div class="q-num">Frage 17 von 20</div>
+    <div class="q-text">Welche Konversionsrate ergibt sich bei einem T-Shirt-Webshop mit 2.000 Besuchern und 320 Bestellungen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> 6,25 %</div>
+      <div class="opt" data-correct="false"><span class="letter">B</span> 3,2 %</div>
+      <div class="opt" data-correct="true"><span class="letter">C</span> 16 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> 1,6 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Konversionsrate = (320 / 2.000) × 100 = 16 %. Das ist ein sehr guter Wert – weit über dem Durchschnitt von 2–5 %.</div>
+    <div class="feedback err">&#10008; Falsch. Konversionsrate = (320 / 2.000) × 100 = 16 %. Das Ergebnis liegt deutlich über dem E-Commerce-Durchschnitt von 2–5 %.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 18 -->
+  <div class="q-card">
+    <div class="q-num">Frage 18 von 20</div>
+    <div class="q-text">Was umfasst die Widerrufsquote?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Den prozentualen Anteil von Stornierungen an abgeschlossenen Verträgen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Den Anteil widerrufener Kaufverträge innerhalb der 14-Tage-Frist</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Den Anteil zurückgesendeter Waren im Gesamtumsatz</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Den Anteil unbezahlter Rechnungen</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Widerrufsquote gibt den Anteil widerrufener Kaufverträge innerhalb der gesetzlichen 14-Tage-Widerrufsfrist an.</div>
+    <div class="feedback err">&#10008; Falsch. Die Widerrufsquote misst den Anteil widerrufener Kaufverträge innerhalb der gesetzlichen 14-Tage-Frist. Die Stornoquote hingegen misst den Anteil stornierter Bestellungen.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 19 -->
+  <div class="q-card">
+    <div class="q-num">Frage 19 von 20</div>
+    <div class="q-text">Welche Kennzahl hat bei einem Webshop die Exclusiva GmbH laut Praxisbeispiel?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Konversionsrate: 8,0 % und Absprungrate: 12 %</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Konversionsrate: 3,8 % und Absprungrate: 32 %</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Konversionsrate: 1,2 % und Absprungrate: 65 %</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Konversionsrate: 5,5 % und Absprungrate: 20 %</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Die Exclusiva GmbH hat eine Konversionsrate von 3,8 % und eine Absprungrate von 32 % – beides liegt im normalen Bereich für E-Commerce-Shops.</div>
+    <div class="feedback err">&#10008; Falsch. Laut Praxisbeispiel hat die Exclusiva GmbH eine Konversionsrate von 3,8 % und eine Absprungrate von 32 %.</div>
+    <div class="q-nav"><button class="btn btn-next">Weiter &#8594;</button></div>
+  </div>
+
+  <!-- FRAGE 20 -->
+  <div class="q-card">
+    <div class="q-num">Frage 20 von 20</div>
+    <div class="q-text">Welche Aussage zum Qualitätsmanagement in der Auftragsbearbeitung ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="letter">A</span> Fehler in späten Phasen sind günstiger zu korrigieren als in frühen Phasen</div>
+      <div class="opt" data-correct="true"><span class="letter">B</span> Korrekturkosten steigen exponentiell, je später ein Fehler entdeckt wird</div>
+      <div class="opt" data-correct="false"><span class="letter">C</span> Qualitätsmanagement ist nur für die Fakturierungsphase relevant</div>
+      <div class="opt" data-correct="false"><span class="letter">D</span> Fehler haben keinen Einfluss auf die Kundenzufriedenheit</div>
+    </div>
+    <div class="feedback ok">&#10004; Richtig! Je später ein Fehler entdeckt wird, desto teurer wird seine Korrektur. Deshalb sind frühzeitige Qualitätssicherungsmaßnahmen (z. B. automatische Plausibilitätsprüfung) besonders wichtig.</div>
+    <div class="feedback err">&#10008; Falsch. Korrekturkosten steigen exponentiell, je später ein Fehler entdeckt wird. Fehler in frühen Phasen der Auftragsbearbeitung wirken sich auf die gesamte Prozesskette aus.</div>
+    <div class="q-nav"><button class="btn btn-next">Ergebnis anzeigen &#8594;</button></div>
+  </div>
+
+  <div id="result-card">
+    <div id="result-circle" class="result-circle"></div>
+    <div id="result-msg"></div>
+    <div id="result-sub"></div>
+    <button class="btn-restart" onclick="restartQuiz()">&#128260; Nochmal versuchen</button>
+  </div>
+</main>
+<footer>&copy; 2026 Can Siebert &amp; Hamzah Meyer &nbsp;|&nbsp; Lernfeld 3 – Kaufmann/Kauffrau im E-Commerce &nbsp;|&nbsp; Tag 1: Auftragsbearbeitung und Kaufabwicklung</footer>
+<script>
+const TOTAL = 20;
+let correct = 0, answered = 0, currentQ = 0;
+const results = new Array(TOTAL).fill(null);
+const dotsWrap = document.getElementById('q-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' current' : '');
+  d.title = 'Frage ' + (i+1);
+  d.addEventListener('click', () => jumpTo(i));
+  dotsWrap.appendChild(d);
+}
+function getDots() { return document.querySelectorAll('.dot'); }
+function getCards() { return document.querySelectorAll('.q-card'); }
+function updateDots() {
+  getDots().forEach((d, i) => {
+    d.className = 'dot';
+    if (results[i] === true)  d.classList.add('answered-ok');
+    if (results[i] === false) d.classList.add('answered-err');
+    if (i === currentQ)       d.classList.add('current');
+  });
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = ((answered / TOTAL) * 100).toFixed(0) + '%';
+  document.getElementById('score-display').textContent = correct + ' / ' + answered;
+}
+function jumpTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  getCards().forEach(c => c.classList.remove('active'));
+  currentQ = n;
+  getCards()[n].classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextQuestion() {
+  let next = -1;
+  for (let i = currentQ + 1; i < TOTAL; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) for (let i = 0; i < currentQ; i++) { if (results[i] === null) { next = i; break; } }
+  if (next === -1) showResult(); else jumpTo(next);
+}
+document.querySelectorAll('.q-card').forEach((card, qi) => {
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (results[qi] !== null) return;
+      const isCorrect = opt.dataset.correct === 'true';
+      results[qi] = isCorrect;
+      if (isCorrect) correct++;
+      answered++;
+      opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else o.classList.add('disabled'); });
+      if (!isCorrect) opt.classList.add('wrong');
+      const fbs = card.querySelectorAll('.feedback');
+      fbs[isCorrect ? 0 : 1].classList.add('show');
+      updateDots(); updateProgress();
+    });
+  });
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.addEventListener('click', () => { if (qi === TOTAL - 1) showResult(); else nextQuestion(); });
+});
+function showResult() {
+  getCards().forEach(c => c.classList.remove('active'));
+  const rc = document.getElementById('result-card');
+  rc.classList.add('show');
+  const pct = Math.round((correct / TOTAL) * 100);
+  const circle = document.getElementById('result-circle');
+  circle.textContent = pct + '%';
+  circle.className = 'result-circle ' + (pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'low');
+  const msgs = [
+    ['excellent', '&#127942; Ausgezeichnet!', `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Hervorragende Leistung!`],
+    ['good',      '&#128077; Gut gemacht!',   `Du hast ${correct} von ${TOTAL} Fragen richtig beantwortet. Noch ein paar Fragen zum Wiederholen.`],
+    ['ok',        '&#128218; Weiter üben!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Lies das Handout nochmals durch.`],
+    ['low',       '&#128736; Noch einmal!',   `Du hast ${correct} von ${TOTAL} Fragen richtig. Bitte das Lernmaterial wiederholen.`],
+  ];
+  const [, msg, sub] = msgs.find(([k]) => circle.classList.contains(k));
+  document.getElementById('result-msg').innerHTML = msg;
+  document.getElementById('result-sub').textContent = sub;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function restartQuiz() {
+  correct = 0; answered = 0; results.fill(null); currentQ = 0;
+  document.getElementById('result-card').classList.remove('show');
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong','disabled'));
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  jumpTo(0); updateProgress();
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+updateDots(); updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lernfeld 4 – Werteströme erfassen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#DC2626;--primary-light:#FEE2E2;--primary-dark:#B91C1C;--bg:#f8fafc;--text:#1e293b;--muted:#64748b;--border:#e2e8f0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0f172a,#1e293b);padding:0 32px;display:flex;align-items:center;height:60px;gap:16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.back-btn{color:#94a3b8;text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:color .2s}
+.back-btn:hover{color:#f1f5f9}
+.sep{color:#334155}
+.topbar-title{color:#f1f5f9;font-weight:700;font-size:.95rem}
+.header{background:linear-gradient(135deg,#0f172a 0%,#2c1515 100%);padding:40px 32px 36px;border-bottom:3px solid var(--primary)}
+.lf-badge{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.header h1{color:#f1f5f9;font-size:2rem;font-weight:800;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.9rem}
+.content{max-width:1100px;margin:0 auto;padding:36px 24px}
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;position:relative;overflow:hidden;opacity:.6}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:#94a3b8}
+.tag-num{font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.tag-topic{font-size:.97rem;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.4}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge-wip{font-size:.72rem;background:#f1f5f9;color:var(--muted);border:1px solid var(--border);padding:5px 10px;border-radius:20px}
+.coming-soon-banner{background:var(--primary-light);border:1px solid #FECACA;border-radius:12px;padding:24px;margin-bottom:28px;display:flex;align-items:center;gap:16px}
+.cs-icon{font-size:2rem}
+.cs-text h3{color:var(--primary-dark);font-size:1rem;font-weight:700;margin-bottom:4px}
+.cs-text p{color:#991B1B;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back-btn" href="../index.html">← Dashboard</a>
+  <span class="sep">|</span>
+  <span class="topbar-title">Lernfeld 4 – Werteströme erfassen und beurteilen</span>
+</div>
+<div class="header">
+  <div class="lf-badge">Lernfeld 4</div>
+  <h1>Werteströme erfassen und beurteilen</h1>
+  <p>13 Unterrichtstage &nbsp;·&nbsp; Buchführung, Belege, Inventur, Bilanz, Konten, Umsatzsteuer</p>
+</div>
+<div class="content">
+  <div class="coming-soon-banner">
+    <div class="cs-icon">🚧</div>
+    <div class="cs-text">
+      <h3>In Vorbereitung</h3>
+      <p>Die Materialien für Lernfeld 4 werden aktuell erstellt und in Kürze verfügbar gemacht.</p>
+    </div>
+  </div>
+  <div class="section-label">Unterrichtstage (Vorschau)</div>
+  <div class="grid">
+
+    <div class="card"><div class="tag-num">Tag 1 · 02.06.2026</div><div class="tag-topic">4.1 Belege und Wertströme</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 2 · 03.06.2026</div><div class="tag-topic">4.2 Anforderungen an eine ordnungsgemäße Buchführung</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 3 · 04.06.2026</div><div class="tag-topic">4.3 Inventur und Inventar + 4.4 Inventurvereinfachungsverfahren</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 4 · 05.06.2026</div><div class="tag-topic">4.5 Die Bilanz als Grundlage + 4.6 Bilanzveränderungen</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 5 · 08.06.2026</div><div class="tag-topic">4.7 Arbeitsabläufe in der Buchführung + 4.8 Eröffnung der Konten (EBK)</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 6 · 09.06.2026</div><div class="tag-topic">4.9 Laufende Buchungen im Hauptbuch + 4.10 Buchen im Grundbuch</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 7 · 10.06.2026</div><div class="tag-topic">4.11 Abschluss der Konten</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 8 · 11.06.2026</div><div class="tag-topic">4.12 Erfolgskonten im Grund- und Hauptbuch</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 9 · 12.06.2026</div><div class="tag-topic">4.13 Warenbuchungen</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 10 · 15.06.2026</div><div class="tag-topic">4.14 Planung der Belegbearbeitung + 4.15 Bedeutung der Umsatzsteuer</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 11 · 16.06.2026</div><div class="tag-topic">4.16 Buchen mit Umsatzsteuer + 4.17 Berechnung der Umsatzsteuerzahllast</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 12 · 17.06.2026</div><div class="tag-topic">4.18 Aufbau und Organisation der Buchführung</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+    <div class="card"><div class="tag-num">Tag 13 · 18.06.2026</div><div class="tag-topic">4.19 Bewertung der Auswirkungen von Geschäftsprozessen</div><div class="btns"><span class="badge-wip">In Vorbereitung</span></div></div>
+
+  </div>
+</div>
+<script>
+if(sessionStorage.getItem('ecom-auth')!=='ok') window.location='../index.html';
+</script>
+</body>
+</html>

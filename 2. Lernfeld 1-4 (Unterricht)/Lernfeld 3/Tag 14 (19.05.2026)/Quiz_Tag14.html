@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – Tag 14: Die Geschäftsfähigkeit der Geschäftspartner</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --accent: #f59e0b;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; text-align: center; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; }
+  .progress-bar-wrap { width: 100%; max-width: 680px; height: 6px; background: var(--border); border-radius: 99px; margin-bottom: 1.5rem; }
+  .progress-bar { height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.4s ease; }
+  .dots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 680px; margin-bottom: 1.5rem; }
+  .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .dot.current { border-color: var(--primary); color: var(--primary); background: #ede9fe; }
+  .dot.answered-ok { background: var(--success); color: #fff; border-color: var(--success); }
+  .dot.answered-err { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .quiz-area { width: 100%; max-width: 680px; position: relative; }
+  .q-card { display: none; background: var(--card); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .q-card.active { display: block; }
+  .q-number { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .q-text { font-size: 1.1rem; font-weight: 600; line-height: 1.5; margin-bottom: 1.5rem; }
+  .options { display: flex; flex-direction: column; gap: 0.75rem; }
+  .opt { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.4; background: #fafafa; }
+  .opt:hover:not(.locked) { border-color: var(--primary); background: #ede9fe; }
+  .opt .badge { min-width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+  .opt.correct { border-color: var(--success); background: #f0fdf4; }
+  .opt.correct .badge { background: var(--success); color: #fff; }
+  .opt.wrong { border-color: var(--danger); background: #fff5f5; }
+  .opt.wrong .badge { background: var(--danger); color: #fff; }
+  .opt.locked { cursor: default; }
+  .feedback { margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.5; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+  .feedback.err { background: #fff5f5; border: 1px solid #fecaca; color: #b91c1c; }
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-next { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.4rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: none; transition: background 0.2s; }
+  .btn-next:hover { background: #4338ca; }
+  .btn-next.show { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .result-card { display: none; background: var(--card); border-radius: 16px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border); text-align: center; width: 100%; max-width: 680px; }
+  .result-card.show { display: block; }
+  .result-score { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
+  .result-label { font-size: 1.15rem; font-weight: 600; margin: 0.5rem 0 1rem; }
+  .result-msg { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .btn-restart { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 0.7rem 1.6rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+  .btn-restart:hover { background: #4338ca; }
+</style>
+</head>
+<body>
+
+<h1>Quiz – Tag 14</h1>
+<p class="subtitle">3.14 Die Geschäftsfähigkeit der Geschäftspartner · 20 Fragen</p>
+
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<div class="dots" id="dotsContainer"></div>
+
+<div class="quiz-area" id="quizArea">
+
+  <!-- Frage 1 -->
+  <div class="q-card active" id="q1">
+    <div class="q-number">Frage 1 von 20</div>
+    <div class="q-text">Ab welchem Alter ist eine Person in Deutschland grundsätzlich voll geschäftsfähig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Ab 16 Jahren</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Ab 17 Jahren</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Ab 18 Jahren</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Ab 21 Jahren</div>
+    </div>
+    <div class="feedback ok">Richtig! Die volle Geschäftsfähigkeit tritt in Deutschland mit Vollendung des 18. Lebensjahres ein. Ab dann können alle Rechtsgeschäfte selbstständig und ohne Zustimmung eines gesetzlichen Vertreters abgeschlossen werden.</div>
+    <div class="feedback err">Nicht korrekt. Die volle Geschäftsfähigkeit beginnt in Deutschland mit dem 18. Geburtstag (Volljährigkeit).</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 2 -->
+  <div class="q-card" id="q2">
+    <div class="q-number">Frage 2 von 20</div>
+    <div class="q-text">Was versteht man unter „Rechtsfähigkeit"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Die Fähigkeit, Verträge selbstständig abzuschließen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Die Fähigkeit, Träger von Rechten und Pflichten zu sein</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Die Fähigkeit, vor Gericht zu klagen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Fähigkeit, Vertragsstrafen einzufordern</div>
+    </div>
+    <div class="feedback ok">Richtig! Rechtsfähigkeit bedeutet, Träger von Rechten und Pflichten sein zu können. Sie beginnt bei natürlichen Personen mit der Geburt und bei juristischen Personen mit ihrer Eintragung ins Register.</div>
+    <div class="feedback err">Nicht korrekt. Rechtsfähigkeit = die Fähigkeit, überhaupt Rechte und Pflichten zu haben (nicht unbedingt selbst handeln zu können).</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 3 -->
+  <div class="q-card" id="q3">
+    <div class="q-number">Frage 3 von 20</div>
+    <div class="q-text">Welche der folgenden ist eine juristische Person und damit rechtsfähig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Ein Einzelunternehmer</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Eine GbR (Gesellschaft bürgerlichen Rechts)</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Eine GmbH (Gesellschaft mit beschränkter Haftung)</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Eine OHG (Offene Handelsgesellschaft)</div>
+    </div>
+    <div class="feedback ok">Richtig! Die GmbH ist eine juristische Person des Privatrechts – sie ist eigenständige Rechtsträgerin, kann Eigentum erwerben, Verträge schließen und wird durch ihre Organe (Geschäftsführer) vertreten.</div>
+    <div class="feedback err">Nicht korrekt. Die GmbH ist eine juristische Person. Einzelunternehmer, GbR und OHG sind keine juristischen Personen, sondern natürliche Personen oder Personengesellschaften.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 4 -->
+  <div class="q-card" id="q4">
+    <div class="q-number">Frage 4 von 20</div>
+    <div class="q-text">Kinder unter 7 Jahren sind nach deutschem Recht …</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>beschränkt geschäftsfähig</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>geschäftsunfähig</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>bedingt geschäftsfähig</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>voll geschäftsfähig mit Einwilligung der Eltern</div>
+    </div>
+    <div class="feedback ok">Richtig! Kinder unter 7 Jahren sind nach §104 BGB geschäftsunfähig. Ihre Willenserklärungen sind nichtig – Verträge können nur durch den gesetzlichen Vertreter (Eltern) abgeschlossen werden.</div>
+    <div class="feedback err">Nicht korrekt. Kinder unter 7 Jahren sind geschäftsunfähig (§104 BGB) – ihre Willenserklärungen sind von vornherein nichtig.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 5 -->
+  <div class="q-card" id="q5">
+    <div class="q-number">Frage 5 von 20</div>
+    <div class="q-text">Welche rechtliche Folge hat ein Vertragsschluss durch eine geschäftsunfähige Person?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Vertrag ist schwebend unwirksam und kann genehmigt werden</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Vertrag ist von Anfang an nichtig</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Vertrag ist wirksam, kann aber angefochten werden</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Vertrag ist wirksam, wenn die andere Seite gutgläubig war</div>
+    </div>
+    <div class="feedback ok">Richtig! Rechtsgeschäfte geschäftsunfähiger Personen sind nichtig (§105 BGB) – sie sind von Anfang an unwirksam und können auch durch spätere Genehmigung nicht wirksam werden.</div>
+    <div class="feedback err">Nicht korrekt. Willenserklärungen geschäftsunfähiger Personen sind nichtig (§105 BGB) – absolut unwirksam, keine Heilung möglich.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 6 -->
+  <div class="q-card" id="q6">
+    <div class="q-number">Frage 6 von 20</div>
+    <div class="q-text">In welchem Alterssegment gelten Personen als „beschränkt geschäftsfähig"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Unter 7 Jahren</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Von 7 bis einschließlich 17 Jahren</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Von 14 bis einschließlich 17 Jahren</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Von 16 bis einschließlich 20 Jahren</div>
+    </div>
+    <div class="feedback ok">Richtig! Jugendliche von 7 bis 17 Jahren (also bis zur Vollendung des 18. Lebensjahres) sind beschränkt geschäftsfähig (§§106–113 BGB). Ihre Rechtsgeschäfte sind schwebend unwirksam und bedürfen der Einwilligung des gesetzlichen Vertreters.</div>
+    <div class="feedback err">Nicht korrekt. Beschränkte Geschäftsfähigkeit gilt von 7 bis 17 Jahren (bis zum 18. Geburtstag).</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 7 -->
+  <div class="q-card" id="q7">
+    <div class="q-number">Frage 7 von 20</div>
+    <div class="q-text">Was bedeutet „schwebend unwirksam" bei Rechtsgeschäften beschränkt Geschäftsfähiger?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Vertrag ist sofort wirksam, kann aber angefochten werden</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Der Vertrag ist von Anfang an nichtig und nie heilbar</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>Der Vertrag ist vorläufig unwirksam, wird wirksam bei Genehmigung des gesetzlichen Vertreters</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Vertrag wird automatisch nach 6 Monaten wirksam</div>
+    </div>
+    <div class="feedback ok">Richtig! „Schwebend unwirksam" bedeutet: Der Vertrag ist vorläufig in der Schwebe – er wird wirksam, wenn der gesetzliche Vertreter (Eltern) zustimmt/genehmigt, oder endgültig unwirksam, wenn er ablehnt.</div>
+    <div class="feedback err">Nicht korrekt. Schwebend unwirksam = vorläufig unwirksam, kann aber durch Genehmigung des gesetzlichen Vertreters rückwirkend wirksam werden.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 8 -->
+  <div class="q-card" id="q8">
+    <div class="q-number">Frage 8 von 20</div>
+    <div class="q-text">Was regelt der §110 BGB, bekannt als „Taschengeldparagraph"?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Den Mindestbetrag des Taschengeldes für Minderjährige</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Dass ein Minderjähriger einen Vertrag wirksam abschließen kann, wenn er ihn mit eigenen, freigegebenen Mitteln vollständig bezahlt</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Dass Minderjährige bis 50 Euro selbstständig einkaufen dürfen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Den Rückgabeanspruch bei Käufen unter 10 Euro</div>
+    </div>
+    <div class="feedback ok">Richtig! §110 BGB: Ein Vertrag eines Minderjährigen wird wirksam, wenn er die Leistung vollständig mit Mitteln bewirkt hat, die ihm zu diesem Zweck oder zur freien Verfügung überlassen wurden (z. B. Taschengeld). Keine Bewilligung einer Ratenzahlung.</div>
+    <div class="feedback err">Nicht korrekt. §110 BGB (Taschengeldparagraph): Der Vertrag wird wirksam, wenn der Minderjährige mit selbst zur Verfügung gestellten Mitteln vollständig bezahlt hat.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 9 -->
+  <div class="q-card" id="q9">
+    <div class="q-number">Frage 9 von 20</div>
+    <div class="q-text">Ein 15-jähriger kauft ein Handy per Ratenzahlung ohne Elternzustimmung. Was gilt nach §110 BGB?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Kauf ist wirksam, weil §110 BGB auch Ratenkäufe erlaubt</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Kauf ist schwebend unwirksam – §110 BGB gilt nicht bei Ratenzahlung</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Kauf ist nichtig, weil der 15-Jährige geschäftsunfähig ist</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Kauf ist wirksam, wenn der erste Rate bereits gezahlt wurde</div>
+    </div>
+    <div class="feedback ok">Richtig! §110 BGB greift nur, wenn die Leistung vollständig bezahlt wird. Bei Ratenzahlung ist die Vollständigkeit nicht gegeben – der Vertrag bleibt schwebend unwirksam bis zur Elterngenehmigung.</div>
+    <div class="feedback err">Nicht korrekt. §110 BGB gilt ausdrücklich nicht bei Ratenzahlungen. Der Minderjährige muss die Leistung vollständig und sofort bewirken – der Kauf bleibt schwebend unwirksam.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 10 -->
+  <div class="q-card" id="q10">
+    <div class="q-number">Frage 10 von 20</div>
+    <div class="q-text">Welche der folgenden Ausnahmen erlaubt einem Minderjährigen, ohne Elternzustimmung vollwirksame Verträge abzuschließen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Kauf von Lebensmitteln in jedem Betrag</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Rechtsgeschäfte, die ihm nur rechtliche Vorteile bringen (z. B. Schenkung)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Käufe über das Internet bis 100 Euro</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Verträge, die ein Gericht für zulässig erklärt hat</div>
+    </div>
+    <div class="feedback ok">Richtig! Rechtsgeschäfte, die dem Minderjährigen nur rechtliche Vorteile bringen (z. B. eine Schenkung, bei der er nichts bezahlen muss), sind auch ohne Elternzustimmung wirksam (§107 BGB). Ein Vorteil-/Nachteil-Test entscheidet.</div>
+    <div class="feedback err">Nicht korrekt. Ausnahme nach §107 BGB: Bringt das Rechtsgeschäft dem Minderjährigen nur rechtliche Vorteile (z. B. reine Schenkung), ist es ohne Elternzustimmung wirksam.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 11 -->
+  <div class="q-card" id="q11">
+    <div class="q-number">Frage 11 von 20</div>
+    <div class="q-text">Darf ein 16-Jähriger in Deutschland einen Ausbildungsvertrag wirksam selbst unterzeichnen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Nein, erst ab 18 Jahren ist das möglich</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Ja, mit Einwilligung der Eltern – der Arbeitsvertrag ist eine gesetzliche Ausnahme</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Nein, Ausbildungsverträge erfordern notarielle Beurkundung</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Ja, vollständig selbstständig ohne jede Einschränkung</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Ausbildungsvertrag (als Arbeitsvertrag) kann ein Minderjähriger mit elterlicher Einwilligung wirksam abschließen. Die Eltern können den Minderjährigen generell für Arbeitsverhältnisse ermächtigen (§113 BGB).</div>
+    <div class="feedback err">Nicht korrekt. Ausbildungsverträge können Minderjährige mit Einwilligung der Eltern wirksam abschließen (§113 BGB – Ermächtigung für Arbeitsverhältnisse).</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 12 -->
+  <div class="q-card" id="q12">
+    <div class="q-number">Frage 12 von 20</div>
+    <div class="q-text">Was passiert rechtlich, wenn Eltern den Vertrag eines beschränkt geschäftsfähigen Kindes ablehnen?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Vertrag wird trotzdem wirksam, weil die andere Seite gutgläubig war</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Vertrag wird endgültig unwirksam</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Vertrag wird wirksam, das Kind haftet aber persönlich</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Vertrag kann nur vom Richter für ungültig erklärt werden</div>
+    </div>
+    <div class="feedback ok">Richtig! Verweigern die gesetzlichen Vertreter die Genehmigung, wird der schwebend unwirksame Vertrag endgültig unwirksam. Beide Seiten sind dann so zu stellen, als hätte der Vertrag nie bestanden.</div>
+    <div class="feedback err">Nicht korrekt. Lehnen die Eltern ab, wird der Vertrag endgültig unwirksam. Er kann nicht mehr geheilt werden.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 13 -->
+  <div class="q-card" id="q13">
+    <div class="q-number">Frage 13 von 20</div>
+    <div class="q-text">Warum ist die Altersverifikation im E-Commerce rechtlich wichtig?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Um Marketingdaten zu sammeln und Zielgruppen zu definieren</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Weil Verträge mit Minderjährigen ohne Elternzustimmung schwebend unwirksam sind und der Händler Rückabwicklungsrisiken trägt</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Weil das Datenschutzgesetz es für alle Online-Transaktionen vorschreibt</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Weil Minderjährige grundsätzlich nicht im Internet einkaufen dürfen</div>
+    </div>
+    <div class="feedback ok">Richtig! Ohne Altersverifikation riskiert der Händler, dass Verträge mit Minderjährigen schwebend unwirksam sind und er im Streitfall die Ware ohne Gegenleistung zurücknehmen muss. Bei bestimmten Waren (Alkohol, Tabak) ist Altersverifikation gesetzlich vorgeschrieben.</div>
+    <div class="feedback err">Nicht korrekt. Der Hauptgrund: Ohne Altersverifikation können Verträge mit Minderjährigen unwirksam sein – der Händler trägt das Rückabwicklungsrisiko.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 14 -->
+  <div class="q-card" id="q14">
+    <div class="q-number">Frage 14 von 20</div>
+    <div class="q-text">Welches Verfahren wird im E-Commerce zur Altersverifikation genutzt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Telefonische Befragung durch den Händler</div>
+      <div class="opt" data-correct="false"><span class="badge">B</span>Selbstauskunft per Checkbox „Ich bin über 18"</div>
+      <div class="opt" data-correct="true"><span class="badge">C</span>PostIdent, Giropay-ID oder Ausweis-Upload</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Bonitätsprüfung über die SCHUFA</div>
+    </div>
+    <div class="feedback ok">Richtig! Anerkannte Altersverifikationsverfahren im E-Commerce sind PostIdent (Vorlage beim Postamt), Giropay-Altersverifikation und Ausweis-Upload (mit Lichtbildabgleich). Eine einfache Checkbox ist rechtlich nicht ausreichend.</div>
+    <div class="feedback err">Nicht korrekt. Rechtssichere Altersverifikation im E-Commerce: PostIdent, Giropay-Altersverifikation oder Ausweis-Upload – nicht nur eine Checkbox.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 15 -->
+  <div class="q-card" id="q15">
+    <div class="q-number">Frage 15 von 20</div>
+    <div class="q-text">Welche Aussage zu dauerhaft Geisteskranken und ihrer Geschäftsfähigkeit ist korrekt?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Sie sind beschränkt geschäftsfähig und brauchen einen Betreuer als Berater</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Sie sind geschäftsunfähig – ihre Willenserklärungen sind nichtig</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Sie sind voll geschäftsfähig, solange kein Gericht etwas anderes bestimmt</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Sie sind schwebend geschäftsunfähig – ein Betreuer kann ihre Verträge genehmigen</div>
+    </div>
+    <div class="feedback ok">Richtig! Dauerhaft Geisteskranke sind nach §104 Nr. 2 BGB geschäftsunfähig – genauso wie Kinder unter 7 Jahren. Ihre Willenserklärungen sind nichtig; ein Betreuer handelt für sie.</div>
+    <div class="feedback err">Nicht korrekt. Dauerhaft Geisteskranke sind geschäftsunfähig (§104 Nr. 2 BGB) – ihre Willenserklärungen sind nichtig.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 16 -->
+  <div class="q-card" id="q16">
+    <div class="q-number">Frage 16 von 20</div>
+    <div class="q-text">Ein 17-jähriger Schüler betreibt einen eigenen Online-Handel mit Zustimmung der Eltern. Welche Sonderregel gilt für seine geschäftlichen Handlungen in diesem Bereich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Er braucht für jedes Geschäft einzeln die Elternzustimmung</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Er ist für alle Rechtsgeschäfte des Betriebs selbstständig geschäftsfähig (§112 BGB)</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Er darf nur Käufe bis 500 Euro selbst tätigen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Die Eltern haften für alle seine geschäftlichen Fehler persönlich</div>
+    </div>
+    <div class="feedback ok">Richtig! §112 BGB: Wenn die Eltern einem Minderjährigen den Betrieb eines Erwerbsgeschäfts gestatten (mit Genehmigung des Familiengerichts), ist er für alle Geschäfte des Betriebs unbeschränkt geschäftsfähig.</div>
+    <div class="feedback err">Nicht korrekt. §112 BGB: Mit elterlicher Zustimmung (und Genehmigung des Familiengerichts) zur Führung eines Betriebs ist der Minderjährige für alle Geschäfte des Betriebs voll geschäftsfähig.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 17 -->
+  <div class="q-card" id="q17">
+    <div class="q-number">Frage 17 von 20</div>
+    <div class="q-text">Welche der folgenden Situationen fällt NICHT unter den §110 BGB (Taschengeldparagraph)?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Ein 14-Jähriger kauft ein Buch mit gespartem Taschengeld bar</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Ein 16-Jähriger schließt ein Streaming-Abo mit monatlicher Abbuchung ab</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Ein 15-Jähriger kauft eine Kinokarte und bezahlt sofort</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Ein 13-Jähriger bezahlt sein Schulessen mit freigegebenem Geld</div>
+    </div>
+    <div class="feedback ok">Richtig! Ein Streaming-Abo mit monatlicher Abbuchung ist kein vollständig mit Taschengeld bezahltes Rechtsgeschäft. §110 BGB gilt nicht für Dauerschuldverhältnisse (Abos) oder Ratenzahlungen – die Leistung muss vollständig bezahlt werden.</div>
+    <div class="feedback err">Nicht korrekt. Das Streaming-Abo fällt nicht unter §110 BGB: Es handelt sich um ein Dauerschuldverhältnis mit laufenden Zahlungen, nicht um eine einmalige vollständige Leistung.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 18 -->
+  <div class="q-card" id="q18">
+    <div class="q-number">Frage 18 von 20</div>
+    <div class="q-text">Warum stellt die Geschäftsfähigkeit für Onlineshop-Betreiber ein besonderes Problem dar?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Weil Minderjährige keine Kreditkarten besitzen dürfen</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Weil im Internet das Alter der Kunden nicht direkt überprüft werden kann und Verträge unwirksam sein könnten</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Weil Minderjährige grundsätzlich kein Geld im Internet ausgeben dürfen</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Weil der Händler persönlich für Schäden durch Minderjährige haftet</div>
+    </div>
+    <div class="feedback ok">Richtig! Im stationären Handel kann man das Alter visuell prüfen; online fehlt dieser Check. Der Händler kann so unwissentlich mit Minderjährigen kontrahieren – die Verträge sind dann ggf. schwebend unwirksam, und er muss rückabwickeln.</div>
+    <div class="feedback err">Nicht korrekt. Das Kernproblem: Online ist das Alter nicht direkt erkennbar. Stellt sich später heraus, dass der Käufer minderjährig ist, droht die Unwirksamkeit des Vertrags.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 19 -->
+  <div class="q-card" id="q19">
+    <div class="q-number">Frage 19 von 20</div>
+    <div class="q-text">Die 15-jährige Britta kauft ohne Wissen ihrer Eltern ein Smartphone für 350 € per Nachnahme. Was gilt rechtlich?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Der Kauf ist sofort wirksam, weil Nachnahme eine sofortige Zahlung ist</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Der Kauf ist schwebend unwirksam – Eltern müssen genehmigen oder ablehnen</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Der Kauf ist nichtig, weil Britta unter 16 ist</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Der Kauf ist wirksam, wenn Britta das Geld selbst verdient hat</div>
+    </div>
+    <div class="feedback ok">Richtig! Britta ist beschränkt geschäftsfähig. Ohne Elterneinwilligung ist der Kaufvertrag schwebend unwirksam. Auch wenn Nachnahme sofort bezahlt wird, gilt §110 BGB hier nicht, da der Kauf nicht mit freigegebenem Taschengeld finanziert wurde (es sind 350 € – kein typisches Taschengeld).</div>
+    <div class="feedback err">Nicht korrekt. Als 15-Jährige ist Britta beschränkt geschäftsfähig. Der Vertrag über 350 € ohne Elternwissen ist schwebend unwirksam – §110 BGB greift bei diesem Betrag nicht.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+  <!-- Frage 20 -->
+  <div class="q-card" id="q20">
+    <div class="q-number">Frage 20 von 20</div>
+    <div class="q-text">Welche der drei Stufen der Geschäftsfähigkeit ordnet man korrekt dem Altersbereich zu?</div>
+    <div class="options">
+      <div class="opt" data-correct="false"><span class="badge">A</span>Geschäftsunfähig: 0–10 Jahre / Beschränkt: 10–17 / Voll: ab 18</div>
+      <div class="opt" data-correct="true"><span class="badge">B</span>Geschäftsunfähig: 0–6 Jahre / Beschränkt: 7–17 Jahre / Voll: ab 18 Jahre</div>
+      <div class="opt" data-correct="false"><span class="badge">C</span>Geschäftsunfähig: 0–5 Jahre / Beschränkt: 6–15 Jahre / Voll: ab 16 Jahre</div>
+      <div class="opt" data-correct="false"><span class="badge">D</span>Geschäftsunfähig: 0–6 Jahre / Beschränkt: 7–20 Jahre / Voll: ab 21 Jahre</div>
+    </div>
+    <div class="feedback ok">Richtig! Die drei Stufen nach BGB: Geschäftsunfähig (0–6 Jahre, §104), beschränkt geschäftsfähig (7–17 Jahre, §106), voll geschäftsfähig (ab 18 Jahre). Diese Grenzen gelten auch für dauerhaft Geisteskranke als eigene Kategorie.</div>
+    <div class="feedback err">Nicht korrekt. Die korrekte Einteilung: Geschäftsunfähig = 0 bis 6 Jahre (unter 7), beschränkt = 7 bis 17 Jahre, voll geschäftsfähig = ab 18 Jahre.</div>
+    <div class="nav-row"><button class="btn-next">Weiter →</button></div>
+  </div>
+
+</div><!-- end quiz-area -->
+
+<!-- Result Card -->
+<div class="result-card" id="resultCard">
+  <div class="result-score" id="resultScore">0/20</div>
+  <div class="result-label" id="resultLabel">Ergebnis</div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn-restart" onclick="restartQuiz()">Quiz wiederholen</button>
+</div>
+
+<script>
+  const totalQ = 20;
+  let answers = new Array(totalQ).fill(null);
+  let currentQ = 0;
+
+  const dots = document.getElementById('dotsContainer');
+  const progressBar = document.getElementById('progressBar');
+  const quizArea = document.getElementById('quizArea');
+  const resultCard = document.getElementById('resultCard');
+
+  function buildDots() {
+    dots.innerHTML = '';
+    for (let i = 0; i < totalQ; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' current' : '');
+      d.textContent = i + 1;
+      d.addEventListener('click', () => goTo(i));
+      dots.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const allDots = dots.querySelectorAll('.dot');
+    allDots.forEach((d, i) => {
+      d.className = 'dot';
+      if (answers[i] === true) d.classList.add('answered-ok');
+      else if (answers[i] === false) d.classList.add('answered-err');
+      if (i === currentQ) d.classList.add('current');
+    });
+  }
+
+  function updateProgress() {
+    const answered = answers.filter(a => a !== null).length;
+    progressBar.style.width = (answered / totalQ * 100) + '%';
+  }
+
+  function goTo(index) {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards[currentQ].classList.remove('active');
+    currentQ = index;
+    cards[currentQ].classList.add('active');
+    updateDots();
+  }
+
+  function lockCard(card, chosenOpt, isCorrect) {
+    const opts = card.querySelectorAll('.opt');
+    opts.forEach(o => {
+      o.classList.add('locked');
+      if (o.dataset.correct === 'true') o.classList.add('correct');
+    });
+    if (!isCorrect) chosenOpt.classList.add('wrong');
+    const fbOk = card.querySelector('.feedback.ok');
+    const fbErr = card.querySelector('.feedback.err');
+    if (isCorrect) fbOk.classList.add('show');
+    else fbErr.classList.add('show');
+    const btn = card.querySelector('.btn-next');
+    btn.classList.add('show');
+    if (currentQ === totalQ - 1) btn.textContent = 'Auswertung →';
+  }
+
+  function initOptions() {
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      const opts = card.querySelectorAll('.opt');
+      opts.forEach(opt => {
+        opt.addEventListener('click', function () {
+          if (opt.classList.contains('locked')) return;
+          const isCorrect = opt.dataset.correct === 'true';
+          answers[idx] = isCorrect;
+          lockCard(card, opt, isCorrect);
+          updateDots();
+          updateProgress();
+        });
+      });
+      const btn = card.querySelector('.btn-next');
+      btn.addEventListener('click', () => {
+        if (currentQ < totalQ - 1) goTo(currentQ + 1);
+        else showResult();
+      });
+    });
+  }
+
+  function showResult() {
+    quizArea.style.display = 'none';
+    dots.style.display = 'none';
+    document.querySelector('.progress-bar-wrap').style.display = 'none';
+    resultCard.classList.add('show');
+    const correct = answers.filter(a => a === true).length;
+    const pct = Math.round(correct / totalQ * 100);
+    document.getElementById('resultScore').textContent = correct + '/' + totalQ;
+    let label, msg;
+    if (pct >= 85) { label = 'Ausgezeichnet!'; msg = 'Hervorragende Leistung – du beherrschst das Thema Geschäftsfähigkeit sehr gut.'; }
+    else if (pct >= 70) { label = 'Gut gemacht!'; msg = 'Gutes Wissen – einzelne Paragraphen noch einmal nachschlagen.'; }
+    else if (pct >= 50) { label = 'Bestanden'; msg = 'Grundkenntnisse vorhanden – §§104–113 BGB noch einmal vertiefen.'; }
+    else { label = 'Weiter üben'; msg = 'Präsentation Tag 14 noch einmal durcharbeiten und dann erneut versuchen.'; }
+    document.getElementById('resultLabel').textContent = label;
+    document.getElementById('resultMsg').textContent = msg;
+  }
+
+  function restartQuiz() {
+    answers = new Array(totalQ).fill(null);
+    currentQ = 0;
+    const cards = quizArea.querySelectorAll('.q-card');
+    cards.forEach((card, idx) => {
+      card.classList.remove('active');
+      card.querySelectorAll('.opt').forEach(o => { o.className = 'opt'; });
+      card.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+      card.querySelector('.btn-next').classList.remove('show');
+      if (idx === 0) card.classList.add('active');
+    });
+    quizArea.style.display = '';
+    dots.style.display = '';
+    document.querySelector('.progress-bar-wrap').style.display = '';
+    resultCard.classList.remove('show');
+    progressBar.style.width = '0%';
+    updateDots();
+  }
+
+  buildDots();
+  initOptions();
+  updateDots();
+</script>
+</body>
+</html>
