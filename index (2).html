@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coming Soon | top-abschluss.de</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --bg:#0a0a0f;
+    --surface:rgba(255,255,255,.04);
+    --accent:#00e5a0;
+    --accent-dim:rgba(0,229,160,.12);
+    --text:#f0f0f5;
+    --text-muted:rgba(240,240,245,.45);
+    --glow:0 0 60px rgba(0,229,160,.15);
+  }
+
+  html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+
+  /* animated grain */
+  body::before{
+    content:'';position:fixed;inset:-50%;width:200%;height:200%;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;z-index:9999;opacity:.5;
+    animation:grain 4s steps(6) infinite;
+  }
+  @keyframes grain{0%,100%{transform:translate(0)}10%{transform:translate(-2%,5%)}30%{transform:translate(3%,-3%)}50%{transform:translate(-4%,1%)}70%{transform:translate(2%,4%)}90%{transform:translate(-1%,-2%)}}
+
+  /* gradient mesh background */
+  .bg-mesh{
+    position:fixed;inset:0;z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(0,229,160,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,120,200,.06) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(80,0,200,.04) 0%, transparent 50%);
+  }
+
+  .container{
+    position:relative;z-index:1;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:100%;padding:2rem;text-align:center;
+  }
+
+  /* top label */
+  .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;
+    color:var(--accent);
+    background:var(--accent-dim);
+    padding:.5rem 1.4rem;border-radius:100px;
+    margin-bottom:2.5rem;
+    animation:fadeUp .8s ease both;
+  }
+
+  h1{
+    font-size:clamp(2.8rem,8vw,6.5rem);
+    font-weight:900;line-height:1;
+    letter-spacing:-.03em;
+    margin-bottom:.6rem;
+    animation:fadeUp .8s .15s ease both;
+  }
+  h1 span{
+    display:inline-block;
+    background:linear-gradient(135deg,var(--accent) 0%,#00b4d8 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+
+  .subtitle{
+    font-size:clamp(.95rem,2vw,1.2rem);
+    font-weight:300;color:var(--text-muted);
+    max-width:460px;line-height:1.6;
+    margin-bottom:3.5rem;
+    animation:fadeUp .8s .3s ease both;
+  }
+
+  /* countdown */
+  .countdown{
+    display:flex;gap:clamp(.8rem,3vw,2rem);
+    animation:fadeUp .8s .45s ease both;
+  }
+
+  .countdown-item{
+    display:flex;flex-direction:column;align-items:center;
+    background:var(--surface);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:16px;
+    padding:clamp(1rem,3vw,1.8rem) clamp(1.2rem,3vw,2rem);
+    min-width:clamp(70px,15vw,110px);
+    backdrop-filter:blur(12px);
+    box-shadow:var(--glow);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .countdown-item:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 80px rgba(0,229,160,.22);
+  }
+
+  .countdown-value{
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(2rem,6vw,3.5rem);
+    font-weight:700;line-height:1;
+    color:var(--text);
+    transition:color .3s;
+  }
+  .countdown-item:hover .countdown-value{color:var(--accent)}
+
+  .countdown-label{
+    font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--text-muted);margin-top:.5rem;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* domain footer */
+  .domain{
+    position:absolute;bottom:2rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.75rem;letter-spacing:.15em;
+    color:var(--text-muted);
+    animation:fadeUp .8s .6s ease both;
+  }
+  .domain a{color:var(--text-muted);text-decoration:none;transition:color .3s}
+  .domain a:hover{color:var(--accent)}
+
+  /* pulse dot */
+  .pulse{
+    display:inline-block;width:6px;height:6px;
+    background:var(--accent);border-radius:50%;
+    margin-right:.6rem;vertical-align:middle;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,229,160,.4)}50%{opacity:.6;box-shadow:0 0 0 8px rgba(0,229,160,0)}}
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* launched state */
+  .launched .countdown-value{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+
+<div class="container">
+  <div class="label"><span class="pulse"></span>In Vorbereitung</div>
+  <h1>Coming <span>Soon</span></h1>
+  <p class="subtitle">Wir arbeiten an etwas Neuem. Bleib gespannt&nbsp;– es geht bald&nbsp;los.</p>
+
+  <div class="countdown" id="countdown">
+    <div class="countdown-item">
+      <span class="countdown-value" id="days">00</span>
+      <span class="countdown-label">Tage</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-value" id="hours">00</span>
+      <span class="countdown-label">Stunden</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-value" id="minutes">00</span>
+      <span class="countdown-label">Minuten</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-value" id="seconds">00</span>
+      <span class="countdown-label">Sekunden</span>
+    </div>
+  </div>
+
+  <div class="domain"><a href="https://e-com.top-abschluss.de">e-com.top-abschluss.de</a></div>
+</div>
+
+<script>
+  const target = new Date('2026-03-31T08:00:00+02:00').getTime();
+
+  function pad(n){ return String(n).padStart(2,'0') }
+
+  function tick(){
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('days').textContent    = pad(d);
+    document.getElementById('hours').textContent   = pad(h);
+    document.getElementById('minutes').textContent = pad(m);
+    document.getElementById('seconds').textContent = pad(s);
+
+    if(diff === 0){
+      document.getElementById('countdown').classList.add('launched');
+      document.querySelector('.label').innerHTML = '<span class="pulse"></span>Jetzt live';
+      document.querySelector('h1').innerHTML = 'Wir sind <span>live</span>';
+      document.querySelector('.subtitle').textContent = 'Willkommen – es geht los!';
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
